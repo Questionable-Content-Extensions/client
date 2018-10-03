@@ -36,8 +36,6 @@ var qcExt;
 						return self.settings.showAllMembers;
 					}, function() {
 						return self.settings.editMode;
-					}, function() {
-						return self.settings.useCorrectTimeFormat;
 					}], function() {
 						comicService.refreshComicData();
 					});

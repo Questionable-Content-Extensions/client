@@ -72,13 +72,13 @@
             "requireParamDescription": true,
             "requireReturnDescription": true
     }, */
-    "maximumLineLength": {
-        "value": 80,
+    /*"maximumLineLength": {
+        "value": 0,
         "tabSize": 4,
         "allExcept": [
             "regex"
         ]
-    },
+    },*/
     "requireAlignedMultilineParams": 0,
     "requireAnonymousFunctions": {
         "allExcept": [
@@ -146,7 +146,7 @@
     },
     "safeContextKeyword": ["self"],
     "validateIndentation": "\t",
-    "validateLineBreaks": "LF",
+    "validateLineBreaks": null,
     "validateParameterSeparator": ", ",
     "validateQuoteMarks": "'"
 }

@@ -109,6 +109,7 @@ var qcExt;
 	}
 	
 	if (qcExt.settings.showDebugLogs) {
+		console.debug('Running QC Extensions v' + GM_info.script.version);
 		console.debug('Latest URL:', latestUrl, 'Latest Comic:', latestComic);
 	}
 
@@ -127,8 +128,7 @@ var qcExt;
 	
 	$('#news, #newspost').replaceWith('<qc-news></qc-news>');
 
-	// $('#side').prepend('<qc-extra></qc-extra>');
-	$('#container .small-2').prepend('<qc-extra></qc-extra>');
+	comicDirective.parent().siblings('.small-2').prepend('<qc-extra></qc-extra>');
 
 	// Set a base (required by Angular's html5Mode)
 	$('head').append('<base href="' + window.location.origin + '/">');

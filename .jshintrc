@@ -11,7 +11,8 @@
         "GM_xmlhttpRequest": true,
         "GM_getValue": true,
         "GM_setValue": true,
-        "unsafeWindow": true
+        "unsafeWindow": true,
+        "GM": true
     },
     "latedef": true,
     "nocomma": true,

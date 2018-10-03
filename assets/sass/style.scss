@@ -59,7 +59,15 @@ $link-color: #2ba6cb;
         margin-top: 10px;
 
         &.first-header {
-            margin-top: 0px;
+            margin-top: 0;
+        }
+
+        &.update-header {
+			margin-top: 0;
+			margin-bottom: 0;
+			
+			color: #e43;
+			font-weight: bold;
         }
 
         small {

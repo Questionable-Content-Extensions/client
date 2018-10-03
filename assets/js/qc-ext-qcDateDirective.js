@@ -47,82 +47,30 @@ var qcExt;
 							this.$apply(fn);
 						}
 					};
-					
-					function formatDate(dateTime) {
-						var monthNames = [
-							'January', 'February', 'March',
-							'April', 'May', 'June', 'July',
-							'August', 'September', 'October',
-							'November', 'December'
-						];
-						
-						var weekDayNames = [
-							'Sunday', 'Monday', 'Tuesday',
-							'Wednesday', 'Thursday', 'Friday',
-							'Saturday'
-						];
-
-						var dayIndex = dateTime.getDay();
-						var date = dateTime.getDate();
-						var monthIndex = dateTime.getMonth();
-						var year = dateTime.getFullYear();
-						
-						var dateText = weekDayNames[dayIndex] + ', ' +
-							monthNames[monthIndex] + ' ' + date + ', ' + year;
-						
-						var hours = dateTime.getHours();
-						var minutes = dateTime.getMinutes();
-						
-						if (minutes < 10) {
-							minutes = '0' + minutes;
-						}
-						
-						var timeText;
-						if (qcExt.settings.useCorrectTimeFormat) {
-							if (hours < 10) {
-								hours = '0' + hours;
-							}
-							timeText = hours + ':' + minutes;
-						} else {
-							var meridiem;
-							if (hours < 12) {
-								meridiem = 'a.m.';
-							} else {
-								meridiem = 'p.m.';
-							}
-							hours = hours % 12;
-							if (hours === 0) {
-								hours = 12;
-							}
-							
-							timeText = hours + ':' + minutes + ' ' + meridiem;
-						}
-
-						return dateText + ' ' + timeText;
-					}
 
 					var self = this;
-					this.date = '';
+					this.settings = qcExt.settings;
+					this.date = null;
+					this.approximateDate = false;
 					comicDataLoadingEvent.subscribe($scope,
 						function() {
 							$scope.safeApply(function() {
-								self.date = '';
+								self.date = null;
+								self.approximateDate = false;
 							});
 						});
 					comicDataLoadedEvent.subscribe($scope,
 						function(event, comicData) {
 							$scope.safeApply(function() {
+								self.approximateDate = !comicData.isAccuratePublishDate;
 								var publishDate = comicData.publishDate;
 								$log.debug('qcDate(): ', publishDate);
 								if (publishDate !== null &&
 									publishDate !== undefined) {
 									var date = new Date(publishDate);
-									self.date = formatDate(date);
-									if (!comicData.isAccuratePublishDate) {
-										self.date += ' (Approximately)';
-									}
+									self.date = date;
 								} else {
-									self.date = '';
+									self.date = null;
 								}
 							});
 						});
@@ -130,7 +78,7 @@ var qcExt;
 					$log.debug('END qcDate()');
 				}],
 			controllerAs: 'd',
-			template: '<div class="row"><b>{{d.date}}</b></div>'
+			template: qcExt.variables.angularTemplates.date
 		};
 	});
 })(qcExt || (qcExt = {}));

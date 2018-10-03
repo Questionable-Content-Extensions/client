@@ -185,6 +185,17 @@ var qcExt;
 						comicService.comic > constants.taglineThreshold) {
 						self.missingDataInfo.push('a tagline');
 					}
+					
+					if (qcExt.settings.version === undefined) {
+						// Version is undefined. We're a new user!
+						$log.debug('qcExtra(): Version undefined!');
+						self.showWelcomeMessage = true;
+					} else if (qcExt.settings.version !==
+						self.currentVersion) {
+						// Version is changed. Script has been updated!
+						$log.debug('qcExtra(): Version different!');
+						self.showUpdateMessage = true;
+					}
 				});
 			});
 
@@ -239,6 +250,11 @@ var qcExt;
 			$log.debug(item);
 		};
 
+		this.showChangeLog = function() {
+			self.showWelcomeMessage = false;
+			self.showUpdateMessage = false;
+			$('#changeLogDialog').modal('show');
+		};
 	}
 
 	qcExt.app.directive('qcExtra', function() {

@@ -55,7 +55,6 @@ var qcExt;
 							} else {
 								return;
 							}
-							$('#changeLogDialog').modal('show');
 							self.versionUpdated = true;
 						});
 

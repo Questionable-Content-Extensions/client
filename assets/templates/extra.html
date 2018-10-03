@@ -31,6 +31,18 @@
         <tr ng-repeat="message in e.messages">
             <td>{{ message }}</td>
         </tr>
+        <tr ng-if="e.showWelcomeMessage">
+			<td>
+				<h1 class="update-header">Welcome to QC&nbsp;Extensions!</h1>
+				<a class="qc" ng-click="e.showChangeLog()">See change log!</a>
+			</td>
+        </tr>
+        <tr ng-if="e.showUpdateMessage">
+			<td>
+				<h1 class="update-header">QC Extensions updated!</h1>
+				<a class="qc" ng-click="e.showChangeLog()">See what's new!</a>
+			</td>
+        </tr>
         <tr ng-if="e.settings.editMode && e.editorData.missing.any">
             <td>
                 <h1 class="first-header">Comics with missing items</h1>
