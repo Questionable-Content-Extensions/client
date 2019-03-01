@@ -1,12 +1,26 @@
 language: node_js
 node_js:
-  - "4.7.0"
-before_install: 
-  - npm install -g grunt-cli
-  - rvm install 2.4.1
-  - gem install sass --version "=3.4.23"
-  - gem install compass --version "=1.0.3"
+- 8.4.0
+before_install:
+- npm install -g grunt-cli
+- rvm install 2.4.2
+- gem install sass --version "=3.4.25"
+- gem install compass --version "=1.0.3"
 install:
-  - npm update -g
-  - npm install
-script: grunt build
+- npm update -g
+- npm install
+script:
+- grunt build
+- npm run print-userscript-banner
+deploy:
+  provider: releases
+  api_key:
+    secure: UfVMZo8geJjIw3p9p2Iw5LDXWXVcJKNBkAam8PDDWlqprPhRuHsvvvev5BGchjZ8mlr/3R2poYn+6KXWqiGNh/1/4vEx1GCeo9/Y7IdZw4Zk11Z0rZIsg0G8VyQidLwEJC/g3y5INV3RkHmg2ux5qHpgWXVaaVInyPgHEYxoVeYtGb1QRQfu45axLjxhT6PbGjSzQ9oa6kE5+mR+GZAfr4KdiVXYVfN+VFF75KMh8swoRUOtxX5ED+mblC83ar25BHUCSwDvkfMZgNJHziTI0KzIJHSoxAZnso14cx6/BWcRW3chsU/Eh5mXT3Z94iGIgrTTNKjq6nDC/HJuRMwVKfMGSkQBOpAtKEGpSusLOsluOw1XVRytnkIXEE5+CnQNS8J0GqKUU9Ea47EScH+VW4xUmWolyGDuYjZC0tH2GFhxcAXDUFMbCxTwVNIuoph7nokxbYAPgGc4g0WeI/fNJ0szHTw9mGFbWXFh4kWj0bCEcKwPBkgrN18n7l1EiM7uR221jUPjqJihS5hiyVyBsjzxefS/lY1+9C0Fb0tBRMWE/jEqgh1LVA5ir8LiRlV3FxHdT04ebR6y5aq5e1A8Xfu+z72aPi8ZmGz4hdU4VHIou6VzzzGuPp9lnQx5UEZ+nvBAPeoprcXG0HV9CwaJa3aStPdSm8WSJxNHdyMUQdQ=
+  file:
+  - dist/qc-ext.min.user.js
+  - dist/qc-ext.user.js
+  - dist/qc-ext.meta.js
+  skip_cleanup: true
+  on:
+    repo: Questionable-Content-Extensions/client
+    tags: true

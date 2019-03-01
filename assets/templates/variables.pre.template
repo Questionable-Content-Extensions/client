@@ -1,7 +1,4 @@
-var qcExt;
-(function(qcExt) {
-    'use strict';
-    
-    qcExt.variables = qcExt.variables || {};
-    qcExt.variables.css = qcExt.variables.css || {};
-    qcExt.variables.angularTemplates = qcExt.variables.angularTemplates || {};
+let variables = {
+    css: {},
+    html: {}
+};

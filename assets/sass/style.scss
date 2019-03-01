@@ -1,5 +1,5 @@
 /* 
- * Copyright (C) 2016 Alexander Krivács Schrøder <alexschrod@gmail.com>
+ * Copyright (C) 2016-2018 Alexander Krivács Schrøder <alexschrod@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -166,7 +166,9 @@ a {
         }
 
         .mask, .fill {
-            -webkit-backface-visibility: hidden;
+			-webkit-backface-visibility: hidden;
+			backface-visibility: hidden;
+			
             transition: -webkit-transform 1s;
             transition: -ms-transform 1s;
             transition: transform 1s;

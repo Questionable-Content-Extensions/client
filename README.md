@@ -1,4 +1,4 @@
-# Questionable Content Extensions User Script [![Build Status](https://travis-ci.org/Questionable-Content-Extensions/client.svg?branch=master)](https://travis-ci.org/Questionable-Content-Extensions/client) [![Dependency Status](https://www.versioneye.com/user/projects/58da3f4f26a5bb0038e42095/badge.svg?style=flat)](https://www.versioneye.com/user/projects/58da3f4f26a5bb0038e42095) [![Built with Grunt](https://cdn.gruntjs.com/builtwith.svg)](http://gruntjs.com/)
+# Questionable Content Extensions User Script [![Build Status](https://travis-ci.org/Questionable-Content-Extensions/client.svg?branch=master)](https://travis-ci.org/Questionable-Content-Extensions/client) [![Built with Grunt](https://cdn.gruntjs.com/builtwith.svg)](http://gruntjs.com/)
 
 ## Getting Started
 
@@ -29,8 +29,6 @@ This project requires [Node.js®](https://nodejs.org/) and [Ruby](https://www.ru
 ```shell
 gem install compass      # If you don't have compass installed already
 npm install -g grunt-cli # If you don't have grunt installed already
-npm install -g jsonlint  # If you don't have jsonlint installed already
-npm install -g jshint    # If you don't have jshint installed already
 npm install              # To install all the grunt plugins we use
 grunt build              # To build our script
 ```

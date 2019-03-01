@@ -15,8 +15,6 @@ sudo apt-get install -y build-essential
 
 # Install grunt, jsonlint and jshint
 sudo npm install -g grunt
-sudo npm install -g jsonlint
-sudo npm install -g jshint
 
 # Install latest stable Ruby
 curl -sSL https://get.rvm.io | bash -s stable --ruby

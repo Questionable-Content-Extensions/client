@@ -1,5 +1,6 @@
 /.sass-cache
 /assets/generated
+/assets/removeFlow
 /dist
 /nbproject/private
 /node_modules
