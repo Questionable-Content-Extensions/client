@@ -1,6 +1,6 @@
 // @flow
 /*
- * Copyright (C) 2016-2018 Alexander Krivács Schrøder <alexschrod@gmail.com>
+ * Copyright (C) 2016-2019 Alexander Krivács Schrøder <alexschrod@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -51,6 +51,7 @@ export type ComicItem = {
 
 export type ComicData = {
 	comic: number;
+	imageType: "unknown" | "png" | "gif" | "jpeg",
 	hasData: boolean;
 	publishDate: ?string;
 	isAccuratePublishDate: ?boolean;
@@ -58,6 +59,11 @@ export type ComicData = {
 	tagline: ?string;
 	isGuestComic: ?boolean;
 	isNonCanon: ?boolean;
+	hasNoCast: ?boolean;
+	hasNoLocation: ?boolean;
+	hasNoStoryline: ?boolean;
+	hasNoTitle: ?boolean;
+	hasNoTagline: ?boolean;
 	news: ?string;
 	previous: ?number;
 	next: ?number;

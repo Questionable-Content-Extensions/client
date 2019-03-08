@@ -15,7 +15,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 <div class="row">
-    <b>
+    <b ng-if="d.date">
         <span ng-if="d.settings.useCorrectTimeFormat">{{d.date | date:'EEEE, MMMM d, yyyy HH:mm' }}</span>
         <span ng-if="!d.settings.useCorrectTimeFormat">{{d.date | date:'EEEE, MMMM d, yyyy h:mm a' }}</span>
         <span ng-if="d.approximateDate"> (Approximately)</span>

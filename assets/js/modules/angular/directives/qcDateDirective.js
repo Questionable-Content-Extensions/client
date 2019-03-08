@@ -1,6 +1,6 @@
 // @flow
 /*
- * Copyright (C) 2016-2018 Alexander Krivács Schrøder <alexschrod@gmail.com>
+ * Copyright (C) 2016-2019 Alexander Krivács Schrøder <alexschrod@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,13 +22,13 @@ import constants from '../../../constants';
 import settings, { Settings } from '../../settings';
 import variables from '../../../../generated/variables.pass2';
 
-import { ComicDataControllerBase } from '../controllers/ControllerBases';
+import { EventHandlingControllerBase } from '../controllers/ControllerBases';
 
 import type { $DecoratedScope } from '../decorateScope';
 import type { EventService } from '../services/eventService';
 import type { ComicData } from '../api/comicData';
 
-export class DateController extends ComicDataControllerBase<DateController> {
+export class DateController extends EventHandlingControllerBase<DateController> {
 	static $inject: string[];
 
 	$log: $Log;

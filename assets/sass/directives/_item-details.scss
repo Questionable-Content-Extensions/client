@@ -1,0 +1,109 @@
+/* 
+ * Copyright (C) 2016-2019 Alexander Krivács Schrøder <alexschrod@gmail.com>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+.item-details-image {
+	width: 128px;
+	height: 128px;
+	text-align: center;
+	position: relative;
+	border: 1px solid #485563;
+	box-sizing: content-box;
+	float: left;
+	margin-right: 15px;
+	margin-bottom: 24px;
+
+	.no-image-icon {
+		position: absolute;
+		left: 50%;
+		top: 42%;
+		transform: translate(-50%,-50%);
+		color: #485563;
+		font-size: 64px;
+	}
+
+	.no-image-text {
+		position: absolute;
+		top: 76%;
+		transform: translateY(-50%);
+		width: 100%;
+		font-size: 20px;
+		color: #485563;
+		font-weight: bold;
+	}
+
+	img {
+		position: absolute;
+		top: 50%;
+		transform: translate(-50%,-50%);
+		left: 50%;
+		max-width: 128px;
+		max-height: 128px;
+	}
+
+	.left-arrow, .right-arrow {
+		position: absolute;
+		top: 100%;
+		color: inherit;
+		font-size: 24px;
+	}
+
+	.left-arrow {
+		left: 5%;
+	}
+
+	.right-arrow {
+		right: 5%;
+	}
+
+	.item-details-pager {
+		position: absolute;
+		left: 50%;
+		top: 100%;
+		color: inherit;
+		font-size: 16px;
+		transform: translateX(-50%);
+
+		&.point {
+			cursor: pointer;
+		}
+	}
+}
+
+.item-details-presence {
+	float: right;
+	margin-left: 15px;
+	margin-bottom: 15px;
+	position: relative;
+
+	.presence-text {
+		position: absolute;
+		top: 50%;
+		transform: translate(-50%,-50%);
+		left:50%;
+		font-size: 20px;
+		text-align: center;
+
+		span {
+			font-size: 12px;
+		}
+	}
+}
+
+.item-details-hr {
+	margin-top: 0;
+	margin-bottom: 10px;
+}

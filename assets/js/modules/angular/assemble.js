@@ -1,6 +1,6 @@
 // @flow
 /*
- * Copyright (C) 2016-2018 Alexander Krivács Schrøder <alexschrod@gmail.com>
+ * Copyright (C) 2016-2019 Alexander Krivács Schrøder <alexschrod@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,12 +27,14 @@ import titleController from './controllers/titleController';
 
 import colorService from './services/colorService';
 import comicService from './services/comicService';
+import itemService from './services/itemService';
 import eventFactory from './services/eventFactory';
 import eventService from './services/eventService';
 import messageReportingService from './services/messageReportingService';
 import styleService from './services/styleService';
 
 import donutDirective from './directives/donutDirective';
+import fileDataDirective from './directives/fileDataDirective';
 import onErrorDirective from './directives/onErrorDirective';
 import qcAddItemDirective from './directives/qcAddItemDirective';
 import qcChangeLogDirective from './directives/qcChangeLogDirective';
@@ -40,6 +42,7 @@ import qcComicDirective from './directives/qcComicDirective';
 import qcComicNavDirective from './directives/qcComicNavDirective';
 import qcDateDirective from './directives/qcDateDirective';
 import qcEditComicDataDirective from './directives/qcEditComicDataDirective';
+import qcEditLogDirective from './directives/qcEditLogDirective';
 import qcExtraDirective from './directives/qcExtraDirective';
 import qcExtraNavDirective from './directives/qcExtraNavDirective';
 import qcItemDetailsDirective from './directives/qcItemDetailsDirective';
@@ -61,12 +64,14 @@ export default function (app: AngularModule) {
 
 	colorService(app);
 	comicService(app);
+	itemService(app);
 	eventFactory(app);
 	eventService(app);
 	messageReportingService(app);
 	styleService(app);
 
 	donutDirective(app);
+	fileDataDirective(app);
 	onErrorDirective(app);
 	qcAddItemDirective(app);
 	qcChangeLogDirective(app);
@@ -74,6 +79,7 @@ export default function (app: AngularModule) {
 	qcComicNavDirective(app);
 	qcDateDirective(app);
 	qcEditComicDataDirective(app);
+	qcEditLogDirective(app);
 	qcExtraDirective(app);
 	qcExtraNavDirective(app);
 	qcItemDetailsDirective(app);

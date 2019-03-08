@@ -1,5 +1,5 @@
 <!--
-    Copyright (C) 2016 Alexander Krivács Schrøder <alexschrod@gmail.com>
+    Copyright (C) 2016-2019 Alexander Krivács Schrøder <alexschrod@gmail.com>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -14,9 +14,9 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
-<div class="input-group" style="margin-top: 3px;">
-    <input ng-keypress="s.keyPress($event)" ng-model="s.title" id="setTitle_{{s.unique}}_field" type="text" class="form-control" aria-label="Set title" placeholder="Set title...">
+<div class="input-group" class="m-t-3px">
+    <input ng-keypress="s.keyPress($event)" ng-model="s.title" ng-disabled="isUpdating" id="setTitle_{{s.unique}}_field" type="text" class="form-control" aria-label="Set title" placeholder="Set title...">
     <div class="input-group-btn">
-        <button ng-click="s.setTitle()" type="button" class="btn btn-default">Set</button>
+        <button ng-click="s.setTitle()" type="button" class="btn btn-default" ng-disabled="isUpdating">Set</button>
     </div><!-- /btn-group -->
 </div><!-- /input-group -->

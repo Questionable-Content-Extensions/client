@@ -1,6 +1,6 @@
 // @flow
 /*
- * Copyright (C) 2016-2018 Alexander Krivács Schrøder <alexschrod@gmail.com>
+ * Copyright (C) 2016-2019 Alexander Krivács Schrøder <alexschrod@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,7 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import type { AngularModule, $Log, $Http, $Sce } from 'angular';
+import type { AngularModule, $Log, $Sce } from 'angular';
 
 import GM from 'greasemonkey';
 import angular from 'angular';
@@ -25,7 +25,7 @@ import constants from '../../../constants';
 import settings, { Settings } from '../../settings';
 import variables from '../../../../generated/variables.pass2';
 
-import { ComicDataControllerBase } from '../controllers/ControllerBases';
+import { EventHandlingControllerBase } from '../controllers/ControllerBases';
 
 import type { $DecoratedScope } from '../decorateScope';
 import type { ColorService } from '../services/colorService';
@@ -36,12 +36,13 @@ import type { StyleService } from '../services/styleService';
 import type { ItemData } from '../api/itemData';
 import type { ComicItemRepository, ComicData, ComicEditorData, ComicItem } from '../api/comicData';
 
-export class ExtraController extends ComicDataControllerBase<ExtraController> {
+export class ExtraController extends EventHandlingControllerBase<ExtraController> {
 	static $inject: string[];
 
 	$log: $Log;
 	$sce: $Sce;
 	comicService: ComicService;
+	messageReportingService: MessageReportingService;
 
 	settings: Settings;
 	constants: *;
@@ -51,6 +52,7 @@ export class ExtraController extends ComicDataControllerBase<ExtraController> {
 	showWelcomeMessage: boolean;
 	showUpdateMessage: boolean;
 	isLoading: boolean;
+	isUpdating: boolean;
 	hasError: boolean;
 	hasWarning: boolean;
 
@@ -65,6 +67,7 @@ export class ExtraController extends ComicDataControllerBase<ExtraController> {
 		$sce: $Sce,
 		comicService: ComicService,
 		eventService: EventService,
+		messageReportingService: MessageReportingService,
 		latestComic: number
 	) {
 		$log.debug('START ExtraController');
@@ -74,6 +77,7 @@ export class ExtraController extends ComicDataControllerBase<ExtraController> {
 		this.$log = $log;
 		this.$sce = $sce;
 		this.comicService = comicService;
+		this.messageReportingService = messageReportingService;
 
 		this.settings = settings;
 		this.constants = constants;
@@ -84,6 +88,13 @@ export class ExtraController extends ComicDataControllerBase<ExtraController> {
 		this.missingDataInfo = [];
 
 		$log.debug('END ExtraController');
+	}
+
+	_maintenance() {
+		this._reset();
+		this.messages.push(constants.messages.maintenance);
+		this.messageReportingService.reportError(constants.messages.maintenance);
+		this.hasWarning = true;
 	}
 
 	_comicDataLoading(comic: number) {
@@ -188,19 +199,19 @@ export class ExtraController extends ComicDataControllerBase<ExtraController> {
 			angular.forEach(comicData.allItems, processAllItem);
 		}
 
-		if (!hasCast) {
+		if (!hasCast && !comicData.hasNoCast) {
 			this.missingDataInfo.push('cast members');
 		}
-		if (!hasLocation) {
+		if (!hasLocation && !comicData.hasNoLocation) {
 			this.missingDataInfo.push('a location');
 		}
-		/* #if (!hasStoryline) {
+		/* #if (!hasStoryline && !comicData.hasNoStoryline) {
 			self.missingDataInfo.push('a storyline');
 		}*/
-		if (!comicData.title) {
+		if (!comicData.title && !comicData.hasNoTitle) {
 			this.missingDataInfo.push('a title');
 		}
-		if (!comicData.tagline &&
+		if (!comicData.tagline && !comicData.hasNoTagline &&
 			this.comicService.comic > constants.taglineThreshold) {
 			this.missingDataInfo.push('a tagline');
 		}
@@ -224,12 +235,13 @@ export class ExtraController extends ComicDataControllerBase<ExtraController> {
 			this.messages.push('Error communicating with server');
 			this.hasError = true;
 		} else {
-			this.messages.push(constants.messages.maintenance);
+			this.eventService.maintenanceEvent.publish();
 		}
 	}
 
 	_reset() {
 		this.isLoading = false;
+		this.isUpdating = false;
 		this.items = {};
 		this.allItems = {};
 		this.editorData = (({}: any): ComicEditorData);
@@ -242,6 +254,7 @@ export class ExtraController extends ComicDataControllerBase<ExtraController> {
 	_loading() {
 		this._reset();
 		this.isLoading = true;
+		this.isUpdating = true;
 		this.messages.push('Loading...');
 	}
 
@@ -274,6 +287,10 @@ export class ExtraController extends ComicDataControllerBase<ExtraController> {
 		($('#editComicDataDialog'): any).modal('show');
 	}
 
+	showEditLog() {
+		($('#editLogDialog'): any).modal('show');
+	}
+
 	showDetailsFor(item: ItemData) {
 		$('#itemDetailsDialog').data('itemId', item.id);
 		($('#itemDetailsDialog'): any).modal('show');
@@ -285,7 +302,7 @@ export class ExtraController extends ComicDataControllerBase<ExtraController> {
 		($('#changeLogDialog'): any).modal('show');
 	}
 }
-ExtraController.$inject = ['$scope', '$log', '$sce', 'comicService', 'eventService', 'latestComic'];
+ExtraController.$inject = ['$scope', '$log', '$sce', 'comicService', 'eventService', 'messageReportingService', 'latestComic'];
 
 export default function (app: AngularModule) {
 	app.directive('qcExtra', function () {

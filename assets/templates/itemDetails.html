@@ -1,5 +1,5 @@
 <!--
-    Copyright (C) 2016 Alexander Krivács Schrøder <alexschrod@gmail.com>
+    Copyright (C) 2016-2019 Alexander Krivács Schrøder <alexschrod@gmail.com>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -15,90 +15,134 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 <div class="modal fade" tabindex="-1" role="dialog" id="itemDetailsDialog" style="display: none;">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3 class="modal-title">
-                    <span ng-if="idvm.isLoading">Loading...</span>
-                    <span ng-if="!idvm.isLoading">{{idvm.itemData.name}}</span>
-                </h3>
-            </div>
-            <div class="modal-body" ng-if="idvm.isLoading">
-                Loading...
-            </div>
-            <div class="modal-body" ng-if="!idvm.isLoading">
-                <div class="clearfix">
-                    <div style="width: 128px; height: 128px; text-align: center; position: relative; border: 1px solid #485563; box-sizing: content-box; float: left; margin-right: 15px; margin-bottom: 15px;">
-                        <i ng-if="!idvm.itemData.hasImage" class="fa fa-camera" style="position: absolute; left: 50%; top: 42%; transform: translate(-50%,-50%); color: #485563; font-size: 64px;"></i>
-                        <div ng-if="!idvm.itemData.hasImage" style="position: absolute; top: 76%; transform: translateY(-50%); width: 100%; font-size: 20px; color: #485563; font-weight: bold;">No image</div>
-                        <img ng-if="idvm.itemData.hasImage"  ng-src="{{idvm.itemData.imagePath}}" style="position: absolute; top: 50%; transform: translate(-50%,-50%); left: 50%;" alt="{{idvm.itemData.shortName}}">
-                    </div>
-                    <div style="float: right; margin-left: 15px; margin-bottom: 15px; position: relative;">
-                        <donut ng-if="idvm.settings.useColors" size="128" color="#{{idvm.itemData.color}}" highlight-color="{{idvm.itemData.highlightColor}}" percent="{{idvm.itemData.presence}}" border-size="30" inner-color="#4e5d6c"></donut>
-                        <donut ng-if="!idvm.settings.useColors" size="128" color="black" highlight-color="white" percent="{{idvm.itemData.presence}}" border-size="30" inner-color="#4e5d6c"></donut>
-                        <div style="position: absolute; top: 50%; transform: translate(-50%,-50%); left:50%; font-size: 20px; text-align: center;" title="{{idvm.itemData.shortName}} has appeared in {{idvm.itemData.appearances}} out of the {{idvm.itemData.totalComics}} comics ({{idvm.itemData.presence|number:2}}%)">{{idvm.itemData.presence|number:2}}%<br><span style="font-size: 12px;">({{idvm.itemData.appearances}}/{{idvm.itemData.totalComics}})</span></div>
-                    </div>
-                    <div ng-switch="idvm.itemData.type">
-                        <p ng-switch-default>
-                            <span ng-if="idvm.settings.editMode"><b><i class="fa fa-id-card" aria-hidden="true" title="Item ID"></i></b> {{idvm.itemData.id}}<br></span>
-                            <b>Full name:</b> {{idvm.itemData.name}}<br>
-                            <b>Short name:</b> {{idvm.itemData.shortName}}<br>
-                            <b>First appearance:</b> <a ng-click="idvm.goToComic(idvm.itemData.first)">Comic {{idvm.itemData.first}}</a><br>
-                            <b>Latest appearance:</b> <a ng-click="idvm.goToComic(idvm.itemData.last)">Comic {{idvm.itemData.last}}</a><br>
-                            <b>Number of appearances:</b> {{idvm.itemData.appearances}} ({{idvm.itemData.presence|number:2}}%)<br>
-                            <b>Identifying color:</b> <span ng-if="idvm.settings.useColors" ng-style="{'color': idvm.itemData.color, 'background-color': idvm.itemData.highlightColor}">#{{idvm.itemData.color}}</span><span ng-if="!idvm.settings.useColors" >#{{idvm.itemData.color}}</span>
-                        </p>
-                    </div>
-                </div>
-                <hr style="margin-top: 0; margin-bottom: 10px;">
-                <div class="row">
-                    <div class="col-xs-6" ng-show="idvm.itemData.locations">
-                        <p ng-switch="idvm.itemData.type">Most often <span ng-switch-when="cast">spotted at</span><span ng-switch-when="location">visited simultaneously with</span><span ng-switch-default>involves</span>:</p>
-                        <ul>
-                            <li ng-repeat="location in idvm.itemData.locations"><a ng-click="idvm.showInfoFor(location.id)">{{location.shortName}}</a><span ng-if="idvm.settings.editMode"> (<i class="fa fa-id-card" aria-hidden="true" title="Item ID"></i> {{location.id}})</span> in {{location.count}} comics ({{location.percentage|number:2}}%)</li>
-                        </ul>
-                    </div>
-                    <div class="col-xs-6" ng-show="idvm.itemData.friends">
-                        <p ng-switch="idvm.itemData.type">Most often <span ng-switch-when="cast">spotted with</span><span ng-switch-when="location">visited by</span><span ng-switch-default>involves</span>:</p>
-                        <ul>
-                            <li ng-repeat="friend in idvm.itemData.friends"><a ng-click="idvm.showInfoFor(friend.id)">{{friend.shortName}}</a><span ng-if="idvm.settings.editMode"> (<i class="fa fa-id-card" aria-hidden="true" title="Item ID"></i> {{friend.id}})</span> in {{friend.count}} comics ({{friend.percentage|number:2}}%)</li>
-                        </ul>
-                    </div>
-                </div>
-                <hr ng-if="idvm.settings.editMode" style="margin-top: 0; margin-bottom: 10px;">
-                <div ng-if="idvm.settings.editMode" class="row form-horizontal">
-                    <div class="form-group">
-                        <label class="col-xs-3 control-label" for="edit_{{idvm.itemData.id}}_name">Name:</label>
-                        <div class="col-xs-9">
-                            <div class="input-group">
-                                <input id="edit_{{idvm.itemData.id}}_name" type="text" ng-keypress="idvm.keyPress($event, 'name')" ng-model="idvm.itemData.name" class="form-control" aria-label="Name">
-                                <span class="input-group-btn"><button ng-click="idvm.update('name')" type="button" class="btn btn-default">Update</button></span>
-                            </div><!-- /input-group -->
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label class="col-xs-3 control-label" for="edit_{{idvm.itemData.id}}_shortName">Short name:</label>
-                        <div class="col-xs-9">
-                            <div class="input-group">
-                                <input id="edit_{{idvm.itemData.id}}_shortName" type="text" ng-keypress="idvm.keyPress($event, 'shortName')" ng-model="idvm.itemData.shortName" class="form-control" aria-label="Short name">
-                                <span class="input-group-btn"><button ng-click="idvm.update('shortName')" type="button" class="btn btn-default">Update</button></span>
-                            </div><!-- /input-group -->
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label class="col-xs-3 control-label" for="edit_{{idvm.itemData.id}}_color">Color:</label>
-                        <div class="col-xs-9">
-                            <div class="input-group">
-                                <input id="edit_{{idvm.itemData.id}}_color" type="text" ng-keypress="idvm.keyPress($event, 'color')" ng-model="idvm.itemData.color" class="form-control" aria-label="Color">
-                                <span class="input-group-btn"><button ng-click="idvm.update('color')" type="button" class="btn btn-default">Update</button></span>
-                            </div><!-- /input-group -->
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-primary" type="button" ng-click="idvm.close()">Close</button>
-            </div>
-        </div>
-    </div>
+	<div class="modal-dialog">
+		<div class="modal-content" class="pos-rel">
+			<div class="modal-header">
+				<h3 class="modal-title">
+					<span ng-if="idvm.isLoading > 0">Loading...</span>
+					<span ng-if="idvm.isLoading == 0">{{idvm.itemData.name}}</span>
+				</h3>
+			</div>
+			<div class="modal-body" ng-if="idvm.isLoading > 0">
+				Loading...
+			</div>
+			<div class="modal-body" ng-if="idvm.isLoading == 0">
+				<div class="clearfix">
+					<div class="item-details-image">
+						<i ng-if="!idvm.isImagePreview && !idvm.itemData.hasImage" class="fa fa-camera no-image-icon"></i>
+						<div ng-if="!idvm.isImagePreview && !idvm.itemData.hasImage" class="no-image-text">No image</div>
+						<img ng-if="!idvm.isImagePreview && idvm.itemData.hasImage" ng-src="{{idvm.imagePaths[idvm.currentImagePath]}}" alt="{{idvm.itemData.shortName}}">
+						<img ng-if="idvm.isImagePreview" ng-src="{{idvm.imageFile}}" alt="{{idvm.itemData.shortName}}">
+
+						 <i ng-if="!idvm.isImagePreview && idvm.imagePaths.length > 1" class="fa fa-caret-left left-arrow" ng-click="idvm.previousImage()"></i>
+						 <p ng-if="!idvm.isImagePreview && idvm.imagePaths.length > 1" class="item-details-pager">{{idvm.currentImagePath + 1}} / {{idvm.imagePaths.length}}</p>
+						 <p ng-if="idvm.isImagePreview" class="item-details-pager point" ng-click="idvm.isImagePreview = false" title="Click to stop the preview">Preview</p>
+						 <i ng-if="!idvm.isImagePreview && idvm.imagePaths.length > 1" class="fa fa-caret-right right-arrow" ng-click="idvm.nextImage()"></i>
+					</div>
+					<div class="item-details-presence">
+						<donut ng-if="idvm.settings.useColors" size="128" color="#{{idvm.itemData.color}}" highlight-color="{{idvm.itemData.highlightColor}}"
+						 percent="{{idvm.itemData.presence}}" border-size="30" inner-color="#4e5d6c"></donut>
+						<donut ng-if="!idvm.settings.useColors" size="128" color="black" highlight-color="white" percent="{{idvm.itemData.presence}}"
+						 border-size="30" inner-color="#4e5d6c"></donut>
+						<div class="presence-text" title="{{idvm.itemData.shortName}} has appeared in {{idvm.itemData.appearances}} out of the {{idvm.itemData.totalComics}} comics ({{idvm.itemData.presence|number:2}}%)">{{idvm.itemData.presence|number:2}}%<br>
+							<span>({{idvm.itemData.appearances}}/{{idvm.itemData.totalComics}})</span>
+						</div>
+					</div>
+					<div ng-switch="idvm.itemData.type">
+						<p ng-switch-default>
+							<span ng-if="idvm.settings.editMode"><b><i class="fa fa-id-card" aria-hidden="true" title="Item ID"></i></b>
+								{{idvm.itemData.id}}<br></span>
+							<b>Full name:</b> {{idvm.itemData.name}}<br>
+							<b>Short name:</b> {{idvm.itemData.shortName}}<br>
+							<b>First appearance:</b> <a ng-click="idvm.goToComic(idvm.itemData.first)">Comic {{idvm.itemData.first}}</a><br>
+							<b>Latest appearance:</b> <a ng-click="idvm.goToComic(idvm.itemData.last)">Comic {{idvm.itemData.last}}</a><br>
+							<b>Number of appearances:</b> {{idvm.itemData.appearances}} ({{idvm.itemData.presence|number:2}}%)<br>
+							<b>Identifying color:</b> <span ng-if="idvm.settings.useColors" ng-style="{'color': idvm.itemData.color, 'background-color': idvm.itemData.highlightColor}">#{{idvm.itemData.color}}</span><span
+							 ng-if="!idvm.settings.useColors">#{{idvm.itemData.color}}</span>
+						</p>
+					</div>
+				</div>
+				<hr class="item-details-hr">
+				<div class="row">
+					<div class="col-xs-6" ng-show="idvm.itemData.locations">
+						<p ng-switch="idvm.itemData.type">Most often <span ng-switch-when="cast">spotted at</span><span ng-switch-when="location">visited
+								simultaneously with</span><span ng-switch-default>involves</span>:</p>
+						<ul>
+							<li ng-repeat="location in idvm.itemData.locations"><a ng-click="idvm.showInfoFor(location.id)">{{location.shortName}}</a><span
+								 ng-if="idvm.settings.editMode"> (<i class="fa fa-id-card" aria-hidden="true" title="Item ID"></i>
+									{{location.id}})</span> in {{location.count}} comics ({{location.percentage|number:2}}%)</li>
+						</ul>
+					</div>
+					<div class="col-xs-6" ng-show="idvm.itemData.friends">
+						<p ng-switch="idvm.itemData.type">Most often <span ng-switch-when="cast">spotted with</span><span ng-switch-when="location">visited
+								by</span><span ng-switch-default>involves</span>:</p>
+						<ul>
+							<li ng-repeat="friend in idvm.itemData.friends"><a ng-click="idvm.showInfoFor(friend.id)">{{friend.shortName}}</a><span
+								 ng-if="idvm.settings.editMode"> (<i class="fa fa-id-card" aria-hidden="true" title="Item ID"></i>
+									{{friend.id}})</span> in {{friend.count}} comics ({{friend.percentage|number:2}}%)</li>
+						</ul>
+					</div>
+				</div>
+				<hr ng-if="idvm.settings.editMode" class="item-details-hr">
+				<div ng-if="idvm.settings.editMode" class="row form-horizontal">
+					<div class="col-xs-12">
+						<div class="form-group">
+							<label class="col-xs-3 control-label" for="edit_{{idvm.itemData.id}}_name">Name:</label>
+							<div class="col-xs-9">
+								<div class="input-group">
+									<input id="edit_{{idvm.itemData.id}}_name" type="text" ng-keypress="idvm.keyPress($event, 'name')" ng-model="idvm.itemData.name" class="form-control" aria-label="Name">
+									<span class="input-group-btn"><button ng-click="idvm.update('name')" type="button" class="btn btn-default">Update</button></span>
+								</div><!-- /input-group -->
+							</div>
+						</div>
+					</div>
+					<div class="col-xs-12">
+						<div class="form-group">
+							<label class="col-xs-3 control-label" for="edit_{{idvm.itemData.id}}_shortName">Short name:</label>
+							<div class="col-xs-9">
+								<div class="input-group">
+									<input id="edit_{{idvm.itemData.id}}_shortName" type="text" ng-keypress="idvm.keyPress($event, 'shortName')"
+									 ng-model="idvm.itemData.shortName" class="form-control" aria-label="Short name">
+									<span class="input-group-btn"><button ng-click="idvm.update('shortName')" type="button" class="btn btn-default">Update</button></span>
+								</div><!-- /input-group -->
+							</div>
+						</div>
+					</div>
+					<div class="col-xs-12">
+						<div class="form-group">
+							<label class="col-xs-3 control-label" for="edit_{{idvm.itemData.id}}_color">Color:</label>
+							<div class="col-xs-9">
+								<div class="input-group">
+									<input id="edit_{{idvm.itemData.id}}_color" type="text" ng-keypress="idvm.keyPress($event, 'color')" ng-model="idvm.itemData.color"
+									 class="form-control" aria-label="Color">
+									<span class="input-group-btn"><button ng-click="idvm.update('color')" type="button" class="btn btn-default">Update</button></span>
+								</div><!-- /input-group -->
+							</div>
+						</div>
+					</div>
+					<div class="col-xs-12">
+						<div class="form-group">
+							<label class="col-xs-3 control-label" for="edit_{{idvm.itemData.id}}_image">Image:</label>
+							<div class="col-xs-9">
+								<div class="input-group">
+									<input id="edit_{{idvm.itemData.id}}_image" type="file" class="form-control" aria-label="Image" file-data="idvm.imageFile" file-info="idvm.imageFileInfo">
+									<span class="input-group-btn"><button ng-click="idvm.previewImage()" type="button" class="btn btn-default">Preview</button></span>
+									<span class="input-group-btn"><button ng-click="idvm.uploadImage()" type="button" class="btn btn-default">Upload</button></span>
+								</div><!-- /input-group -->
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button class="btn btn-primary" type="button" ng-click="idvm.close()">Close</button>
+			</div>
+			<div ng-show="idvm.isUpdating" class="update-overlay">
+				<div class="absolute-dead-center">
+					<div class="lds-dual-ring"></div>
+					<p class="update-text">Updating...</p>
+				</div>
+			</div>
+		</div>
+	</div>
 </div>

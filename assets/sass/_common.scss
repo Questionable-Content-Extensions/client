@@ -1,0 +1,90 @@
+/* 
+ * Copyright (C) 2016-2019 Alexander Krivács Schrøder <alexschrod@gmail.com>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+.hidden {
+	display: none !important;
+}
+
+@media screen and (min-width: 1015px) {
+    // Large screens (wider than the automatically resizing comics)
+    img[src*="/comics/"] {
+        margin-left: -15px;
+        margin-right: 15px;
+    }
+}
+
+.nav, .pagination, .carousel, .panel-title a {
+	cursor: pointer;
+}
+
+.modal {
+	color: #ebebeb;
+	text-align: left;
+
+	input { width: auto; }
+
+	label.disabled, p.disabled {
+		color: #999;
+	}
+}
+
+input {
+	margin: 0 !important;
+}
+
+a {
+	cursor: pointer;
+}
+
+.p-l-10px {
+	padding-left: 10px;
+}
+
+.p-r-10px {
+	padding-right: 10px;
+}
+
+.p-r-20px {
+	padding-right: 20px;
+}
+
+.m-t-3px {
+	margin-top: 3px;
+}
+
+.m-t-20px {
+	margin-top: 20px;
+}
+
+.pos-rel {
+	position: relative;
+}
+
+.no-border {
+	border: none;
+}
+
+.absolute-dead-center {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform:translate(-50%, -50%);
+}
+
+.qc-error-text {
+	color: red;
+}

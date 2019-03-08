@@ -1,6 +1,6 @@
 // @flow
 /*
- * Copyright (C) 2016-2018 Alexander Krivács Schrøder <alexschrod@gmail.com>
+ * Copyright (C) 2016-2019 Alexander Krivács Schrøder <alexschrod@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,7 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import type { AngularModule, $Log, $Timeout, $Http, $Filter } from 'angular';
+import type { AngularModule, $Log, $Timeout, $Filter } from 'angular';
 
 import constants from '../../../constants';
 import variables from '../../../../generated/variables.pass2';
@@ -25,29 +25,47 @@ import { SetValueControllerBase } from '../controllers/ControllerBases';
 
 import type { $DecoratedScope } from '../decorateScope';
 import type { ComicService } from '../services/comicService';
+import type { ItemService } from '../services/itemService';
 import type { EventService } from '../services/eventService';
+import type { MessageReportingService } from '../services/messageReportingService';
 import type { ItemBaseData, ItemData } from '../api/itemData';
-import type { ComicItem } from '../api/comicData';
+import type { ComicData, ComicItem } from '../api/comicData';
+
+const newItemId = -1;
+const maintenanceId = -2;
+const errorId = -3;
 
 const addCastTemplate = 'Add new cast member';
 const addCastItem: ItemBaseData = {
-	id: -1,
+	id: newItemId,
 	type: 'cast',
 	shortName: `${addCastTemplate} ''`,
 	name: ''
 };
 const addStorylineTemplate = 'Add new storyline';
 const addStorylineItem: ItemBaseData = {
-	id: -1,
+	id: newItemId,
 	type: 'storyline',
 	shortName: `${addStorylineTemplate} ''`,
 	name: ''
 };
 const addLocationTemplate = 'Add new location';
 const addLocationItem: ItemBaseData = {
-	id: -1,
+	id: newItemId,
 	type: 'location',
 	shortName: `${addLocationTemplate} ''`,
+	name: ''
+};
+const maintenanceItem: ItemBaseData = {
+	id: maintenanceId,
+	type: 'cast',
+	shortName: 'Maintenance ongoing. Choose this to attempt refresh.',
+	name: ''
+};
+const errorItem: ItemBaseData = {
+	id: errorId,
+	type: 'cast',
+	shortName: 'Error loading item list. Choose this to attempt refresh.',
 	name: ''
 };
 
@@ -63,9 +81,11 @@ export class AddItemController extends SetValueControllerBase<AddItemController>
 	static $inject: string[];
 
 	$log: $Log;
-	$http: $Http;
 	$timeout: $Timeout;
 	$filter: $Filter;
+
+	itemService: ItemService;
+	messageReportingService: MessageReportingService;
 
 	searchFieldId: string;
 	dropdownId: string;
@@ -74,54 +94,61 @@ export class AddItemController extends SetValueControllerBase<AddItemController>
 	itemFilterText: string;
 	items: ItemBaseData[];
 
+	isUpdating: boolean;
+
 	constructor(
 		$scope: $DecoratedScope<AddItemController>,
 		$log: $Log,
 		comicService: ComicService,
 		eventService: EventService,
-		$http: $Http,
+		itemService: ItemService,
 		$timeout: $Timeout,
-		$filter: $Filter
+		$filter: $Filter,
+		messageReportingService: MessageReportingService
 	) {
 		$log.debug('START AddItemController');
 
 		super($scope, comicService, eventService);
 
 		this.$log = $log;
-		this.$http = $http;
 		this.$timeout = $timeout;
 		this.$filter = $filter;
+
+		this.itemService = itemService;
+		this.messageReportingService = messageReportingService;
 
 		this.searchFieldId = `#addItem_${this.unique}_search`;
 		this.dropdownId = `#addItem_${this.unique}_dropdown`;
 		this.dropdownButtonId = `#addItem_${this.unique}_dropdownButton`;
-		
+
 		this.items = [];
 		this.itemFilterText = '';
 
 		(this: any).itemFilter = this.itemFilter.bind(this);
 
-		this._loadItemData();
-
 		$log.debug('END AddItemController');
 	}
 
-	_loadItemData() {
-		this.$http.get(constants.itemDataUrl)
-			.then((response) => {
-				let itemData: ItemBaseData[] = [];
-				if (response.status === 200) {
-					itemData = response.data;
-				}
+	_itemDataLoaded(itemData: ItemBaseData[]) {
+		itemData = itemData.slice(0);
 
-				itemData.push(addCastItem);
-				itemData.push(addStorylineItem);
-				itemData.push(addLocationItem);
+		itemData.push(addCastItem);
+		itemData.push(addStorylineItem);
+		itemData.push(addLocationItem);
 
-				this.$scope.safeApply(() => {
-					this.items = itemData;
-				});
-			});
+		this.$scope.safeApply(() => {
+			this.items = itemData;
+		});
+	}
+
+	_itemDataError(error: any) {
+		this.items.length = 0;
+		this.items.push(errorItem);
+	}
+
+	_maintenance() {
+		this.items.length = 0;
+		this.items.push(maintenanceItem);
 	}
 
 	_updateValue() {
@@ -132,8 +159,9 @@ export class AddItemController extends SetValueControllerBase<AddItemController>
 		this.addItem(chosenItem);
 	}
 
-	_itemsChanged() {
-		this._loadItemData();
+	_comicDataLoaded(comicData: ComicData) {
+		this.itemFilterText = '';
+		this.$scope.isUpdating = false;
 	}
 
 	searchChanged() {
@@ -214,20 +242,32 @@ export class AddItemController extends SetValueControllerBase<AddItemController>
 		}
 	}
 
-	addItem(item: ComicItem) {
-		this.comicService.addItem(item).then((response) => {
-			if (response.status === 200) {
+	async addItem(item: ComicItem) {
+		if (item.id == maintenanceId || item.id == errorId) {
+			this.itemService.refreshItemData();
+			return;
+		}
+
+		this.$scope.isUpdating = true;
+		const response = await this.comicService.addItemToComic(item);
+		if (response.status === 200) {
+			// TODO: Maybe move this new item event logic to comicService.addItemToComic?
+			if (item.id == newItemId) {
 				this.eventService.itemsChangedEvent.publish();
-				this.$scope.safeApply(() => {
-					this.itemFilterText = '';
-				});
 			}
-		});
+			this.$scope.safeApply(() => {
+				this.itemFilterText = '';
+			});
+		} else {
+			this.$scope.safeApply(() => {
+				this.$scope.isUpdating = false;
+			});
+		}
 	}
 }
 AddItemController.$inject = [
 	'$scope', '$log', 'comicService', 'eventService',
-	'$http', '$timeout'
+	'itemService', '$timeout', '$filter', 'messageReportingService'
 ];
 
 export default function (app: AngularModule) {
@@ -235,7 +275,7 @@ export default function (app: AngularModule) {
 		return {
 			restrict: 'E',
 			replace: true,
-			scope: {},
+			scope: { isUpdating: '=' },
 			controller: AddItemController,
 			controllerAs: 'a',
 			template: variables.html.addItem

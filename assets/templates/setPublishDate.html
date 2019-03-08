@@ -14,18 +14,18 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
-<div style="margin-top: 3px;">
+<div class="m-t-3px">
     <div class="form-group">
         <div class="input-group">
-            <input ng-keypress="s.keyPress($event)" ng-model="s.publishDate" id="setPublishDate_{{s.unique}}_field" type="datetime-local" class="form-control" aria-label="Set publish date" placeholder="Set publish date...">
+            <input ng-keypress="s.keyPress($event)" ng-model="s.publishDate" ng-disabled="isUpdating" id="setPublishDate_{{s.unique}}_field" type="datetime-local" class="form-control" aria-label="Set publish date" placeholder="Set publish date...">
             <div class="input-group-btn">
-                <button ng-click="s.setPublishDate()" type="button" class="btn btn-default">Set</button>
+                <button ng-click="s.setPublishDate()" ng-disabled="isUpdating" type="button" class="btn btn-default">Set</button>
             </div><!-- /btn-group -->
         </div><!-- /input-group -->
     </div><!-- /form-group -->
     <div class="form-group">
         <label>
-            <input type="checkbox" ng-model="s.isAccuratePublishDate" ng-change="s.setPublishDate()"> Accurate Date
+            <input type="checkbox" ng-model="s.isAccuratePublishDate" ng-change="s.setAccuratePublishDate()" ng-disabled="isUpdating"> Accurate Date
         </label>
     </div><!-- /form-group -->
 </div>

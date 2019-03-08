@@ -1,6 +1,6 @@
 // @flow
 /*
- * Copyright (C) 2016-2018 Alexander Krivács Schrøder <alexschrod@gmail.com>
+ * Copyright (C) 2016-2019 Alexander Krivács Schrøder <alexschrod@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -50,7 +50,7 @@ export class MessageReportingService {
 		this.isProcessing = false;
 	}
 
-	processMessages() {
+	_processMessages() {
 		this.isProcessing = true;
 
 		let nextMessage = this.messageQueue.shift();
@@ -73,17 +73,16 @@ export class MessageReportingService {
 		const messageElement = $('#' + unique);
 		messageElement.slideDown();
 
-		function removeMessage() {
+		const removeMessage = () => {
 			messageElement.slideUp(
-				function () {
+				() => {
 					messageElement.remove();
-					this.processMessages();
+					this._processMessages();
 				});
-		}
+		};
 
 		const timeoutHandle = this.$timeout(removeMessage, 5000, false);
-
-		messageElement.click(function () {
+		messageElement.click(() => {
 			this.$timeout.cancel(timeoutHandle);
 			removeMessage();
 		});
@@ -91,7 +90,7 @@ export class MessageReportingService {
 
 	reportMessage(type: MessageType, message: string) {
 		this.messageQueue.push({ type: type, message: message });
-		if (!this.isProcessing) { this.processMessages(); }
+		if (!this.isProcessing) { this._processMessages(); }
 	}
 
 	reportError(message: string) {

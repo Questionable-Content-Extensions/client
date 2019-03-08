@@ -10,7 +10,7 @@ install:
 - npm update -g
 - npm install
 script:
-- grunt build
+- grunt
 - npm run print-userscript-banner
 deploy:
   provider: releases

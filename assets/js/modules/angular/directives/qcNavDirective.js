@@ -1,6 +1,6 @@
 // @flow
 /*
- * Copyright (C) 2016-2018 Alexander Krivács Schrøder <alexschrod@gmail.com>
+ * Copyright (C) 2016-2019 Alexander Krivács Schrøder <alexschrod@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,6 +18,7 @@
 
 import type { AngularModule, $Log } from 'angular';
 
+import settings, { Settings } from '../../settings';
 import variables from '../../../../generated/variables.pass2';
 
 import type { $DecoratedScope } from '../decorateScope';
@@ -30,6 +31,9 @@ export class NavController {
 	comicService: ComicService;
 	latestComic: number;
 	randomComic: number;
+	mainDirective: boolean;
+
+	settings: Settings;
 
 	constructor(
 		$scope: $DecoratedScope<NavController>,
@@ -40,12 +44,25 @@ export class NavController {
 		this.comicService = comicService;
 		this.latestComic = latestComic;
 
-		this._updateRandomComic();
+		this.settings = settings;
+
+		if (this.$scope.mainDirective) {
+			$scope.$watchGroup([() => {
+				return this.settings.values.skipGuest;
+			}, () => {
+				return this.settings.values.skipNonCanon;
+			}], () => {
+				this._updateRandomComic();
+			});
+		}
 	}
 
-	_updateRandomComic() {
-		this.$scope.randomComic = Math.floor(Math.random() *
-			(parseInt(this.latestComic) + 1));
+	async _updateRandomComic() {
+		this.$scope.randomComic = this.comicService.nextRandomComic();
+		const randomComic = await this.comicService.nextFilteredRandomComic();
+		this.$scope.safeApply(() => {
+			this.$scope.randomComic = randomComic;
+		});
 	}
 
 	first(event: UIEvent) {
@@ -86,7 +103,7 @@ export default function (app: AngularModule) {
 	app.directive('qcNav', function () {
 		return {
 			restrict: 'E',
-			scope: { randomComic: '=' },
+			scope: { randomComic: '=', mainDirective: '=' },
 			controller: NavController,
 			controllerAs: 'n',
 			template: variables.html.navigation

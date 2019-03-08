@@ -15,12 +15,12 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 <div class="modal fade" tabindex="-1" role="dialog" id="changeLogDialog" style="display: none;">
-    <div class="modal-dialog" style="overflow-y: initial !important;">
+    <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
                 <h3 class="modal-title">Change Log</h3>
             </div>
-            <div class="modal-body" style="max-height: 73.5vh; overflow-y: auto;">
+            <div class="modal-body">
                 <div ng-if="clvm.previousVersion">
                     <h4>Script updated!</h4>
                     <p>Your Questionable Content Extensions has been updated from v{{ clvm.previousVersion || 'none'}} to v{{ clvm.currentVersion }}!</p>
@@ -36,6 +36,35 @@
 					<li></li>
 				</ul>
 				-->
+				
+				<h4>0.6.0 <small>March 7, 2019</small></h4>
+				<div class="change-log-entry">
+					<p class="developer-message">
+						This release, like the previous one, has been mostly about code quality and features for editors and me,
+						the developer. I'm hoping that I can now start putting in more features for the end-user as we move
+						towards version 0.7. If you have ideas for new features, or you have any problems with the extension
+						as it is, don't hesitate to
+						<a href="https://github.com/Questionable-Content-Extensions/client/issues">tell us about them</a>!
+						While I have quite a lot of ideas left to implement, I'd also love to implement ideas that aren't just
+						my own.
+					</p>
+					<h5>New features</h5>
+					<ul>
+						<li>If a comic takes too long to load, show a loading indicator. What's considered "too long" is configurable in the settings dialog</li>
+						<li>You can now open this change log at any time from the settings dialog, not just when a new version is out</li>
+					</ul>
+					<h5>Changes/fixes</h5>
+					<ul>
+						<li>Random comic navigation now respects exclusion settings</li>
+					</ul>
+					<h5>Editor features</h5>
+					<ul>
+						<li>Add support for the new item image system and for image uploading. This allows uploading images directly in the browser (was previously a tedious server-only job), and also allows for multiple images per item</li>
+						<li>Add edit log view. The server keeps track of all changes editors make, this view lets you see that log</li>
+						<li>Add flags for indicating whether a comic is lacking certain features, such as marking a comic as not having characters. Currently only used by the "comic missing X" feature so it doesn't indicate a comic having an error where missing X isn't erroneous</li>
+						<li>Ensure there are updating/loading indicators when changes are made, so it's clear that something's happening and that you don't accidentally do multiple potentially conflicting things</li>
+					</ul>
+				</div>
 				
                 <h4>0.5.3 <small>March 1, 2019</small></h4>
                 <ul>

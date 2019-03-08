@@ -1,6 +1,6 @@
 // @flow
 /*
- * Copyright (C) 2016-2018 Alexander Krivács Schrøder <alexschrod@gmail.com>
+ * Copyright (C) 2016-2019 Alexander Krivács Schrøder <alexschrod@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -50,11 +50,10 @@ export class SettingsController {
 			this.comicService.refreshComicData();
 		});
 
-		$('#settingsDialog').on('hide.bs.modal', () => {
+		$('#settingsDialog').on('hide.bs.modal', async () => {
 			$log.debug('Saving settings...');
-			this.settings.saveSettings().then(() => {
-				$log.debug('Settings saved.');
-			});
+			await this.settings.saveSettings();
+			$log.debug('Settings saved.');
 		});
 
 		$log.debug('END SettingsController');
@@ -63,7 +62,15 @@ export class SettingsController {
 	close() {
 		($('#settingsDialog'): any).modal('hide');
 	}
+
+	showChangeLog() {
+		this.close();
+		($('#changeLogDialog'): any).modal('show');
+	}
 }
+SettingsController.$inject = [
+	'$scope', '$log', 'comicService'
+];
 
 export default function (app: AngularModule) {
 	app.directive('qcSettings', function () {

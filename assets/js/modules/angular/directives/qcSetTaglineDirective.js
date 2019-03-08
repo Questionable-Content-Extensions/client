@@ -1,6 +1,6 @@
 // @flow
 /*
- * Copyright (C) 2016-2018 Alexander Krivács Schrøder <alexschrod@gmail.com>
+ * Copyright (C) 2016-2019 Alexander Krivács Schrøder <alexschrod@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,6 +35,8 @@ export class SetTaglineController extends SetValueControllerBase<SetTaglineContr
 
 	tagline: ?string;
 
+	isUpdating: boolean;
+
 	constructor(
 		$scope: $DecoratedScope<SetTaglineController>,
 		$log: $Log,
@@ -53,14 +55,21 @@ export class SetTaglineController extends SetValueControllerBase<SetTaglineContr
 
 	_comicDataLoaded(comicData: ComicData) {
 		this.tagline = comicData.tagline;
+		this.$scope.isUpdating = false;
 	}
 
 	_updateValue() {
 		this.setTagline();
 	}
 
-	setTagline() {
-		this.comicService.setTagline(this.tagline ? this.tagline : '');
+	async setTagline() {
+		this.$scope.isUpdating = true;
+		const response = await this.comicService.setTagline(this.tagline ? this.tagline : '');
+		if (response.status !== 200) {
+			this.$scope.safeApply(() => {
+				this.$scope.isUpdating = false;
+			});
+		}
 	}
 }
 SetTaglineController.$inject = ['$scope', '$log', 'comicService', 'eventService'];
@@ -70,7 +79,7 @@ export default function (app: AngularModule) {
 		return {
 			restrict: 'E',
 			replace: true,
-			scope: {},
+			scope: { isUpdating: '=' },
 			controller: SetTaglineController,
 			controllerAs: 's',
 			template: variables.html.setTagline

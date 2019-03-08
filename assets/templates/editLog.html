@@ -1,0 +1,70 @@
+<!--
+    Copyright (C) 2016-2019 Alexander Krivács Schrøder <alexschrod@gmail.com>
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+-->
+<div class="modal fade" tabindex="-1" role="dialog" id="editLogDialog" style="display: none;">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Edit Log</h3>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <h3 class="panel-title">Log</h3>
+                            </div>
+                            <div class="panel-body pos-rel">
+								<table>
+									<thead>
+										<tr>
+											<th>Identifier</th>
+											<th>Time</th>
+											<th>Action</th>
+										</tr>
+									</thead>
+									<tbody class="no-border">
+										<tr ng-repeat="logEntry in elvm.logEntryData.logEntries">
+											<td>{{logEntry.identifier}}</td>
+											<td>{{logEntry.dateTime | date:'MMM d, yyyy HH:mm'}}</td>
+											<td>{{logEntry.action}}</td>
+										</tr>
+										<tr>
+											<td class="edit-log-pager" colspan="3">
+												<i class="fa fa-arrow-left p-r-10px" ng-click="elvm.previousPage()"></i>
+												{{elvm.logEntryData.page}} / {{elvm.logEntryData.pageCount}}
+												<i class="fa fa-arrow-right p-l-10px" ng-click="elvm.nextPage()"></i>
+											</td>
+										</tr>
+									</tbody>
+								</table>
+								<div ng-show="elvm.isLoading" class="update-overlay update-overlay-white">
+									<div class="absolute-dead-center">
+										<div class="lds-dual-ring black"></div>
+										<p class="update-text">Loading...</p>
+									</div>
+								</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" type="button" ng-click="elvm.close()">Close</button>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,6 +1,6 @@
 // @flow
 /*
- * Copyright (C) 2016-2018 Alexander Krivács Schrøder <alexschrod@gmail.com>
+ * Copyright (C) 2016-2019 Alexander Krivács Schrøder <alexschrod@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,37 +16,49 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import type { AngularModule, $Log, $Http } from 'angular';
+import angular from 'angular';
+
+import type { AngularModule, $Log } from 'angular';
 
 import constants from '../../../constants';
 import settings, { Settings } from '../../settings';
 import variables from '../../../../generated/variables.pass2';
 
+import { convertDataUritoBlob } from '../util';
+
 import type { $DecoratedScope } from '../decorateScope';
 import type { ColorService } from '../services/colorService';
 import type { ComicService } from '../services/comicService';
+import type { ItemService } from '../services/itemService';
 import type { MessageReportingService } from '../services/messageReportingService';
 import type { StyleService } from '../services/styleService';
-import type { DecoratedItemData, ItemRelationData } from '../api/itemData';
+import type { DecoratedItemData, ItemRelationData, ItemImageData } from '../api/itemData';
 
 export class ItemDetailsController {
 	static $inject: string[];
 
 	$log: $Log;
-	$http: $Http;
 	$scope: $DecoratedScope<ItemDetailsController>;
 	colorService: ColorService;
 	comicService: ComicService;
 	messageReportingService: MessageReportingService;
 	styleService: StyleService;
+	itemService: ItemService;
 
 	isLoading: boolean;
+	isUpdating: boolean;
 	settings: Settings;
 	itemData: DecoratedItemData;
 
+	imagePaths: string[];
+	currentImagePath: number;
+	isImagePreview: boolean;
+	imageFile: ?string;
+	imageFileInfo: any;
+
 	constructor(
 		$log: $Log,
-		$http: $Http,
+		itemService: ItemService,
 		$scope: $DecoratedScope<ItemDetailsController>,
 		colorService: ColorService,
 		comicService: ComicService,
@@ -56,7 +68,7 @@ export class ItemDetailsController {
 		$log.debug('START ItemDetailsController');
 
 		this.$log = $log;
-		this.$http = $http;
+		this.itemService = itemService;
 		this.$scope = $scope;
 		this.colorService = colorService;
 		this.comicService = comicService;
@@ -64,94 +76,62 @@ export class ItemDetailsController {
 		this.styleService = styleService;
 
 		this.isLoading = true;
+		this.isUpdating = false;
 		this.settings = settings;
+
+		this.imagePaths = [];
+		this.currentImagePath = 0;
+		this.isImagePreview = false;
+		this.imageFile = null;
+		this.imageFileInfo = null;
 
 		$('#itemDetailsDialog').on('show.bs.modal', () => this._getItemDetails());
 
 		$log.debug('END ItemDetailsController');
 	}
 
-	_getItemDetails() {
+	async _getItemDetails() {
 		const self = this;
 		const itemId = $('#itemDetailsDialog').data('itemId');
 		this.$log.debug('ItemDetailsController::showModal() - item id:',
 			itemId);
 
-		function handleRelationData(response): ?ItemRelationData[] {
-			if (response.status === 200) {
-				const relationData = (response.data: ItemRelationData[]);
+		this.itemData = (({}: any): DecoratedItemData);
+		this.isLoading = true;
 
-				$.each(relationData, (_: number, relation) => {
-					relation.percentage = relation.count /
-						self.itemData.appearances * 100;
-				});
+		this.imagePaths = [];
+		this.currentImagePath = 0;
+		this.isImagePreview = false;
+		this.imageFile = null;
+		this.imageFileInfo = null;
 
-				return relationData;
-			}
-			return null;
-		}
+		const itemData = await this.itemService.getItemData(itemId);
+		if (itemData) {
+			this.$log.debug('qcItemDetails::showModal() - ' +
+				'item data:', itemData);
 
-		function handleItemFriendsData(response) {
-			let friends = handleRelationData(response);
-			self.$scope.safeApply(() => {
-				self.itemData.friends = friends || [];
-			});
-		}
+			this.$scope.safeApply(() => {
+				this.itemData = itemData;
+				this.isLoading = false;
+				this.isUpdating = false;
 
-		function handleItemLocationsData(response) {
-			let locations = handleRelationData(response);
-			self.$scope.safeApply(() => {
-				self.itemData.locations = locations || [];
-			});
-		}
-
-		function handleItemData(response) {
-			if (response.status === 200) {
-				const itemData = response.data;
-
-				itemData.highlightColor = self.colorService
-					.createTintOrShade(itemData.color);
-
-				if (itemData.hasImage) {
-					itemData.imagePath =
-						constants.characterImageBaseUrl +
-						itemData.id + '.' +
-						constants.characterImageExtension;
-				}
-
-				self.$log.debug('qcItemDetails::showModal() - ' +
-					'item data:', itemData);
+				this.imagePaths = itemData.imageUrls;
+				this.currentImagePath = 0;
 
 				// If the color changes, also update the
 				// highlight color
-				self.$scope.safeApply(() => {
-					self.itemData = itemData;
-					self.isLoading = false;
-
-					self.$scope.$watch(() => {
-						return self.itemData.color;
-					}, function () {
-						self.itemData.highlightColor =
-							self.colorService
-								.createTintOrShade(
-									itemData.color);
-					});
+				this.$scope.$watch(() => {
+					return this.itemData.color;
+				}, () => {
+					this.itemData.highlightColor =
+						this.colorService
+							.createTintOrShade(
+								itemData.color);
 				});
-
-				self.$http.get(constants.itemFriendDataUrl + itemId)
-					.then(handleItemFriendsData);
-				self.$http.get(constants.itemLocationDataUrl +
-					itemId).then(handleItemLocationsData);
-			} else {
-				self.messageReportingService.reportError(
-					response.data);
-			}
+			});
+		} else {
+			this.close();
 		}
-
-		this.itemData = (({}: any): DecoratedItemData);
-		this.isLoading = true;
-		this.$http.get(constants.itemDataUrl + itemId)
-			.then(response => handleItemData(response));
 	}
 
 	_onErrorLog(response: any) {
@@ -180,28 +160,24 @@ export class ItemDetailsController {
 		}
 	}
 
-	update(property: string) {
-		const self = this;
-		function updateItemColor(response) {
-			if (response.status === 200) {
-				if (property === 'color') {
-					self.$log.debug('ItemDetailsController::update() - ' +
-						'update item color');
-					self.styleService.removeItemStyle(
-						self.itemData.id);
-				}
+	async update(property: string) {
+		this.$scope.safeApply(() => {
+			this.isUpdating = true;
+		});
+		const success = await this.itemService.updateProperty(this.itemData.id, property, this.itemData[property]);
+		this.$scope.safeApply(() => {
+			this.isUpdating = false;
+		});
+		if (success) {
+			if (property === 'color') {
+				this.$log.debug('ItemDetailsController::update() - ' +
+					'update item color');
+				this.styleService.removeItemStyle(
+					this.itemData.id);
 			}
-			return self._onSuccessRefreshElseErrorLog(response);
+			this.comicService.refreshComicData();
+			this._getItemDetails();
 		}
-
-		const data = {
-			token: settings.values.editModeToken,
-			item: this.itemData.id,
-			property: property,
-			value: this.itemData[property]
-		};
-		this.$http.post(constants.setItemDataPropertyUrl, data)
-			.then(r => updateItemColor(r)).catch(r => this._onErrorLog(r));
 	}
 
 	goToComic(comic: number) {
@@ -212,8 +188,44 @@ export class ItemDetailsController {
 	close() {
 		($('#itemDetailsDialog'): any).modal('hide');
 	}
+
+	previewImage() {
+		if (this.imageFile && this.imageFileInfo.type == 'image/png') {
+			this.isImagePreview = true;
+		}
+	}
+
+	async uploadImage() {
+		if (this.imageFile && this.imageFileInfo.type == 'image/png') {
+			const imageBlob = convertDataUritoBlob(this.imageFile);
+
+			this.$scope.safeApply(() => {
+				this.isUpdating = true;
+			});
+			const success = await this.itemService.uploadImage(this.itemData.id, imageBlob, this.imageFileInfo.name);
+			if (success) {
+				this._getItemDetails();
+			}
+		} else {
+			this.messageReportingService.reportError('Only PNG images are supported');
+		}
+	}
+
+	previousImage() {
+		this.currentImagePath--;
+		if (this.currentImagePath < 0) {
+			this.currentImagePath = 0;
+		}
+	}
+
+	nextImage() {
+		this.currentImagePath++;
+		if (this.currentImagePath >= this.imagePaths.length) {
+			this.currentImagePath = this.imagePaths.length - 1;
+		}
+	}
 }
-ItemDetailsController.$inject = ['$log', '$http', '$scope', 'colorService',
+ItemDetailsController.$inject = ['$log', 'itemService', '$scope', 'colorService',
 	'comicService', 'messageReportingService', 'styleService'];
 
 export default function (app: AngularModule) {

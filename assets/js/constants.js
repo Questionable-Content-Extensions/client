@@ -1,6 +1,6 @@
 // @flow
 /*
- * Copyright (C) 2016-2018 Alexander Krivács Schrøder <alexschrod@gmail.com>
+ * Copyright (C) 2016-2019 Alexander Krivács Schrøder <alexschrod@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,11 +21,7 @@
 const developmentMode = false;
 
 function getSiteUrl() {
-	if (developmentMode) {
-		return 'http://localhost:3000/';
-	} else {
-		return 'https://questionablextensions.net/';
-	}
+	return 'https://questionablextensions.net/';
 }
 
 function getWebserviceBaseUrl() {
@@ -38,6 +34,7 @@ function getWebserviceBaseUrl() {
 
 const comicDataUrl = getWebserviceBaseUrl() + 'comicdata/';
 const itemDataUrl = getWebserviceBaseUrl() + 'itemdata/';
+const editLogUrl = getWebserviceBaseUrl() + 'log';
 
 const constants = {
 	settingsKey: 'settings',
@@ -46,10 +43,12 @@ const constants = {
 	siteUrl: getSiteUrl(),
 	comicDataUrl,
 	itemDataUrl,
+	editLogUrl,
 
 	// Comics after 3132 should have a tagline
 	taglineThreshold: 3132,
 
+	excludedComicsUrl: comicDataUrl + 'excluded',
 	addItemToComicUrl: comicDataUrl + 'additem',
 	removeItemFromComicUrl: comicDataUrl + 'removeitem',
 	setComicTitleUrl: comicDataUrl + 'settitle',
@@ -57,20 +56,30 @@ const constants = {
 	setPublishDateUrl: comicDataUrl + 'setpublishdate',
 	setGuestComicUrl: comicDataUrl + 'setguest',
 	setNonCanonUrl: comicDataUrl + 'setnoncanon',
+	setNoCastUrl: comicDataUrl + 'setnocast',
+	setNoLocationUrl: comicDataUrl + 'setnolocation',
+	setNoStorylineUrl: comicDataUrl + 'setnostoryline',
+	setNoTitleUrl: comicDataUrl + 'setnotitle',
+	setNoTaglineUrl: comicDataUrl + 'setnotagline',
 
+	itemImageUrl: itemDataUrl + 'image/',
 	itemFriendDataUrl: itemDataUrl + 'friends/',
 	itemLocationDataUrl: itemDataUrl + 'locations/',
 	setItemDataPropertyUrl: itemDataUrl + 'setproperty',
-
-	characterImageBaseUrl: getSiteUrl() + 'images/characters/',
-	characterImageExtension: 'png',
 
 	comicExtensions: ['png', 'gif', 'jpg'],
 
 	comicdataLoadingEvent: 'comicdata-loading',
 	comicdataLoadedEvent: 'comicdata-loaded',
 	comicdataErrorEvent: 'comicdata-error',
+
+	itemdataLoadingEvent: 'itemdata-loading',
+	itemdataLoadedEvent: 'itemdata-loaded',
+	itemdataErrorEvent: 'itemdata-error',
+
 	itemsChangedEvent: 'items-changed',
+
+	maintenanceEvent: 'maintenance',
 
 	messages: {
 		maintenance: 'The Questionable Extensions' +

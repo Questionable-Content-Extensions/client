@@ -1,5 +1,5 @@
 <!--
-    Copyright (C) 2016 Alexander Krivács Schrøder <alexschrod@gmail.com>
+    Copyright (C) 2016-2019 Alexander Krivács Schrøder <alexschrod@gmail.com>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -15,10 +15,10 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 <div class="input-group" id="addItem_{{a.unique}}_dropdown">
-    <input id="addItem_{{a.unique}}_search" type="text" ng-keypress="a.keyPress($event)" ng-change="a.searchChanged()" ng-focus="a.focusSearch()" ng-blur="a.blurSearch()" ng-model="a.itemFilterText" class="form-control" aria-label="Quick-add" placeholder="Quick-Add...">
+    <input id="addItem_{{a.unique}}_search" type="text" ng-keypress="a.keyPress($event)" ng-change="a.searchChanged()" ng-focus="a.focusSearch()" ng-blur="a.blurSearch()" ng-model="a.itemFilterText" ng-disabled="isUpdating" class="form-control" aria-label="Quick-add" placeholder="Quick-Add...">
     <div class="input-group-btn">
-        <button id="addItem_{{a.unique}}_dropdownButton" type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">&nbsp;<span class="caret"></span></button>
-        <ul class="dropdown-menu dropdown-menu-right" style="max-height: 250px; overflow-y: auto; word-break: break-all; word-wrap: break-word;">
+        <button id="addItem_{{a.unique}}_dropdownButton" type="button" ng-disabled="isUpdating" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">&nbsp;<span class="caret"></span></button>
+        <ul class="dropdown-menu dropdown-menu-right dropdown-add-item">
             <li ng-repeat="item in a.items | filter:a.itemFilter"><a ng-click="a.addItem(item)">{{item.shortName}}</a></li>
         </ul>
     </div><!-- /btn-group -->

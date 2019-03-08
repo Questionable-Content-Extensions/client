@@ -1,6 +1,6 @@
 // @flow
 /*
- * Copyright (C) 2016-2018 Alexander Krivács Schrøder <alexschrod@gmail.com>
+ * Copyright (C) 2016-2019 Alexander Krivács Schrøder <alexschrod@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,6 +22,7 @@ import constants from '../../../constants';
 
 import type { Event, EventFactory } from './eventFactory';
 import type { ComicData } from '../api/comicData';
+import type { ItemBaseData } from '../api/itemData';
 
 export class EventService {
 	$log: $Log;
@@ -29,7 +30,14 @@ export class EventService {
 	comicDataLoadingEvent: Event<number>;
 	comicDataLoadedEvent: Event<ComicData>;
 	comicDataErrorEvent: Event<any>;
+	
+	itemDataLoadingEvent: Event<number>;
+	itemDataLoadedEvent: Event<ItemBaseData[]>;
+	itemDataErrorEvent: Event<any>;
+
 	itemsChangedEvent: Event<any>;
+
+	maintenanceEvent: Event<any>;
 
 	constructor($log: $Log, eventFactory: EventFactory) {
 		this.$log = $log;
@@ -37,7 +45,14 @@ export class EventService {
 		this.comicDataLoadingEvent = eventFactory<number>(constants.comicdataLoadingEvent);
 		this.comicDataLoadedEvent = eventFactory<ComicData>(constants.comicdataLoadedEvent);
 		this.comicDataErrorEvent = eventFactory<any>(constants.comicdataErrorEvent); // TODO: Figure out this type
+
+		this.itemDataLoadingEvent = eventFactory<any>(constants.itemdataLoadingEvent);
+		this.itemDataLoadedEvent = eventFactory<ItemBaseData[]>(constants.itemdataLoadedEvent);
+		this.itemDataErrorEvent = eventFactory<any>(constants.itemdataErrorEvent); // TODO: Figure out this type
+
 		this.itemsChangedEvent = eventFactory<any>(constants.itemsChangedEvent);
+
+		this.maintenanceEvent = eventFactory<any>(constants.maintenanceEvent);
 	}
 }
 

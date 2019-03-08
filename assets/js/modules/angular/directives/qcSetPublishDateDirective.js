@@ -1,7 +1,7 @@
 // @flow
 
 /*
- * Copyright (C) 2016-2018 Alexander Krivács Schrøder <alexschrod@gmail.com>
+ * Copyright (C) 2016-2019 Alexander Krivács Schrøder <alexschrod@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,6 +40,8 @@ export class SetPublishDateController extends SetValueControllerBase<SetPublishD
 	publishDate: ?Date;
 	isAccuratePublishDate: ?boolean;
 
+	isUpdating: boolean;
+
 	constructor(
 		$scope: $DecoratedScope<SetPublishDateController>,
 		$log: $Log,
@@ -66,21 +68,36 @@ export class SetPublishDateController extends SetValueControllerBase<SetPublishD
 		}
 		this.isAccuratePublishDate =
 			comicData.isAccuratePublishDate;
+		this.$scope.isUpdating = false;
 	}
 
 	_updateValue() {
-		this.setPublishDate();
+		this.setPublishDate(false);
 	}
 
-	setPublishDate() {
+	setAccuratePublishDate() {
+		this.setPublishDate(true);
+	}
+
+	async setPublishDate(setAccurate: boolean) {
 		if (this.publishDate == null) {
 			// Error
 			this.messageReportingService.reportWarning(
 				'The date entered is not valid!');
 			return;
 		}
-		this.comicService.setPublishDate(this.publishDate,
+
+		this.$scope.isUpdating = true;
+		const response = await this.comicService.setPublishDate(this.publishDate,
 			this.isAccuratePublishDate != null ? this.isAccuratePublishDate : false);
+		if (response.status !== 200) {
+			this.$scope.safeApply(() => {
+				this.$scope.isUpdating = false;
+				if (setAccurate) {
+					this.isAccuratePublishDate = !this.isAccuratePublishDate;
+				}
+			});
+		}
 	}
 }
 SetPublishDateController.$inject = ['$scope', '$log', 'comicService', 'eventService', 'messageReportingService'];
@@ -90,7 +107,7 @@ export default function (app: AngularModule) {
 		return {
 			restrict: 'E',
 			replace: true,
-			scope: {},
+			scope: { isUpdating: '=' },
 			controller: SetPublishDateController,
 			controllerAs: 's',
 			template: variables.html.setPublishDate

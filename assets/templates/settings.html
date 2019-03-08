@@ -80,6 +80,11 @@
                                     <label><input type="checkbox" ng-model="svm.settings.useCorrectTimeFormat"> Use 24h clock format</label>
                                     <p class="small">When showing when a comic was published (above the news section), use the 24-hour clock format.</p>
                                 </div>
+                                <div class="form-group">
+                                    <label for="comicLoadingIndicatorDelay">Comic loading indicator delay</label>
+                                    <input id="comicLoadingIndicatorDelay" class="form-control settings-input" type="number" ng-model="svm.settings.comicLoadingIndicatorDelay" placeholder="Comic Loading Indicator Delay">
+                                    <p class="small">How long to wait in milliseconds for the next comic to load before showing a loading indicator over the previous comic.</p>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -95,7 +100,7 @@
                                 </div>
                                 <div class="form-group">
                                     <label><input type="checkbox" ng-model="svm.settings.editMode"> Enable editor mode</label>
-                                    <input class="form-control" style="width: 100%; margin-bottom: 5px;" type="text" ng-model="svm.settings.editModeToken" ng-disabled="!svm.settings.editMode" placeholder="Editor token">
+                                    <input class="form-control settings-input" type="text" ng-model="svm.settings.editModeToken" ng-disabled="!svm.settings.editMode" placeholder="Editor token">
                                     <p ng-class="{'disabled': !svm.settings.editMode}"  class="small">Enables features for creating and changing the navigation data, such as adding cast members. Requires a valid editor token. If you are supposed to have one, you do. Feel free to turn on edit mode regardless if you are curious what it is like. You simply will not be able to save any changes you make.</p>
                                 </div>
                             </div>
@@ -104,6 +109,7 @@
                 </div>
             </div>
             <div class="modal-footer">
+				<a class="qc p-r-20px" ng-click="svm.showChangeLog()">See change log</a>
                 <button class="btn btn-primary" type="button" ng-click="svm.close()">Close</button>
             </div>
         </div>

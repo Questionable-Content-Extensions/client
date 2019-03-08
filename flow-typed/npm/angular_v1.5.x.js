@@ -184,7 +184,7 @@ declare module angular {
     when: <T>(value: T) => AngularPromise<T>
   };
 
-  declare type AngularPromise<T> = {
+  declare type AngularPromise<T> = Promise<T> & {
     then: <U>(a: (resolve: U) => T) => AngularPromise<*>,
     catch: <U>(a: (e: Error) => U) => AngularPromise<*>,
     finally: <U>(a: (result: U | typeof Error) => T) => AngularPromise<*>
@@ -221,6 +221,7 @@ declare module angular {
   //----------------------------------------------------------------------------
 
   declare type AngularHttpService = {
+	({}): AngularPromise<*>;
 	get: AngularHttpGet<*>;
     post: AngularHttpPost<*>;
   };
@@ -231,7 +232,8 @@ declare module angular {
 
   declare type AngularHttpPost<T> = (
     url: string,
-    data: mixed
+	data: mixed,
+	config?: mixed
   ) => AngularPromise<T>;
 
   declare type AngularResourceResult<T> = {
@@ -351,4 +353,6 @@ declare module angular {
   declare type $Http = AngularHttpService;
 
   declare type $Filter = (name: string) => Function;
+
+  declare var identity: any;
 }

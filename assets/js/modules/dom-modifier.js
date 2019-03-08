@@ -1,6 +1,6 @@
 // @flow
 /*
- * Copyright (C) 2016-2018 Alexander Krivács Schrøder <alexschrod@gmail.com>
+ * Copyright (C) 2016-2019 Alexander Krivács Schrøder <alexschrod@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -51,6 +51,7 @@ export default class DomModifier {
 		$('body').prepend('<qc-edit-comic-data></qc-edit-comic-data>');
 		$('body').prepend('<qc-item-details></qc-item-details>');
 		$('body').prepend('<qc-change-log></qc-change-log>');
+		$('body').prepend('<qc-edit-log></qc-edit-log>');
 
 		// Take control over the page's title
 		$('title').replaceWith('<title ng-controller="titleController as t">' +
@@ -78,24 +79,6 @@ export default class DomModifier {
 			comicAnchor = comicImg.parent('a');
 		}
 
-		$('body').append($('<div ui-view></div>'));
-
-		// To avoid triggering a flash of the comic "reloading", do in-place DOM
-		// manipulation instead of replacing the whole thing with a template.
-		// Fixes issue #13
-		const comicDirective = $('<qc-comic></qc-comic>');
-		comicAnchor.before(comicDirective);
-		comicAnchor.detach().appendTo(comicDirective);
-		comicAnchor.attr('ng-href', 'view.php?comic={{c.comicService.nextComic}}');
-		comicImg.attr('ng-src', '//questionablecontent.net/comics/' +
-			'{{c.comicService.comic}}.{{c.comicService.comicExtension}}');
-		comicImg.attr('ng-click', 'c.next($event)');
-		comicImg.attr('on-error', 'c.comicService.canFallback() ' +
-			'&& c.comicService.tryFallback()');
-
-		// #comicDirective.attr('id', 'comic-anchor');
-		comicDirective.append($('<qc-ribbon></qc-ribbon>'));
-
 		const comicImage = comicImg.get(0);
 		let comicLinkUrl = comicImage.src;
 
@@ -103,6 +86,11 @@ export default class DomModifier {
 		const comic = parseInt(comicLinkUrl[comicLinkUrl.length - 1].split('.')[0]);
 
 		angularApp.constant('startComic', comic);
+
+		$('body').append($('<div ui-view></div>'));
+
+		const comicDirective = $('<qc-comic></qc-comic>');
+		comicAnchor.before(comicDirective);
 
 		// Figure out what the latest comic # is based on the URL in the
 		// "Latest/Last" navigation button.
@@ -119,8 +107,8 @@ export default class DomModifier {
 
 		angularApp.constant('latestComic', latestComic);
 
-		$('body #comicnav')
-			.replaceWith('<qc-nav random-comic="randomComic"></qc-nav>');
+		$($('body #comicnav').get(0)).replaceWith('<qc-nav random-comic="randomComic" main-directive="true"></qc-nav>');
+		$('body #comicnav').replaceWith('<qc-nav random-comic="randomComic" main-directive="false"></qc-nav>');
 
 		if ($('#news, #newspost').prev().prop('tagName') === 'QC-NAV') {
 			// There's no date section: Insert our own

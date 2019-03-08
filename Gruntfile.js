@@ -1,5 +1,5 @@
 /* 
- * Copyright (C) 2016-2018 Alexander Krivács Schrøder <alexschrod@gmail.com>
+ * Copyright (C) 2016-2019 Alexander Krivács Schrøder <alexschrod@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
 const resolve = require('rollup-plugin-node-resolve');
 const commonJs = require('rollup-plugin-commonjs');
 const virtual = require('rollup-plugin-virtual');
-const babel  = require('rollup-plugin-babel');
+const babel = require('rollup-plugin-babel');
 
 const licenseBanner = require('./licenseBanner');
 const userScriptBanner = require('./userScriptBanner');
@@ -137,6 +137,7 @@ module.exports = function (grunt) {
 					'assets/generated/extraNav.html': 'assets/templates/extraNav.html',
 					'assets/generated/settings.html': 'assets/templates/settings.html',
 					'assets/generated/editComicData.html': 'assets/templates/editComicData.html',
+					'assets/generated/editLog.html': 'assets/templates/editLog.html',
 					'assets/generated/addItem.html': 'assets/templates/addItem.html',
 					'assets/generated/setTitle.html': 'assets/templates/setTitle.html',
 					'assets/generated/setTagline.html': 'assets/templates/setTagline.html',
@@ -146,7 +147,8 @@ module.exports = function (grunt) {
 					'assets/generated/itemDetails.html': 'assets/templates/itemDetails.html',
 					'assets/generated/comicNav.html': 'assets/templates/comicNav.html',
 					'assets/generated/changeLog.html': 'assets/templates/changeLog.html',
-					'assets/generated/date.html': 'assets/templates/date.html'
+					'assets/generated/date.html': 'assets/templates/date.html',
+					'assets/generated/comic.html': 'assets/templates/comic.html'
 				}
 			}
 		},
@@ -194,16 +196,18 @@ module.exports = function (grunt) {
 	require('load-grunt-tasks')(grunt);
 
 	// Register the tasks.
-	grunt.registerTask('default', ['build']);
+	grunt.registerTask('default', ['build', 'check', 'uglify']);
 	grunt.registerTask('build', [
 		'compass',            // Compile CSS
 		'htmlmin',            // Minify HTML templates
 		'filesToJavascript',  // Convert HTML templates to JS variables
 		'concat:variables',   // Create finished variable.pass2.js file
-		'flow',               // Type-checking
-		'eslint',             // Check for lint
 		'rollup:main',        // Rollup all the javascript files into one
 		'concat:source',      // Add banner to rollup result
-		'uglify',             // Minify the javascript
+	]);
+
+	grunt.registerTask('check', [
+		'flow',               // Type-checking
+		'eslint',             // Check for lint
 	]);
 };

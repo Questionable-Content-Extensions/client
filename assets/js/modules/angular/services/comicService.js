@@ -1,6 +1,6 @@
 // @flow
 /*
- * Copyright (C) 2016-2018 Alexander Krivács Schrøder <alexschrod@gmail.com>
+ * Copyright (C) 2016-2019 Alexander Krivács Schrøder <alexschrod@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -98,8 +98,7 @@ export class ComicService {
 		if (response.status !== 503) {
 			this.messageReportingService.reportError(response.data);
 		} else {
-			this.messageReportingService.reportError(
-				constants.messages.maintenance);
+			this.eventService.maintenanceEvent.publish();
 		}
 		return response;
 	}
@@ -159,7 +158,7 @@ export class ComicService {
 		this.$http.get(comicDataUrl)
 			.then((response) => {
 				if (response.status === 503) {
-					this.eventService.comicDataErrorEvent.publish(response);
+					this.eventService.maintenanceEvent.publish(response);
 					return;
 				}
 				if (response.status !== 200) {
@@ -207,12 +206,23 @@ export class ComicService {
 			});
 	}
 
-	addItem(item: ComicItem) {
-		const data = {
+	addItemToComic(item: ComicItem) {
+		const data: {
+			token: string,
+			comicId: number,
+			itemId: number,
+			newItemName?: string,
+			newItemType?: string
+		} = {
 			token: settings.values.editModeToken,
-			comic: this.comic,
-			item: item
+			comicId: this.comic,
+			itemId: item.id
 		};
+		if (item.id === -1) {
+			data.newItemName = item.name;
+			data.newItemType = item.type;
+		}
+
 		return this.$http.post(constants.addItemToComicUrl, data)
 			.then(r => this._onSuccessRefreshElseErrorLog(r)).catch(r => this._onErrorLog(r));
 	}
@@ -220,8 +230,8 @@ export class ComicService {
 	removeItem(item: ComicItem) {
 		const data = {
 			token: settings.values.editModeToken,
-			comic: this.comic,
-			item: item
+			comicId: this.comic,
+			itemId: item.id
 		};
 		return this.$http.post(constants.removeItemFromComicUrl, data)
 			.then(r => this._onSuccessRefreshElseErrorLog(r)).catch(r => this._onErrorLog(r));
@@ -230,7 +240,7 @@ export class ComicService {
 	setTitle(title: string) {
 		const data = {
 			token: settings.values.editModeToken,
-			comic: this.comic,
+			comicId: this.comic,
 			title: title
 		};
 		return this.$http.post(constants.setComicTitleUrl, data)
@@ -240,7 +250,7 @@ export class ComicService {
 	setTagline(tagline: string) {
 		const data = {
 			token: settings.values.editModeToken,
-			comic: this.comic,
+			comicId: this.comic,
 			tagline: tagline
 		};
 		return this.$http.post(constants.setComicTaglineUrl, data)
@@ -250,7 +260,7 @@ export class ComicService {
 	setPublishDate(publishDate: Date, isAccurate: boolean) {
 		const data = {
 			token: settings.values.editModeToken,
-			comic: this.comic,
+			comicId: this.comic,
 			publishDate: publishDate,
 			isAccuratePublishDate: isAccurate
 		};
@@ -261,8 +271,8 @@ export class ComicService {
 	setGuestComic(value: boolean) {
 		const data = {
 			token: settings.values.editModeToken,
-			comic: this.comic,
-			value: value
+			comicId: this.comic,
+			flagValue: value
 		};
 		return this.$http.post(constants.setGuestComicUrl, data)
 			.then(r => this._onSuccessRefreshElseErrorLog(r)).catch(r => this._onErrorLog(r));
@@ -271,10 +281,60 @@ export class ComicService {
 	setNonCanon(value: boolean) {
 		const data = {
 			token: settings.values.editModeToken,
-			comic: this.comic,
-			value: value
+			comicId: this.comic,
+			flagValue: value
 		};
 		return this.$http.post(constants.setNonCanonUrl, data)
+			.then(r => this._onSuccessRefreshElseErrorLog(r)).catch(r => this._onErrorLog(r));
+	}
+
+	setNoCast(value: boolean) {
+		const data = {
+			token: settings.values.editModeToken,
+			comicId: this.comic,
+			flagValue: value
+		};
+		return this.$http.post(constants.setNoCastUrl, data)
+			.then(r => this._onSuccessRefreshElseErrorLog(r)).catch(r => this._onErrorLog(r));
+	}
+
+	setNoLocation(value: boolean) {
+		const data = {
+			token: settings.values.editModeToken,
+			comicId: this.comic,
+			flagValue: value
+		};
+		return this.$http.post(constants.setNoLocationUrl, data)
+			.then(r => this._onSuccessRefreshElseErrorLog(r)).catch(r => this._onErrorLog(r));
+	}
+
+	setNoStoryline(value: boolean) {
+		const data = {
+			token: settings.values.editModeToken,
+			comicId: this.comic,
+			flagValue: value
+		};
+		return this.$http.post(constants.setNoStorylineUrl, data)
+			.then(r => this._onSuccessRefreshElseErrorLog(r)).catch(r => this._onErrorLog(r));
+	}
+
+	setNoTitle(value: boolean) {
+		const data = {
+			token: settings.values.editModeToken,
+			comicId: this.comic,
+			flagValue: value
+		};
+		return this.$http.post(constants.setNoTitleUrl, data)
+			.then(r => this._onSuccessRefreshElseErrorLog(r)).catch(r => this._onErrorLog(r));
+	}
+
+	setNoTagline(value: boolean) {
+		const data = {
+			token: settings.values.editModeToken,
+			comicId: this.comic,
+			flagValue: value
+		};
+		return this.$http.post(constants.setNoTaglineUrl, data)
 			.then(r => this._onSuccessRefreshElseErrorLog(r)).catch(r => this._onErrorLog(r));
 	}
 
@@ -308,6 +368,44 @@ export class ComicService {
 	last() {
 		this.gotoComic(this.latestComic);
 	};
+
+	nextRandomComic() {
+		let randomComic = this.comic;
+		while (randomComic == this.comic) {
+			randomComic = Math.floor(Math.random() *
+				(parseInt(this.latestComic) + 1));
+		}
+		return randomComic;
+	}
+
+	async nextFilteredRandomComic() {
+		if (!settings.values.skipGuest && !settings.values.skipNonCanon) {
+			return this.nextRandomComic();
+		}
+
+		const urlParameters = {};
+		if (settings.values.skipGuest) {
+			urlParameters.exclusion = 'guest';
+		} else if (settings.values.skipNonCanon) {
+			urlParameters.exclusion = 'non-canon';
+		}
+		const urlQuery = $.param(urlParameters);
+		const excludedComicsUrl = constants.excludedComicsUrl + '?' + urlQuery;
+
+		const exclusionResponse = await this.$http.get(excludedComicsUrl);
+		const excludedComics = exclusionResponse.data.map(c => c.comic);
+		if (exclusionResponse.status !== 200) {
+			return this.nextRandomComic();
+		}
+
+		this.$log.debug('comicService::nextFilteredRandomComic() excluded comics', excludedComics);
+
+		let nextRandomComic = this.comic;
+		while (nextRandomComic == this.comic || excludedComics.includes(nextRandomComic)) {
+			nextRandomComic = this.nextRandomComic();
+		}
+		return nextRandomComic;
+	}
 }
 
 export default function (app: AngularModule) {

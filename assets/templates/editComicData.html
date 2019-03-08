@@ -1,5 +1,5 @@
 <!--
-    Copyright (C) 2016 Alexander Krivács Schrøder <alexschrod@gmail.com>
+    Copyright (C) 2016-2019 Alexander Krivács Schrøder <alexschrod@gmail.com>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -16,7 +16,7 @@
 -->
 <div class="modal fade" tabindex="-1" role="dialog" id="editComicDataDialog" style="display: none;">
     <div class="modal-dialog">
-        <div class="modal-content">
+        <div class="modal-content pos-rel">
             <div class="modal-header">
                 <h3 class="modal-title">Edit Comic Data for #{{ecdvm.editData.comicData.comic}}</h3>
             </div>
@@ -87,20 +87,35 @@
                                 <div class="form-group">
                                     <label><input type="checkbox" ng-model="ecdvm.editData.comicData.isNonCanon" ng-change="ecdvm.changeNonCanon()"> Non-canon</label>
                                 </div>
+                                <div class="form-group">
+                                    <label><input type="checkbox" ng-model="ecdvm.editData.comicData.hasNoCast" ng-change="ecdvm.changeNoCast()"> Has no cast</label>
+                                </div>
+                                <div class="form-group">
+                                    <label><input type="checkbox" ng-model="ecdvm.editData.comicData.hasNoLocation" ng-change="ecdvm.changeNoLocation()"> Has no location</label>
+                                </div>
+                                <div class="form-group">
+                                    <label><input type="checkbox" ng-model="ecdvm.editData.comicData.hasNoStoryline" ng-change="ecdvm.changeNoStoryline()"> Has no storyline</label>
+                                </div>
+                                <div class="form-group">
+                                    <label><input type="checkbox" ng-model="ecdvm.editData.comicData.hasNoTitle" ng-change="ecdvm.changeNoTitle()"> Has no title</label>
+                                </div>
+                                <div class="form-group">
+                                    <label><input type="checkbox" ng-model="ecdvm.editData.comicData.hasNoTagline" ng-change="ecdvm.changeNoTagline()"> Has no tagline</label>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
                 <div class="row">
-                    <qc-add-item></qc-add-item>
+                    <qc-add-item is-updating="ecdvm.isUpdating"></qc-add-item>
                 </div>
                 <div class="row">
-                    <div class="panel panel-default" style="margin-top: 20px;">
+                    <div class="panel panel-default m-t-20px">
                         <div class="panel-heading">
                             <h3 class="panel-title">Publish date</h3>
                         </div>
                         <div class="panel-body">
-                            <qc-set-publish-date></qc-set-publish-date>
+                            <qc-set-publish-date is-updating="ecdvm.isUpdating"></qc-set-publish-date>
                         </div>
                     </div>
                 </div>
@@ -108,6 +123,12 @@
             <div class="modal-footer">
                 <button class="btn btn-primary" type="button" ng-click="ecdvm.close()">Close</button>
             </div>
+			<div ng-show="ecdvm.isUpdating" class="update-overlay">
+				<div class="absolute-dead-center">
+					<div class="lds-dual-ring"></div>
+					<p class="update-text">Updating...</p>
+				</div>
+			</div>
         </div>
     </div>
 </div>

@@ -1,6 +1,6 @@
 // @flow
 /*
- * Copyright (C) 2016-2018 Alexander Krivács Schrøder <alexschrod@gmail.com>
+ * Copyright (C) 2016-2019 Alexander Krivács Schrøder <alexschrod@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,6 +35,8 @@ export class SetTitleController extends SetValueControllerBase<SetTitleControlle
 
 	title: ?string;
 
+	isUpdating: boolean;
+
 	constructor(
 		$scope: $DecoratedScope<SetTitleController>,
 		$log: $Log,
@@ -53,15 +55,22 @@ export class SetTitleController extends SetValueControllerBase<SetTitleControlle
 
 	_comicDataLoaded(comicData: ComicData) {
 		this.title = comicData.title;
+		this.$scope.isUpdating = false;
 	}
 
 	_updateValue() {
 		this.setTitle();
 	}
 
-	setTitle() {
-		this.comicService.setTitle(this.title ? this.title : '');
-	};
+	async setTitle() {
+		this.$scope.isUpdating = true;
+		const response = await this.comicService.setTitle(this.title ? this.title : '');
+		if (response.status !== 200) {
+			this.$scope.safeApply(() => {
+				this.$scope.isUpdating = false;
+			});
+		}
+	}
 }
 SetTitleController.$inject = ['$scope', '$log', 'comicService', 'eventService'];
 
@@ -70,7 +79,7 @@ export default function (app: AngularModule) {
 		return {
 			restrict: 'E',
 			replace: true,
-			scope: {},
+			scope: { isUpdating: '=' },
 			controller: SetTitleController,
 			controllerAs: 's',
 			template: variables.html.setTitle

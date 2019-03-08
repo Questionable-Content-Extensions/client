@@ -1,6 +1,6 @@
 // @flow
 /*
- * Copyright (C) 2016-2018 Alexander Krivács Schrøder <alexschrod@gmail.com>
+ * Copyright (C) 2016-2019 Alexander Krivács Schrøder <alexschrod@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,13 +21,13 @@ import type { AngularModule, $Log, $Sce } from 'angular';
 import constants from '../../../constants';
 import { nl2br, angularizeLinks } from '../util';
 
-import { ComicDataControllerBase } from '../controllers/ControllerBases';
+import { EventHandlingControllerBase } from '../controllers/ControllerBases';
 
 import type { $DecoratedScope } from '../decorateScope';
 import type { EventService } from '../services/eventService';
 import type { ComicData } from '../api/comicData';
 
-export class NewsController extends ComicDataControllerBase<NewsController> {
+export class NewsController extends EventHandlingControllerBase<NewsController> {
 	static $inject: string[];
 
 	$sce: $Sce;

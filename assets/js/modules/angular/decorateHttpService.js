@@ -1,6 +1,6 @@
 // @flow
 /*
- * Copyright (C) 2016-2018 Alexander Krivács Schrøder <alexschrod@gmail.com>
+ * Copyright (C) 2016-2019 Alexander Krivács Schrøder <alexschrod@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,6 +18,7 @@
 
 import GM from 'greasemonkey';
 import angular from 'angular';
+import $ from 'jquery';
 
 // TODO: Since we're not using the original service at all, we might
 // as well completely replace it rather than decorate it...
@@ -38,6 +39,11 @@ export default function ($provide: any) {
 			'{': /}$/
 		};
 		const JSON_PROTECTION_PREFIX = /^\)\]\}',?\n/;
+
+		const DEFAULT_HEADERS = {
+			Accept: APPLICATION_JSON,
+			'X-QCExt-Version': GM.info.script.version
+		};
 
 		function isJsonLike(str) {
 			const jsonStart = str.match(JSON_START);
@@ -103,13 +109,17 @@ export default function ($provide: any) {
 		const $q = injector.get('$q');
 		const ourHttp = {
 			get: function (url, config) {
+				config = config || {};
+
+				let headers: any = DEFAULT_HEADERS;
+				if (config.headers) {
+					headers = $.extend({}, DEFAULT_HEADERS, config.headers);
+				}
 				return $q(function (resolve, reject) {
 					GM.xmlHttpRequest({
 						method: 'GET',
 						url: url,
-						headers: {
-							Accept: APPLICATION_JSON
-						},
+						headers: headers,
 						onload: function (gmResponse) {
 							const headers = getHeaderFunction(
 								gmResponse.responseHeaders
@@ -149,15 +159,24 @@ export default function ($provide: any) {
 				});
 			},
 			post: function (url, data, config) {
+				config = config || {};
+				const contentType = 'contentType' in config ? config.contentType : APPLICATION_JSON;
+				const dataTransform = 'dataTransform' in config ? config.dataTransform : (d) => JSON.stringify(d);
+
+				let headers: any = DEFAULT_HEADERS;
+				if (config.headers) {
+					headers = $.extend({}, DEFAULT_HEADERS, config.headers);
+				}
+				if (contentType) {
+					headers['Content-Type'] = contentType;
+				}
+
 				return $q(function (resolve, reject) {
 					GM.xmlHttpRequest({
 						method: 'POST',
 						url: url,
-						data: JSON.stringify(data),
-						headers: {
-							'Content-Type': APPLICATION_JSON,
-							Accept: APPLICATION_JSON
-						},
+						data: dataTransform(data),
+						headers,
 						onload: function (gmResponse) {
 							const headers = getHeaderFunction(
 								gmResponse.responseHeaders

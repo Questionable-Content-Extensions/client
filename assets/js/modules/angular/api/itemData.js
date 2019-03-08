@@ -1,6 +1,6 @@
 // @flow
 /*
- * Copyright (C) 2016-2018 Alexander Krivács Schrøder <alexschrod@gmail.com>
+ * Copyright (C) 2016-2019 Alexander Krivács Schrøder <alexschrod@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -47,4 +47,10 @@ export type DecoratedItemData = ItemData & {
 	highlightColor: string;
 	locations: ItemRelationData[];
 	friends: ItemRelationData[];
+	imageUrls: string[];
+};
+
+export type ItemImageData = {
+	id: number;
+	crC32CHash: number;
 };
