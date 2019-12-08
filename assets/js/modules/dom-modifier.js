@@ -124,6 +124,18 @@ export default class DomModifier {
 			// There's no column after the comic: Insert our own
 			comicDirective.parent().after('<div class="small-2 medium-expand column"></div>');
 		}
+		if ($('a[href*="dord.png"]').siblings('div.small-2').length !== 0) {
+			// There's a dord Link is in the way: Move it to the bottom of the page
+			let donationLink = $('[href*="https://www.paypal.com/"]');
+			donationLink.after($('[href*="dord.png"]'));
+			donationLink.after('•');
+		}
+		if ($('a[href*="privacy.php"]').siblings('div.small-2').length !== 0) {
+			// There's a privacy link in the way: Move it to the bottom of the page
+			let donationLink = $('[href*="https://www.paypal.com/"]');
+			donationLink.after($('[href*="privacy.php"]'));
+			donationLink.after('•');
+		}
 		comicDirective.parent().siblings('.small-2').prepend('<qc-extra></qc-extra>');
 
 		// Set a base (required by Angular's html5Mode)
