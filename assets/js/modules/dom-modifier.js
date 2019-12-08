@@ -120,6 +120,10 @@ export default class DomModifier {
 
 		$('#news, #newspost').replaceWith('<qc-news></qc-news>');
 
+		if (comicDirective.parent().siblings('.small-2').length === 0) {
+			// There's no column after the comic: Insert our own
+			comicDirective.parent().after('<div class="small-2 medium-expand column"></div>');
+		}
 		comicDirective.parent().siblings('.small-2').prepend('<qc-extra></qc-extra>');
 
 		// Set a base (required by Angular's html5Mode)
