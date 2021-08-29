@@ -16,54 +16,54 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import type { AngularModule } from 'angular';
+import type { AngularModule } from "angular";
 
-import variables from '../../../../generated/variables.pass2';
+import variables from "../../../../generated/variables.pass2";
 
 export default function (app: AngularModule) {
-	app.directive('donut',
-		function () {
-			return {
-				restrict: 'E',
-				scope: {
-					size: '@',
-					innerColor: '@',
-					color: '@',
-					highlightColor: '@',
-					percent: '@',
-					borderSize: '@'
-				},
-				controller: ['$scope',
-					function ($scope) {
-						function calculateRotationValues() {
-							$scope.rotation = $scope.percent / 100 * 180;
-							$scope.fixRotation = $scope.rotation * 2;
-						}
-						function calculateSizeValues() {
-							$scope.maskClip = {
-								top: 0,
-								right: $scope.size,
-								bottom: $scope.size,
-								left: $scope.size / 2
-							};
-							$scope.fillClip = {
-								top: 0,
-								right: $scope.size / 2,
-								bottom: $scope.size,
-								left: 0
-							};
-							$scope.insetSize = $scope.size - $scope.borderSize;
-							$scope.insetMargin = $scope.borderSize / 2;
-						}
-						calculateRotationValues();
-						calculateSizeValues();
+  app.directive("donut", function () {
+    return {
+      restrict: "E",
+      scope: {
+        size: "@",
+        innerColor: "@",
+        color: "@",
+        highlightColor: "@",
+        percent: "@",
+        borderSize: "@",
+      },
+      controller: [
+        "$scope",
+        function ($scope) {
+          function calculateRotationValues() {
+            $scope.rotation = ($scope.percent / 100) * 180;
+            $scope.fixRotation = $scope.rotation * 2;
+          }
+          function calculateSizeValues() {
+            $scope.maskClip = {
+              top: 0,
+              right: $scope.size,
+              bottom: $scope.size,
+              left: $scope.size / 2,
+            };
+            $scope.fillClip = {
+              top: 0,
+              right: $scope.size / 2,
+              bottom: $scope.size,
+              left: 0,
+            };
+            $scope.insetSize = $scope.size - $scope.borderSize;
+            $scope.insetMargin = $scope.borderSize / 2;
+          }
+          calculateRotationValues();
+          calculateSizeValues();
 
-						$scope.$watch('percent', calculateRotationValues);
-						$scope.$watch('size', calculateSizeValues);
-						$scope.$watch('borderSize', calculateSizeValues);
-					}
-				],
-				template: variables.html.donut
-			};
-		});
+          $scope.$watch("percent", calculateRotationValues);
+          $scope.$watch("size", calculateSizeValues);
+          $scope.$watch("borderSize", calculateSizeValues);
+        },
+      ],
+      template: variables.html.donut,
+    };
+  });
 }

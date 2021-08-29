@@ -16,97 +16,103 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import type { AngularModule, $Log } from 'angular';
+import type { AngularModule, $Log } from "angular";
 
-import settings, { Settings } from '../../settings';
-import variables from '../../../../generated/variables.pass2';
+import settings, { Settings } from "../../settings";
+import variables from "../../../../generated/variables.pass2";
 
-import type { $DecoratedScope } from '../decorateScope';
-import type { ComicService } from '../services/comicService';
+import type { $DecoratedScope } from "../decorateScope";
+import type { ComicService } from "../services/comicService";
 
 export class NavController {
-	static $inject: string[];
+  static $inject: string[];
 
-	$scope: $DecoratedScope<NavController>;
-	comicService: ComicService;
-	latestComic: number;
-	randomComic: number;
-	mainDirective: boolean;
+  $scope: $DecoratedScope<NavController>;
+  comicService: ComicService;
+  latestComic: number;
+  randomComic: number;
+  mainDirective: boolean;
 
-	settings: Settings;
+  settings: Settings;
 
-	constructor(
-		$scope: $DecoratedScope<NavController>,
-		comicService: ComicService,
-		latestComic: number
-	) {
-		this.$scope = $scope;
-		this.comicService = comicService;
-		this.latestComic = latestComic;
+  constructor(
+    $scope: $DecoratedScope<NavController>,
+    comicService: ComicService,
+    latestComic: number
+  ) {
+    this.$scope = $scope;
+    this.comicService = comicService;
+    this.latestComic = latestComic;
 
-		this.settings = settings;
+    this.settings = settings;
 
-		if (this.$scope.mainDirective) {
-			$scope.$watchGroup([() => {
-				return this.settings.values.skipGuest;
-			}, () => {
-				return this.settings.values.skipNonCanon;
-			}], () => {
-				this._updateRandomComic();
-			});
-		}
-	}
+    if (this.$scope.mainDirective) {
+      $scope.$watchGroup(
+        [
+          () => {
+            return this.settings.values.skipGuest;
+          },
+          () => {
+            return this.settings.values.skipNonCanon;
+          },
+        ],
+        () => {
+          this._updateRandomComic();
+        }
+      );
+    }
+  }
 
-	async _updateRandomComic() {
-		this.$scope.randomComic = this.comicService.nextRandomComic();
-		const randomComic = await this.comicService.nextFilteredRandomComic();
-		this.$scope.safeApply(() => {
-			this.$scope.randomComic = randomComic;
-		});
-	}
+  async _updateRandomComic() {
+    this.$scope.randomComic = this.comicService.nextRandomComic();
+    const randomComic = await this.comicService.nextFilteredRandomComic();
+    this.$scope.safeApply(() => {
+      this.$scope.randomComic = randomComic;
+    });
+  }
 
-	first(event: UIEvent) {
-		event.preventDefault();
-		event.stopPropagation();
-		this.comicService.first();
-	}
+  first(event: UIEvent) {
+    event.preventDefault();
+    event.stopPropagation();
+    this.comicService.first();
+  }
 
-	previous(event: UIEvent) {
-		event.preventDefault();
-		event.stopPropagation();
-		this.comicService.previous();
-	}
+  previous(event: UIEvent) {
+    event.preventDefault();
+    event.stopPropagation();
+    this.comicService.previous();
+  }
 
-	next(event: UIEvent) {
-		event.preventDefault();
-		event.stopPropagation();
-		this.comicService.next();
-	}
+  next(event: UIEvent) {
+    event.preventDefault();
+    event.stopPropagation();
+    this.comicService.next();
+  }
 
-	last(event: UIEvent) {
-		event.preventDefault();
-		event.stopPropagation();
-		this.comicService.last();
-	}
+  last(event: UIEvent) {
+    event.preventDefault();
+    event.stopPropagation();
+    this.comicService.last();
+  }
 
-	random(event: UIEvent) {
-		event.preventDefault();
-		event.stopPropagation();
+  random(event: UIEvent) {
+    event.preventDefault();
+    event.stopPropagation();
 
-		this.comicService.gotoComic(this.$scope.randomComic);
-		this._updateRandomComic();
-	}
+    this.comicService.gotoComic(this.$scope.randomComic);
+    this._updateRandomComic();
+  }
 }
-NavController.$inject = ['$scope', 'comicService', 'latestComic'];
+NavController.$inject = ["$scope", "comicService", "latestComic"];
 
 export default function (app: AngularModule) {
-	app.directive('qcNav', function () {
-		return {
-			restrict: 'E',
-			scope: { randomComic: '=', mainDirective: '=' },
-			controller: NavController,
-			controllerAs: 'n',
-			template: variables.html.navigation
-		};
-	});
+  app.directive("qcNav", function () {
+    return {
+      restrict: "E",
+      scope: { randomComic: "=", mainDirective: "=" },
+      controller: NavController,
+      controllerAs: "n",
+      template: variables.html.navigation,
+    };
+  });
 }

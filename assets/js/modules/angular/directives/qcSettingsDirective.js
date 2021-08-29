@@ -16,71 +16,79 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import type { AngularModule, $Log } from 'angular';
+import type { AngularModule, $Log } from "angular";
 
-import settings, { Settings } from '../../settings';
-import variables from '../../../../generated/variables.pass2';
+import settings, { Settings } from "../../settings";
+import variables from "../../../../generated/variables.pass2";
 
-import type { $DecoratedScope } from '../decorateScope';
-import type { ComicService } from '../services/comicService';
+import type { $DecoratedScope } from "../decorateScope";
+import type { ComicService } from "../services/comicService";
 
 export class SettingsController {
-	static $inject: string[];
+  static $inject: string[];
 
-	$scope: $DecoratedScope<SettingsController>;
-	$log: $Log;
-	comicService: ComicService;
+  $scope: $DecoratedScope<SettingsController>;
+  $log: $Log;
+  comicService: ComicService;
 
-	settings: Settings;
+  settings: Settings;
 
-	constructor($scope: $DecoratedScope<SettingsController>, $log: $Log, comicService: ComicService) {
-		$log.debug('START SettingsController');
+  constructor(
+    $scope: $DecoratedScope<SettingsController>,
+    $log: $Log,
+    comicService: ComicService
+  ) {
+    $log.debug("START SettingsController");
 
-		this.$scope = $scope;
-		this.$log = $log;
-		this.comicService = comicService;
+    this.$scope = $scope;
+    this.$log = $log;
+    this.comicService = comicService;
 
-		this.settings = settings;
+    this.settings = settings;
 
-		$scope.$watchGroup([() => {
-			return this.settings.values.showAllMembers;
-		}, () => {
-			return this.settings.values.editMode;
-		}], () => {
-			this.comicService.refreshComicData();
-		});
+    $scope.$watchGroup(
+      [
+        () => {
+          return this.settings.values.showAllMembers;
+        },
+        () => {
+          return this.settings.values.editMode;
+        },
+      ],
+      () => {
+        this.comicService.refreshComicData();
+      }
+    );
 
-		$('#settingsDialog').on('hide.bs.modal', async () => {
-			$log.debug('Saving settings...');
-			await this.settings.saveSettings();
-			$log.debug('Settings saved.');
-		});
+    $("#settingsDialog").on("hide.bs.modal", async () => {
+      $log.debug("Saving settings...");
+      await this.settings.saveSettings();
+      $log.debug("Settings saved.");
+    });
 
-		$log.debug('END SettingsController');
-	}
+    $log.debug("END SettingsController");
+  }
 
-	close() {
-		($('#settingsDialog'): any).modal('hide');
-	}
+  close() {
+    ($("#settingsDialog"): any).modal("hide");
+  }
 
-	showChangeLog() {
-		this.close();
-		($('#changeLogDialog'): any).modal('show');
-	}
+  showChangeLog() {
+    this.close();
+    ($("#changeLogDialog"): any).modal("show");
+  }
 }
-SettingsController.$inject = [
-	'$scope', '$log', 'comicService'
-];
+SettingsController.$inject = ["$scope", "$log", "comicService"];
 
 export default function (app: AngularModule) {
-	app.directive('qcSettings', function () {
-		return {
-			restrict: 'E',
-			replace: true,
-			scope: {},
-			controller: SettingsController,
-			controllerAs: 'svm',
-			template: variables.html.settings
-		};
-	});
+  app.directive("qcSettings", function () {
+    return {
+      restrict: "E",
+      replace: true,
+      scope: {},
+      controller: SettingsController,
+      controllerAs: "svm",
+      template: variables.html.settings,
+    };
+  });
 }

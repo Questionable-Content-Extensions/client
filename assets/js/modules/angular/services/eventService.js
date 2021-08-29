@@ -16,52 +16,63 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import type { AngularModule, $Log } from 'angular';
+import type { AngularModule, $Log } from "angular";
 
-import constants from '../../../constants';
+import constants from "../../../constants";
 
-import type { Event, EventFactory } from './eventFactory';
-import type { ComicData } from '../api/comicData';
-import type { ItemBaseData } from '../api/itemData';
+import type { Event, EventFactory } from "./eventFactory";
+import type { ComicData } from "../api/comicData";
+import type { ItemBaseData } from "../api/itemData";
 
 export class EventService {
-	$log: $Log;
+  $log: $Log;
 
-	comicDataLoadingEvent: Event<number>;
-	comicDataLoadedEvent: Event<ComicData>;
-	comicDataErrorEvent: Event<any>;
-	
-	itemDataLoadingEvent: Event<number>;
-	itemDataLoadedEvent: Event<ItemBaseData[]>;
-	itemDataErrorEvent: Event<any>;
+  comicDataLoadingEvent: Event<number>;
+  comicDataLoadedEvent: Event<ComicData>;
+  comicDataErrorEvent: Event<any>;
 
-	itemsChangedEvent: Event<any>;
+  itemDataLoadingEvent: Event<number>;
+  itemDataLoadedEvent: Event<ItemBaseData[]>;
+  itemDataErrorEvent: Event<any>;
 
-	maintenanceEvent: Event<any>;
+  itemsChangedEvent: Event<any>;
 
-	constructor($log: $Log, eventFactory: EventFactory) {
-		this.$log = $log;
+  maintenanceEvent: Event<any>;
 
-		this.comicDataLoadingEvent = eventFactory<number>(constants.comicdataLoadingEvent);
-		this.comicDataLoadedEvent = eventFactory<ComicData>(constants.comicdataLoadedEvent);
-		this.comicDataErrorEvent = eventFactory<any>(constants.comicdataErrorEvent); // TODO: Figure out this type
+  constructor($log: $Log, eventFactory: EventFactory) {
+    this.$log = $log;
 
-		this.itemDataLoadingEvent = eventFactory<any>(constants.itemdataLoadingEvent);
-		this.itemDataLoadedEvent = eventFactory<ItemBaseData[]>(constants.itemdataLoadedEvent);
-		this.itemDataErrorEvent = eventFactory<any>(constants.itemdataErrorEvent); // TODO: Figure out this type
+    this.comicDataLoadingEvent = eventFactory<number>(
+      constants.comicdataLoadingEvent
+    );
+    this.comicDataLoadedEvent = eventFactory<ComicData>(
+      constants.comicdataLoadedEvent
+    );
+    this.comicDataErrorEvent = eventFactory<any>(constants.comicdataErrorEvent); // TODO: Figure out this type
 
-		this.itemsChangedEvent = eventFactory<any>(constants.itemsChangedEvent);
+    this.itemDataLoadingEvent = eventFactory<any>(
+      constants.itemdataLoadingEvent
+    );
+    this.itemDataLoadedEvent = eventFactory<ItemBaseData[]>(
+      constants.itemdataLoadedEvent
+    );
+    this.itemDataErrorEvent = eventFactory<any>(constants.itemdataErrorEvent); // TODO: Figure out this type
 
-		this.maintenanceEvent = eventFactory<any>(constants.maintenanceEvent);
-	}
+    this.itemsChangedEvent = eventFactory<any>(constants.itemsChangedEvent);
+
+    this.maintenanceEvent = eventFactory<any>(constants.maintenanceEvent);
+  }
 }
 
 export default function (app: AngularModule) {
-	app.service('eventService', ['$log', 'eventFactory',
-		function<T>($log: $Log, eventFactory: EventFactory) {
-			$log.debug('START eventService()');
-			const eventService = new EventService($log, eventFactory);
-			$log.debug('END eventService()');
-			return eventService;
-		}]);
+  app.service("eventService", [
+    "$log",
+    "eventFactory",
+    function <T>($log: $Log, eventFactory: EventFactory) {
+      $log.debug("START eventService()");
+      const eventService = new EventService($log, eventFactory);
+      $log.debug("END eventService()");
+      return eventService;
+    },
+  ]);
 }

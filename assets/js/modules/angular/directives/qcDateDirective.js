@@ -16,76 +16,74 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import type { AngularModule, $Log } from 'angular';
+import type { AngularModule, $Log } from "angular";
 
-import constants from '../../../constants';
-import settings, { Settings } from '../../settings';
-import variables from '../../../../generated/variables.pass2';
+import constants from "../../../constants";
+import settings, { Settings } from "../../settings";
+import variables from "../../../../generated/variables.pass2";
 
-import { EventHandlingControllerBase } from '../controllers/ControllerBases';
+import { EventHandlingControllerBase } from "../controllers/ControllerBases";
 
-import type { $DecoratedScope } from '../decorateScope';
-import type { EventService } from '../services/eventService';
-import type { ComicData } from '../api/comicData';
+import type { $DecoratedScope } from "../decorateScope";
+import type { EventService } from "../services/eventService";
+import type { ComicData } from "../api/comicData";
 
 export class DateController extends EventHandlingControllerBase<DateController> {
-	static $inject: string[];
+  static $inject: string[];
 
-	$log: $Log;
+  $log: $Log;
 
-	settings: Settings;
+  settings: Settings;
 
-	date: ?Date;
-	approximateDate: boolean;
+  date: ?Date;
+  approximateDate: boolean;
 
-	constructor(
-		$scope: $DecoratedScope<DateController>,
-		$log: $Log,
-		eventService: EventService
-	) {
-		$log.debug('START DateController');
+  constructor(
+    $scope: $DecoratedScope<DateController>,
+    $log: $Log,
+    eventService: EventService
+  ) {
+    $log.debug("START DateController");
 
-		super($scope, eventService);
+    super($scope, eventService);
 
-		this.$log = $log;
+    this.$log = $log;
 
-		this.settings = settings;
-		this.date = null;
-		this.approximateDate = false;
+    this.settings = settings;
+    this.date = null;
+    this.approximateDate = false;
 
-		$log.debug('END DateController');
-	}
+    $log.debug("END DateController");
+  }
 
-	_comicDataLoading(comic: number) {
-		self.date = null;
-		self.approximateDate = false;
-	}
+  _comicDataLoading(comic: number) {
+    self.date = null;
+    self.approximateDate = false;
+  }
 
-	_comicDataLoaded(comicData: ComicData) {
-		this.approximateDate = !comicData.isAccuratePublishDate;
-		const publishDate = comicData.publishDate;
-		this.$log.debug('DateController::_comicDataLoaded(): ', publishDate);
-		if (publishDate !== null &&
-			publishDate !== undefined) {
-			const date = new Date(publishDate);
-			this.date = date;
-		} else {
-			this.date = null;
-		}
-	}
-
+  _comicDataLoaded(comicData: ComicData) {
+    this.approximateDate = !comicData.isAccuratePublishDate;
+    const publishDate = comicData.publishDate;
+    this.$log.debug("DateController::_comicDataLoaded(): ", publishDate);
+    if (publishDate !== null && publishDate !== undefined) {
+      const date = new Date(publishDate);
+      this.date = date;
+    } else {
+      this.date = null;
+    }
+  }
 }
-DateController.$inject = ['$scope', '$log', 'eventService'];
+DateController.$inject = ["$scope", "$log", "eventService"];
 
 export default function (app: AngularModule) {
-	app.directive('qcDate', function () {
-		return {
-			restrict: 'E',
-			replace: true,
-			scope: {},
-			controller: DateController,
-			controllerAs: 'd',
-			template: variables.html.date
-		};
-	});
+  app.directive("qcDate", function () {
+    return {
+      restrict: "E",
+      replace: true,
+      scope: {},
+      controller: DateController,
+      controllerAs: "d",
+      template: variables.html.date,
+    };
+  });
 }

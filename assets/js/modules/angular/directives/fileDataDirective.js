@@ -16,28 +16,28 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import type { AngularModule } from 'angular';
+import type { AngularModule } from "angular";
 
 export default function (app: AngularModule) {
-	app.directive('fileData', function () {
-		return {
-			restrict: 'A',
-			scope: {
-				fileData: '=',
-				fileInfo: '='
-			},
-			link: function (scope, element, attrs) {
-				element.bind('change', function (changeEvent) {
-					const fileReader = new FileReader();
-					fileReader.onload = function (loadEvent) {
-						scope.$apply(function () {
-							scope.fileInfo = changeEvent.target.files[0];
-							scope.fileData = loadEvent.target.result;
-						});
-					};
-					fileReader.readAsDataURL(changeEvent.target.files[0]);
-				});
-			}
-		};
-	});
+  app.directive("fileData", function () {
+    return {
+      restrict: "A",
+      scope: {
+        fileData: "=",
+        fileInfo: "=",
+      },
+      link: function (scope, element, attrs) {
+        element.bind("change", function (changeEvent) {
+          const fileReader = new FileReader();
+          fileReader.onload = function (loadEvent) {
+            scope.$apply(function () {
+              scope.fileInfo = changeEvent.target.files[0];
+              scope.fileData = loadEvent.target.result;
+            });
+          };
+          fileReader.readAsDataURL(changeEvent.target.files[0]);
+        });
+      },
+    };
+  });
 }

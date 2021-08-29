@@ -16,78 +16,78 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import type { AngularModule } from 'angular';
+import type { AngularModule } from "angular";
 
-import config from './config';
-import run from './run';
+import config from "./config";
+import run from "./run";
 
-import bodyController from './controllers/bodyController';
-import comicController from './controllers/comicController';
-import titleController from './controllers/titleController';
+import bodyController from "./controllers/bodyController";
+import comicController from "./controllers/comicController";
+import titleController from "./controllers/titleController";
 
-import colorService from './services/colorService';
-import comicService from './services/comicService';
-import itemService from './services/itemService';
-import eventFactory from './services/eventFactory';
-import eventService from './services/eventService';
-import messageReportingService from './services/messageReportingService';
-import styleService from './services/styleService';
+import colorService from "./services/colorService";
+import comicService from "./services/comicService";
+import itemService from "./services/itemService";
+import eventFactory from "./services/eventFactory";
+import eventService from "./services/eventService";
+import messageReportingService from "./services/messageReportingService";
+import styleService from "./services/styleService";
 
-import donutDirective from './directives/donutDirective';
-import fileDataDirective from './directives/fileDataDirective';
-import onErrorDirective from './directives/onErrorDirective';
-import qcAddItemDirective from './directives/qcAddItemDirective';
-import qcChangeLogDirective from './directives/qcChangeLogDirective';
-import qcComicDirective from './directives/qcComicDirective';
-import qcComicNavDirective from './directives/qcComicNavDirective';
-import qcDateDirective from './directives/qcDateDirective';
-import qcEditComicDataDirective from './directives/qcEditComicDataDirective';
-import qcEditLogDirective from './directives/qcEditLogDirective';
-import qcExtraDirective from './directives/qcExtraDirective';
-import qcExtraNavDirective from './directives/qcExtraNavDirective';
-import qcItemDetailsDirective from './directives/qcItemDetailsDirective';
-import qcNavDirective from './directives/qcNavDirective';
-import qcNewsDirective from './directives/qcNewsDirective';
-import qcRibbonDirective from './directives/qcRibbonDirective';
-import qcSetPublishDateDirective from './directives/qcSetPublishDateDirective';
-import qcSetTaglineDirective from './directives/qcSetTaglineDirective';
-import qcSettingsDirective from './directives/qcSettingsDirective';
-import qcSetTitleDirective from './directives/qcSetTitleDirective';
+import donutDirective from "./directives/donutDirective";
+import fileDataDirective from "./directives/fileDataDirective";
+import onErrorDirective from "./directives/onErrorDirective";
+import qcAddItemDirective from "./directives/qcAddItemDirective";
+import qcChangeLogDirective from "./directives/qcChangeLogDirective";
+import qcComicDirective from "./directives/qcComicDirective";
+import qcComicNavDirective from "./directives/qcComicNavDirective";
+import qcDateDirective from "./directives/qcDateDirective";
+import qcEditComicDataDirective from "./directives/qcEditComicDataDirective";
+import qcEditLogDirective from "./directives/qcEditLogDirective";
+import qcExtraDirective from "./directives/qcExtraDirective";
+import qcExtraNavDirective from "./directives/qcExtraNavDirective";
+import qcItemDetailsDirective from "./directives/qcItemDetailsDirective";
+import qcNavDirective from "./directives/qcNavDirective";
+import qcNewsDirective from "./directives/qcNewsDirective";
+import qcRibbonDirective from "./directives/qcRibbonDirective";
+import qcSetPublishDateDirective from "./directives/qcSetPublishDateDirective";
+import qcSetTaglineDirective from "./directives/qcSetTaglineDirective";
+import qcSettingsDirective from "./directives/qcSettingsDirective";
+import qcSetTitleDirective from "./directives/qcSetTitleDirective";
 
 export default function (app: AngularModule) {
-	config(app);
-	run(app);
+  config(app);
+  run(app);
 
-	bodyController(app);
-	comicController(app);
-	titleController(app);
+  bodyController(app);
+  comicController(app);
+  titleController(app);
 
-	colorService(app);
-	comicService(app);
-	itemService(app);
-	eventFactory(app);
-	eventService(app);
-	messageReportingService(app);
-	styleService(app);
+  colorService(app);
+  comicService(app);
+  itemService(app);
+  eventFactory(app);
+  eventService(app);
+  messageReportingService(app);
+  styleService(app);
 
-	donutDirective(app);
-	fileDataDirective(app);
-	onErrorDirective(app);
-	qcAddItemDirective(app);
-	qcChangeLogDirective(app);
-	qcComicDirective(app);
-	qcComicNavDirective(app);
-	qcDateDirective(app);
-	qcEditComicDataDirective(app);
-	qcEditLogDirective(app);
-	qcExtraDirective(app);
-	qcExtraNavDirective(app);
-	qcItemDetailsDirective(app);
-	qcNavDirective(app);
-	qcNewsDirective(app);
-	qcRibbonDirective(app);
-	qcSetPublishDateDirective(app);
-	qcSetTaglineDirective(app);
-	qcSettingsDirective(app);
-	qcSetTitleDirective(app);
+  donutDirective(app);
+  fileDataDirective(app);
+  onErrorDirective(app);
+  qcAddItemDirective(app);
+  qcChangeLogDirective(app);
+  qcComicDirective(app);
+  qcComicNavDirective(app);
+  qcDateDirective(app);
+  qcEditComicDataDirective(app);
+  qcEditLogDirective(app);
+  qcExtraDirective(app);
+  qcExtraNavDirective(app);
+  qcItemDetailsDirective(app);
+  qcNavDirective(app);
+  qcNewsDirective(app);
+  qcRibbonDirective(app);
+  qcSetPublishDateDirective(app);
+  qcSetTaglineDirective(app);
+  qcSettingsDirective(app);
+  qcSetTitleDirective(app);
 }

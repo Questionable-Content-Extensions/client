@@ -1,3 +1,5 @@
+@charset "UTF-8";
+
 /* 
  * Copyright (C) 2016-2019 Alexander Krivács Schrøder <alexschrod@gmail.com>
  *
@@ -16,114 +18,118 @@
  */
 
 #qcnav_navbox {
-	margin: 40px 5px 5px 5px;
-	text-align: center;
+  margin: 40px 5px 5px 5px;
+  text-align: center;
 
-	thead, tbody {
-		border: none;
-	}
+  thead,
+  tbody {
+    border: none;
+  }
 
-	> tbody > tr, > thead > tr {
-		background-color: #ffffff !important;
-	}
+  > tbody > tr,
+  > thead > tr {
+    background-color: #ffffff !important;
+  }
 
-	thead td, thead th {
-		text-align: center;
-	}
-	a.qc {
-		cursor: pointer;
+  thead td,
+  thead th {
+    text-align: center;
+  }
+  a.qc {
+    cursor: pointer;
 
-		// START Style bits borrowed from/based on QC's own styles
-		background: transparent;
-		padding: 0px 4px;
-		text-decoration: none;
+    // START Style bits borrowed from/based on QC's own styles
+    background: transparent;
+    padding: 0px 4px;
+    text-decoration: none;
 
-		&, &:link {
-			color: $link-color;
-		}
+    &,
+    &:link {
+      color: $link-color;
+    }
 
-		&:visited {
-			color: #258faf;
-		}
+    &:visited {
+      color: #258faf;
+    }
 
-		&:hover {
-			color: #258faf;
-		}
-		// END Style bits borrowed from/based on QC's own styles
-	}
+    &:hover {
+      color: #258faf;
+    }
+    // END Style bits borrowed from/based on QC's own styles
+  }
 
-	h1 {
-		font-size: 15px;
-		margin-top: 10px;
+  h1 {
+    font-size: 15px;
+    margin-top: 10px;
 
-		&.first-header {
-			margin-top: 0;
-		}
+    &.first-header {
+      margin-top: 0;
+    }
 
-		&.update-header {
-			margin-top: 0;
-			margin-bottom: 0;
-			
-			color: #e43;
-			font-weight: bold;
-		}
+    &.update-header {
+      margin-top: 0;
+      margin-bottom: 0;
 
-		small {
-			color: #0a0a0a;
-			line-height: 1;
-		}
-	}
+      color: #e43;
+      font-weight: bold;
+    }
 
-	@media screen and (min-width: 1015px) {
-		margin-left: -48px;
-		width: 200px;
-	}
+    small {
+      color: #0a0a0a;
+      line-height: 1;
+    }
+  }
+
+  @media screen and (min-width: 1015px) {
+    margin-left: -48px;
+    width: 200px;
+  }
 }
 
 .qcnav_space {
-	padding: 3px;
+  padding: 3px;
 }
 .qcnav_centered {
-	text-align: center;
+  text-align: center;
 }
 .qcnav_vcentered {
-	vertical-align: middle;
+  vertical-align: middle;
 }
 .qcnav_navelement {
-	width: 100%;
-	font-weight: bold;
-	margin: 0;
-	* {
-		background-color: transparent;
-	}
-	a {
-		text-decoration: none;
-	}
-	td {
-		padding: 3px 1px;
-	}
-	.no-nav {
-		visibility: hidden;
-	}
+  width: 100%;
+  font-weight: bold;
+  margin: 0;
+  * {
+    background-color: transparent;
+  }
+  a {
+    text-decoration: none;
+  }
+  td {
+    padding: 3px 1px;
+  }
+  .no-nav {
+    visibility: hidden;
+  }
 }
 
 .qcnav_arrows {
-	font-weight: bold;
+  font-weight: bold;
 }
 .qcnav_name {
-	width: 100%;
-	text-align: center;
+  width: 100%;
+  text-align: center;
 }
 
 a.qcnav_settings {
-	font-size: x-small;
-	text-decoration: none;
+  font-size: x-small;
+  text-decoration: none;
 }
 
 .qcnav_navelement a.qcnav_name_link {
-    cursor: pointer;
-    text-decoration: none;
-    color: $link-color;
+  cursor: pointer;
+  text-decoration: none;
+  color: $link-color;
 }
 
 // TODO: Reduce to a common class
@@ -132,15 +138,18 @@ a.qcnav_settings {
 #qcnav_item_missing_storyline,
 #qcnav_item_missing_title,
 #qcnav_item_missing_tagline {
-	> table.with_color {
-		background-color: #5f0000;
+  > table.with_color {
+    background-color: #5f0000;
 
-		a.qcnav_name_link, a:link, a:visited {
-			color: #ff3030;
-		}
+    a.qcnav_name_link,
+    a:link,
+    a:visited {
+      color: #ff3030;
+    }
 
-		a:hover, a:focus {
-			color: #ff9797;
-		}
-	}
+    a:hover,
+    a:focus {
+      color: #ff9797;
+    }
+  }
 }

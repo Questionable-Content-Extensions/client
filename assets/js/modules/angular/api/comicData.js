@@ -16,66 +16,66 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import type { ItemType } from './itemData';
+import type { ItemType } from "./itemData";
 
 export type ComicEditorDataMissing = {
-	first: ?number;
-	previous: ?number;
-	next: ?number;
-	last: ?number;
-	any: boolean;
-}
+  first: ?number,
+  previous: ?number,
+  next: ?number,
+  last: ?number,
+  any: boolean,
+};
 
 export type ComicEditorData = {
-	missing: {
-		cast: ComicEditorDataMissing;
-		location: ComicEditorDataMissing;
-		storyline: ComicEditorDataMissing;
-		title: ComicEditorDataMissing;
-		tagline: ComicEditorDataMissing;
-		any: boolean;
-	}
+  missing: {
+    cast: ComicEditorDataMissing,
+    location: ComicEditorDataMissing,
+    storyline: ComicEditorDataMissing,
+    title: ComicEditorDataMissing,
+    tagline: ComicEditorDataMissing,
+    any: boolean,
+  },
 };
 
 export type ComicItem = {
-	first: ?number;
-	previous: ?number;
-	first: ?number;
-	last: ?number;
-	id: number;
-	shortName: string;
-	name: string;
-	type: ItemType;
-	color: string;
+  first: ?number,
+  previous: ?number,
+  first: ?number,
+  last: ?number,
+  id: number,
+  shortName: string,
+  name: string,
+  type: ItemType,
+  color: string,
 };
 
 export type ComicData = {
-	comic: number;
-	imageType: "unknown" | "png" | "gif" | "jpeg",
-	hasData: boolean;
-	publishDate: ?string;
-	isAccuratePublishDate: ?boolean;
-	title: ?string;
-	tagline: ?string;
-	isGuestComic: ?boolean;
-	isNonCanon: ?boolean;
-	hasNoCast: ?boolean;
-	hasNoLocation: ?boolean;
-	hasNoStoryline: ?boolean;
-	hasNoTitle: ?boolean;
-	hasNoTagline: ?boolean;
-	news: ?string;
-	previous: ?number;
-	next: ?number;
-	editorData?: ComicEditorData;
-	items: Array<ComicItem>;
-	allItems?: Array<ComicItem>;
+  comic: number,
+  imageType: "unknown" | "png" | "gif" | "jpeg",
+  hasData: boolean,
+  publishDate: ?string,
+  isAccuratePublishDate: ?boolean,
+  title: ?string,
+  tagline: ?string,
+  isGuestComic: ?boolean,
+  isNonCanon: ?boolean,
+  hasNoCast: ?boolean,
+  hasNoLocation: ?boolean,
+  hasNoStoryline: ?boolean,
+  hasNoTitle: ?boolean,
+  hasNoTagline: ?boolean,
+  news: ?string,
+  previous: ?number,
+  next: ?number,
+  editorData?: ComicEditorData,
+  items: Array<ComicItem>,
+  allItems?: Array<ComicItem>,
 };
 
 export type ComicItemRepository = {
-	[string]: ComicItem[];
+  [string]: ComicItem[],
 
-	cast?: ComicItem[];
-	location?: ComicItem[];
-	storyline?: ComicItem[];
-}
+  cast?: ComicItem[],
+  location?: ComicItem[],
+  storyline?: ComicItem[],
+};

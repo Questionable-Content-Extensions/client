@@ -21,72 +21,73 @@
 const developmentMode = false;
 
 function getSiteUrl() {
-	return 'https://questionablextensions.net/';
+  return "https://questionablextensions.net/";
 }
 
 function getWebserviceBaseUrl() {
-	if (developmentMode) {
-		return 'http://localhost:3000/api/';
-	} else {
-		return 'https://questionablecontent.herokuapp.com/api/';
-	}
+  if (developmentMode) {
+    return "http://localhost:3000/api/";
+  } else {
+    return "https://questionablecontent.herokuapp.com/api/";
+  }
 }
 
-const comicDataUrl = getWebserviceBaseUrl() + 'comicdata/';
-const itemDataUrl = getWebserviceBaseUrl() + 'itemdata/';
-const editLogUrl = getWebserviceBaseUrl() + 'log';
+const comicDataUrl = getWebserviceBaseUrl() + "comicdata/";
+const itemDataUrl = getWebserviceBaseUrl() + "itemdata/";
+const editLogUrl = getWebserviceBaseUrl() + "log";
 
 const constants = {
-	settingsKey: 'settings',
+  settingsKey: "settings",
 
-	developmentMode,
-	siteUrl: getSiteUrl(),
-	comicDataUrl,
-	itemDataUrl,
-	editLogUrl,
+  developmentMode,
+  siteUrl: getSiteUrl(),
+  comicDataUrl,
+  itemDataUrl,
+  editLogUrl,
 
-	// Comics after 3132 should have a tagline
-	taglineThreshold: 3132,
+  // Comics after 3132 should have a tagline
+  taglineThreshold: 3132,
 
-	excludedComicsUrl: comicDataUrl + 'excluded',
-	addItemToComicUrl: comicDataUrl + 'additem',
-	removeItemFromComicUrl: comicDataUrl + 'removeitem',
-	setComicTitleUrl: comicDataUrl + 'settitle',
-	setComicTaglineUrl: comicDataUrl + 'settagline',
-	setPublishDateUrl: comicDataUrl + 'setpublishdate',
-	setGuestComicUrl: comicDataUrl + 'setguest',
-	setNonCanonUrl: comicDataUrl + 'setnoncanon',
-	setNoCastUrl: comicDataUrl + 'setnocast',
-	setNoLocationUrl: comicDataUrl + 'setnolocation',
-	setNoStorylineUrl: comicDataUrl + 'setnostoryline',
-	setNoTitleUrl: comicDataUrl + 'setnotitle',
-	setNoTaglineUrl: comicDataUrl + 'setnotagline',
+  excludedComicsUrl: comicDataUrl + "excluded",
+  addItemToComicUrl: comicDataUrl + "additem",
+  removeItemFromComicUrl: comicDataUrl + "removeitem",
+  setComicTitleUrl: comicDataUrl + "settitle",
+  setComicTaglineUrl: comicDataUrl + "settagline",
+  setPublishDateUrl: comicDataUrl + "setpublishdate",
+  setGuestComicUrl: comicDataUrl + "setguest",
+  setNonCanonUrl: comicDataUrl + "setnoncanon",
+  setNoCastUrl: comicDataUrl + "setnocast",
+  setNoLocationUrl: comicDataUrl + "setnolocation",
+  setNoStorylineUrl: comicDataUrl + "setnostoryline",
+  setNoTitleUrl: comicDataUrl + "setnotitle",
+  setNoTaglineUrl: comicDataUrl + "setnotagline",
 
-	itemImageUrl: itemDataUrl + 'image/',
-	itemFriendDataUrl: itemDataUrl + 'friends/',
-	itemLocationDataUrl: itemDataUrl + 'locations/',
-	setItemDataPropertyUrl: itemDataUrl + 'setproperty',
+  itemImageUrl: itemDataUrl + "image/",
+  itemFriendDataUrl: itemDataUrl + "friends/",
+  itemLocationDataUrl: itemDataUrl + "locations/",
+  setItemDataPropertyUrl: itemDataUrl + "setproperty",
 
-	comicExtensions: ['png', 'gif', 'jpg'],
+  comicExtensions: ["png", "gif", "jpg"],
 
-	comicdataLoadingEvent: 'comicdata-loading',
-	comicdataLoadedEvent: 'comicdata-loaded',
-	comicdataErrorEvent: 'comicdata-error',
+  comicdataLoadingEvent: "comicdata-loading",
+  comicdataLoadedEvent: "comicdata-loaded",
+  comicdataErrorEvent: "comicdata-error",
 
-	itemdataLoadingEvent: 'itemdata-loading',
-	itemdataLoadedEvent: 'itemdata-loaded',
-	itemdataErrorEvent: 'itemdata-error',
+  itemdataLoadingEvent: "itemdata-loading",
+  itemdataLoadedEvent: "itemdata-loaded",
+  itemdataErrorEvent: "itemdata-error",
 
-	itemsChangedEvent: 'items-changed',
+  itemsChangedEvent: "items-changed",
 
-	maintenanceEvent: 'maintenance',
+  maintenanceEvent: "maintenance",
 
-	messages: {
-		maintenance: 'The Questionable Extensions' +
-			' server is currently undergoing maintenance.' +
-			' Normal operation should resume within a' +
-			' few minutes.'
-	}
+  messages: {
+    maintenance:
+      "The Questionable Extensions" +
+      " server is currently undergoing maintenance." +
+      " Normal operation should resume within a" +
+      " few minutes.",
+  },
 };
 
 export default constants;

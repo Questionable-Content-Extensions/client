@@ -16,41 +16,41 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-export type ItemType = 'cast' | 'location' | 'storyline';
+export type ItemType = "cast" | "location" | "storyline";
 
 export type ItemBaseData = {
-	id: number;
-	shortName: string;
-	name: string;
-	type: ItemType;
-}
+  id: number,
+  shortName: string,
+  name: string,
+  type: ItemType,
+};
 
 export type ItemBaseDataWithColor = ItemBaseData & {
-	color: string;
-}
+  color: string,
+};
 
 export type ItemData = ItemBaseDataWithColor & {
-	first: number;
-	last: number;
-	appearances: number;
-	totalComics: number;
-	presence: number;
-	hasImage: boolean;
+  first: number,
+  last: number,
+  appearances: number,
+  totalComics: number,
+  presence: number,
+  hasImage: boolean,
 };
 
 export type ItemRelationData = ItemBaseDataWithColor & {
-	count: number;
-	percentage: number;
+  count: number,
+  percentage: number,
 };
 
 export type DecoratedItemData = ItemData & {
-	highlightColor: string;
-	locations: ItemRelationData[];
-	friends: ItemRelationData[];
-	imageUrls: string[];
+  highlightColor: string,
+  locations: ItemRelationData[],
+  friends: ItemRelationData[],
+  imageUrls: string[],
 };
 
 export type ItemImageData = {
-	id: number;
-	crC32CHash: number;
+  id: number,
+  crC32CHash: number,
 };

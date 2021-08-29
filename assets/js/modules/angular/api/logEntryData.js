@@ -17,14 +17,14 @@
  */
 
 export type LogEntry = {
-	identifier: string;
-	dateTime: string;
-	action: string;
-}
+  identifier: string,
+  dateTime: string,
+  action: string,
+};
 
 export type LogEntryData = {
-	logEntries: LogEntry[];
-	page: number;
-	pageCount: number;
-	logEntryCount: number;
-}
+  logEntries: LogEntry[],
+  page: number,
+  pageCount: number,
+  logEntryCount: number,
+};

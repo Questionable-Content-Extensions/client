@@ -16,17 +16,17 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import type { AngularModule } from 'angular';
+import type { AngularModule } from "angular";
 
 export default function (app: AngularModule) {
-	app.directive('onError', function () {
-		return {
-			restrict: 'A',
-			link: function (scope, element, attrs) {
-				element.bind('error', function () {
-					scope.$apply(attrs.onError);
-				});
-			}
-		};
-	});
+  app.directive("onError", function () {
+    return {
+      restrict: "A",
+      link: function (scope, element, attrs) {
+        element.bind("error", function () {
+          scope.$apply(attrs.onError);
+        });
+      },
+    };
+  });
 }

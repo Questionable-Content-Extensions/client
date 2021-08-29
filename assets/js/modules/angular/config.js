@@ -16,41 +16,53 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import GM from 'greasemonkey';
-import angular from 'angular';
-import type { AngularModule } from 'angular';
+import GM from "greasemonkey";
+import angular from "angular";
+import type { AngularModule } from "angular";
 
-import settings from './../settings';
+import settings from "./../settings";
 
-import decorateHttpService from './decorateHttpService';
-import decorateScope from './decorateScope';
+import decorateHttpService from "./decorateHttpService";
+import decorateScope from "./decorateScope";
 
 export default function (app: AngularModule) {
-	// Set up routing and do other configuration
-	app.config(['$stateProvider', '$urlRouterProvider',
-		'$locationProvider', '$provide', '$logProvider',
-		function ($stateProvider, $urlRouterProvider, $locationProvider,
-			$provide, $logProvider) {
-			decorateHttpService($provide);
-			decorateScope($provide);
+  // Set up routing and do other configuration
+  app.config([
+    "$stateProvider",
+    "$urlRouterProvider",
+    "$locationProvider",
+    "$provide",
+    "$logProvider",
+    function (
+      $stateProvider,
+      $urlRouterProvider,
+      $locationProvider,
+      $provide,
+      $logProvider
+    ) {
+      decorateHttpService($provide);
+      decorateScope($provide);
 
-			$stateProvider.state('homepage', {
-				url: '^/$',
-				controller: 'comicController',
-				controllerAs: 'c',
-				template: '<div></div>'
-			}).state('view', {
-				url: '^/view.php?comic',
-				controller: 'comicController',
-				controllerAs: 'c',
-				template: '<div></div>'
-			});
-			$urlRouterProvider.otherwise(function ($injector, $location) {
-				GM.openInTab($location.$$absUrl, false);
-			});
+      $stateProvider
+        .state("homepage", {
+          url: "^/$",
+          controller: "comicController",
+          controllerAs: "c",
+          template: "<div></div>",
+        })
+        .state("view", {
+          url: "^/view.php?comic",
+          controller: "comicController",
+          controllerAs: "c",
+          template: "<div></div>",
+        });
+      $urlRouterProvider.otherwise(function ($injector, $location) {
+        GM.openInTab($location.$$absUrl, false);
+      });
 
-			$locationProvider.html5Mode(true);
+      $locationProvider.html5Mode(true);
 
-			$logProvider.debugEnabled(settings.values.showDebugLogs);
-		}]);
+      $logProvider.debugEnabled(settings.values.showDebugLogs);
+    },
+  ]);
 }

@@ -16,13 +16,13 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import angular from 'angular';
+import angular from "angular";
 
-import assemble from './angular/assemble';
+import assemble from "./angular/assemble";
 
-const angularApp = angular.module('qc-spa', ['ui.router']);
+const angularApp = angular.module("qc-spa", ["ui.router"]);
 export function setup() {
-	assemble(angularApp);
+  assemble(angularApp);
 }
 
 export default angularApp;

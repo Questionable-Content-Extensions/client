@@ -16,54 +16,53 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import type { AngularModule, $Log } from 'angular';
+import type { AngularModule, $Log } from "angular";
 
-import constants from '../../../constants';
+import constants from "../../../constants";
 
-import { EventHandlingControllerBase } from './ControllerBases';
+import { EventHandlingControllerBase } from "./ControllerBases";
 
-import type { $DecoratedScope } from '../decorateScope';
-import type { EventService } from '../services/eventService';
-import type { ComicData } from '../api/comicData';
+import type { $DecoratedScope } from "../decorateScope";
+import type { EventService } from "../services/eventService";
+import type { ComicData } from "../api/comicData";
 
 export class TitleController extends EventHandlingControllerBase<TitleController> {
-	static $inject: string[];
+  static $inject: string[];
 
-	$log: $Log;
+  $log: $Log;
 
-	title: string;
+  title: string;
 
-	constructor(
-		$scope: $DecoratedScope<TitleController>,
-		$log: $Log,
-		eventService: EventService
-	) {
-		$log.debug('START TitleController');
+  constructor(
+    $scope: $DecoratedScope<TitleController>,
+    $log: $Log,
+    eventService: EventService
+  ) {
+    $log.debug("START TitleController");
 
-		super($scope, eventService);
+    super($scope, eventService);
 
-		this.$log = $log;
+    this.$log = $log;
 
-		this.title = 'Loading Questionable Content Extension...';
+    this.title = "Loading Questionable Content Extension...";
 
-		$log.debug('END TitleController');
-	}
+    $log.debug("END TitleController");
+  }
 
-	_comicDataLoading(comic: number) {
-		this.title = `Loading #${comic} — Questionable Content`;
-	}
+  _comicDataLoading(comic: number) {
+    this.title = `Loading #${comic} — Questionable Content`;
+  }
 
-	_comicDataLoaded(comicData: ComicData) {
-		if (comicData.hasData && comicData.title) {
-			this.title = `#${comicData.comic}: ${comicData.title} — Questionable Content`;
-		} else {
-			this.title = `#${comicData.comic} — Questionable Content`;
-		}
-	}
-
+  _comicDataLoaded(comicData: ComicData) {
+    if (comicData.hasData && comicData.title) {
+      this.title = `#${comicData.comic}: ${comicData.title} — Questionable Content`;
+    } else {
+      this.title = `#${comicData.comic} — Questionable Content`;
+    }
+  }
 }
-TitleController.$inject = ['$scope', '$log', 'eventService'];
+TitleController.$inject = ["$scope", "$log", "eventService"];
 
 export default function (app: AngularModule) {
-	app.controller('titleController', TitleController);
+  app.controller("titleController", TitleController);
 }

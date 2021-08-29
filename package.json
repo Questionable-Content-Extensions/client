@@ -1,49 +1,50 @@
 {
-	"name": "questionable-content-spa",
-	"version": "0.6.1",
-	"description": "Questionable Content Single-Page Application with Extra Features",
-	"main": "app.js",
-	"scripts": {
-		"print-userscript-banner": "node scripts/print-userscript-banner.js",
-		"test": "echo \"Error: no test specified\" && exit 1"
-	},
-	"repository": {
-		"type": "git",
-		"url": "git+https://github.com/Questionable-Content-Extensions/client.git"
-	},
-	"author": "Alexander Krivács Schrøder",
-	"license": "GPL-3.0",
-	"bugs": {
-		"url": "https://github.com/Questionable-Content-Extensions/client/issues"
-	},
-	"homepage": "https://questionablextensions.net/",
-	"devDependencies": {
-		"@babel/core": "^7.3.4",
-		"@babel/preset-flow": "^7.0.0",
-		"babel-eslint": "^10.0.1",
-		"eslint": "^5.15.1",
-		"eslint-plugin-flowtype": "^3.4.2",
-		"flow-bin": "^0.84.0",
-		"flow-remove-types": "^1.2.3",
-		"flow-typed": "^2.5.1",
-		"grunt": "^1.0.3",
-		"grunt-babel": "^8.0.0",
-		"grunt-contrib-compass": "~1.1",
-		"grunt-contrib-concat": "~1.0",
-		"grunt-contrib-htmlmin": "~2.3",
-		"grunt-contrib-uglify-es": "git://github.com/gruntjs/grunt-contrib-uglify.git#harmony",
-		"grunt-contrib-watch": "^1.0.1",
-		"grunt-eslint": "^21.0.0",
-		"grunt-files-to-javascript-variables": "git://github.com/alexschrod/grunt-files-to-javascript-variables.git#master",
-		"grunt-flow": "^2.0.0",
-		"grunt-rollup": "^8.1.0",
-		"jquery": "^3.3.1",
-		"load-grunt-tasks": "~3.5",
-		"rollup-plugin-babel": "^4.3.2",
-		"rollup-plugin-commonjs": "^8.4.1",
-		"rollup-plugin-node-resolve": "^3.4.0",
-		"rollup-plugin-virtual": "^1.0.1",
-		"uglify-es": "^3.3.9"
-	},
-	"dependencies": {}
+    "name": "questionable-content-spa",
+    "version": "0.6.1",
+    "description": "Questionable Content Single-Page Application with Extra Features",
+    "main": "app.js",
+    "scripts": {
+        "print-userscript-banner": "node scripts/print-userscript-banner.js",
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/Questionable-Content-Extensions/client.git"
+    },
+    "author": "Alexander Krivács Schrøder",
+    "license": "GPL-3.0",
+    "bugs": {
+        "url": "https://github.com/Questionable-Content-Extensions/client/issues"
+    },
+    "homepage": "https://questionablextensions.net/",
+    "devDependencies": {
+        "@babel/core": "^7.3.4",
+        "@babel/preset-flow": "^7.0.0",
+        "babel-eslint": "^10.0.1",
+        "eslint": "^5.15.1",
+        "eslint-plugin-flowtype": "^3.4.2",
+        "flow-bin": "^0.158.0",
+        "flow-remove-types": "^2.158",
+        "flow-typed": "^3.3.1",
+        "grunt": "^1.0.3",
+        "grunt-babel": "^8.0.0",
+        "grunt-contrib-compass": "~1.1",
+        "grunt-contrib-concat": "~1.0",
+        "grunt-contrib-copy": "^1.0.0",
+        "grunt-contrib-htmlmin": "~2.3",
+        "grunt-contrib-uglify-es": "git://github.com/gruntjs/grunt-contrib-uglify.git#harmony",
+        "grunt-contrib-watch": "^1.0.1",
+        "grunt-eslint": "^21.0.0",
+        "grunt-files-to-javascript-variables": "git://github.com/alexschrod/grunt-files-to-javascript-variables.git#master",
+        "grunt-flow": "^2.0.0",
+        "grunt-rollup": "^8.1.0",
+        "jquery": "^3.3.1",
+        "load-grunt-tasks": "~3.5",
+        "rollup-plugin-babel": "^4.3.2",
+        "rollup-plugin-commonjs": "^8.4.1",
+        "rollup-plugin-node-resolve": "^3.4.0",
+        "rollup-plugin-virtual": "^1.0.1",
+        "uglify-es": "^3.3.9"
+    },
+    "dependencies": {}
 }

@@ -16,14 +16,18 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import type { AngularModule } from 'angular';
+import type { AngularModule } from "angular";
 
-import settings from './../settings';
+import settings from "./../settings";
 
 export default function (app: AngularModule) {
-	app.run(['$rootScope', 'comicService', 'startComic',
-		function ($rootScope, comicService, startComic) {
-			$rootScope.settings = settings;
-			comicService.gotoComic(startComic);
-		}]);
+  app.run([
+    "$rootScope",
+    "comicService",
+    "startComic",
+    function ($rootScope, comicService, startComic) {
+      $rootScope.settings = settings;
+      comicService.gotoComic(startComic);
+    },
+  ]);
 }
