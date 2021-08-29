@@ -108,7 +108,11 @@ export class ComicService {
 
   // TODO: Add proper response type
   _onErrorLog(response: any) {
-    if (response.status !== 503) {
+    if (response.status == 0) {
+      this.messageReportingService.reportError(
+        "Error communicating with server"
+      );
+    } else if (response.status !== 503) {
       this.messageReportingService.reportError(response.data);
     } else {
       this.eventService.maintenanceEvent.publish();

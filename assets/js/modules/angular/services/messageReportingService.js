@@ -61,18 +61,11 @@ export class MessageReportingService {
 
     const unique = Math.random().toString(36).slice(-5);
 
-    console.log("NM", nextMessage);
-    const messageHtml =
-      '<div class="alert alert-' +
-      nextMessage.type +
-      '" ' +
-      'id="' +
-      unique +
-      '" ' +
-      'style="display: none;" ' +
-      'role="alert">' +
-      escapeHtml(nextMessage.message) +
-      "</div>";
+    const messageHtml = `<div class="alert alert-${
+      nextMessage.type
+    }" id="${unique}" style="display: none;" role="alert">${escapeHtml(
+      nextMessage.message ? nextMessage.message : "null"
+    )}</div>`;
 
     $("#messageSeat").append(messageHtml);
     const messageElement = $("#" + unique);
