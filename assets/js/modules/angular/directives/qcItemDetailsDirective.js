@@ -110,6 +110,10 @@ export class ItemDetailsController {
 
     const itemData = await this.itemService.getItemData(itemId);
     if (itemData) {
+      if (itemData.color.startsWith("#")) {
+        itemData.color = itemData.color.substring(1);
+      }
+
       this.$log.debug("qcItemDetails::showModal() - " + "item data:", itemData);
 
       this.$scope.safeApply(() => {
