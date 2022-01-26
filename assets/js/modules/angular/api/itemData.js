@@ -52,5 +52,5 @@ export type DecoratedItemData = ItemData & {
 
 export type ItemImageData = {
   id: number,
-  crC32CHash: number,
+  crc32cHash: number,
 };
