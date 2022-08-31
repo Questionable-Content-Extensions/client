@@ -38,7 +38,7 @@
         "grunt-files-to-javascript-variables": "git://github.com/alexschrod/grunt-files-to-javascript-variables.git#master",
         "grunt-flow": "^2.0.0",
         "grunt-rollup": "^8.1.0",
-        "jquery": "^3.3.1",
+        "jquery": "^3.5.0",
         "load-grunt-tasks": "~3.5",
         "rollup-plugin-babel": "^4.3.2",
         "rollup-plugin-commonjs": "^8.4.1",
