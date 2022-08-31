@@ -1,6 +1,6 @@
 // @flow
 /*
- * Copyright (C) 2016-2019 Alexander Krivács Schrøder <alexschrod@gmail.com>
+ * Copyright (C) 2016-2022 Alexander Krivács Schrøder <alexschrod@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,73 +16,75 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import type { AngularModule, $Log } from 'angular';
+import type { AngularModule, $Log } from "angular";
 
-import constants from '../../../constants';
-import variables from '../../../../generated/variables.pass2';
+import constants from "../../../constants";
+import variables from "../../../../generated/variables.pass2";
 
-import { SetValueControllerBase } from '../controllers/ControllerBases';
+import { SetValueControllerBase } from "../controllers/ControllerBases";
 
-import type { $DecoratedScope } from '../decorateScope';
-import type { ComicService } from '../services/comicService';
-import type { EventService } from '../services/eventService';
-import type { ComicData } from '../api/comicData';
+import type { $DecoratedScope } from "../decorateScope";
+import type { ComicService } from "../services/comicService";
+import type { EventService } from "../services/eventService";
+import type { ComicData } from "../api/comicData";
 
 export class SetTitleController extends SetValueControllerBase<SetTitleController> {
-	static $inject: string[];
+  static $inject: string[];
 
-	$log: $Log;
+  $log: $Log;
 
-	title: ?string;
+  title: ?string;
 
-	isUpdating: boolean;
+  isUpdating: boolean;
 
-	constructor(
-		$scope: $DecoratedScope<SetTitleController>,
-		$log: $Log,
-		comicService: ComicService,
-		eventService: EventService
-	) {
-		$log.debug('START SetTitleController');
+  constructor(
+    $scope: $DecoratedScope<SetTitleController>,
+    $log: $Log,
+    comicService: ComicService,
+    eventService: EventService
+  ) {
+    $log.debug("START SetTitleController");
 
-		super($scope, comicService, eventService);
-		this.$log = $log;
+    super($scope, comicService, eventService);
+    this.$log = $log;
 
-		this.title = '';
+    this.title = "";
 
-		$log.debug('END SetTitleController');
-	}
+    $log.debug("END SetTitleController");
+  }
 
-	_comicDataLoaded(comicData: ComicData) {
-		this.title = comicData.title;
-		this.$scope.isUpdating = false;
-	}
+  _comicDataLoaded(comicData: ComicData) {
+    this.title = comicData.title;
+    this.$scope.isUpdating = false;
+  }
 
-	_updateValue() {
-		this.setTitle();
-	}
+  _updateValue() {
+    this.setTitle();
+  }
 
-	async setTitle() {
-		this.$scope.isUpdating = true;
-		const response = await this.comicService.setTitle(this.title ? this.title : '');
-		if (response.status !== 200) {
-			this.$scope.safeApply(() => {
-				this.$scope.isUpdating = false;
-			});
-		}
-	}
+  async setTitle() {
+    this.$scope.isUpdating = true;
+    const response = await this.comicService.setTitle(
+      this.title ? this.title : ""
+    );
+    if (response.status !== 200) {
+      this.$scope.safeApply(() => {
+        this.$scope.isUpdating = false;
+      });
+    }
+  }
 }
-SetTitleController.$inject = ['$scope', '$log', 'comicService', 'eventService'];
+SetTitleController.$inject = ["$scope", "$log", "comicService", "eventService"];
 
 export default function (app: AngularModule) {
-	app.directive('qcSetTitle', function () {
-		return {
-			restrict: 'E',
-			replace: true,
-			scope: { isUpdating: '=' },
-			controller: SetTitleController,
-			controllerAs: 's',
-			template: variables.html.setTitle
-		};
-	});
+  app.directive("qcSetTitle", function () {
+    return {
+      restrict: "E",
+      replace: true,
+      scope: { isUpdating: "=" },
+      controller: SetTitleController,
+      controllerAs: "s",
+      template: variables.html.setTitle,
+    };
+  });
 }

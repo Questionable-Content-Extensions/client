@@ -1,6 +1,6 @@
 // @flow
 /*
- * Copyright (C) 2016-2019 Alexander Krivács Schrøder <alexschrod@gmail.com>
+ * Copyright (C) 2016-2022 Alexander Krivács Schrøder <alexschrod@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,28 +16,28 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import type { AngularModule } from 'angular';
+import type { AngularModule } from "angular";
 
-import variables from '../../../../generated/variables.pass2';
+import variables from "../../../../generated/variables.pass2";
 
 export default function (app: AngularModule) {
-	app.directive('qcExtraNav', function () {
-		return {
-			restrict: 'E',
-			scope: {
-				firstValue: '=',
-				firstTitle: '@',
-				previousValue: '=',
-				previousTitle: '@',
-				nextValue: '=',
-				nextTitle: '@',
-				lastValue: '=',
-				lastTitle: '@',
-				name: '@',
-				nameTitle: '@',
-				clickAction: '&'
-			},
-			template: variables.html.extraNav
-		};
-	});
+  app.directive("qcExtraNav", function () {
+    return {
+      restrict: "E",
+      scope: {
+        firstValue: "=",
+        firstTitle: "@",
+        previousValue: "=",
+        previousTitle: "@",
+        nextValue: "=",
+        nextTitle: "@",
+        lastValue: "=",
+        lastTitle: "@",
+        name: "@",
+        nameTitle: "@",
+        clickAction: "&",
+      },
+      template: variables.html.extraNav,
+    };
+  });
 }

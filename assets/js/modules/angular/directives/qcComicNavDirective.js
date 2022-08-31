@@ -1,6 +1,6 @@
 // @flow
 /*
- * Copyright (C) 2016-2019 Alexander Krivács Schrøder <alexschrod@gmail.com>
+ * Copyright (C) 2016-2022 Alexander Krivács Schrøder <alexschrod@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,82 +16,91 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import type { AngularModule, $Log } from 'angular';
+import type { AngularModule, $Log } from "angular";
 
-import constants from '../../../constants';
-import variables from '../../../../generated/variables.pass2';
+import constants from "../../../constants";
+import variables from "../../../../generated/variables.pass2";
 
-import { EventHandlingControllerBase } from '../controllers/ControllerBases';
+import { EventHandlingControllerBase } from "../controllers/ControllerBases";
 
-import type { $DecoratedScope } from '../decorateScope';
-import type { ComicService } from '../services/comicService';
-import type { EventService } from '../services/eventService';
-import type { ComicData } from '../api/comicData';
+import type { $DecoratedScope } from "../decorateScope";
+import type { ComicService } from "../services/comicService";
+import type { EventService } from "../services/eventService";
+import type { ComicData } from "../api/comicData";
 
 export class ComicNavController extends EventHandlingControllerBase<ComicNavController> {
-	static $inject: string[];
+  static $inject: string[];
 
-	$log: $Log;
-	comicService: ComicService;
-	latestComic: number;
+  $log: $Log;
+  comicService: ComicService;
+  latestComic: number;
 
-	currentComic: ?number;
+  currentComic: ?number;
 
-	constructor(
-		$scope: $DecoratedScope<ComicNavController>,
-		$log: $Log,
-		comicService: ComicService,
-		eventService: EventService,
-		latestComic: number
-	) {
-		$log.debug('START ComicNavController');
+  constructor(
+    $scope: $DecoratedScope<ComicNavController>,
+    $log: $Log,
+    comicService: ComicService,
+    eventService: EventService,
+    latestComic: number
+  ) {
+    $log.debug("START ComicNavController");
 
-		super($scope, eventService);
+    super($scope, eventService);
 
-		this.$log = $log;
-		this.comicService = comicService;
-		this.latestComic = latestComic;
+    this.$log = $log;
+    this.comicService = comicService;
+    this.latestComic = latestComic;
 
-		this.currentComic = null;
+    this.currentComic = null;
 
-		$log.debug('END ComicNavController');
-	}
+    $log.debug("END ComicNavController");
+  }
 
-	_comicDataLoaded(comicData: ComicData) {
-		this.currentComic = comicData.comic;
-	}
+  _comicDataLoaded(comicData: ComicData) {
+    this.currentComic = comicData.comic;
+  }
 
-	go() {
-		this.$log.debug(`ComicNavController::go(): ${this.currentComic ? this.currentComic : 'NONE'}`);
-		if (!this.currentComic) {
-			this.currentComic = this.latestComic;
-		} else if (this.currentComic < 1) {
-			this.currentComic = 1;
-		} else if (this.currentComic > this.latestComic) {
-			this.currentComic = this.latestComic;
-		}
-		this.comicService.gotoComic(this.currentComic);
-	}
+  go() {
+    this.$log.debug(
+      `ComicNavController::go(): ${
+        this.currentComic ? this.currentComic : "NONE"
+      }`
+    );
+    if (!this.currentComic) {
+      this.currentComic = this.latestComic;
+    } else if (this.currentComic < 1) {
+      this.currentComic = 1;
+    } else if (this.currentComic > this.latestComic) {
+      this.currentComic = this.latestComic;
+    }
+    this.comicService.gotoComic(this.currentComic);
+  }
 
-	keyPress(event: KeyboardEvent) {
-		if (event.keyCode === 13) {
-			// ENTER key
-			this.go();
-		}
-	}
-
+  keyPress(event: KeyboardEvent) {
+    if (event.keyCode === 13) {
+      // ENTER key
+      this.go();
+    }
+  }
 }
-ComicNavController.$inject = ['$scope', '$log', 'comicService', 'eventService', 'latestComic'];
+ComicNavController.$inject = [
+  "$scope",
+  "$log",
+  "comicService",
+  "eventService",
+  "latestComic",
+];
 
 export default function (app: AngularModule) {
-	app.directive('qcComicNav', function () {
-		return {
-			restrict: 'E',
-			replace: true,
-			scope: {},
-			controller: ComicNavController,
-			controllerAs: 'cn',
-			template: variables.html.comicNav
-		};
-	});
+  app.directive("qcComicNav", function () {
+    return {
+      restrict: "E",
+      replace: true,
+      scope: {},
+      controller: ComicNavController,
+      controllerAs: "cn",
+      template: variables.html.comicNav,
+    };
+  });
 }

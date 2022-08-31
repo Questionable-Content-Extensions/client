@@ -1,6 +1,6 @@
 // @flow
 /*
- * Copyright (C) 2016-2019 Alexander Krivács Schrøder <alexschrod@gmail.com>
+ * Copyright (C) 2016-2022 Alexander Krivács Schrøder <alexschrod@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,14 +17,14 @@
  */
 
 export type LogEntry = {
-	identifier: string;
-	dateTime: string;
-	action: string;
-}
+  identifier: string,
+  dateTime: string,
+  action: string,
+};
 
 export type LogEntryData = {
-	logEntries: LogEntry[];
-	page: number;
-	pageCount: number;
-	logEntryCount: number;
-}
+  logEntries: LogEntry[],
+  page: number,
+  pageCount: number,
+  logEntryCount: number,
+};

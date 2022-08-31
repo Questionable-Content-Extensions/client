@@ -1,6 +1,6 @@
 // @flow
 /*
- * Copyright (C) 2016-2019 Alexander Krivács Schrøder <alexschrod@gmail.com>
+ * Copyright (C) 2016-2022 Alexander Krivács Schrøder <alexschrod@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,23 +16,23 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import $ from 'jquery';
-import angular from 'angular';
+import $ from "jquery";
+import angular from "angular";
 
-import './modules/jQuery.changeElementType';
+import "./modules/jQuery.changeElementType";
 
-import settings from './modules/settings';
-import DomModifier from './modules/dom-modifier';
-import { setup as setupAngular } from './modules/angular-app';
+import settings from "./modules/settings";
+import DomModifier from "./modules/dom-modifier";
+import { setup as setupAngular } from "./modules/angular-app";
 
 (async () => {
-	await settings.loadSettings();
+  await settings.loadSettings();
 
-	const domModifier = new DomModifier();
-	domModifier.modify();
+  const domModifier = new DomModifier();
+  domModifier.modify();
 
-	setupAngular();
+  setupAngular();
 
-	// Let's go!
-	angular.bootstrap($('html').get(0), ['qc-spa']);
+  // Let's go!
+  angular.bootstrap($("html").get(0), ["qc-spa"]);
 })();

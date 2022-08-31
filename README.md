@@ -2,25 +2,17 @@
 
 ## Getting Started
 
-To build this project, you can make use of a [Vagrant virtual machine build environment](https://www.vagrantup.com/) which will take care of setting the build environment up for you (recommended) or, you can install the build environment on your own computer.
+To build this project, you can make use of a [Docker](https://www.docker.com/) container, which will take care of setting the build environment up for you (recommended) or, you can install the build environment on your own computer.
 
-### Building using Vagrant
+### Building using Docker
 
-Install [Vagrant](https://www.vagrantup.com/) if you don't already have it on your system. (If you're not familiar with Vagrant from before, reading the [Getting Started](https://www.vagrantup.com/docs/getting-started/) documentation is recommended to get a feel for what it is about.)
+Install [Docker](https://www.docker.com/) if you don't already have it on your system. (If you're not familiar with Docker from before, reading the [Getting Started](https://www.docker.com/get-started) documentation is recommended to get a feel for what it is about.)
 
-Once Vagrant is installed, clone this repository, then run the following commands in the repository directory:
+Once Docker is installed, clone this repository, then run the build.ps1 file. If you're not using Powershell, run the commands from build.ps1 manually in your own shell.
 
-```shell
-vagrant up  # To initialize the Vagrant virtual machine (this will take a while the first time)
-vagrant ssh # To log into the virtual machine
-grunt build # To build our script
-```
+After having run the commands, you should have files created at `dist\qc-ext.user.js`. This file can be opened in Greasemonkey or Tampermonkey directly.
 
-After having run the commands above, you should have files created at `dist\qc-ext.user.js` and `dist\qc-ext.min.user.js` within the repository. These files can be opened in Greasemonkey or Tampermonkey directly.
-
-Whenever you've made changes and want to incorporate them into the user script, simply run `grunt build` in the Vagrant VM again.
-
-When you're done developing, simply log off the virtual machine (`exit`) and run `vagrant suspend` or `vagrant halt`. To resume work later, just repeat the sequence of commands shown above. Should you want to remove the virtual machine, run `vagrant destroy`.
+Whenever you've made changes and want to incorporate them into the user script, simply run the build script again.
 
 ### Building on your own computer
 
@@ -30,10 +22,9 @@ This project requires [Node.js®](https://nodejs.org/) and [Ruby](https://www.ru
 gem install compass      # If you don't have compass installed already
 npm install -g grunt-cli # If you don't have grunt installed already
 npm install              # To install all the grunt plugins we use
-grunt build              # To build our script
+grunt                    # To build our script
 ```
 
-After having run the commands above, you should have files created at `dist\qc-ext.user.js` and `dist\qc-ext.min.user.js` within the repository. These files can be opened in Greasemonkey or Tampermonkey directly.
+After having run the commands above, you should have files created at `dist\qc-ext.user.js`. This file can be opened in Greasemonkey or Tampermonkey directly.
 
-Whenever you've made changes and want to incorporate them into the user script, simply run `grunt build` again.
-
+Whenever you've made changes and want to incorporate them into the user script, simply run `grunt` again.

@@ -1,6 +1,6 @@
 // @flow
 /*
- * Copyright (C) 2016-2019 Alexander Krivács Schrøder <alexschrod@gmail.com>
+ * Copyright (C) 2016-2022 Alexander Krivács Schrøder <alexschrod@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,60 +16,59 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import type { AngularModule, $Log } from 'angular';
+import type { AngularModule, $Log } from "angular";
 
-import constants from '../../../constants';
-import settings, { Settings } from '../../settings';
-import variables from '../../../../generated/variables.pass2';
+import constants from "../../../constants";
+import settings, { Settings } from "../../settings";
+import variables from "../../../../generated/variables.pass2";
 
-import { EventHandlingControllerBase } from '../controllers/ControllerBases';
+import { EventHandlingControllerBase } from "../controllers/ControllerBases";
 
-import type { $DecoratedScope } from '../decorateScope';
-import type { EventService } from '../services/eventService';
-import type { ComicData } from '../api/comicData';
+import type { $DecoratedScope } from "../decorateScope";
+import type { EventService } from "../services/eventService";
+import type { ComicData } from "../api/comicData";
 
 export class RibbonController extends EventHandlingControllerBase<RibbonController> {
-	static $inject: string[];
+  static $inject: string[];
 
-	settings: Settings;
-	isNonCanon: ?boolean;
-	isGuestComic: ?boolean;
-	isSmall: boolean;
+  settings: Settings;
+  isNonCanon: ?boolean;
+  isGuestComic: ?boolean;
+  isSmall: boolean;
 
-	constructor(
-		$scope: $DecoratedScope<RibbonController>,
-		$log: $Log,
-		eventService: EventService
-	) {
-		$log.debug('START RibbonController');
+  constructor(
+    $scope: $DecoratedScope<RibbonController>,
+    $log: $Log,
+    eventService: EventService
+  ) {
+    $log.debug("START RibbonController");
 
-		super($scope, eventService);
+    super($scope, eventService);
 
-		this.settings = settings;
-		this.isNonCanon = false;
-		this.isGuestComic = false;
-		this.isSmall = settings.values.showSmallRibbonByDefault;
+    this.settings = settings;
+    this.isNonCanon = false;
+    this.isGuestComic = false;
+    this.isSmall = settings.values.showSmallRibbonByDefault;
 
-		$log.debug('END RibbonController');
-	}
+    $log.debug("END RibbonController");
+  }
 
-	_comicDataLoaded(comicData: ComicData) {
-		this.isNonCanon = comicData.isNonCanon;
-		this.isGuestComic = comicData.isGuestComic;
-	}
-
+  _comicDataLoaded(comicData: ComicData) {
+    this.isNonCanon = comicData.isNonCanon;
+    this.isGuestComic = comicData.isGuestComic;
+  }
 }
-RibbonController.$inject = ['$scope', '$log', 'eventService'];
+RibbonController.$inject = ["$scope", "$log", "eventService"];
 
 export default function (app: AngularModule) {
-	app.directive('qcRibbon', function () {
-		return {
-			restrict: 'E',
-			replace: true,
-			scope: {},
-			controller: RibbonController,
-			controllerAs: 'r',
-			template: variables.html.ribbon
-		};
-	});
+  app.directive("qcRibbon", function () {
+    return {
+      restrict: "E",
+      replace: true,
+      scope: {},
+      controller: RibbonController,
+      controllerAs: "r",
+      template: variables.html.ribbon,
+    };
+  });
 }

@@ -1,6 +1,6 @@
 // @flow
 /*
- * Copyright (C) 2016-2019 Alexander Krivács Schrøder <alexschrod@gmail.com>
+ * Copyright (C) 2016-2022 Alexander Krivács Schrøder <alexschrod@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,14 +16,17 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import type { AngularModule, $Log } from 'angular';
-import type { ComicService } from '../services/comicService';
+import type { AngularModule, $Log } from "angular";
+import type { ComicService } from "../services/comicService";
 
 export default function (app: AngularModule) {
-	app.controller('comicController', ['$log', 'comicService',
-		function ($log: $Log, comicService: ComicService) {
-			$log.debug('START comicController()');
-			this.comicService = comicService;
-			$log.debug('END comicController()');
-		}]);
+  app.controller("comicController", [
+    "$log",
+    "comicService",
+    function ($log: $Log, comicService: ComicService) {
+      $log.debug("START comicController()");
+      this.comicService = comicService;
+      $log.debug("END comicController()");
+    },
+  ]);
 }

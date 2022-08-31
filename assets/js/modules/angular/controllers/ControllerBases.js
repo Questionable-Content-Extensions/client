@@ -1,6 +1,6 @@
 // @flow
 /*
- * Copyright (C) 2016-2019 Alexander Krivács Schrøder <alexschrod@gmail.com>
+ * Copyright (C) 2016-2022 Alexander Krivács Schrøder <alexschrod@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,130 +16,114 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import type { $DecoratedScope } from '../decorateScope';
-import type { ComicService } from '../services/comicService';
-import type { EventService } from '../services/eventService';
-import type { ComicData } from '../api/comicData';
-import type { ItemBaseData } from '../api/itemData';
+import type { $DecoratedScope } from "../decorateScope";
+import type { ComicService } from "../services/comicService";
+import type { EventService } from "../services/eventService";
+import type { ComicData } from "../api/comicData";
+import type { ItemBaseData } from "../api/itemData";
 
 export class EventHandlingControllerBase<TScope: Object> {
-	$scope: $DecoratedScope<TScope>;
-	eventService: EventService;
+  $scope: $DecoratedScope<TScope>;
+  eventService: EventService;
 
-	constructor(
-		$scope: $DecoratedScope<TScope>,
-		eventService: EventService
-	) {
-		this.$scope = $scope;
-		this.eventService = eventService;
+  constructor($scope: $DecoratedScope<TScope>, eventService: EventService) {
+    this.$scope = $scope;
+    this.eventService = eventService;
 
-		eventService.comicDataLoadingEvent.subscribe($scope,
-			(event, comic) => {
-				$scope.safeApply(() => {
-					this._comicDataLoading(comic);
-				});
-			});
+    eventService.comicDataLoadingEvent.subscribe(
+      $scope,
+      (event, comic: number) => {
+        $scope.safeApply(() => {
+          this._comicDataLoading(comic);
+        });
+      }
+    );
 
-		eventService.comicDataLoadedEvent.subscribe($scope,
-			(event, comicData) => {
-				$scope.safeApply(() => {
-					this._comicDataLoaded(comicData);
-				});
-			});
+    eventService.comicDataLoadedEvent.subscribe($scope, (event, comicData) => {
+      $scope.safeApply(() => {
+        this._comicDataLoaded(comicData);
+      });
+    });
 
-		eventService.comicDataErrorEvent.subscribe($scope,
-			(event, error) => {
-				$scope.safeApply(() => {
-					this._comicDataError(error);
-				});
-			});
+    eventService.comicDataErrorEvent.subscribe($scope, (event, error) => {
+      $scope.safeApply(() => {
+        this._comicDataError(error);
+      });
+    });
 
-		eventService.itemsChangedEvent.subscribe($scope,
-			(event, data) => {
-				$scope.safeApply(() => {
-					this._itemsChanged();
-				});
-			});
+    eventService.itemsChangedEvent.subscribe($scope, (event, data) => {
+      $scope.safeApply(() => {
+        this._itemsChanged();
+      });
+    });
 
-		eventService.itemDataLoadingEvent.subscribe($scope,
-			(event, data) => {
-				$scope.safeApply(() => {
-					this._itemDataLoading();
-				});
-			});
+    eventService.itemDataLoadingEvent.subscribe($scope, (event, data) => {
+      $scope.safeApply(() => {
+        this._itemDataLoading();
+      });
+    });
 
-		eventService.itemDataLoadedEvent.subscribe($scope,
-			(event, itemData) => {
-				$scope.safeApply(() => {
-					this._itemDataLoaded(itemData);
-				});
-			});
+    eventService.itemDataLoadedEvent.subscribe($scope, (event, itemData) => {
+      $scope.safeApply(() => {
+        this._itemDataLoaded(itemData);
+      });
+    });
 
-		eventService.itemDataErrorEvent.subscribe($scope,
-			(event, error) => {
-				$scope.safeApply(() => {
-					this._itemDataError(error);
-				});
-			});
+    eventService.itemDataErrorEvent.subscribe($scope, (event, error) => {
+      $scope.safeApply(() => {
+        this._itemDataError(error);
+      });
+    });
 
-		eventService.maintenanceEvent.subscribe($scope,
-			(event, error) => {
-				$scope.safeApply(() => {
-					this._maintenance();
-				});
-			});
-	}
+    eventService.maintenanceEvent.subscribe($scope, (event, error) => {
+      $scope.safeApply(() => {
+        this._maintenance();
+      });
+    });
+  }
 
-	_comicDataLoading(comic: number) {
-	}
+  _comicDataLoading(comic: number) {}
 
-	_comicDataLoaded(comicData: ComicData) {
-	}
+  _comicDataLoaded(comicData: ComicData) {}
 
-	_comicDataError(error: any) {
-	}
+  _comicDataError(error: any) {}
 
-	_itemsChanged() {
-	}
+  _itemsChanged() {}
 
-	_itemDataLoading() {
-	}
+  _itemDataLoading() {}
 
-	_itemDataLoaded(itemData: ItemBaseData[]) {
-	}
+  _itemDataLoaded(itemData: ItemBaseData[]) {}
 
-	_itemDataError(error: any) {
-	}
+  _itemDataError(error: any) {}
 
-	_maintenance() {
-
-	}
+  _maintenance() {}
 }
 
-export class SetValueControllerBase<TScope: Object> extends EventHandlingControllerBase<TScope> {
-	comicService: ComicService;
+export class SetValueControllerBase<
+  TScope: Object
+> extends EventHandlingControllerBase<TScope> {
+  comicService: ComicService;
 
-	unique: string;
+  unique: string;
 
-	constructor(
-		$scope: $DecoratedScope<TScope>,
-		comicService: ComicService,
-		eventService: EventService
-	) {
-		super($scope, eventService);
+  constructor(
+    $scope: $DecoratedScope<TScope>,
+    comicService: ComicService,
+    eventService: EventService
+  ) {
+    super($scope, eventService);
 
-		this.comicService = comicService;
+    this.comicService = comicService;
 
-		this.unique = Math.random().toString(36).slice(-5);
-	}
+    this.unique = Math.random().toString(36).slice(-5);
+  }
 
-	_updateValue() {
-	}
+  _updateValue() {}
 
-	keyPress(event: KeyboardEvent) {
-		if (event.keyCode === 13) {
-			// ENTER key
-			this._updateValue();
-		}
-	}
+  keyPress(event: KeyboardEvent) {
+    if (event.keyCode === 13) {
+      // ENTER key
+      this._updateValue();
+    }
+  }
 }

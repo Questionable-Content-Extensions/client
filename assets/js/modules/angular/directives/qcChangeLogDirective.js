@@ -1,6 +1,6 @@
 // @flow
 /*
- * Copyright (C) 2016-2019 Alexander Krivács Schrøder <alexschrod@gmail.com>
+ * Copyright (C) 2016-2022 Alexander Krivács Schrøder <alexschrod@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,86 +16,88 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import type { AngularModule, $Log } from 'angular';
+import type { AngularModule, $Log } from "angular";
 
-import GM from 'greasemonkey';
+import GM from "greasemonkey";
 
-import constants from '../../../constants';
-import settings from '../../settings';
-import variables from '../../../../generated/variables.pass2';
+import constants from "../../../constants";
+import settings from "../../settings";
+import variables from "../../../../generated/variables.pass2";
 
-import { EventHandlingControllerBase } from '../controllers/ControllerBases';
+import { EventHandlingControllerBase } from "../controllers/ControllerBases";
 
-import type { $DecoratedScope } from '../decorateScope';
-import type { EventService } from '../services/eventService';
-import type { ComicData } from '../api/comicData';
+import type { $DecoratedScope } from "../decorateScope";
+import type { EventService } from "../services/eventService";
+import type { ComicData } from "../api/comicData";
 
 export class ChangeLogController extends EventHandlingControllerBase<ChangeLogController> {
-	static $inject: string[];
+  static $inject: string[];
 
-	$log: $Log;
+  $log: $Log;
 
-	versionUpdated: boolean;
-	currentVersion: string;
-	previousVersion: ?string;
+  versionUpdated: boolean;
+  currentVersion: string;
+  previousVersion: ?string;
 
-	constructor(
-		$scope: $DecoratedScope<ChangeLogController>,
-		$log: $Log,
-		eventService: EventService
-	) {
-		$log.debug('START ChangeLogController');
+  constructor(
+    $scope: $DecoratedScope<ChangeLogController>,
+    $log: $Log,
+    eventService: EventService
+  ) {
+    $log.debug("START ChangeLogController");
 
-		super($scope, eventService);
+    super($scope, eventService);
 
-		this.$log = $log;
+    this.$log = $log;
 
-		this.versionUpdated = false;
-		this.currentVersion = GM.info.script.version;
-		this.previousVersion = null;
+    this.versionUpdated = false;
+    this.currentVersion = GM.info.script.version;
+    this.previousVersion = null;
 
-		$('#changeLogDialog').on('hide.bs.modal', async () => {
-			this.$log.debug('Saving settings...');
-			settings.values.version = this.currentVersion;
-			await settings.saveSettings();
-			this.$log.debug('Settings saved.');
-		});
+    $("#changeLogDialog").on("hide.bs.modal", async () => {
+      this.$log.debug("Saving settings...");
+      settings.values.version = this.currentVersion;
+      await settings.saveSettings();
+      this.$log.debug("Settings saved.");
+    });
 
-		$log.debug('END ChangeLogController');
-	}
+    $log.debug("END ChangeLogController");
+  }
 
-	_comicDataLoaded(comicData: ComicData) {
-		if (!settings.values.version) {
-			// Version is undefined. We're a new user!
-			this.$log.debug('ChangeLogController::_comicDataLoaded(): Version undefined!');
-		} else if (settings.values.version !==
-			this.currentVersion) {
-			// Version is changed. Script has been updated!
-			// Show the change log dialog.
-			this.previousVersion = settings.values.version;
-			this.$log.debug('ChangeLogController::_comicDataLoaded(): Version different!');
-		} else {
-			return;
-		}
-		this.versionUpdated = true;
-	}
-	
-	close() {
-		($('#changeLogDialog'): any).modal('hide');
-	}
+  _comicDataLoaded(comicData: ComicData) {
+    if (!settings.values.version) {
+      // Version is undefined. We're a new user!
+      this.$log.debug(
+        "ChangeLogController::_comicDataLoaded(): Version undefined!"
+      );
+    } else if (settings.values.version !== this.currentVersion) {
+      // Version is changed. Script has been updated!
+      // Show the change log dialog.
+      this.previousVersion = settings.values.version;
+      this.$log.debug(
+        "ChangeLogController::_comicDataLoaded(): Version different!"
+      );
+    } else {
+      return;
+    }
+    this.versionUpdated = true;
+  }
 
+  close() {
+    ($("#changeLogDialog"): any).modal("hide");
+  }
 }
-ChangeLogController.$inject = ['$scope', '$log', 'eventService'];
+ChangeLogController.$inject = ["$scope", "$log", "eventService"];
 
 export default function (app: AngularModule) {
-	app.directive('qcChangeLog', function () {
-		return {
-			restrict: 'E',
-			replace: true,
-			scope: {},
-			controller: ChangeLogController,
-			controllerAs: 'clvm',
-			template: variables.html.changeLog
-		};
-	});
+  app.directive("qcChangeLog", function () {
+    return {
+      restrict: "E",
+      replace: true,
+      scope: {},
+      controller: ChangeLogController,
+      controllerAs: "clvm",
+      template: variables.html.changeLog,
+    };
+  });
 }

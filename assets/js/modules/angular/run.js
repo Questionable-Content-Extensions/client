@@ -1,6 +1,6 @@
 // @flow
 /*
- * Copyright (C) 2016-2019 Alexander Krivács Schrøder <alexschrod@gmail.com>
+ * Copyright (C) 2016-2022 Alexander Krivács Schrøder <alexschrod@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,14 +16,18 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import type { AngularModule } from 'angular';
+import type { AngularModule } from "angular";
 
-import settings from './../settings';
+import settings from "./../settings";
 
 export default function (app: AngularModule) {
-	app.run(['$rootScope', 'comicService', 'startComic',
-		function ($rootScope, comicService, startComic) {
-			$rootScope.settings = settings;
-			comicService.gotoComic(startComic);
-		}]);
+  app.run([
+    "$rootScope",
+    "comicService",
+    "startComic",
+    function ($rootScope, comicService, startComic) {
+      $rootScope.settings = settings;
+      comicService.gotoComic(startComic);
+    },
+  ]);
 }

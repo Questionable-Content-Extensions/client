@@ -1,6 +1,6 @@
 // @flow
 /*
- * Copyright (C) 2016-2019 Alexander Krivács Schrøder <alexschrod@gmail.com>
+ * Copyright (C) 2016-2022 Alexander Krivács Schrøder <alexschrod@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,28 +16,31 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import GM from 'greasemonkey';
+import GM from "greasemonkey";
 
-import type { $Scope } from 'angular';
+import type { $Scope } from "angular";
 
 export type $DecoratedScope<T> = $Scope<T> & {
-	safeApply(fn: Function): void;
+  safeApply(fn: Function): void,
 };
 
 export default function ($provide: any) {
-	$provide.decorator('$rootScope', ['$delegate', function ($delegate) {
-		const $rootScopePrototype = Object.getPrototypeOf($delegate);
-		$rootScopePrototype.safeApply = function (fn) {
-			const phase = this.$root.$$phase;
-			if (phase === '$apply' || phase === '$digest') {
-				if (fn && typeof fn === 'function') {
-					fn();
-				}
-			} else {
-				this.$apply(fn);
-			}
-		};
+  $provide.decorator("$rootScope", [
+    "$delegate",
+    function ($delegate) {
+      const $rootScopePrototype = Object.getPrototypeOf($delegate);
+      $rootScopePrototype.safeApply = function (fn) {
+        const phase = this.$root.$$phase;
+        if (phase === "$apply" || phase === "$digest") {
+          if (fn && typeof fn === "function") {
+            fn();
+          }
+        } else {
+          this.$apply(fn);
+        }
+      };
 
-		return $delegate;
-	}]);
+      return $delegate;
+    },
+  ]);
 }
