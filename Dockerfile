@@ -34,7 +34,7 @@ RUN bash -c "source /etc/profile.d/rvm.sh && gem install compass"
 COPY package*.json ./
 
 # Install our NPM dependencies
-RUN npm install
+RUN npm install --legacy-peer-deps
 
 # Preserve package-lock.json
 RUN cp package-lock.json package-lock.json.new

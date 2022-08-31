@@ -1,4 +1,4 @@
-/* 
+/*
  * Copyright (C) 2016-2019 Alexander Krivács Schrøder <alexschrod@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -17,8 +17,7 @@
 
 /* global module */
 
-const userScriptBanner =
-`// ==UserScript==
+const userScriptBanner = `// ==UserScript==
 // @name         Questionable Content Single-Page Application with Extra Features
 // @namespace    https://questionablextensions.net/
 // @version      <%= pkg.version %>
@@ -38,8 +37,6 @@ const userScriptBanner =
 // @require      https://questionablextensions.net/scripts/angular.custom.js
 // @require      https://cdnjs.cloudflare.com/ajax/libs/angular-ui-router/0.2.18/angular-ui-router.min.js
 // @connect      questionablextensions.net
-// @connect      questionablecontent.herokuapp.com
-// @connect      localhost
 // @grant        GM.openInTab
 // @grant        GM.setValue
 // @grant        GM.getValue

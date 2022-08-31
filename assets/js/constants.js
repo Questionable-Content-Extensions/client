@@ -28,7 +28,7 @@ function getWebserviceBaseUrl() {
   if (developmentMode) {
     return "http://localhost:3000/api/";
   } else {
-    return "https://questionablecontent.herokuapp.com/api/";
+    return "https://questionablextensions.net/api/";
   }
 }
 
