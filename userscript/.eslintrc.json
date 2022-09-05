@@ -1,0 +1,20 @@
+{
+    "extends": ["react-app"],
+    "rules": {
+        "no-unused-vars": [
+            "warn",
+            {
+                "argsIgnorePattern": "^_",
+                "varsIgnorePattern": "^_"
+            }
+        ]
+    },
+    "overrides": [
+        {
+            "files": ["**/*.ts?(x)"],
+            "rules": {
+                "@typescript-eslint/no-unused-vars": ["off"]
+            }
+        }
+    ]
+}

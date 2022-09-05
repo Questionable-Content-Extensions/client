@@ -1,0 +1,14 @@
+@import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css');
+@import url('https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@200;400;700&display=swap');
+
+/* @tailwind base; */
+/* @tailwind components; */
+@tailwind utilities;
+
+body {
+    position: relative;
+}
+
+.small-caps {
+    font-variant: small-caps;
+}
