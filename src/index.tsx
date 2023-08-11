@@ -14,24 +14,21 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 import React from 'react'
 import ReactDOM from 'react-dom'
 
 import './index.css'
 
-import { awaitElement, info, qcBug, error, debug, fetch, setup } from './utils'
-import Settings from './settings'
-
-import comicService from './services/comicService'
-import './services/comicDataService'
-import settingsService from './services/settingsService'
-
+import Comic from './components/Comic'
 import ComicNavigation from './components/ComicNavigation'
 import DateComponent from './components/Date'
-import Comic from './components/Comic'
 import News from './components/News'
 import QcExtMainWidget from './components/QcExtMainWidget/QcExtMainWidget'
+import './services/comicDataService'
+import comicService from './services/comicService'
+import settingsService from './services/settingsService'
+import Settings from './settings'
+import { awaitElement, debug, error, fetch, info, qcBug, setup } from './utils'
 
 // TODO: Project-wide issue: Handle errors on network, non-200 HTTP statuses, etc.
 

@@ -1,7 +1,7 @@
-import { ComponentStory, ComponentMeta } from '@storybook/react'
+import { ComponentMeta, ComponentStory } from '@storybook/react'
 
-import { ComicList } from './GoToComicDialog'
 import { ComicDataListing } from '../../services/comicDataService'
+import { ComicList } from './GoToComicDialog'
 
 export default {
     component: ComicList,

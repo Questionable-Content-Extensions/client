@@ -1,8 +1,9 @@
 import { useState } from 'react'
+
+import ModalDialogSeat from '../Modals/ModalDialogSeat'
 import ModalPageOverlay from '../Modals/ModalPageOverlay'
 import ModalPortal from '../Modals/ModalPortal'
 import ExtraNavButton from './ExtraNavButton'
-import ModalDialogSeat from '../Modals/ModalDialogSeat'
 import GoToComicDialog from './GoToComicDialog'
 
 export default function ExtraNavigation({

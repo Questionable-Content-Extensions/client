@@ -1,6 +1,6 @@
 import constants from '../constants'
 import Settings from '../settings'
-import { warn, error, info, debug, fetch } from '../utils'
+import { debug, error, fetch, info, warn } from '../utils'
 import comicService from './comicService'
 
 let currentComicData: ComicData | null = null

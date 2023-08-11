@@ -1,6 +1,6 @@
-import { ComponentStory, ComponentMeta } from '@storybook/react'
-import { ItemNavigationData } from '../../services/comicDataService'
+import { ComponentMeta, ComponentStory } from '@storybook/react'
 
+import { ItemNavigationData } from '../../services/comicDataService'
 import NavElement from './NavElement'
 
 const MARTEN: ItemNavigationData = {

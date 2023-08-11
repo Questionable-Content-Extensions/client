@@ -1,8 +1,8 @@
+import '../src/index.css'
 import './qc.css'
 
-import '../src/index.css'
-
 import { setup } from '../src/utils'
+
 setup(true)
 
 export const parameters = {

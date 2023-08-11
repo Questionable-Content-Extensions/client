@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react'
+
 import useComic from '../../hooks/useComic'
 import useComicData from '../../hooks/useComicData'
+import useSettings from '../../hooks/useSettings'
 import { debug } from '../../utils'
 import ExtraNavigation from './ExtraNavigation'
 import ItemNavigation from './ItemNavigation'
-import useSettings from '../../hooks/useSettings'
 
 export default function QcExtMainWidget() {
     const [settings, _updateSettings] = useSettings()

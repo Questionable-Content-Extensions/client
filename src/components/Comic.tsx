@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+
 import useComic from '../hooks/useComic'
 import useComicData from '../hooks/useComicData'
 import useSettings from '../hooks/useSettings'

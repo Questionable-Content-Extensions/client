@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+
 import comicDataService, { ComicData } from '../services/comicDataService'
 
 export default function useComicData() {
