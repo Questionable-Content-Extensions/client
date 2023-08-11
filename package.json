@@ -11,7 +11,8 @@
         "test": "react-app-rewired test",
         "eject": "react-scripts eject",
         "storybook": "cross-env NODE_OPTIONS=--openssl-legacy-provider start-storybook -p 6006 -s public",
-        "build-storybook": "build-storybook -s public"
+        "build-storybook": "build-storybook -s public",
+        "prepare": "husky install"
     },
     "author": "Alexander Krivács Schrøder",
     "license": "GPL-3.0",
@@ -20,6 +21,8 @@
     },
     "homepage": "https://questionablextensions.net/",
     "devDependencies": {
+        "@commitlint/cli": "^17.7.1",
+        "@commitlint/config-conventional": "^17.7.0",
         "@storybook/addon-actions": "^6.5.10",
         "@storybook/addon-essentials": "^6.5.10",
         "@storybook/addon-interactions": "^6.5.10",
@@ -30,9 +33,12 @@
         "@storybook/preset-create-react-app": "^4.1.2",
         "@storybook/react": "^6.5.10",
         "@storybook/testing-library": "^0.0.13",
+        "@trivago/prettier-plugin-sort-imports": "^4.2.0",
         "autoprefixer": "^10.4.8",
         "babel-plugin-named-exports-order": "^0.0.2",
         "cross-env": "^7.0.3",
+        "husky": "^8.0.3",
+        "lint-staged": "^13.2.3",
         "postcss": "^8.4.16",
         "prettier": "2.5.1",
         "prop-types": "^15.8.1",
@@ -62,6 +68,11 @@
             "last 1 chrome version",
             "last 1 firefox version",
             "last 1 safari version"
+        ]
+    },
+    "lint-staged": {
+        "**/*.{js,jsx,ts,tsx,json,css,scss,md}": [
+            "prettier --write"
         ]
     }
 }
