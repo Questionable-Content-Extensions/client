@@ -31,12 +31,12 @@ const extraArgs = process.argv[2] || ''
 execSync('npm run react-build -- ' + extraArgs, { stdio: [0, 1, 2] })
 
 // If it doesn't exist, create the `/dist` directory
-if (!fs.existsSync('../dist')) {
-    fs.mkdirSync('../dist')
+if (!fs.existsSync('./dist')) {
+    fs.mkdirSync('./dist')
 }
 
 // Open the dist file for writing
-let w = fs.createWriteStream('../dist/qc-ext.user.js', {
+let w = fs.createWriteStream('./dist/qc-ext.user.js', {
     flags: 'w',
 })
 
@@ -55,7 +55,7 @@ s.on('end', () => {
     mr.pipe(w)
     mr.on('end', () => {
         // Open the dev file for writing
-        let w = fs.createWriteStream('../dist/qc-ext-dev.user.js', {
+        let w = fs.createWriteStream('./dist/qc-ext-dev.user.js', {
             flags: 'w',
         })
 
