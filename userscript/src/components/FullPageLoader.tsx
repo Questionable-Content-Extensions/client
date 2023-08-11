@@ -1,6 +1,6 @@
 import Spinner from './Spinner'
 
-export default function Loader({
+export default function FullPageLoader({
     loadingText,
     show,
     height,

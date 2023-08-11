@@ -82,7 +82,9 @@ export default function ComicImage({
             let imageExtension = constants.comicExtensions[currentExtension]
             downloadingImage.src = `./comics/${comicNo}.${imageExtension}`
         } else {
-            debug(`wah wah ${comicNo} ${imageType}`)
+            debug(
+                `comic service isn't ready yet, nothing yet to do for image loading`
+            )
         }
     }, [imageData, imageReady])
 

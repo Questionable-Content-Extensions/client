@@ -1,44 +1,4 @@
-// export enum ReportSeverity {
-//     Log,
-//     Debug,
-//     Info,
-//     Warn,
-//     Error,
-// }
-
-// let clog = console.log.bind(console)
-// let cdebug = console.debug.bind(console)
-// let cinfo = console.info.bind(console)
-// let cwarn = console.warn.bind(console)
-// let cerror = console.error.bind(console)
-
-// /**
-//  * Wrapped console logging functions.
-//  *
-//  * @export
-//  * @param {*} args
-//  */
-// export function report(severity: ReportSeverity, ...args: any[]) {
-//     switch (severity) {
-//         case ReportSeverity.Log:
-//             clog('%c[QC-Ext]:', 'color: purple; font-weight: bold', ...args)
-//             break
-//         case ReportSeverity.Debug:
-//             cdebug('%c[QC-Ext]:', 'color: purple; font-weight: bold', ...args)
-//             break
-//         case ReportSeverity.Info:
-//             cinfo('%c[QC-Ext]:', 'color: purple; font-weight: bold', ...args)
-//             break
-//         case ReportSeverity.Warn:
-//             cwarn('%c[QC-Ext]:', 'color: purple; font-weight: bold', ...args)
-//             break
-//         case ReportSeverity.Error:
-//             cerror('%c[QC-Ext]:', 'color: purple; font-weight: bold', ...args)
-//             break
-//     }
-// }
-
-/* eslint-disable no-unused-vars */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 let log = function (...args: any[]) {
     forgotSetup()
 }
@@ -62,7 +22,7 @@ let error = function (...args: any[]) {
 let qcBug = function (...args: any[]) {
     forgotSetup()
 }
-/* eslint-enable no-unused-vars */
+/* eslint-enable @typescript-eslint/no-unused-vars */
 
 function forgotSetup() {
     console.error('Console function used before call to setup()')
@@ -76,6 +36,8 @@ function setup(enableDebug: boolean) {
         'color: purple; font-weight: bold'
     )
 
+    // TODO: See if there's a way to make this dynamic based on the setting
+    // instead of requiring a restart.
     if (enableDebug) {
         debug = Function.prototype.bind.call(
             console.debug,

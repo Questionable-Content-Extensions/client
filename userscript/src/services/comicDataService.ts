@@ -31,7 +31,7 @@ async function comicChanged(refresh?: boolean) {
     currentlyLoadingComicData = currentComic
     notifyLoadingSubscribers(currentComic)
 
-    const settings = await Settings.loadSettings()
+    const settings = Settings.get()
 
     let comicDataUrl = constants.comicDataUrl + currentComic
     const urlParameters: {
@@ -56,7 +56,14 @@ async function comicChanged(refresh?: boolean) {
     }
 
     debug('Next comicData URL is', comicDataUrl)
-    const response = await fetch(comicDataUrl)
+    let response
+    try {
+        response = await fetch(comicDataUrl)
+    } catch (e) {
+        // TODO: Handle connection error (i.e. server down)
+        // (Should probably be done using error boundaries...)
+        return
+    }
     if (response.status === 503) {
         // TODO: Enter Maintenance mode
         warn('Maintenance', response.responseText)
@@ -168,6 +175,25 @@ function notifyLoadedSubscribers(comicData: ComicData) {
     }
 }
 
+async function all() {
+    const response = await fetch(constants.comicDataUrl)
+
+    if (response.status === 503) {
+        // TODO: Enter Maintenance mode
+        warn('Maintenance', response.responseText)
+        return
+    } else if (response.status !== 200) {
+        error(
+            `Got error when loading the comic data for all comics:`,
+            response.responseText
+        )
+        return
+    }
+
+    const comicData = JSON.parse(response.responseText) as ComicDataListing[]
+    return comicData
+}
+
 const comicDataService = {
     refresh,
     current,
@@ -176,6 +202,7 @@ const comicDataService = {
     unsubscribeLoading,
     subscribeLoaded,
     unsubscribeLoaded,
+    all,
 }
 export default comicDataService
 
@@ -187,6 +214,13 @@ function fixItem(item: ItemNavigationData, currentComic: number) {
     if (item.last === currentComic) {
         item.last = null
     }
+}
+
+export type ComicDataListing = {
+    comic: number
+    title: string | null
+    isGuestComic: boolean
+    isNonCanon: boolean
 }
 
 export type ComicDataShared = {

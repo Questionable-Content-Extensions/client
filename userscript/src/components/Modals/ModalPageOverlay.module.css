@@ -1,0 +1,35 @@
+@keyframes fade-in {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 0.5;
+    }
+}
+
+@keyframes fade-out {
+    from {
+        opacity: 0.5;
+    }
+    to {
+        opacity: 0;
+    }
+}
+
+.modalPageOverlay {
+    display: none;
+}
+.modalPageOverlay.show,
+.modalPageOverlay.fadedIn {
+    display: block;
+    z-index: 1000;
+    opacity: 0.5;
+}
+
+.modalPageOverlay.show {
+    animation: fade-in 1s;
+}
+
+.modalPageOverlay:not(.show).fadedIn {
+    animation: fade-out 1s;
+}

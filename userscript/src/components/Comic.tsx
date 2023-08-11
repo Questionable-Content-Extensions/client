@@ -4,7 +4,7 @@ import useComicData from '../hooks/useComicData'
 import useSettings from '../hooks/useSettings'
 import { debug, info } from '../utils'
 import ComicImage from './ComicImage'
-import Loader from './Loader'
+import FullPageLoader from './FullPageLoader'
 
 export default function Comic({
     initialComic,
@@ -99,7 +99,7 @@ export default function Comic({
                     imageReady={imageReady}
                 />
             </a>
-            <Loader
+            <FullPageLoader
                 height="h-10"
                 width="w-10"
                 loadingText={`Loading comic ${comicNo}...`}

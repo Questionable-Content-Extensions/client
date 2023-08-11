@@ -64,9 +64,16 @@ module.exports = function override(config, env) {
                 // This will happen if, for example, it has already been replaced
             }
         }
+        if (x.use) {
+            x.use = x.use.filter(
+                (y) =>
+                    !y.loader || !y.loader.includes('mini-css-extract-plugin')
+            )
+        }
     })
 
-    // Make a globalThis shim to prevent webpack code from erroring when run in dev mode
+    // Make a global
+    // This shim to prevent webpack code from erroring when run in dev mode
     config.output.globalObject = `(function() {
         if (typeof globalThis === 'object') return globalThis;
         Object.defineProperty(Object.prototype, '__magic__', {

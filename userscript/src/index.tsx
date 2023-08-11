@@ -27,11 +27,11 @@ import comicService from './services/comicService'
 import './services/comicDataService'
 import settingsService from './services/settingsService'
 
-import Navigation from './components/Navigation'
+import ComicNavigation from './components/ComicNavigation'
 import DateComponent from './components/Date'
 import Comic from './components/Comic'
 import News from './components/News'
-import ExtraNavigation from './components/ExtraNavigation'
+import QcExtMainWidget from './components/QcExtMainWidget/QcExtMainWidget'
 
 // TODO: Project-wide issue: Handle errors on network, non-200 HTTP statuses, etc.
 
@@ -54,10 +54,9 @@ async function main() {
         return
     }
 
-    initializeNavigation()
-
+    initializePortal()
+    initializeComicNavigation()
     initializeDateAndNews()
-
     initializeExtraNavigation()
 
     // TODO: Initialize "message seat"
@@ -68,7 +67,7 @@ async function main() {
 
 async function developmentMain() {
     const settings = await Settings.loadSettings()
-    // TODO: Remove this line:
+    // TODO: Remove this line once we have a settings dialog:
     settings.values.showDebugLogs = true
     setup(settings.values.showDebugLogs)
 
@@ -188,7 +187,14 @@ async function getLatestComic(comic: number) {
     return latestComic
 }
 
-function initializeNavigation() {
+function initializePortal() {
+    const portalContainer = document.createElement('div')
+    portalContainer.id = 'qc-ext-portal-container'
+    const body = document.getElementsByTagName('body')[0]
+    body.insertAdjacentElement('afterbegin', portalContainer)
+}
+
+function initializeComicNavigation() {
     // Jeph violates an HTML rule by having the same ID on two elements. What this means for us is
     // that in order to get a hold of both of them, we need to first grab one; change its ID and
     // then grab the second one, both using the same id selector.
@@ -213,7 +219,7 @@ function initializeNavigation() {
     comicNavParent.replaceChild(comicNavContainer, comicNav)
     ReactDOM.render(
         <React.StrictMode>
-            <Navigation />
+            <ComicNavigation />
         </React.StrictMode>,
         comicNavContainer
     )
@@ -240,7 +246,7 @@ function initializeNavigation() {
 
     ReactDOM.render(
         <React.StrictMode>
-            <Navigation />
+            <ComicNavigation />
         </React.StrictMode>,
         comicNavContainer
     )
@@ -300,7 +306,7 @@ function initializeExtraNavigation() {
     container.insertAdjacentElement('beforebegin', extraContainer)
     ReactDOM.render(
         <React.StrictMode>
-            <ExtraNavigation />
+            <QcExtMainWidget />
         </React.StrictMode>,
         extraContainer
     )

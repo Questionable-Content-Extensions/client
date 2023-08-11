@@ -139,65 +139,69 @@ window.addEventListener('popstate', (event) => {
     }
 })
 
+// TODO: Make this work well in Firefox also
 const isStupidFox = navigator.userAgent.toLowerCase().indexOf('firefox') > -1
 // eslint-disable-next-line no-eval
 const shortcut = window.eval('window.shortcut')
+if (shortcut) {
+    // Firefox balks at me trying to use the "shortcut" object from
+    // my user script. Works just fine in Chrome. I can't be bothered
+    // to cater to one browser's stupidity.
+    if (isStupidFox) {
+        const shortcutRemove = window
+            // eslint-disable-next-line no-eval
+            .eval('window.shortcut && window.shortcut.remove')
+            .bind(shortcut)
+        shortcutRemove('Left')
+        shortcutRemove('Right')
 
-// Firefox balks at me trying to use the "shortcut" object from
-// my user script. Works just fine in Chrome. I can't be bothered
-// to cater to one browser's stupidity.
-if (isStupidFox) {
-    // eslint-disable-next-line no-eval
-    const shortcutRemove = window.eval('window.shortcut.remove').bind(shortcut)
-    shortcutRemove('Left')
-    shortcutRemove('Right')
+        // This is a sort of replacement for "shortcut". Only supports
+        // simple Left/Right navigation. Is missing the editor mode
+        // shortcuts because Firefox is behaving like shit.
+        window.addEventListener(
+            'keydown',
+            function (event) {
+                // Only if no special keys are held down
+                if (
+                    event.altKey ||
+                    event.ctrlKey ||
+                    event.metaKey ||
+                    event.shiftKey
+                ) {
+                    return
+                }
 
-    // This is a sort of replacement for "shortcut". Only supports
-    // simple Left/Right navigation. Is missing the editor mode
-    // shortcuts because Firefox is behaving like shit.
-    window.addEventListener(
-        'keydown',
-        function (event) {
-            // Only if no special keys are held down
-            if (
-                event.altKey ||
-                event.ctrlKey ||
-                event.metaKey ||
-                event.shiftKey
-            ) {
-                return
-            }
+                if (event.key === 'ArrowLeft') {
+                    previous()
+                } else if (event.key === 'ArrowRight') {
+                    // RIGHT
+                    next()
+                }
+            },
+            false
+        )
+    } else {
+        console.debug(shortcut)
+        // See how nice it can be done when your browser doesn't
+        // actively try to sabotage you?
+        shortcut.remove('Left')
+        shortcut.remove('Right')
 
-            if (event.key === 'ArrowLeft') {
-                previous()
-            } else if (event.key === 'ArrowRight') {
-                // RIGHT
-                next()
-            }
-        },
-        false
-    )
-} else {
-    console.debug(shortcut)
-    // See how nice it can be done when your browser doesn't
-    // actively try to sabotage you?
-    shortcut.remove('Left')
-    shortcut.remove('Right')
+        shortcut.add('Left', setPrevious, { disable_in_input: true })
+        shortcut.add('Alt+Left', setPrevious)
 
-    shortcut.add('Left', setPrevious, { disable_in_input: true })
-    shortcut.add('Alt+Left', setPrevious)
+        shortcut.add('Right', setNext, { disable_in_input: true })
+        shortcut.add('Alt+Right', setNext)
 
-    shortcut.add('Right', setNext, { disable_in_input: true })
-    shortcut.add('Alt+Right', setNext)
-
-    shortcut.add(
-        'Q',
-        function () {
-            // TODO
-            // if (settings.values.editMode) {
-            //     $('input[id^="addItem"]').focus()
-            // }
-        },
-        { disable_in_input: true }
-    )
+        shortcut.add(
+            'Q',
+            function () {
+                // TODO
+                // if (settings.values.editMode) {
+                //     $('input[id^="addItem"]').focus()
+                // }
+            },
+            { disable_in_input: true }
+        )
+    }
 }

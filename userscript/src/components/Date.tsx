@@ -1,20 +1,13 @@
-import { useEffect, useState } from 'react'
 import useComicData from '../hooks/useComicData'
-import Settings from '../settings'
+import useSettings from '../hooks/useSettings'
 
 export default function DateComponent() {
     const {
         comicDataLoading: [comicDataLoading, _comicDataComicLoading],
         comicData,
     } = useComicData()
+    const [settings, _] = useSettings()
 
-    const [settings, setSettings] = useState<Settings>()
-    useEffect(() => {
-        async function loadSavedSettings() {
-            setSettings(await Settings.loadSettings())
-        }
-        loadSavedSettings()
-    })
     let useCorrectTimeFormat
     if (!settings) {
         useCorrectTimeFormat = true

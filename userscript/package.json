@@ -1,16 +1,16 @@
 {
     "name": "questionable-content-spa",
-    "version": "0.6.1",
+    "version": "0.7.0",
     "description": "Questionable Content Single-Page Application with Extra Features",
     "private": true,
     "scripts": {
         "start": "cross-env PORT=8124 BROWSER=none FAST_REFRESH=false WDS_SOCKET_HOST=localhost EXTEND_ESLINT=true react-app-rewired start",
         "build": "node build",
         "react-build": "react-app-rewired build",
-        "debug-build": "react-app-rewired --inspect-brk=5858 build && npm run finalize",
+        "debug-build": "react-app-rewired --inspect-brk=5858 build",
         "test": "react-app-rewired test",
         "eject": "react-scripts eject",
-        "storybook": "start-storybook -p 6006 -s public",
+        "storybook": "cross-env NODE_OPTIONS=--openssl-legacy-provider start-storybook -p 6006 -s public",
         "build-storybook": "build-storybook -s public"
     },
     "author": "Alexander Krivács Schrøder",
@@ -36,7 +36,8 @@
         "postcss": "^8.4.16",
         "prettier": "2.5.1",
         "prop-types": "^15.8.1",
-        "tailwindcss": "^3.1.8",
+        "tailwindcss": "^3.3.3",
+        "typescript-plugin-css-modules": "^3.4.0",
         "webpack": "^5.74.0"
     },
     "dependencies": {

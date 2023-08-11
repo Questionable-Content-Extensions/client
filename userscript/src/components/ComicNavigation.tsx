@@ -1,7 +1,6 @@
-//import comicService from '../services/comicService'
 import useComic from '../hooks/useComic'
 
-export default function Navigation() {
+export default function ComicNavigation() {
     const {
         currentComic: [currentComic, setCurrentComic],
         previousComic: [previousComic, setPreviousComic],

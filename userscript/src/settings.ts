@@ -38,13 +38,15 @@ export interface SettingValues {
     useCorrectTimeFormat: boolean
     comicLoadingIndicatorDelay: number
 
-    version: string | null
+    subDivideGotoComics: boolean
 
-    [prop: string | symbol]: boolean | string | number | null
+    version: string | null
 }
 
-export interface SettingsValuesIndexer {
-    [prop: string]: SettingValues
+// This is a bit of a hack to make TypeScript happy when we do direct property
+// transfer from defaults in `loadSettings()` below.
+interface TransferSettings {
+    [prop: string | symbol | number]: any
 }
 
 /**
@@ -94,6 +96,8 @@ export class Settings {
         useCorrectTimeFormat: true,
         comicLoadingIndicatorDelay: 2000,
 
+        subDivideGotoComics: true,
+
         version: null,
     }
 
@@ -123,12 +127,22 @@ export class Settings {
         // they update.
         for (const prop in this.DEFAULTS) {
             if (!(prop in settings)) {
-                settings[prop] = this.DEFAULTS[prop]
+                ;(settings as SettingValues & TransferSettings)[prop] = (
+                    this.DEFAULTS as SettingValues & TransferSettings
+                )[prop]
             }
         }
 
         instance = new Settings(settings)
         return instance
+    }
+
+    /*
+     * Since `loadSettings()` is called before anything else in the user script
+     * gets to run, we can assume `instance` is always non-null.
+     */
+    static get() {
+        return instance as Settings
     }
 
     async saveSettings() {

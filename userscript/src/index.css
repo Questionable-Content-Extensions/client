@@ -1,4 +1,4 @@
-@import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css');
+@import url('https://unpkg.com/fork-awesome@1.2.0/css/fork-awesome.min.css');
 @import url('https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@200;400;700&display=swap');
 
 /* @tailwind base; */
@@ -11,4 +11,46 @@ body {
 
 .small-caps {
     font-variant: small-caps;
+}
+
+:root {
+    --qc-ext-navelement-bg-color: rgb(214 211 209);
+    --qc-ext-navelement-color: #0f3a48;
+    --qc-ext-navelement-accent-color: #0f3a48;
+    --qc-ext-navelement-underline-color: #0f3a48;
+}
+
+.qc-ext-navelement {
+    background-color: var(--qc-ext-navelement-bg-color);
+    @apply border border-solid border-transparent;
+}
+
+.qc-ext-navelement button,
+.qc-ext-navelement a {
+    @apply duration-500;
+}
+
+.qc-ext-navelement button,
+.qc-ext-navelement a {
+    color: var(--qc-ext-navelement-color);
+}
+
+.qc-ext-navelement a > *,
+.qc-ext-navelement button > * {
+    @apply border-0 border-b border-solid border-transparent;
+}
+
+.qc-ext-navelement a:hover > *,
+.qc-ext-navelement a:focus > *,
+.qc-ext-navelement button:hover > *,
+.qc-ext-navelement button:focus > * {
+    color: var(--qc-ext-navelement-accent-color);
+    border-color: var(--qc-ext-navelement-underline-color);
+}
+
+.qc-ext-navelement.with-color a:hover > *,
+.qc-ext-navelement.with-color a:focus > *,
+.qc-ext-navelement.with-color button:hover > *,
+.qc-ext-navelement.with-color button:focus > * {
+    border-color: transparent;
 }
