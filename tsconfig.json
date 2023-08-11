@@ -15,7 +15,17 @@
         "isolatedModules": true,
         "noEmit": true,
         "jsx": "react-jsx",
-        "plugins": [{ "name": "typescript-plugin-css-modules" }]
+        "plugins": [
+            {
+                "name": "typescript-plugin-css-modules"
+            }
+        ]
     },
-    "include": ["src"]
+    "include": ["src"],
+    // This is needed for Storybook
+    "ts-node": {
+        "compilerOptions": {
+            "module": "commonjs"
+        }
+    }
 }
