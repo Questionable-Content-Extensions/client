@@ -1,0 +1,5 @@
+input.toggle:checked ~ .dot {
+    transform: translateX(100%);
+    @apply bg-qc-header-second;
+    @apply border-transparent;
+}
