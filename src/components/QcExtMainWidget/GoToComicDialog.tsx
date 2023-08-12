@@ -125,7 +125,10 @@ export function ComicList({
                     lastHundred = i
 
                     hundredDividers.push(
-                        <CollapsibleComicRange summary={`${start}..${end}`}>
+                        <CollapsibleComicRange
+                            summary={`${start}..${end}`}
+                            key={`hundreds-${i}`}
+                        >
                             <ul>{comicEntries}</ul>
                         </CollapsibleComicRange>
                     )
@@ -138,7 +141,10 @@ export function ComicList({
                     lastThousand = i
 
                     thousandDividers.push(
-                        <CollapsibleComicRange summary={`${start}..${end}`}>
+                        <CollapsibleComicRange
+                            summary={`${start}..${end}`}
+                            key={`thousands-${i}`}
+                        >
                             <>{hundredDividers}</>
                         </CollapsibleComicRange>
                     )
@@ -151,6 +157,7 @@ export function ComicList({
                 hundredDividers.push(
                     <CollapsibleComicRange
                         summary={`${lastHundred + 1}..${allComicData.length}`}
+                        key="hundreds-last"
                     >
                         <ul>{comicEntries}</ul>
                     </CollapsibleComicRange>
@@ -160,6 +167,7 @@ export function ComicList({
                 thousandDividers.push(
                     <CollapsibleComicRange
                         summary={`${lastThousand + 1}..${allComicData.length}`}
+                        key="thousands-last"
                     >
                         <>{hundredDividers}</>
                     </CollapsibleComicRange>
