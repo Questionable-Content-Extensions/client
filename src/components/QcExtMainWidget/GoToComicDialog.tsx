@@ -6,7 +6,8 @@ import Spinner from '@components/Spinner'
 import useComic from '@hooks/useComic'
 import useSettings from '@hooks/useSettings'
 import ModalDialog from '@modals/ModalDialog'
-import comicDataService, { ComicDataListing } from '@services/comicDataService'
+import { ComicDataListing } from '@models/ComicData'
+import comicDataService from '@services/comicDataService'
 
 import { debug } from '~/utils'
 

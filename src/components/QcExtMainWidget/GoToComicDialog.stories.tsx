@@ -1,4 +1,4 @@
-import { ComicDataListing } from '@services/comicDataService'
+import { ComicDataListing } from '@models/ComicData'
 import { ComponentMeta, ComponentStory } from '@storybook/react'
 
 import { ComicList } from './GoToComicDialog'

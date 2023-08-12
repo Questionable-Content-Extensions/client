@@ -2,12 +2,13 @@
     "compilerOptions": {
         "baseUrl": ".",
         "paths": {
-            "~/*": ["src/*"],
+            "@models/*": ["src/models/*"],
             "@components/*": ["src/components/*"],
             "@hooks/*": ["src/hooks/*"],
             "@modals/*": ["src/components/Modals/*"],
             "@services/*": ["src/services/*"],
-            "@widgets/*": ["src/components/Widgets/*"]
+            "@widgets/*": ["src/components/Widgets/*"],
+            "~/*": ["src/*"]
         },
         "target": "es2016",
         "lib": ["dom", "dom.iterable", "esnext"],

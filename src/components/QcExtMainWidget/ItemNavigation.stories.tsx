@@ -1,4 +1,4 @@
-import { ComicData } from '@services/comicDataService'
+import { ComicData } from '@models/ComicData'
 import { ComponentMeta, ComponentStory } from '@storybook/react'
 
 import ItemNavigation from './ItemNavigation'

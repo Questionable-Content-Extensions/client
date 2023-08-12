@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 
-import { ImageType, KnownImageType } from '@services/comicDataService'
+import { ImageType, KnownImageType } from '@models/ComicData'
 
 import constants from '~/constants'
 import { debug, error } from '~/utils'
