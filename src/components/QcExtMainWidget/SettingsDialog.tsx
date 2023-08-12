@@ -174,6 +174,23 @@ export function SettingsPanel({
                     'Your editor token goes here. If you are supposed to have one, you do.'
                 }
             />
+
+            <h3 className="text-lg mt-6">Appreciate my efforts?</h3>
+            <div className="pt-4 pb-4 border-0 border-t border-solid border-gray-200">
+                {/* eslint-disable-next-line react/jsx-no-target-blank */}
+                <a
+                    href="https://ko-fi.com/ilyvion"
+                    target="_blank"
+                    rel="noopener"
+                >
+                    <img
+                        height="36"
+                        style={{ border: '0px', height: '36px' }}
+                        src="https://cdn.ko-fi.com/cdn/kofi2.png?v=3"
+                        alt="Buy Me a Coffee at ko-fi.com"
+                    />
+                </a>
+            </div>
         </>
     )
 }
