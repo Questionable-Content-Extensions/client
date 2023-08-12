@@ -26,7 +26,6 @@ import News from './components/News'
 import QcExtMainWidget from './components/QcExtMainWidget/QcExtMainWidget'
 import './services/comicDataService'
 import comicService from './services/comicService'
-import settingsService from './services/settingsService'
 import Settings from './settings'
 import { awaitElement, debug, error, fetch, info, qcBug, setup } from './utils'
 
@@ -36,7 +35,6 @@ async function main() {
     const settings = await Settings.loadSettings()
     // TODO: Remove this line once we have a settings dialog:
     settings.values.showDebugLogs = true
-    settingsService.initialize(settings)
     setup(settings.values.showDebugLogs)
 
     info('Running QC Extensions v' + GM.info.script.version)

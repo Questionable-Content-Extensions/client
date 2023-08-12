@@ -12,7 +12,7 @@ export default function DateComponent() {
     if (!settings) {
         useCorrectTimeFormat = true
     } else {
-        useCorrectTimeFormat = settings.values.useCorrectTimeFormat
+        useCorrectTimeFormat = settings.useCorrectTimeFormat
     }
 
     let date

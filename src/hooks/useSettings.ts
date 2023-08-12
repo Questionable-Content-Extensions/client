@@ -1,16 +1,16 @@
 import { useEffect, useState } from 'react'
 
 import settingsService from '../services/settingsService'
-import Settings from '../settings'
+import { SettingValues } from '../settings'
 
-type SettingsUpdater = (s: Settings) => void
-type UpdateSettings = (u: SettingsUpdater) => void
+export type SettingsUpdater = (s: SettingValues) => void
+export type UpdateSettings = (u: SettingsUpdater) => void
 
-export default function useSettings(): [Settings, UpdateSettings] {
-    let [settings, setSettings] = useState(settingsService.get() as Settings)
+export default function useSettings(): [SettingValues, UpdateSettings] {
+    let [settings, setSettings] = useState(settingsService.get().values)
     useEffect(() => {
         function handleSettingsChanged() {
-            setSettings(settingsService.get() as Settings)
+            setSettings(settingsService.get().values)
         }
         settingsService.subscribeChanged(handleSettingsChanged)
         return () => {
@@ -18,8 +18,12 @@ export default function useSettings(): [Settings, UpdateSettings] {
         }
     }, [])
     async function updateSettings(updater: SettingsUpdater) {
-        updater(settings)
-        await settings.saveSettings()
+        const values = settingsService.get().values
+        updater(values)
+        // We need to make a whole new object here, or React won't be able
+        // to tell that something actually changed. Yay flaky behavior!
+        settingsService.get().values = { ...values }
+        await settingsService.get().saveSettings()
         settingsService.notifySubscribers()
     }
     return [settings, updateSettings]

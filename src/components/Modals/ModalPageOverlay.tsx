@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 
 import styles from './ModalPageOverlay.module.css'
 
@@ -11,20 +11,22 @@ export default function ModalPageOverlay({
     show: boolean
     onClick?: () => void
 }) {
-    let [originalBodyOverflow] = useState(document.body.style.overflow)
+    let originalBodyOverflow = useMemo(() => document.body.style.overflow, [])
 
     const [fadedIn, setFadedIn] = useState(false)
 
     useEffect(() => {
         if (show) {
+            debug('Hiding body overflow')
             // When a modal is active, remove the scrolling from the main body
             document.body.style.overflow = 'hidden'
         } else {
+            debug('Restoring body overflow')
             // Return the scrolling to normal on the main body when the modal
             // is closed once again.
             document.body.style.overflow = originalBodyOverflow
         }
-    })
+    }, [show, originalBodyOverflow])
     return (
         <div
             className={

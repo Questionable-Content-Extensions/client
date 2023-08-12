@@ -23,14 +23,14 @@ export default function Comic({
     } = useComic()
 
     useEffect(() => {
-        if (settings.values.scrollToTop) {
+        if (settings.scrollToTop) {
             window.scrollTo({
                 top: 0,
                 behavior: 'smooth', // for smoothly scrolling
             })
             let _comic = currentComic
         }
-    }, [settings.values.scrollToTop, currentComic])
+    }, [settings.scrollToTop, currentComic])
 
     const {
         comicDataLoading: [_comicDataLoading, _comicDataComicLoading],
@@ -50,15 +50,14 @@ export default function Comic({
     }, [currentComic, initialComic])
 
     let comicLoadingTimeout = useMemo(() => {
-        let comicLoadingIndicatorDelay =
-            settings.values.comicLoadingIndicatorDelay
+        let comicLoadingIndicatorDelay = settings.comicLoadingIndicatorDelay
         if (comicLoadingIndicatorDelay < 0) {
             comicLoadingIndicatorDelay = 0
         }
 
         debug(`loading timeout is ${comicLoadingIndicatorDelay}`)
         return comicLoadingIndicatorDelay
-    }, [settings.values.comicLoadingIndicatorDelay])
+    }, [settings.comicLoadingIndicatorDelay])
 
     let [isLoading, doneLoading] = useComicLoaderTimeout(
         currentComic,

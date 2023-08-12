@@ -54,9 +54,7 @@ export default function GoToComicDialog({
                 <div className="max-h-[50vh] overflow-y-scroll">
                     <ComicList
                         allComicData={allComicData ?? []}
-                        subDivideGotoComics={
-                            settings.values.subDivideGotoComics
-                        }
+                        subDivideGotoComics={settings.subDivideGotoComics}
                         onGoToComic={(comic) => {
                             setCurrentComic(comic)
                             onClose()

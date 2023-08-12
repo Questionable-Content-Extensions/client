@@ -1,13 +1,8 @@
 import Settings from '../settings'
 import { debug } from '../utils'
 
-let currentSettings: Settings | null = null
-function initialize(settings: Settings) {
-    currentSettings = settings
-}
-
-function get(): Settings | null {
-    return currentSettings
+function get(): Settings {
+    return Settings.get()
 }
 
 let settingsServiceSubscribers: (() => void)[] = []
@@ -30,7 +25,6 @@ function notifySubscribers() {
 }
 
 const settingsService = {
-    initialize,
     get,
     notifySubscribers,
     subscribeChanged,
