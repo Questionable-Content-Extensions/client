@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 
-import comicDataService, { ComicData } from '../services/comicDataService'
+import comicDataService, { ComicData } from '@services/comicDataService'
 
 export default function useComicData() {
     let currentlyLoading = comicDataService.currentlyLoading()

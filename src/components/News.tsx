@@ -1,5 +1,6 @@
-import useComicData from '../hooks/useComicData'
-import { debug, nl2br } from '../utils'
+import useComicData from '@hooks/useComicData'
+
+import { debug, nl2br } from '~/utils'
 
 export default function News({ initialNews }: { initialNews: string }) {
     const {

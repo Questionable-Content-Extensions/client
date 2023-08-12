@@ -1,12 +1,14 @@
 import { useEffect, useState } from 'react'
 
-import useComic from '../../hooks/useComic'
-import useComicData from '../../hooks/useComicData'
-import useSettings from '../../hooks/useSettings'
-import { debug } from '../../utils'
-import ModalDialogSeat from '../Modals/ModalDialogSeat'
-import ModalPageOverlay from '../Modals/ModalPageOverlay'
-import ModalPortal from '../Modals/ModalPortal'
+import useComic from '@hooks/useComic'
+import useComicData from '@hooks/useComicData'
+import useSettings from '@hooks/useSettings'
+import ModalDialogSeat from '@modals/ModalDialogSeat'
+import ModalPageOverlay from '@modals/ModalPageOverlay'
+import ModalPortal from '@modals/ModalPortal'
+
+import { debug } from '~/utils'
+
 import ExtraNavigation from './ExtraNavigation'
 import ItemNavigation from './ItemNavigation'
 import SettingsDialog from './SettingsDialog'

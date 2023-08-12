@@ -3,7 +3,7 @@
     "tabWidth": 4,
     "semi": false,
     "singleQuote": true,
-    "importOrder": ["\\.css$", "^[./]"],
+    "importOrder": ["\\.css$", "^@", "^~", "^[./]"],
     "importOrderSeparation": true,
     "importOrderSortSpecifiers": true
 }

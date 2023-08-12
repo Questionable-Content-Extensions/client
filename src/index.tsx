@@ -19,15 +19,16 @@ import ReactDOM from 'react-dom'
 
 import './index.css'
 
-import Comic from './components/Comic'
-import ComicNavigation from './components/ComicNavigation'
-import DateComponent from './components/Date'
-import News from './components/News'
-import QcExtMainWidget from './components/QcExtMainWidget/QcExtMainWidget'
-import './services/comicDataService'
-import comicService from './services/comicService'
-import Settings from './settings'
-import { awaitElement, debug, error, fetch, info, qcBug, setup } from './utils'
+import Comic from '@components/Comic'
+import ComicNavigation from '@components/ComicNavigation'
+import DateComponent from '@components/Date'
+import News from '@components/News'
+import QcExtMainWidget from '@components/QcExtMainWidget/QcExtMainWidget'
+import '@services/comicDataService'
+import comicService from '@services/comicService'
+
+import Settings from '~/settings'
+import { awaitElement, debug, error, fetch, info, qcBug, setup } from '~/utils'
 
 // TODO: Project-wide issue: Handle errors on network, non-200 HTTP statuses, etc.
 

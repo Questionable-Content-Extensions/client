@@ -1,4 +1,4 @@
-import useComic from '../hooks/useComic'
+import useComic from '@hooks/useComic'
 
 export default function ComicNavigation() {
     const {

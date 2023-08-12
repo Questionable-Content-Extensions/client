@@ -1,5 +1,5 @@
-import Settings from '../settings'
-import { debug } from '../utils'
+import Settings from '~/settings'
+import { debug } from '~/utils'
 
 function get(): Settings {
     return Settings.get()

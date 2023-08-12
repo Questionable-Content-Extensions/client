@@ -1,9 +1,11 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
-import useComic from '../hooks/useComic'
-import useComicData from '../hooks/useComicData'
-import useSettings from '../hooks/useSettings'
-import { debug, info } from '../utils'
+import useComic from '@hooks/useComic'
+import useComicData from '@hooks/useComicData'
+import useSettings from '@hooks/useSettings'
+
+import { debug, info } from '~/utils'
+
 import ComicImage from './ComicImage'
 import FullPageLoader from './FullPageLoader'
 

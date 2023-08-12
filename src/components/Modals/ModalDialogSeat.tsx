@@ -1,4 +1,4 @@
-import { debug } from '../../utils'
+import { debug } from '~/utils'
 
 export default function ModalDialogSeat({
     show,

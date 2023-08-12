@@ -1,4 +1,4 @@
-import { debug } from '../utils'
+import { debug } from '~/utils'
 
 let currentComic: number | null = null
 let latestComic: number | null = null

@@ -2,14 +2,13 @@ import { useEffect, useState } from 'react'
 
 import styles from './GoToComicDialog.module.css'
 
-import useComic from '../../hooks/useComic'
-import useSettings from '../../hooks/useSettings'
-import comicDataService, {
-    ComicDataListing,
-} from '../../services/comicDataService'
-import { debug } from '../../utils'
-import ModalDialog from '../Modals/ModalDialog'
-import Spinner from '../Spinner'
+import Spinner from '@components/Spinner'
+import useComic from '@hooks/useComic'
+import useSettings from '@hooks/useSettings'
+import ModalDialog from '@modals/ModalDialog'
+import comicDataService, { ComicDataListing } from '@services/comicDataService'
+
+import { debug } from '~/utils'
 
 // TODO: Add a search/filter function to this dialog
 

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 
-import comicService from '../services/comicService'
+import comicService from '@services/comicService'
 
 export type UseComic = {
     currentComic: [number | null, (comic: number) => void]

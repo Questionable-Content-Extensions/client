@@ -2,8 +2,8 @@ import { useEffect, useMemo, useState } from 'react'
 
 import styles from './ModalPageOverlay.module.css'
 
-import { BODY_CONTAINER_ID } from '../../index'
-import { debug } from '../../utils'
+import { BODY_CONTAINER_ID } from '~/index'
+import { debug } from '~/utils'
 
 export default function ModalPageOverlay({
     show,

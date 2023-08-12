@@ -1,7 +1,8 @@
 import { useMemo } from 'react'
 
-import { ItemNavigationData } from '../../services/comicDataService'
-import Spinner from '../Spinner'
+import Spinner from '@components/Spinner'
+import { ItemNavigationData } from '@services/comicDataService'
+
 import NavElement from './NavElement'
 
 export default function ItemNavigation({

@@ -1,5 +1,5 @@
-import useComicData from '../hooks/useComicData'
-import useSettings from '../hooks/useSettings'
+import useComicData from '@hooks/useComicData'
+import useSettings from '@hooks/useSettings'
 
 export default function DateComponent() {
     const {

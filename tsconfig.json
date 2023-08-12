@@ -2,6 +2,11 @@
     "compilerOptions": {
         "baseUrl": ".",
         "paths": {
+            "~/*": ["src/*"],
+            "@components/*": ["src/components/*"],
+            "@hooks/*": ["src/hooks/*"],
+            "@modals/*": ["src/components/Modals/*"],
+            "@services/*": ["src/services/*"],
             "@widgets/*": ["src/components/Widgets/*"]
         },
         "target": "es2016",

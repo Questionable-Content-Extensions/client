@@ -1,8 +1,9 @@
 import { useState } from 'react'
 
-import ModalDialogSeat from '../Modals/ModalDialogSeat'
-import ModalPageOverlay from '../Modals/ModalPageOverlay'
-import ModalPortal from '../Modals/ModalPortal'
+import ModalDialogSeat from '@modals/ModalDialogSeat'
+import ModalPageOverlay from '@modals/ModalPageOverlay'
+import ModalPortal from '@modals/ModalPortal'
+
 import ExtraNavButton from './ExtraNavButton'
 import GoToComicDialog from './GoToComicDialog'
 

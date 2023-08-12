@@ -1,10 +1,11 @@
-import ToggleButton from '@widgets/ToggleButton'
 import { useState } from 'react'
 
-import useSettings, { SettingsUpdater } from '../../hooks/useSettings'
-import { SettingValues } from '../../settings'
-import { KeyOfType } from '../../tsUtils'
-import ModalDialog from '../Modals/ModalDialog'
+import useSettings, { SettingsUpdater } from '@hooks/useSettings'
+import ModalDialog from '@modals/ModalDialog'
+import ToggleButton from '@widgets/ToggleButton'
+
+import { SettingValues } from '~/settings'
+import { KeyOfType } from '~/tsUtils'
 
 export default function SettingsDialog({
     show: _show,

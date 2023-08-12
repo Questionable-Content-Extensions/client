@@ -1,5 +1,7 @@
-import { createTintOrShade } from '../../color'
-import { ItemNavigationData } from '../../services/comicDataService'
+import { ItemNavigationData } from '@services/comicDataService'
+
+import { createTintOrShade } from '~/color'
+
 import NavButton from './NavButton'
 
 export default function NavElement({

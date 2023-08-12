@@ -1,6 +1,6 @@
+import { ComicData } from '@services/comicDataService'
 import { ComponentMeta, ComponentStory } from '@storybook/react'
 
-import { ComicData } from '../../services/comicDataService'
 import ItemNavigation from './ItemNavigation'
 
 const COMIC_DATA_666: ComicData = {

@@ -1,7 +1,7 @@
-import '../src/index.css'
 import './qc.css'
+import '~/index.css'
 
-import { setup } from '../src/utils'
+import { setup } from '~/utils'
 
 setup(true)
 

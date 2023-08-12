@@ -1,8 +1,9 @@
+import { SettingsUpdater, UpdateSettings } from '@hooks/useSettings'
 import { useArgs, useState } from '@storybook/client-api'
 import { ComponentMeta, ComponentStory } from '@storybook/react'
 
-import { SettingsUpdater, UpdateSettings } from '../../hooks/useSettings'
-import Settings from '../../settings'
+import Settings from '~/settings'
+
 import { SettingsPanel } from './SettingsDialog'
 
 export default {

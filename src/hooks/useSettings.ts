@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react'
 
-import settingsService from '../services/settingsService'
-import { SettingValues } from '../settings'
+import settingsService from '@services/settingsService'
+
+import { SettingValues } from '~/settings'
 
 export type SettingsUpdater = (s: SettingValues) => void
 export type UpdateSettings = (u: SettingsUpdater) => void
