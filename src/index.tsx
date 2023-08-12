@@ -31,6 +31,11 @@ import { awaitElement, debug, error, fetch, info, qcBug, setup } from './utils'
 
 // TODO: Project-wide issue: Handle errors on network, non-200 HTTP statuses, etc.
 
+const QC_EXT_CLASSNAME = 'qc-ext'
+const NAVIGATION_CONTAINER_CLASSNAME = 'qc-ext-navigation-container'
+export const BODY_CONTAINER_ID = 'qc-ext-body-container'
+export const PORTAL_CONTAINER_ID = 'qc-ext-portal-container'
+
 async function main() {
     const settings = await Settings.loadSettings()
     // TODO: Remove this line once we have a settings dialog:
@@ -49,6 +54,7 @@ async function main() {
         return
     }
 
+    encaseBody()
     initializePortal()
     initializeComicNavigation()
     initializeDateAndNews()
@@ -137,7 +143,7 @@ async function initializeComic() {
     debug('Current comic:', comic)
 
     let comicContainer = document.createElement('div')
-    comicContainer.classList.add('qc-ext', 'qc-ext-comic-container')
+    comicContainer.classList.add(QC_EXT_CLASSNAME, 'qc-ext-comic-container')
 
     const comicImgParent = comicImg.parentNode as HTMLElement
 
@@ -182,11 +188,22 @@ async function getLatestComic(comic: number) {
     return latestComic
 }
 
+function encaseBody() {
+    const bodyContainer = document.createElement('div')
+    bodyContainer.id = BODY_CONTAINER_ID
+    const body = document.getElementsByTagName('body')[0]
+    const children = Array.from(body.children)
+    for (const child of children) {
+        bodyContainer.appendChild(child)
+    }
+    body.appendChild(bodyContainer)
+}
+
 function initializePortal() {
     const portalContainer = document.createElement('div')
-    portalContainer.id = 'qc-ext-portal-container'
+    portalContainer.id = PORTAL_CONTAINER_ID
     const body = document.getElementsByTagName('body')[0]
-    body.insertAdjacentElement('afterbegin', portalContainer)
+    body.appendChild(portalContainer)
 }
 
 function initializeComicNavigation() {
@@ -210,7 +227,10 @@ function initializeComicNavigation() {
     const comicNavParent = comicNav.parentNode as ParentNode
 
     let comicNavContainer = document.createElement('div')
-    comicNavContainer.classList.add('qc-ext', 'qc-ext-navigation-container')
+    comicNavContainer.classList.add(
+        QC_EXT_CLASSNAME,
+        NAVIGATION_CONTAINER_CLASSNAME
+    )
     comicNavParent.replaceChild(comicNavContainer, comicNav)
     ReactDOM.render(
         <React.StrictMode>
@@ -223,7 +243,10 @@ function initializeComicNavigation() {
 
     // The front page places the second #comicnav in a <div class="row"> for some reason. Let's ditch it.
     comicNavContainer = document.createElement('div')
-    comicNavContainer.classList.add('qc-ext', 'qc-ext-navigation-container')
+    comicNavContainer.classList.add(
+        QC_EXT_CLASSNAME,
+        NAVIGATION_CONTAINER_CLASSNAME
+    )
     if (
         comicNav2Parent.tagName === 'DIV' &&
         comicNav2Parent.classList.contains('row')
@@ -257,12 +280,12 @@ function initializeDateAndNews() {
     const newsParent = news.parentNode as ParentNode
     const newsPrevious = news.previousElementSibling as Element
 
-    if (!newsPrevious.classList.contains('qc-ext-navigation-container')) {
+    if (!newsPrevious.classList.contains(NAVIGATION_CONTAINER_CLASSNAME)) {
         newsParent.removeChild(newsPrevious)
     }
 
     const dateContainer = document.createElement('div')
-    dateContainer.classList.add('qc-ext', 'qc-ext-date-container')
+    dateContainer.classList.add(QC_EXT_CLASSNAME, 'qc-ext-date-container')
     newsParent.insertBefore(dateContainer, news)
     ReactDOM.render(
         <React.StrictMode>
@@ -272,7 +295,7 @@ function initializeDateAndNews() {
     )
 
     const newsContainer = document.createElement('div')
-    newsContainer.classList.add('qc-ext', 'qc-ext-news-container')
+    newsContainer.classList.add(QC_EXT_CLASSNAME, 'qc-ext-news-container')
     newsParent.replaceChild(newsContainer, news)
     ReactDOM.render(
         <React.StrictMode>

@@ -4,7 +4,7 @@
         "paths": {
             "@widgets/*": ["src/components/Widgets/*"]
         },
-        "target": "es5",
+        "target": "es2016",
         "lib": ["dom", "dom.iterable", "esnext"],
         "allowJs": true,
         "skipLibCheck": true,

@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 
 import styles from './ModalPageOverlay.module.css'
 
+import { BODY_CONTAINER_ID } from '../../index'
 import { debug } from '../../utils'
 
 export default function ModalPageOverlay({
@@ -20,11 +21,17 @@ export default function ModalPageOverlay({
             debug('Hiding body overflow')
             // When a modal is active, remove the scrolling from the main body
             document.body.style.overflow = 'hidden'
+            document
+                .getElementById(BODY_CONTAINER_ID)!
+                .setAttribute('aria-hidden', 'true')
         } else {
             debug('Restoring body overflow')
             // Return the scrolling to normal on the main body when the modal
             // is closed once again.
             document.body.style.overflow = originalBodyOverflow
+            document
+                .getElementById(BODY_CONTAINER_ID)!
+                .setAttribute('aria-hidden', '')
         }
     }, [show, originalBodyOverflow])
     return (
