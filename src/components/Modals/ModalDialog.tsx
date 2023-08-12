@@ -18,9 +18,11 @@ export default function ModalDialogSeat({
                 {header}
                 <button
                     type="button"
-                    className="btn-close box-content w-4 h-4 p-1 text-black border-none rounded-none opacity-50 focus:shadow-none focus:outline-none focus:opacity-100 hover:text-black hover:opacity-75 hover:no-underline"
+                    className="box-content w-4 h-4 p-1 text-black border-none rounded-none opacity-50 focus:shadow-none focus:outline-none focus:opacity-100 hover:text-black hover:opacity-75 hover:no-underline"
                     aria-label="Close"
-                ></button>
+                >
+                    <i className="fa fa-times" aria-hidden="true"></i>
+                </button>
             </div>
             <div className="relative p-4">{body}</div>
             <div className="modal-footer flex flex-shrink-0 flex-wrap items-center justify-end p-4 border-t border-gray-200 rounded-b-md">
