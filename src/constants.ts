@@ -15,78 +15,89 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-// Set this to true when working against your local test server.
-// NEVER CHECK THIS FILE IN WITH developmentMode = true!
-const developmentMode = true
-
-function getSiteUrl() {
-    return 'https://questionablextensions.net/'
+let scriptVersion
+if (typeof GM === undefined) {
+    scriptVersion = GM.info.script.version
+} else {
+    scriptVersion = 'Unknown'
 }
+
+// Set this to true when working against your local test server.
+// NEVER CHECK THIS FILE IN WITH forceDevelopmentMode = true!
+const forceDevelopmentMode = false
+const developmentMode =
+    forceDevelopmentMode || scriptVersion.indexOf('+development') !== -1
+
+const siteUrl = 'https://questionablextensions.net/' as const
 
 function getWebserviceBaseUrl() {
     if (developmentMode) {
-        return 'http://localhost:3000/api/'
+        return 'http://localhost:3000/api/' as const
     } else {
-        return 'https://questionablecontent.herokuapp.com/api/'
+        return `${siteUrl}api/` as const
     }
 }
+const webserviceBaseUrl = getWebserviceBaseUrl()
 
-const comicDataUrl = getWebserviceBaseUrl() + 'comicdata/'
-const itemDataUrl = getWebserviceBaseUrl() + 'itemdata/'
-const editLogUrl = getWebserviceBaseUrl() + 'log'
+const comicDataUrl = `${webserviceBaseUrl}comicdata/` as const
+const itemDataUrl = `${webserviceBaseUrl}itemdata/` as const
+const editLogUrl = `${webserviceBaseUrl}log` as const
 
 const constants = {
-    settingsKey: 'settings',
+    settingsKey: 'settings' as const,
 
     developmentMode,
-    siteUrl: getSiteUrl(),
+    siteUrl,
     comicDataUrl,
     itemDataUrl,
     editLogUrl,
 
     // Comics after 3132 should have a tagline
-    taglineThreshold: 3132,
+    taglineThreshold: 3132 as const,
 
-    excludedComicsUrl: comicDataUrl + 'excluded',
-    addItemToComicUrl: comicDataUrl + 'additem',
-    removeItemFromComicUrl: comicDataUrl + 'removeitem',
-    setComicTitleUrl: comicDataUrl + 'settitle',
-    setComicTaglineUrl: comicDataUrl + 'settagline',
-    setPublishDateUrl: comicDataUrl + 'setpublishdate',
-    setGuestComicUrl: comicDataUrl + 'setguest',
-    setNonCanonUrl: comicDataUrl + 'setnoncanon',
-    setNoCastUrl: comicDataUrl + 'setnocast',
-    setNoLocationUrl: comicDataUrl + 'setnolocation',
-    setNoStorylineUrl: comicDataUrl + 'setnostoryline',
-    setNoTitleUrl: comicDataUrl + 'setnotitle',
-    setNoTaglineUrl: comicDataUrl + 'setnotagline',
+    /**
+     * Don't use for anything; only here for the development mode indicator.
+     * If you need a new endpoint, add it as a separate const below.
+     */
+    webserviceBaseUrl,
 
-    itemImageUrl: itemDataUrl + 'image/',
-    itemFriendDataUrl: itemDataUrl + 'friends/',
-    itemLocationDataUrl: itemDataUrl + 'locations/',
-    setItemDataPropertyUrl: itemDataUrl + 'setproperty',
+    excludedComicsUrl: `${comicDataUrl}excluded` as const,
+    addItemToComicUrl: `${comicDataUrl}additem` as const,
+    removeItemFromComicUrl: `${comicDataUrl}removeitem` as const,
+    setComicTitleUrl: `${comicDataUrl}settitle` as const,
+    setComicTaglineUrl: `${comicDataUrl}settagline` as const,
+    setPublishDateUrl: `${comicDataUrl}setpublishdate` as const,
+    setGuestComicUrl: `${comicDataUrl}setguest` as const,
+    setNonCanonUrl: `${comicDataUrl}setnoncanon` as const,
+    setNoCastUrl: `${comicDataUrl}setnocast` as const,
+    setNoLocationUrl: `${comicDataUrl}setnolocation` as const,
+    setNoStorylineUrl: `${comicDataUrl}setnostoryline` as const,
+    setNoTitleUrl: `${comicDataUrl}setnotitle` as const,
+    setNoTaglineUrl: `${comicDataUrl}setnotagline` as const,
 
-    comicExtensions: ['png', 'gif', 'jpg'],
+    itemImageUrl: `${itemDataUrl}image/` as const,
+    itemFriendDataUrl: `${itemDataUrl}friends/` as const,
+    itemLocationDataUrl: `${itemDataUrl}locations/` as const,
+    setItemDataPropertyUrl: `${itemDataUrl}setproperty` as const,
 
-    comicdataLoadingEvent: 'comicdata-loading',
-    comicdataLoadedEvent: 'comicdata-loaded',
-    comicdataErrorEvent: 'comicdata-error',
+    comicExtensions: ['png' as const, 'gif' as const, 'jpg' as const] as const,
 
-    itemdataLoadingEvent: 'itemdata-loading',
-    itemdataLoadedEvent: 'itemdata-loaded',
-    itemdataErrorEvent: 'itemdata-error',
+    comicdataLoadingEvent: 'comicdata-loading' as const,
+    comicdataLoadedEvent: 'comicdata-loaded' as const,
+    comicdataErrorEvent: 'comicdata-error' as const,
 
-    itemsChangedEvent: 'items-changed',
+    itemdataLoadingEvent: 'itemdata-loading' as const,
+    itemdataLoadedEvent: 'itemdata-loaded' as const,
+    itemdataErrorEvent: 'itemdata-error' as const,
 
-    maintenanceEvent: 'maintenance',
+    itemsChangedEvent: 'items-changed' as const,
+
+    maintenanceEvent: 'maintenance' as const,
 
     messages: {
         maintenance:
-            'The Questionable Extensions' +
-            ' server is currently undergoing maintenance.' +
-            ' Normal operation should resume within a' +
-            ' few minutes.',
+            'The Questionable Extensions server is currently undergoing maintenance. Normal operation should resume within a few minutes.' as const,
     },
-}
+} as const
 
 export default constants

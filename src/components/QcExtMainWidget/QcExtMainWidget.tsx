@@ -7,6 +7,7 @@ import ModalDialogSeat from '@modals/ModalDialogSeat'
 import ModalPageOverlay from '@modals/ModalPageOverlay'
 import ModalPortal from '@modals/ModalPortal'
 
+import constants from '~/constants'
 import { debug } from '~/utils'
 
 import ExtraNavigation from './ExtraNavigation'
@@ -36,6 +37,23 @@ export default function QcExtMainWidget() {
         }
     }, [comicData])
     const [showSettingsDialog, setShowSettingsDialog] = useState(false)
+    const developmentMode = useMemo(
+        () =>
+            constants.developmentMode ? (
+                <>
+                    <br />
+                    <span
+                        className="text-xs text-red-600"
+                        title={`Server endpoint is ${constants.webserviceBaseUrl}`}
+                    >
+                        (Development Mode)
+                    </span>
+                </>
+            ) : (
+                <></>
+            ),
+        []
+    )
 
     // TODO: Add a setting for placing the widget on the left or right side of the comic.
 
@@ -57,7 +75,7 @@ export default function QcExtMainWidget() {
             </ModalPortal>
             <div className="bg-stone-100 border-solid shadow-md border-0 border-b border-qc-header xl:fixed xl:top-48 xl:right-[50%] xl:-mr-[620px] xl:w-64 xl:border xl:border-stone-300 z-10 p-2">
                 <div className="-mx-2 -mt-2 text-center small-caps text-sm font-thin border-b border-solid border-b-stone-300 border-l-0 border-t-0 border-r-0">
-                    Questionable Content Extensions
+                    Questionable Content Extensions {developmentMode}
                 </div>
                 <ExtraNavigation
                     currentComic={currentComic}
