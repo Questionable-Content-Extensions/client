@@ -25,7 +25,7 @@ export default function ModalDialogSeat({
                 </button>
             </div>
             <div className="relative p-4">{body}</div>
-            <div className="modal-footer flex flex-shrink-0 flex-wrap items-center justify-end p-4 border-t border-gray-200 rounded-b-md">
+            <div className="modal-footer flex flex-shrink-0 flex-wrap items-center justify-end p-4 border-0 border-t border-solid border-gray-200 rounded-b-md">
                 {footer}
             </div>
         </dialog>
