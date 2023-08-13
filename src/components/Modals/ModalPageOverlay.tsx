@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 
 import styles from './ModalPageOverlay.module.css'
 
-import { BODY_CONTAINER_ID } from '~/index'
+import { BODY_CONTAINER_ID } from '~/shared'
 import { debug } from '~/utils'
 
 export default function ModalPageOverlay({
@@ -17,31 +17,30 @@ export default function ModalPageOverlay({
     const [fadedIn, setFadedIn] = useState(false)
 
     useEffect(() => {
+        const body = document.getElementById(BODY_CONTAINER_ID)!
+
         if (show) {
             debug('Hiding body overflow')
             // When a modal is active, remove the scrolling from the main body
             document.body.style.overflow = 'hidden'
-            document
-                .getElementById(BODY_CONTAINER_ID)!
-                .setAttribute('aria-hidden', 'true')
+            body.setAttribute('aria-hidden', 'true')
         } else {
             debug('Restoring body overflow')
             // Return the scrolling to normal on the main body when the modal
             // is closed once again.
             document.body.style.overflow = originalBodyOverflow
-            document
-                .getElementById(BODY_CONTAINER_ID)!
-                .setAttribute('aria-hidden', '')
+            body.setAttribute('aria-hidden', '')
         }
     }, [show, originalBodyOverflow])
     return (
         <div
             className={
-                `bg-black fixed top-0 left-0 w-full h-full outline-none overflow-x-hidden overflow-y-auto ` +
+                `fixed top-0 left-0 w-full h-full outline-none overflow-x-hidden overflow-y-auto ` +
                 styles.modalPageOverlay +
-                (show ? ' ' + styles.show : '') +
+                (show ? ' ' + styles.show : ' pointer-events-none') +
                 (fadedIn ? ' ' + styles.fadedIn : '')
             }
+            style={{ zIndex: 1000 }}
             tabIndex={-1}
             aria-hidden={!show}
             onClick={() => {

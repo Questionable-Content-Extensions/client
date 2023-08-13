@@ -1,5 +1,5 @@
-import { SettingsUpdater, UpdateSettings } from '@hooks/useSettings'
-import { useArgs, useState } from '@storybook/client-api'
+import { SettingsUpdater } from '@hooks/useSettings'
+import { useArgs } from '@storybook/client-api'
 import { ComponentMeta, ComponentStory } from '@storybook/react'
 
 import Settings from '~/settings'

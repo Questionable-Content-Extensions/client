@@ -12,7 +12,9 @@ export default function ModalDialog({
     return (
         <dialog
             className={
-                'p-0 border-none shadow-lg flex flex-col pointer-events-auto bg-white bg-clip-padding rounded-md outline-none text-current w-[600px]'
+                'p-0 border-none shadow-lg flex flex-col ' +
+                'pointer-events-auto ' +
+                'bg-white bg-clip-padding rounded-md outline-none text-current w-[800px] max-h-[90%] min-h-[10em]'
             }
             aria-modal
         >
@@ -31,7 +33,7 @@ export default function ModalDialog({
                     <i className="fa fa-times" aria-hidden="true"></i>
                 </button>
             </div>
-            <div className="relative p-4">{body}</div>
+            <div className="relative p-4 overflow-y-auto">{body}</div>
             <div className="modal-footer flex flex-shrink-0 flex-wrap items-center justify-end p-4 border-0 border-t border-solid border-gray-200 rounded-b-md">
                 {footer}
             </div>

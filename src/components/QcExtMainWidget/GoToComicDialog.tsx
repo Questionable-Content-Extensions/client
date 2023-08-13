@@ -52,17 +52,15 @@ export default function GoToComicDialog({
                 </h5>
             }
             body={
-                <div className="max-h-[50vh] overflow-y-scroll">
-                    <ComicList
-                        allComicData={allComicData ?? []}
-                        subDivideGotoComics={settings.subDivideGotoComics}
-                        onGoToComic={(comic) => {
-                            setCurrentComic(comic)
-                            onClose()
-                        }}
-                        isLoading={isLoading}
-                    />
-                </div>
+                <ComicList
+                    allComicData={allComicData ?? []}
+                    subDivideGotoComics={settings.subDivideGotoComics}
+                    onGoToComic={(comic) => {
+                        setCurrentComic(comic)
+                        onClose()
+                    }}
+                    isLoading={isLoading}
+                />
             }
             footer={
                 <button

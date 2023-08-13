@@ -1,7 +1,7 @@
 import { useEffect, useMemo } from 'react'
 import { createPortal } from 'react-dom'
 
-import { PORTAL_CONTAINER_ID } from '~/index'
+import { PORTAL_CONTAINER_ID } from '~/shared'
 
 export default function ModalPortal({
     children,

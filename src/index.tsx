@@ -30,12 +30,12 @@ import comicService from '@services/comicService'
 import Settings from '~/settings'
 import { awaitElement, debug, error, fetch, info, qcBug, setup } from '~/utils'
 
+import { BODY_CONTAINER_ID, PORTAL_CONTAINER_ID } from './shared'
+
 // TODO: Project-wide issue: Handle errors on network, non-200 HTTP statuses, etc.
 
 const QC_EXT_CLASSNAME = 'qc-ext'
 const NAVIGATION_CONTAINER_CLASSNAME = 'qc-ext-navigation-container'
-export const BODY_CONTAINER_ID = 'qc-ext-body-container'
-export const PORTAL_CONTAINER_ID = 'qc-ext-portal-container'
 
 async function main() {
     const settings = await Settings.loadSettings()

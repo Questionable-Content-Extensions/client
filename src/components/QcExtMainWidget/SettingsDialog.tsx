@@ -25,12 +25,10 @@ export default function SettingsDialog({
                 </h5>
             }
             body={
-                <div className="max-h-[50vh] overflow-y-scroll">
-                    <SettingsPanel
-                        settings={settings}
-                        updateSettings={updateSettings}
-                    />
-                </div>
+                <SettingsPanel
+                    settings={settings}
+                    updateSettings={updateSettings}
+                />
             }
             footer={
                 <button
