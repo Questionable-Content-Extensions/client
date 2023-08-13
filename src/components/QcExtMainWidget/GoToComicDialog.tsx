@@ -45,6 +45,7 @@ export default function GoToComicDialog({
     }, [allComicData, show, setIsLoading])
     return (
         <ModalDialog
+            onCloseClicked={onClose}
             header={
                 <h5 className="m-0 text-xl font-medium leading-normal text-gray-800">
                     Go to comic

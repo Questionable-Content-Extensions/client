@@ -18,6 +18,7 @@ export default function SettingsDialog({
 
     return (
         <ModalDialog
+            onCloseClicked={onClose}
             header={
                 <h5 className="m-0 text-xl font-medium leading-normal text-gray-800">
                     Settings
