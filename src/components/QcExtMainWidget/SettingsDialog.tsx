@@ -166,7 +166,7 @@ export function SettingsPanel({
                 }
             />
             {/* If you are supposed to have one, you do. */}
-            <StringSetting
+            <SecretStringSetting
                 settings={settings}
                 setting="editModeToken"
                 updateSettings={updateSettings}
@@ -269,7 +269,7 @@ function NumberSetting({
     )
 }
 
-function StringSetting({
+function SecretStringSetting({
     settings,
     setting,
     updateSettings,
@@ -282,17 +282,61 @@ function StringSetting({
     label: string
     description: string
 }) {
+    const [blur, setBlur] = useState(!!settings[setting])
+    const [value, setValue] = useState(settings[setting].toString())
+    const [error, setError] = useState(false)
+    const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const value = e.target.value
+        setValue(value)
+        if (
+            value &&
+            !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-5][0-9a-f]{3}-[089ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(
+                value
+            )
+        ) {
+            setError(true)
+            return
+        }
+        setError(false)
+        updateSettings((u) => (u[setting] = e.target.value))
+    }
     return (
         <div className="pt-4 border-0 border-t border-solid border-gray-200">
             <label className="flex items-center cursor-pointer">
                 <div className="mr-3 text-gray-700 font-medium">{label}</div>
                 <input
                     type="text"
-                    onChange={(e) =>
-                        updateSettings((u) => (u[setting] = e.target.value))
+                    onChange={onChange}
+                    value={value}
+                    className={
+                        'w-80 text-sm transition-filter duration-500 ' +
+                        (blur ? 'blur ' : 'blur-none ') +
+                        (error ? 'border border-solid border-red-600' : '')
                     }
-                    value={settings[setting]}
+                    style={{ fontFamily: 'monospace' }}
+                    readOnly={blur}
+                    title={
+                        blur
+                            ? 'Activate focus to remove blur effect for editing'
+                            : ''
+                    }
+                    onFocus={() => {
+                        if (blur) {
+                            setBlur(false)
+                        }
+                    }}
                 />
+                <button
+                    className="ml-2 text-gray-600 border border-solid border-gray-400 rounded-full py-1 px-1.5"
+                    onClick={() => setBlur((blur) => !blur)}
+                    title={blur ? 'Remove privacy blur' : 'Apply privacy blur'}
+                >
+                    {blur ? (
+                        <i className="fa fa-eye" aria-hidden="true"></i>
+                    ) : (
+                        <i className="fa fa-eye-slash" aria-hidden="true"></i>
+                    )}
+                </button>
             </label>
             <p className="text-sm">{description}</p>
         </div>

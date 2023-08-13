@@ -32,6 +32,6 @@ export const Default = Template.bind({})
 Default.args = {
     settings: {
         ...Settings.DEFAULTS,
-        editModeToken: 'SuperSecretSauce',
+        editModeToken: '00000000-0000-0000-0000-000000000000',
     },
 }
