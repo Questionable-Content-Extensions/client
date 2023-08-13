@@ -12,7 +12,13 @@ module.exports = {
                 'qc-background': '#7297ac',
                 'qc-link': '#258faf',
             },
+            transitionProperty: {
+                filter: 'filter',
+            },
         },
     },
     plugins: [],
+    corePlugins: {
+        preflight: false,
+    },
 }
