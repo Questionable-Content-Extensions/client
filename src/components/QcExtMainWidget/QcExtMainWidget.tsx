@@ -9,6 +9,7 @@ import ModalPortal from '@modals/ModalPortal'
 import { ItemNavigationData } from '@models/ComicData'
 
 import constants from '~/constants'
+import { debug } from '~/utils'
 
 import ExtraNavigation from './ExtraNavigation'
 import ItemDetailsDialog from './ItemDetailsDialog'
@@ -60,6 +61,15 @@ export default function QcExtMainWidget() {
     )
 
     // TODO: Add a setting for placing the widget on the left or right side of the comic.
+
+    function goToSelectorComic() {
+        if (comicSelectorNo && /^\d+$/.test(comicSelectorNo)) {
+            const comicNo = Number(comicSelectorNo)
+            if (comicNo >= 1 && comicNo <= (latestComic as number)) {
+                setCurrentComic(comicNo)
+            }
+        }
+    }
 
     return (
         <>
@@ -153,25 +163,17 @@ export default function QcExtMainWidget() {
                             max={latestComic ?? 1}
                             value={comicSelectorNo ?? ''}
                             onChange={(e) => setComicSelectorNo(e.target.value)}
+                            onKeyPress={(e) => {
+                                if (e.code === 'Enter') {
+                                    goToSelectorComic()
+                                }
+                            }}
                             className="min-w-0 border border-qc-header focus:outline-none flex-auto rounded-none pl-2 disabled:opacity-75"
                             disabled={comicDataLoading}
                         />
                         <button
                             className="bg-qc-header hover:bg-qc-header-second focus:bg-qc-header-second text-white py-2 px-4 rounded-l-none rounded-r-sm disabled:opacity-75"
-                            onClick={() => {
-                                if (
-                                    comicSelectorNo &&
-                                    /^\d+$/.test(comicSelectorNo)
-                                ) {
-                                    const comicNo = Number(comicSelectorNo)
-                                    if (
-                                        comicNo >= 1 &&
-                                        comicNo <= (latestComic as number)
-                                    ) {
-                                        setCurrentComic(comicNo)
-                                    }
-                                }
-                            }}
+                            onClick={goToSelectorComic}
                             disabled={comicDataLoading}
                         >
                             <i
