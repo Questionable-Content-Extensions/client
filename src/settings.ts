@@ -33,6 +33,7 @@ export interface SettingValues {
     editModeToken: string
 
     showIndicatorRibbon: boolean
+    /** deprecated; no longer in use */
     showSmallRibbonByDefault: boolean
     useCorrectTimeFormat: boolean
     comicLoadingIndicatorDelay: number

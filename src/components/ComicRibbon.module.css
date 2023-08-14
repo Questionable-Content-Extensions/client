@@ -1,0 +1,107 @@
+/* Inspired by <https://www.cssportal.com/blog/create-corner-ribbon/> */
+
+.ribbon {
+    --ribbon-width: 120px;
+    --ribbon-color: #000000;
+    --ribbon-highlight-color: #ffffff;
+    --ribbon-text-color: #ffffff;
+    position: absolute;
+    right: -26px;
+
+    top: 20px;
+    z-index: 1;
+    overflow: hidden;
+
+    width: var(--ribbon-width);
+    height: 28px;
+    text-align: right;
+
+    /* Unfortunately, Firefox shows an outline on rotated clip-paths for the time being.
+     * I suspect it's <https://bugzilla.mozilla.org/show_bug.cgi?id=1671784>
+     */
+    clip-path: polygon(
+        16.7% 0%,
+        83.3% 0%,
+        100% 72.5%,
+        100% 100%,
+        0 100%,
+        0 72.5%
+    );
+
+    opacity: 0.99;
+    transition: opacity 1s;
+    cursor: pointer;
+
+    transform: rotate(45deg);
+}
+.ribbon:hover {
+    opacity: 0.2;
+}
+.ribbon span {
+    font-size: 10px;
+    color: var(--ribbon-text-color);
+    text-transform: uppercase;
+    text-align: center;
+    font-weight: bold;
+    line-height: 20px;
+    width: var(--ribbon-width);
+    display: block;
+    background: var(--ribbon-color);
+    background: linear-gradient(
+        var(--ribbon-highlight-color) 0%,
+        var(--ribbon-color) 100%
+    );
+    box-shadow: 0 3px 10px -5px rgba(0, 0, 0, 1);
+    position: absolute;
+}
+.ribbon span::before {
+    content: '';
+    position: absolute;
+    left: 0px;
+    top: 100%;
+    z-index: -1;
+    border-left: 3px solid var(--ribbon-color);
+    border-right: 3px solid transparent;
+    border-bottom: 3px solid transparent;
+    border-top: 3px solid var(--ribbon-color);
+}
+.ribbon span::after {
+    content: '';
+    position: absolute;
+    right: 0%;
+    top: 100%;
+    z-index: -1;
+    border-right: 3px solid var(--ribbon-color);
+    border-left: 3px solid transparent;
+    border-bottom: 3px solid transparent;
+    border-top: 3px solid var(--ribbon-color);
+}
+
+.ribbon.guestComic {
+    --ribbon-color: theme('colors.qc-header');
+    --ribbon-highlight-color: theme('colors.qc-header-second');
+}
+
+.ribbon.nonCanon {
+    --ribbon-color: #bb3629;
+    --ribbon-highlight-color: #e43;
+}
+
+/*
+ * These color combinations are from the original source. Kept around just because.
+
+.ribbon.green {
+    --ribbon-color: #79a70a;
+    --ribbon-highlight-color: #9bc90d;
+}
+
+.ribbon.red {
+    --ribbon-color: #8f0808;
+    --ribbon-highlight-color: #f70505;
+}
+
+.ribbon.blue {
+    --ribbon-color: #1e5799;
+    --ribbon-highlight-color: #2989d8;
+}
+*/

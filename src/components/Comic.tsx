@@ -7,6 +7,7 @@ import useSettings from '@hooks/useSettings'
 import { debug, info } from '~/utils'
 
 import ComicImage from './ComicImage'
+import ComicRibbon, { RibbonType } from './ComicRibbon'
 import FullPageLoader from './FullPageLoader'
 
 export default function Comic({
@@ -84,8 +85,17 @@ export default function Comic({
         info('Comic data and image loaded.')
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [comicData])
+
+    let ribbonType = RibbonType.None
+    if (comicData?.hasData) {
+        if (comicData.isGuestComic) {
+            ribbonType = RibbonType.GuestComic
+        } else if (comicData.isNonCanon) {
+            ribbonType = RibbonType.NonCanon
+        }
+    }
     return (
-        <div className="relative">
+        <div className="relative inline-block">
             <a
                 className="qc-ext qc-ext-comic-anchor"
                 href={`view.php?comic=${currentComic}`}
@@ -107,7 +117,10 @@ export default function Comic({
                 loadingText={`Loading comic ${comicNo}...`}
                 show={!isInitializing && isLoading}
             />
-            {/* TODO: Ribbon */}
+            <ComicRibbon
+                ribbonType={ribbonType}
+                show={settings.showIndicatorRibbon}
+            />
         </div>
     )
 }

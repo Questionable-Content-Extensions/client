@@ -114,16 +114,6 @@ export function SettingsPanel({
             />
             <ToggleSetting
                 settings={settings}
-                setting="showSmallRibbonByDefault"
-                updateSettings={updateSettings}
-                label="Show small indicator ribbon by default"
-                description={
-                    'The size of the ribbon can be changed by clicking on it. By default, it starts out in its large size, ' +
-                    'but with this setting enabled, the ribbon will start out in its small size by default instead.'
-                }
-            />
-            <ToggleSetting
-                settings={settings}
                 setting="useCorrectTimeFormat"
                 updateSettings={updateSettings}
                 label="Use 24h clock format"
