@@ -44,8 +44,6 @@ const NAVIGATION_CONTAINER_CLASSNAME = 'qc-ext-navigation-container'
 
 async function main() {
     const settings = await Settings.loadSettings()
-    // TODO: Remove this line once we have a settings dialog:
-    settings.values.showDebugLogs = true
     setup(settings.values.showDebugLogs)
 
     info('Running QC Extensions v' + GM.info.script.version)
@@ -74,8 +72,6 @@ async function main() {
 
 async function developmentMain() {
     const settings = await Settings.loadSettings()
-    // TODO: Remove this line once we have a settings dialog:
-    settings.values.showDebugLogs = true
     setup(settings.values.showDebugLogs)
 
     const scriptUrl = 'http://localhost:8124/static/js/main.js'
