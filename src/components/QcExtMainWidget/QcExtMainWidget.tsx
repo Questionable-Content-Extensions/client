@@ -33,9 +33,11 @@ export default function QcExtMainWidget() {
     } = useComicData()
 
     const [comicSelectorNo, setComicSelectorNo] = useState<string | null>(null)
+    const [refreshCheckNeeded, setRefreshCheckNeeded] = useState(true)
     useEffect(() => {
         if (comicData) {
             setComicSelectorNo(comicData.comic.toString())
+            setRefreshCheckNeeded(true)
         }
     }, [comicData])
     const [showSettingsDialog, setShowSettingsDialog] = useState(false)
@@ -59,6 +61,48 @@ export default function QcExtMainWidget() {
             ),
         []
     )
+    useEffect(() => {
+        if (!refreshCheckNeeded) {
+            return
+        }
+
+        // We need to reload the comic data *if* `showAllMembers` was enabled
+        // and the currently loaded comic data does not have it
+        if (
+            settings.showAllMembers &&
+            comicData?.hasData &&
+            !comicData.allItems
+        ) {
+            setRefreshCheckNeeded(false)
+
+            debug(
+                'Refreshing comic data because `showAllMembers` was enabled ' +
+                    "when it previously wasn't"
+            )
+            refreshComicData()
+        }
+    }, [
+        settings,
+        comicData?.hasData,
+        comicData?.allItems,
+        refreshComicData,
+        refreshCheckNeeded,
+    ])
+    const [filter, setFilter] = useState('')
+    const [activeFilter, setActiveFilter] = useState('')
+    useEffect(() => {
+        let filterDebounceTimeout: ReturnType<typeof setTimeout> | null =
+            setTimeout(() => {
+                setActiveFilter(filter)
+                filterDebounceTimeout = null
+            }, 500)
+        return () => {
+            if (filterDebounceTimeout !== null) {
+                clearTimeout(filterDebounceTimeout)
+                filterDebounceTimeout = null
+            }
+        }
+    }, [filter])
 
     // TODO: Add a setting for placing the widget on the left or right side of the comic.
 
@@ -175,6 +219,7 @@ export default function QcExtMainWidget() {
                             className="bg-qc-header hover:bg-qc-header-second focus:bg-qc-header-second text-white py-2 px-4 rounded-l-none rounded-r-sm disabled:opacity-75"
                             onClick={goToSelectorComic}
                             disabled={comicDataLoading}
+                            title="Go to selected comic"
                         >
                             <i
                                 className="fa fa-arrow-right"
@@ -183,7 +228,48 @@ export default function QcExtMainWidget() {
                         </button>
                     </div>
                 </div>
+                {settings.showAllMembers ? (
+                    <>
+                        <hr className="my-4 mx-0 border-solid border-b max-w-none" />
+                        <input
+                            type="text"
+                            placeholder="Filter non-present"
+                            title="The value entered here filters the non-present members by their name or abbreviated name"
+                            value={filter}
+                            onChange={(e) => setFilter(e.target.value)}
+                            className="w-full border border-qc-header focus:outline-none flex-auto rounded-none pl-2 disabled:opacity-75"
+                            disabled={comicDataLoading}
+                        />
+                        <div className="max-h-[20em] overflow-y-auto overflow-x-hidden">
+                            <ItemNavigation
+                                itemNavigationData={
+                                    comicData && comicData.hasData
+                                        ? filterItems(
+                                              comicData.allItems ?? [],
+                                              activeFilter
+                                          )
+                                        : []
+                                }
+                                isLoading={false}
+                                useColors={settings.useColors}
+                                onSetCurrentComic={setCurrentComic}
+                                onShowInfoFor={setShowInfoItem}
+                                isAllItems
+                            />
+                        </div>
+                    </>
+                ) : (
+                    <></>
+                )}
             </div>
         </>
+    )
+}
+
+function filterItems(allItems: ItemNavigationData[], filter: string) {
+    return allItems.filter(
+        (i) =>
+            i.shortName.toUpperCase().indexOf(filter.toUpperCase()) !== -1 ||
+            i.name.toUpperCase().indexOf(filter.toUpperCase()) !== -1
     )
 }

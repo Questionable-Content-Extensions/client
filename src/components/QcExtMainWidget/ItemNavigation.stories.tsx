@@ -170,25 +170,36 @@ Default.args = {
     itemNavigationData: COMIC_DATA_666.items,
     useColors: true,
     isLoading: false,
+    isAllItems: false,
 }
 
 export const WithoutColor = Template.bind({})
 WithoutColor.args = {
-    itemNavigationData: COMIC_DATA_666.items,
+    ...Default.args,
     useColors: false,
-    isLoading: false,
 }
 
 export const Loading = Template.bind({})
 Loading.args = {
-    itemNavigationData: COMIC_DATA_666.items,
-    useColors: true,
+    ...Default.args,
     isLoading: true,
 }
 
 export const NoData = Template.bind({})
 NoData.args = {
+    ...Default.args,
     itemNavigationData: [],
-    useColors: true,
-    isLoading: false,
+}
+
+export const AllItemsMode = Template.bind({})
+AllItemsMode.args = {
+    ...Default.args,
+    isAllItems: true,
+}
+
+export const AllItemsModeNoData = Template.bind({})
+AllItemsModeNoData.args = {
+    ...Default.args,
+    itemNavigationData: [],
+    isAllItems: true,
 }

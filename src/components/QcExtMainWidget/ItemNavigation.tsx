@@ -11,12 +11,14 @@ export default function ItemNavigation({
     useColors,
     onSetCurrentComic,
     onShowInfoFor,
+    isAllItems,
 }: {
     itemNavigationData: ItemNavigationData[]
     isLoading: boolean
     useColors: boolean
     onSetCurrentComic: (comicNo: number) => void
     onShowInfoFor: (item: ItemNavigationData) => void
+    isAllItems?: boolean
 }) {
     let itemNavElements: {
         cast: React.ReactNode[]
@@ -61,7 +63,7 @@ export default function ItemNavigation({
         )
     }
 
-    if (!itemNavigationData.length) {
+    if (!itemNavigationData.length && !isAllItems) {
         return (
             <div className="text-center pt-4">
                 <i
@@ -72,6 +74,8 @@ export default function ItemNavigation({
                 Comic has no data
             </div>
         )
+    } else if (!itemNavigationData.length && isAllItems) {
+        return <></>
     }
 
     return (
@@ -81,6 +85,13 @@ export default function ItemNavigation({
                     <h1 className="text-base font-normal text-center m-2">
                         Cast Members
                     </h1>
+                    {isAllItems ? (
+                        <h2 className="text-xs font-normal text-center">
+                            (Non-Present)
+                        </h2>
+                    ) : (
+                        <></>
+                    )}
                     {itemNavElements.cast}
                 </>
             ) : (
@@ -91,6 +102,13 @@ export default function ItemNavigation({
                     <h1 className="text-base font-normal text-center m-2">
                         Locations
                     </h1>
+                    {isAllItems ? (
+                        <h2 className="text-xs font-normal text-center">
+                            (Non-Present)
+                        </h2>
+                    ) : (
+                        <></>
+                    )}
                     {itemNavElements.location}
                 </>
             ) : (
@@ -101,6 +119,13 @@ export default function ItemNavigation({
                     <h1 className="text-base font-normal text-center m-2">
                         Storylines
                     </h1>
+                    {isAllItems ? (
+                        <h2 className="text-xs font-normal text-center">
+                            (Non-Present)
+                        </h2>
+                    ) : (
+                        <></>
+                    )}
                     {itemNavElements.storyline}
                 </>
             ) : (
