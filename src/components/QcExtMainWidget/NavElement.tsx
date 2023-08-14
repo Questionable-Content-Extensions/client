@@ -15,9 +15,9 @@ export default function NavElement({
     useColors: boolean
     onShowInfoFor: (_: ItemNavigationData) => void
 }) {
-    let backgroundcolor = item.color
-    if (!backgroundcolor.startsWith('#')) {
-        backgroundcolor = `#${backgroundcolor}`
+    let backgroundColor = item.color
+    if (!backgroundColor.startsWith('#')) {
+        backgroundColor = `#${backgroundColor}`
     }
     const foregroundColor = createTintOrShade(item.color)
     const hoverFocusColor = createTintOrShade(item.color, 2)
@@ -27,7 +27,7 @@ export default function NavElement({
             <style>
                 {`
                     #qc-ext-navelement-${item.id}.with-color {
-                        --qc-ext-navelement-bg-color: ${backgroundcolor};
+                        --qc-ext-navelement-bg-color: ${backgroundColor};
                         --qc-ext-navelement-color: ${foregroundColor};
                         --qc-ext-navelement-accent-color: ${hoverFocusColor};
                     }

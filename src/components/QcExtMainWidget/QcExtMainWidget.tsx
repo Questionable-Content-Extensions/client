@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 
 import useComic from '@hooks/useComic'
 import useComicData from '@hooks/useComicData'
@@ -6,11 +6,12 @@ import useSettings from '@hooks/useSettings'
 import ModalDialogSeat from '@modals/ModalDialogSeat'
 import ModalPageOverlay from '@modals/ModalPageOverlay'
 import ModalPortal from '@modals/ModalPortal'
+import { ItemNavigationData } from '@models/ComicData'
 
 import constants from '~/constants'
-import { debug } from '~/utils'
 
 import ExtraNavigation from './ExtraNavigation'
+import ItemDetailsDialog from './ItemDetailsDialog'
 import ItemNavigation from './ItemNavigation'
 import SettingsDialog from './SettingsDialog'
 
@@ -37,6 +38,9 @@ export default function QcExtMainWidget() {
         }
     }, [comicData])
     const [showSettingsDialog, setShowSettingsDialog] = useState(false)
+    const [showInfoItem, setShowInfoItem] = useState<ItemNavigationData | null>(
+        null
+    )
     const developmentMode = useMemo(
         () =>
             constants.developmentMode ? (
@@ -73,6 +77,20 @@ export default function QcExtMainWidget() {
                     </ModalDialogSeat>
                 </>
             </ModalPortal>
+            <ModalPortal>
+                <>
+                    <ModalPageOverlay show={showInfoItem !== null} />
+                    <ModalDialogSeat
+                        show={showInfoItem !== null}
+                        onClick={() => setShowInfoItem(null)}
+                    >
+                        <ItemDetailsDialog
+                            initialItemId={showInfoItem?.id ?? null}
+                            onClose={() => setShowInfoItem(null)}
+                        />
+                    </ModalDialogSeat>
+                </>
+            </ModalPortal>
             <div className="bg-stone-100 border-solid shadow-md border-0 border-b border-qc-header xl:fixed xl:top-48 xl:right-[50%] xl:-mr-[620px] xl:w-64 xl:border xl:border-stone-300 z-10 p-2">
                 <div className="-mx-2 -mt-2 text-center small-caps text-sm font-thin border-b border-solid border-b-stone-300 border-l-0 border-t-0 border-r-0">
                     Questionable Content Extensions {developmentMode}
@@ -97,11 +115,7 @@ export default function QcExtMainWidget() {
                     isLoading={comicDataLoading}
                     useColors={settings.useColors}
                     onSetCurrentComic={setCurrentComic}
-                    onShowInfoFor={(item) =>
-                        debug(
-                            `TODO: show info about ${item.shortName} (${item.id})`
-                        )
-                    }
+                    onShowInfoFor={setShowInfoItem}
                 />
                 <hr className="my-4 mx-0 border-solid border-b max-w-none" />
                 <div className="grid grid-rows-2 space-y-1">
