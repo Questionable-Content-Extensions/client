@@ -32,6 +32,11 @@ import { awaitElement, debug, error, fetch, info, qcBug, setup } from '~/utils'
 
 import { BODY_CONTAINER_ID, PORTAL_CONTAINER_ID } from './shared'
 
+const QcStrictMode = React.StrictMode
+// React.StrictMode causes errors in Chromium; set to some innocent element
+// type instead when debugging in Chrome:
+//const QcStrictMode = React.Fragment
+
 // TODO: Project-wide issue: Handle errors on network, non-200 HTTP statuses, etc.
 
 const QC_EXT_CLASSNAME = 'qc-ext'
@@ -158,9 +163,9 @@ async function initializeComic() {
     }
 
     ReactDOM.render(
-        <React.StrictMode>
+        <QcStrictMode>
             <Comic initialComic={comic} initialComicSrc={comicLinkUrl} />
-        </React.StrictMode>,
+        </QcStrictMode>,
         comicContainer
     )
 
@@ -234,9 +239,9 @@ function initializeComicNavigation() {
     )
     comicNavParent.replaceChild(comicNavContainer, comicNav)
     ReactDOM.render(
-        <React.StrictMode>
+        <QcStrictMode>
             <ComicNavigation />
-        </React.StrictMode>,
+        </QcStrictMode>,
         comicNavContainer
     )
 
@@ -264,9 +269,9 @@ function initializeComicNavigation() {
     }
 
     ReactDOM.render(
-        <React.StrictMode>
+        <QcStrictMode>
             <ComicNavigation />
-        </React.StrictMode>,
+        </QcStrictMode>,
         comicNavContainer
     )
 }
@@ -289,9 +294,9 @@ function initializeDateAndNews() {
     dateContainer.classList.add(QC_EXT_CLASSNAME, 'qc-ext-date-container')
     newsParent.insertBefore(dateContainer, news)
     ReactDOM.render(
-        <React.StrictMode>
+        <QcStrictMode>
             <DateComponent />
-        </React.StrictMode>,
+        </QcStrictMode>,
         dateContainer
     )
 
@@ -299,9 +304,9 @@ function initializeDateAndNews() {
     newsContainer.classList.add(QC_EXT_CLASSNAME, 'qc-ext-news-container')
     newsParent.replaceChild(newsContainer, news)
     ReactDOM.render(
-        <React.StrictMode>
+        <QcStrictMode>
             <News initialNews={newsData} />
-        </React.StrictMode>,
+        </QcStrictMode>,
         newsContainer
     )
 }
@@ -324,9 +329,9 @@ function initializeExtraNavigation() {
     )
     container.insertAdjacentElement('beforebegin', extraContainer)
     ReactDOM.render(
-        <React.StrictMode>
+        <QcStrictMode>
             <QcExtMainWidget />
-        </React.StrictMode>,
+        </QcStrictMode>,
         extraContainer
     )
 }
