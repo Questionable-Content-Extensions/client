@@ -61,7 +61,7 @@ export default function DateComponent() {
                     ) : (
                         <></>
                     )}{' '}
-                    {approximateDate ? '(Approximately)' : <></>}
+                    {date && approximateDate ? '(Approximately)' : <></>}
                 </b>
             </div>
         </div>
