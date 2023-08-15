@@ -16,7 +16,7 @@
  */
 
 let scriptVersion
-if (typeof GM === undefined) {
+if (typeof GM !== undefined) {
     scriptVersion = GM.info.script.version
 } else {
     scriptVersion = 'Unknown'
