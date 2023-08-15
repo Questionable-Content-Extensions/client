@@ -13,7 +13,7 @@ import comicService from './comicService'
 let currentComicData: ComicData | null = null
 let currentlyLoadingComicData: number | null = null
 
-comicService.subscribe(comicChanged)
+comicService.subscribeCurrent(comicChanged)
 
 async function comicChanged(refresh?: boolean) {
     let currentComic = comicService.current()
@@ -121,6 +121,7 @@ async function comicChanged(refresh?: boolean) {
         document.title = `#${comicData.comic} — Questionable Content`
     }
 
+    comicService.updateComicData(comicData)
     currentComicData = comicData
     currentlyLoadingComicData = null
     notifyLoadedSubscribers(currentComicData)

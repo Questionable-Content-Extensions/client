@@ -66,7 +66,7 @@ async function main() {
 
     // TODO: Initialize "message seat"
 
-    comicService.setLatestComic(latestComic)
+    comicService.updateLatestComic(latestComic)
     comicService.setCurrentComic(comic)
 }
 

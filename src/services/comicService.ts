@@ -1,8 +1,14 @@
-import { debug } from '~/utils'
+import { ComicData, ComicDataListing } from '@models/ComicData'
+
+import constants from '~/constants'
+import Settings from '~/settings'
+import { debug, error, fetch, warn } from '~/utils'
 
 let currentComic: number | null = null
 let latestComic: number | null = null
 let randomComic: number | null = null
+
+let comicData: ComicData | null = null
 
 function current(): number | null {
     return currentComic
@@ -12,16 +18,22 @@ function previous(): number | null {
     if (currentComic === null) {
         return null
     }
-
-    return currentComic > 1 ? currentComic - 1 : currentComic
+    if (comicData === null || !comicData.previous) {
+        return currentComic > 1 ? currentComic - 1 : currentComic
+    } else {
+        return comicData.previous
+    }
 }
 
 function next(): number | null {
     if (currentComic === null || latestComic === null) {
         return null
     }
-
-    return currentComic < latestComic ? currentComic + 1 : currentComic
+    if (comicData === null || !comicData.next) {
+        return currentComic < latestComic ? currentComic + 1 : currentComic
+    } else {
+        return comicData.next
+    }
 }
 
 function latest(): number | null {
@@ -53,10 +65,16 @@ function setCurrentComic(comic: number, updateHistory: boolean = true) {
         }
     }
     currentComic = comic
-    notifySubscribers()
+    comicData = null
+    notifyCurrentSubscribers()
 }
 
-function setLatestComic(comic: number) {
+function updateComicData(data: ComicData) {
+    comicData = data
+    notifyNavigationSubscribers()
+}
+
+function updateLatestComic(comic: number) {
     latestComic = comic
 }
 
@@ -74,17 +92,17 @@ function setRandom() {
 
 let comicServiceSubscribers: (() => void)[] = []
 
-function subscribe(handler: () => void) {
+function subscribeCurrent(handler: () => void) {
     comicServiceSubscribers.push(handler)
 }
 
-function unsubscribe(handler: () => void) {
+function unsubscribeCurrent(handler: () => void) {
     comicServiceSubscribers = comicServiceSubscribers.filter(
         (s) => handler !== s
     )
 }
 
-function notifySubscribers() {
+function notifyCurrentSubscribers() {
     // Make sure current comic hasn't suddenly become the same as the random comic.
     // If it has, we change the random one to something else.
     if (currentComic === randomComic) {
@@ -100,6 +118,27 @@ function notifySubscribers() {
     }
 }
 
+let comicServiceNavigationSubscribers: (() => void)[] = []
+
+function subscribeNavigation(handler: () => void) {
+    comicServiceNavigationSubscribers.push(handler)
+}
+
+function unsubscribeNavigation(handler: () => void) {
+    comicServiceNavigationSubscribers =
+        comicServiceNavigationSubscribers.filter((s) => handler !== s)
+}
+
+function notifyNavigationSubscribers() {
+    debug(
+        'comicService notifying subscribers about new randomComic',
+        randomComic
+    )
+    for (const randomComicSubscriber of comicServiceNavigationSubscribers) {
+        randomComicSubscriber()
+    }
+}
+
 const comicService = {
     current,
     previous,
@@ -109,25 +148,83 @@ const comicService = {
     setCurrentComic,
     setNext,
     setPrevious,
-    setLatestComic,
+    updateLatestComic,
     setLatest,
     setRandom,
-    subscribe,
-    unsubscribe,
+    subscribeCurrent,
+    unsubscribeCurrent,
+    subscribeNavigation,
+    unsubscribeNavigation,
+    updateComicData,
 }
 
 export default comicService
 
-// TODO: Filter based on excluded comics (guest or non-canon)
 function nextRandomComic() {
     if (latestComic === null) {
         return null
     }
+
+    const settings = Settings.get()
+    if (settings.values.skipGuest || settings.values.skipNonCanon) {
+        fetchNextFilteredRandomComic()
+    }
+
     let newRandomComic = currentComic
     while (newRandomComic === currentComic) {
         newRandomComic = Math.floor(Math.random() * (latestComic + 1))
     }
     return newRandomComic
+}
+
+async function fetchNextFilteredRandomComic() {
+    const settings = Settings.get()
+
+    let excludedComicsUrl = constants.excludedComicsUrl
+    const urlParameters: { exclusion?: 'guest' | 'non-canon' } = {}
+    if (settings.values.skipGuest) {
+        urlParameters.exclusion = 'guest'
+    } else if (settings.values.skipNonCanon) {
+        urlParameters.exclusion = 'non-canon'
+    }
+    const urlQuery = new URLSearchParams(urlParameters).toString()
+    if (urlQuery) {
+        excludedComicsUrl += '?' + urlQuery
+    }
+
+    let response
+    try {
+        response = await fetch(excludedComicsUrl)
+    } catch (e) {
+        // TODO: Handle connection error (i.e. server down)
+        // (Should probably be done using error boundaries...)
+        return
+    }
+    if (response.status === 503) {
+        // TODO: Enter Maintenance mode
+        warn('Maintenance', response.responseText)
+        return
+    } else if (response.status !== 200) {
+        error(
+            `Got error when loading the excluded comic data:`,
+            response.responseText
+        )
+        return
+    }
+
+    const excludedComics = (
+        JSON.parse(response.responseText) as ComicDataListing[]
+    ).map((c) => c.comic)
+
+    let newRandomComic = currentComic
+    while (
+        newRandomComic === currentComic ||
+        (newRandomComic && excludedComics.includes(newRandomComic))
+    ) {
+        newRandomComic = Math.floor(Math.random() * (latestComic! + 1))
+    }
+    randomComic = newRandomComic
+    notifyNavigationSubscribers()
 }
 
 // Handle popstate events to go back to previous comics that were

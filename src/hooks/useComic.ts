@@ -37,9 +37,22 @@ export default function useComic() {
             setRandomComic(comicService.random())
         }
 
-        comicService.subscribe(handleComicChange)
+        comicService.subscribeCurrent(handleComicChange)
         return () => {
-            comicService.unsubscribe(handleComicChange)
+            comicService.unsubscribeCurrent(handleComicChange)
+        }
+    }, [])
+
+    useEffect(() => {
+        function handleComicNavigationChange() {
+            setPreviousComic(comicService.previous())
+            setNextComic(comicService.next())
+            setRandomComic(comicService.random())
+        }
+
+        comicService.subscribeNavigation(handleComicNavigationChange)
+        return () => {
+            comicService.unsubscribeNavigation(handleComicNavigationChange)
         }
     }, [])
 
