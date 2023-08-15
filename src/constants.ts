@@ -16,9 +16,13 @@
  */
 
 let scriptVersion
-if (typeof GM !== undefined) {
-    scriptVersion = GM.info.script.version
-} else {
+try {
+    if (typeof GM !== undefined) {
+        scriptVersion = GM.info.script.version
+    } else {
+        scriptVersion = 'Unknown'
+    }
+} catch {
     scriptVersion = 'Unknown'
 }
 

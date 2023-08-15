@@ -236,46 +236,54 @@ window.addEventListener('popstate', (event) => {
     }
 })
 
-const shortcut = (unsafeWindow as any).shortcut
+try {
+    if (typeof unsafeWindow !== undefined) {
+        const shortcut = (unsafeWindow as any).shortcut
 
-console.debug('Removing Left')
-shortcut.remove('Left')
-console.debug('Removing Right')
-shortcut.remove('Right')
+        console.debug('Removing Left')
+        shortcut.remove('Left')
+        console.debug('Removing Right')
+        shortcut.remove('Right')
 
-const disable_in_input = createObjectIn<any>(unsafeWindow)
-disable_in_input.disable_in_input = true
+        const disable_in_input = createObjectIn<any>(unsafeWindow)
+        disable_in_input.disable_in_input = true
 
-console.debug('Adding Left')
-shortcut.add(
-    'Left',
-    exportFunction(() => setPrevious(), unsafeWindow),
-    disable_in_input
-)
-shortcut.add(
-    'Alt+Left',
-    exportFunction(() => setPrevious(), unsafeWindow)
-)
+        console.debug('Adding Left')
+        shortcut.add(
+            'Left',
+            exportFunction(() => setPrevious(), unsafeWindow),
+            disable_in_input
+        )
+        shortcut.add(
+            'Alt+Left',
+            exportFunction(() => setPrevious(), unsafeWindow)
+        )
 
-console.debug('Adding Right')
-shortcut.add(
-    'Right',
-    exportFunction(() => setNext(), unsafeWindow),
-    disable_in_input
-)
-shortcut.add(
-    'Alt+Right',
-    exportFunction(() => setNext(), unsafeWindow)
-)
+        console.debug('Adding Right')
+        shortcut.add(
+            'Right',
+            exportFunction(() => setNext(), unsafeWindow),
+            disable_in_input
+        )
+        shortcut.add(
+            'Alt+Right',
+            exportFunction(() => setNext(), unsafeWindow)
+        )
 
-console.debug('Adding Q')
-shortcut.add(
-    'Q',
-    exportFunction(function () {
-        // TODO
-        // if (settings.values.editMode) {
-        //     $('input[id^="addItem"]').focus()
-        // }
-    }, unsafeWindow),
-    disable_in_input
-)
+        console.debug('Adding Q')
+        shortcut.add(
+            'Q',
+            exportFunction(function () {
+                // TODO
+                // if (settings.values.editMode) {
+                //     $('input[id^="addItem"]').focus()
+                // }
+            }, unsafeWindow),
+            disable_in_input
+        )
+    }
+} catch (ex) {
+    if (ex !== 'ReferenceError: unsafeWindow is not defined') {
+        console.error(ex)
+    }
+}
