@@ -188,7 +188,13 @@ export default function QcExtMainWidget() {
                             Settings
                         </button>
                     </div>
-                    <div className="flex min-w-0">
+                    <form
+                        className="flex min-w-0"
+                        onSubmit={(e) => {
+                            e.preventDefault()
+                            goToSelectorComic()
+                        }}
+                    >
                         <label
                             title="Comic #"
                             htmlFor="qc-ext-extra-navigation-comic"
@@ -207,26 +213,21 @@ export default function QcExtMainWidget() {
                             max={latestComic ?? 1}
                             value={comicSelectorNo ?? ''}
                             onChange={(e) => setComicSelectorNo(e.target.value)}
-                            onKeyPress={(e) => {
-                                if (e.code === 'Enter') {
-                                    goToSelectorComic()
-                                }
-                            }}
                             className="min-w-0 border border-qc-header focus:outline-none flex-auto rounded-none pl-2 disabled:opacity-75"
                             disabled={comicDataLoading}
                         />
                         <button
                             className="bg-qc-header hover:bg-qc-header-second focus:bg-qc-header-second text-white py-2 px-4 rounded-l-none rounded-r-sm disabled:opacity-75"
-                            onClick={goToSelectorComic}
                             disabled={comicDataLoading}
                             title="Go to selected comic"
+                            type="submit"
                         >
                             <i
                                 className="fa fa-arrow-right"
                                 aria-hidden="true"
                             ></i>
                         </button>
-                    </div>
+                    </form>
                 </div>
                 {settings.showAllMembers ? (
                     <>
@@ -237,7 +238,7 @@ export default function QcExtMainWidget() {
                             title="The value entered here filters the non-present members by their name or abbreviated name"
                             value={filter}
                             onChange={(e) => setFilter(e.target.value)}
-                            className="w-full border border-qc-header focus:outline-none flex-auto rounded-none pl-2 disabled:opacity-75"
+                            className="w-full border border-qc-header focus:outline-none flex-auto rounded-none pl-2 disabled:opacity-75 mb-2"
                             disabled={comicDataLoading}
                         />
                         <div className="max-h-[20em] overflow-y-auto overflow-x-hidden">
