@@ -243,7 +243,7 @@ function initializeComicNavigation() {
 
     let comicNav2Parent = comicNav2.parentNode as HTMLElement
 
-    // The front page places the second #comicnav in a <div class="row"> for some reason. Let's ditch it.
+    // The second #comicnav is in a <div class="row">/<div id="row"> for some reason. Let's ditch it if present.
     comicNavContainer = document.createElement('div')
     comicNavContainer.classList.add(
         QC_EXT_CLASSNAME,
@@ -251,11 +251,14 @@ function initializeComicNavigation() {
     )
     if (
         comicNav2Parent.tagName === 'DIV' &&
-        comicNav2Parent.classList.contains('row')
+        (comicNav2Parent.classList.contains('row') ||
+            comicNav2Parent.id === 'row')
     ) {
+        // Remove all children of comicNav2Parent
         while (comicNav2Parent.firstChild) {
             comicNav2Parent.removeChild(comicNav2Parent.lastChild as ChildNode)
         }
+        // Then insert our comicNavContainer in its place
         comicNav2Parent.parentNode?.replaceChild(
             comicNavContainer,
             comicNav2Parent
