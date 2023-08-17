@@ -46,7 +46,7 @@ async function comicChanged(refresh?: boolean) {
         exclude?: 'guest' | 'non-canon'
         include?: 'all'
     } = {}
-    if (settings.values.editMode) {
+    if (settings.values.editMode && settings.values.editModeToken) {
         urlParameters.token = settings.values.editModeToken
     }
     if (settings.values.skipGuest) {
@@ -54,7 +54,7 @@ async function comicChanged(refresh?: boolean) {
     } else if (settings.values.skipNonCanon) {
         urlParameters.exclude = 'non-canon'
     }
-    if (settings.values.showAllMembers) {
+    if (settings.values.showAllMembers || settings.values.editMode) {
         urlParameters.include = 'all'
     }
     const urlQuery = new URLSearchParams(urlParameters).toString()
@@ -125,6 +125,187 @@ async function comicChanged(refresh?: boolean) {
     currentComicData = comicData
     currentlyLoadingComicData = null
     notifyLoadedSubscribers(currentComicData)
+}
+
+async function addItemToComic(itemId: number) {
+    const settings = Settings.get()
+
+    if (!settings.values.editMode || !settings.values.editModeToken) {
+        warn(
+            'Called `addItemToComic` when edit mode disabled or without edit mode token. Ignoring request.'
+        )
+        return
+    }
+
+    const data: {
+        token: string
+        comicId: number
+        itemId: number
+        newItemName?: string
+        newItemType?: string
+    } = {
+        token: settings.values.editModeToken,
+        comicId: comicService.current()!,
+        itemId: itemId,
+    }
+
+    await makePostRequest(constants.addItemToComicUrl, data)
+    refresh()
+}
+
+async function removeItemFromComic(itemId: number) {
+    const settings = Settings.get()
+
+    if (!settings.values.editMode || !settings.values.editModeToken) {
+        warn(
+            'Called `removeItemFromComic` when edit mode disabled or without edit mode token. Ignoring request.'
+        )
+        return
+    }
+
+    const data: {
+        token: string
+        comicId: number
+        itemId: number
+        newItemName?: string
+        newItemType?: string
+    } = {
+        token: settings.values.editModeToken,
+        comicId: comicService.current()!,
+        itemId: itemId,
+    }
+
+    await makePostRequest(constants.removeItemFromComicUrl, data)
+    refresh()
+}
+
+async function updateComicTitle(newTitle: string) {
+    const settings = Settings.get()
+
+    if (!settings.values.editMode || !settings.values.editModeToken) {
+        warn(
+            'Called `updateComicTitle` when edit mode disabled or without edit mode token. Ignoring request.'
+        )
+        return
+    }
+
+    const data: {
+        token: string
+        comicId: number
+        title: string
+    } = {
+        token: settings.values.editModeToken,
+        comicId: comicService.current()!,
+        title: newTitle,
+    }
+
+    await makePostRequest(constants.setComicTitleUrl, data)
+    refresh()
+}
+
+async function updateComicTagline(newTagline: string) {
+    const settings = Settings.get()
+
+    if (!settings.values.editMode || !settings.values.editModeToken) {
+        warn(
+            'Called `updateComicTagline` when edit mode disabled or without edit mode token. Ignoring request.'
+        )
+        return
+    }
+
+    const data: {
+        token: string
+        comicId: number
+        tagline: string
+    } = {
+        token: settings.values.editModeToken,
+        comicId: comicService.current()!,
+        tagline: newTagline,
+    }
+
+    await makePostRequest(constants.setComicTaglineUrl, data)
+    refresh()
+}
+
+async function updateComicPublishDate(
+    newPublishDate: string,
+    newIsAccuratePublishDate: boolean
+) {
+    const settings = Settings.get()
+
+    if (!settings.values.editMode || !settings.values.editModeToken) {
+        warn(
+            'Called `updateComicPublishDate` when edit mode disabled or without edit mode token. Ignoring request.'
+        )
+        return
+    }
+
+    const data: {
+        token: string
+        comicId: number
+        publishDate: string
+        isAccuratePublishDate: boolean
+    } = {
+        token: settings.values.editModeToken,
+        comicId: comicService.current()!,
+        publishDate: newPublishDate,
+        isAccuratePublishDate: newIsAccuratePublishDate,
+    }
+
+    await makePostRequest(constants.setPublishDateUrl, data)
+    refresh()
+}
+
+async function updateComicFlag(comicFlag: ComicFlag, value: boolean) {
+    const settings = Settings.get()
+
+    if (!settings.values.editMode || !settings.values.editModeToken) {
+        warn(
+            'Called `updateComicFlag` when edit mode disabled or without edit mode token. Ignoring request.'
+        )
+        return
+    }
+
+    const data: {
+        token: string
+        comicId: number
+        flagValue: boolean
+    } = {
+        token: settings.values.editModeToken,
+        comicId: comicService.current()!,
+        flagValue: value,
+    }
+
+    await makePostRequest(comicFlagToUpdateUrl(comicFlag), data)
+    refresh()
+}
+
+async function makePostRequest(url: string, data: any) {
+    let response
+    try {
+        response = await fetch(url, {
+            data: JSON.stringify(data),
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json; charset=utf-8',
+            },
+        })
+    } catch (e) {
+        // TODO: Handle connection error (i.e. server down)
+        // (Should probably be done using error boundaries...)
+        return
+    }
+    if (response.status === 503) {
+        // TODO: Enter Maintenance mode
+        warn('Maintenance', response.responseText)
+        return
+    } else if (response.status !== 200) {
+        error(
+            `Got error when adding an item to the current comic:`,
+            response.responseText
+        )
+        return
+    }
 }
 
 function refresh() {
@@ -211,6 +392,13 @@ const comicDataService = {
     subscribeLoaded,
     unsubscribeLoaded,
     all,
+
+    addItemToComic,
+    removeItemFromComic,
+    updateComicTitle,
+    updateComicTagline,
+    updateComicFlag,
+    updateComicPublishDate,
 }
 export default comicDataService
 
@@ -221,5 +409,32 @@ function fixItem(item: ItemNavigationData, currentComic: number) {
     }
     if (item.last === currentComic) {
         item.last = null
+    }
+}
+
+type ComicFlag =
+    | 'isGuestComic'
+    | 'isNonCanon'
+    | 'hasNoCast'
+    | 'hasNoLocation'
+    | 'hasNoStoryline'
+    | 'hasNoTitle'
+    | 'hasNoTagline'
+function comicFlagToUpdateUrl(comicFlag: ComicFlag) {
+    switch (comicFlag) {
+        case 'isGuestComic':
+            return constants.setGuestComicUrl
+        case 'isNonCanon':
+            return constants.setNonCanonUrl
+        case 'hasNoCast':
+            return constants.setNoCastUrl
+        case 'hasNoLocation':
+            return constants.setNoLocationUrl
+        case 'hasNoStoryline':
+            return constants.setNoStorylineUrl
+        case 'hasNoTitle':
+            return constants.setNoTitleUrl
+        case 'hasNoTagline':
+            return constants.setNoTaglineUrl
     }
 }

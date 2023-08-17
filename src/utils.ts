@@ -182,6 +182,7 @@ export async function fetch<TContext = undefined>(
             method: configuration?.method ? configuration.method : 'GET',
             context: configuration?.context,
             data: configuration?.data,
+            headers: configuration?.headers,
             overrideMimeType: configuration?.overrideMimeType,
             user: configuration?.user,
             password: configuration?.password,

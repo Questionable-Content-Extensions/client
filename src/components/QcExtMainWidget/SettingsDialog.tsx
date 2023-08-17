@@ -67,7 +67,9 @@ export function SettingsPanel({
                 description={
                     'Show every cast member, storyline and location, even if they are not part of the current comic. ' +
                     'Makes no sense to enable for normal use, but can be useful if you always want to be able to find the ' +
-                    'next/previous comic of any character/storyline/location.'
+                    'next/previous comic of any character/storyline/location. When editor mode is enabled, this setting only ' +
+                    'changes where the all-member list is shown; when off, it shows in the editor widget, when on, it shows ' +
+                    'in the navigation widget.'
                 }
             />
             <ToggleSetting

@@ -7,6 +7,8 @@ import ModalDialogSeat from '@modals/ModalDialogSeat'
 import ModalPageOverlay from '@modals/ModalPageOverlay'
 import ModalPortal from '@modals/ModalPortal'
 import { ItemNavigationData } from '@models/ComicData'
+import comicDataService from '@services/comicDataService'
+import FilteredNavigationData from '@widgets/FilteredNavigationData'
 
 import constants from '~/constants'
 import { debug } from '~/utils'
@@ -14,6 +16,7 @@ import { debug } from '~/utils'
 import ExtraNavigation from './ExtraNavigation'
 import ItemDetailsDialog from './ItemDetailsDialog'
 import ItemNavigation from './ItemNavigation'
+import { NavElementMode } from './NavElement'
 import SettingsDialog from './SettingsDialog'
 
 export default function QcExtMainWidget() {
@@ -66,43 +69,33 @@ export default function QcExtMainWidget() {
             return
         }
 
-        // We need to reload the comic data *if* `showAllMembers` was enabled
-        // and the currently loaded comic data does not have it
+        // We need to reload the comic data *if* `showAllMembers` or `editMode`
+        // was enabled and the currently loaded comic data does not already
+        // have the extra data
+        // TODO: This check should probably be moved out to RootWidgetHost when
+        // it gets added
         if (
-            settings.showAllMembers &&
-            comicData?.hasData &&
-            !comicData.allItems
+            (settings.showAllMembers && comicData && !comicData.allItems) ||
+            (settings.editMode &&
+                comicData &&
+                (!comicData.editorData || !comicData.allItems))
         ) {
             setRefreshCheckNeeded(false)
 
             debug(
-                'Refreshing comic data because `showAllMembers` was enabled ' +
-                    "when it previously wasn't"
+                'Refreshing comic data because a setting was enabled ' +
+                    'that requires more data to be loaded'
             )
             refreshComicData()
         }
     }, [
         settings,
-        comicData?.hasData,
+        comicData,
+        comicData?.editorData,
         comicData?.allItems,
         refreshComicData,
         refreshCheckNeeded,
     ])
-    const [filter, setFilter] = useState('')
-    const [activeFilter, setActiveFilter] = useState('')
-    useEffect(() => {
-        let filterDebounceTimeout: ReturnType<typeof setTimeout> | null =
-            setTimeout(() => {
-                setActiveFilter(filter)
-                filterDebounceTimeout = null
-            }, 500)
-        return () => {
-            if (filterDebounceTimeout !== null) {
-                clearTimeout(filterDebounceTimeout)
-                filterDebounceTimeout = null
-            }
-        }
-    }, [filter])
 
     // TODO: Add a setting for placing the widget on the left or right side of the comic.
 
@@ -145,10 +138,15 @@ export default function QcExtMainWidget() {
                     </ModalDialogSeat>
                 </>
             </ModalPortal>
-            <div className="bg-stone-100 border-solid shadow-md border-0 border-b border-qc-header xl:fixed xl:top-48 xl:right-[50%] xl:-mr-[620px] xl:w-64 xl:border xl:border-stone-300 z-10 p-2">
-                <div className="-mx-2 -mt-2 text-center small-caps text-sm font-thin border-b border-solid border-b-stone-300 border-l-0 border-t-0 border-r-0">
+            <div
+                className={
+                    'bg-stone-100 border-solid border-0 border-b border-qc-header lg:border lg:border-stone-300 ' +
+                    'shadow-md lg:fixed lg:top-20 xl:top-48 lg:right-[50%] lg:-mr-[620px] lg:w-64 z-10 p-2 lg:max-h-[calc(100vh-5rem)] xl:max-h-[calc(100vh-12rem)] lg:overflow-y-auto'
+                }
+            >
+                <h1 className="-mx-2 -mt-2 mb-0 text-center small-caps text-sm font-thin border-b border-solid border-b-stone-300 border-l-0 border-t-0 border-r-0">
                     Questionable Content Extensions {developmentMode}
-                </div>
+                </h1>
                 <ExtraNavigation
                     currentComic={currentComic}
                     onSetFirstComic={setFirstComic}
@@ -161,7 +159,6 @@ export default function QcExtMainWidget() {
                     randomComic={randomComic}
                     onSetRandomComic={setRandomComic}
                 />
-                {/* TODO: Fix navigation not showing `allItems` */}
                 <ItemNavigation
                     itemNavigationData={
                         comicData && comicData.hasData ? comicData.items : []
@@ -170,6 +167,11 @@ export default function QcExtMainWidget() {
                     useColors={settings.useColors}
                     onSetCurrentComic={setCurrentComic}
                     onShowInfoFor={setShowInfoItem}
+                    mode={NavElementMode.Present}
+                    editMode={settings.editMode}
+                    onRemoveItem={(item) => {
+                        comicDataService.removeItemFromComic(item.id)
+                    }}
                 />
                 <hr className="my-4 mx-0 border-solid border-b max-w-none" />
                 <div className="grid grid-rows-2 space-y-1">
@@ -232,45 +234,22 @@ export default function QcExtMainWidget() {
                 {settings.showAllMembers ? (
                     <>
                         <hr className="my-4 mx-0 border-solid border-b max-w-none" />
-                        <input
-                            type="text"
-                            placeholder="Filter non-present"
-                            title="The value entered here filters the non-present members by their name or abbreviated name"
-                            value={filter}
-                            onChange={(e) => setFilter(e.target.value)}
-                            className="w-full border border-qc-header focus:outline-none flex-auto rounded-none pl-2 disabled:opacity-75 mb-2"
-                            disabled={comicDataLoading}
+                        <FilteredNavigationData
+                            isLoading={comicDataLoading}
+                            itemData={(comicData && comicData.allItems) ?? []}
+                            onSetCurrentComic={setCurrentComic}
+                            onShowInfoFor={setShowInfoItem}
+                            useColors={settings.useColors}
+                            editMode={settings.editMode}
+                            onAddItem={(item) => {
+                                comicDataService.addItemToComic(item.id)
+                            }}
                         />
-                        <div className="max-h-[20em] overflow-y-auto overflow-x-hidden">
-                            <ItemNavigation
-                                itemNavigationData={
-                                    comicData && comicData.hasData
-                                        ? filterItems(
-                                              comicData.allItems ?? [],
-                                              activeFilter
-                                          )
-                                        : []
-                                }
-                                isLoading={false}
-                                useColors={settings.useColors}
-                                onSetCurrentComic={setCurrentComic}
-                                onShowInfoFor={setShowInfoItem}
-                                isAllItems
-                            />
-                        </div>
                     </>
                 ) : (
                     <></>
                 )}
             </div>
         </>
-    )
-}
-
-function filterItems(allItems: ItemNavigationData[], filter: string) {
-    return allItems.filter(
-        (i) =>
-            i.shortName.toUpperCase().indexOf(filter.toUpperCase()) !== -1 ||
-            i.name.toUpperCase().indexOf(filter.toUpperCase()) !== -1
     )
 }

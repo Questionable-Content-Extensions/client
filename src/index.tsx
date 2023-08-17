@@ -22,6 +22,7 @@ import './index.css'
 import Comic from '@components/Comic'
 import ComicNavigation from '@components/ComicNavigation'
 import DateComponent from '@components/Date'
+import EditorModeExtraWidget from '@components/EditorModeExtraWidget'
 import News from '@components/News'
 import QcExtMainWidget from '@components/QcExtMainWidget/QcExtMainWidget'
 import '@services/comicDataService'
@@ -321,15 +322,14 @@ function initializeExtraNavigation() {
     extraContainer.classList.add(
         'qc-ext',
         'qc-ext-extra-navigation-container',
-        'sticky',
         'top-0',
-        'z-10',
-        'xl:static'
+        'z-10'
     )
     container.insertAdjacentElement('beforebegin', extraContainer)
     ReactDOM.render(
         <QcStrictMode>
             <QcExtMainWidget />
+            <EditorModeExtraWidget />
         </QcStrictMode>,
         extraContainer
     )

@@ -1,9 +1,9 @@
-import { useMemo } from 'react'
-
 import Spinner from '@components/Spinner'
 import { ItemNavigationData } from '@models/ComicData'
 
-import NavElement from './NavElement'
+import { PickEnum } from '~/tsUtils'
+
+import NavElement, { NavElementMode } from './NavElement'
 
 export default function ItemNavigation({
     itemNavigationData,
@@ -11,42 +11,48 @@ export default function ItemNavigation({
     useColors,
     onSetCurrentComic,
     onShowInfoFor,
-    isAllItems,
+    mode,
+    editMode,
+    onRemoveItem,
+    onAddItem,
 }: {
     itemNavigationData: ItemNavigationData[]
     isLoading: boolean
     useColors: boolean
     onSetCurrentComic: (comicNo: number) => void
     onShowInfoFor: (item: ItemNavigationData) => void
-    isAllItems?: boolean
+    mode: PickEnum<
+        NavElementMode,
+        NavElementMode.Present | NavElementMode.Missing
+    >
+    editMode?: boolean
+    onRemoveItem?: (_: ItemNavigationData) => void
+    onAddItem?: (_: ItemNavigationData) => void
 }) {
     let itemNavElements: {
         cast: React.ReactNode[]
         location: React.ReactNode[]
         storyline: React.ReactNode[]
-    } = useMemo(() => {
-        let itemNavElements: {
-            cast: React.ReactNode[]
-            location: React.ReactNode[]
-            storyline: React.ReactNode[]
-        } = {
-            cast: [],
-            location: [],
-            storyline: [],
-        }
-        for (const item of itemNavigationData) {
-            itemNavElements[item.type].push(
-                <NavElement
-                    key={item.id}
-                    item={item}
-                    onSetCurrentComic={onSetCurrentComic}
-                    useColors={useColors}
-                    onShowInfoFor={onShowInfoFor}
-                />
-            )
-        }
-        return itemNavElements
-    }, [itemNavigationData, useColors, onSetCurrentComic, onShowInfoFor])
+    } = {
+        cast: [],
+        location: [],
+        storyline: [],
+    }
+    for (const item of itemNavigationData) {
+        itemNavElements[item.type].push(
+            <NavElement
+                key={item.id}
+                item={item}
+                onSetCurrentComic={onSetCurrentComic}
+                useColors={useColors}
+                onShowInfoFor={onShowInfoFor}
+                mode={mode}
+                editMode={editMode}
+                onAddItem={onAddItem}
+                onRemoveItem={onRemoveItem}
+            />
+        )
+    }
 
     if (isLoading) {
         return (
@@ -63,18 +69,7 @@ export default function ItemNavigation({
         )
     }
 
-    if (!itemNavigationData.length && !isAllItems) {
-        return (
-            <div className="text-center pt-4">
-                <i
-                    className="fa fa-exclamation-triangle"
-                    aria-hidden="true"
-                ></i>
-                <br />
-                Comic has no data
-            </div>
-        )
-    } else if (!itemNavigationData.length && isAllItems) {
+    if (!itemNavigationData.length) {
         return <></>
     }
 
@@ -85,7 +80,7 @@ export default function ItemNavigation({
                     <h1 className="text-base font-normal text-center m-2">
                         Cast Members
                     </h1>
-                    {isAllItems ? (
+                    {mode === NavElementMode.Missing ? (
                         <h2 className="text-xs font-normal text-center">
                             (Non-Present)
                         </h2>
@@ -102,7 +97,7 @@ export default function ItemNavigation({
                     <h1 className="text-base font-normal text-center m-2">
                         Locations
                     </h1>
-                    {isAllItems ? (
+                    {mode === NavElementMode.Missing ? (
                         <h2 className="text-xs font-normal text-center">
                             (Non-Present)
                         </h2>
@@ -119,7 +114,7 @@ export default function ItemNavigation({
                     <h1 className="text-base font-normal text-center m-2">
                         Storylines
                     </h1>
-                    {isAllItems ? (
+                    {mode === NavElementMode.Missing ? (
                         <h2 className="text-xs font-normal text-center">
                             (Non-Present)
                         </h2>

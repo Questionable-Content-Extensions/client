@@ -18,7 +18,7 @@ import { createTintOrShade } from '~/color'
 import constants from '~/constants'
 import { debug } from '~/utils'
 
-import NavElement from './NavElement'
+import NavElement, { NavElementMode } from './NavElement'
 
 export default function ItemDetailsDialog({
     onClose,
@@ -232,6 +232,7 @@ export function ItemDataPanel({
                     useColors={true}
                     onSetCurrentComic={() => {}}
                     onShowInfoFor={() => {}}
+                    mode={NavElementMode.Preview}
                 />
             </div>
             <div

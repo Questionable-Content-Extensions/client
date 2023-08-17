@@ -2,8 +2,10 @@ import { ComicData } from '@models/ComicData'
 import { ComponentMeta, ComponentStory } from '@storybook/react'
 
 import ItemNavigation from './ItemNavigation'
+import { NavElementMode } from './NavElement'
 
 const COMIC_DATA_666: ComicData = {
+    editorData: { present: false },
     comic: 666,
     imageType: 'png',
     hasData: true,
@@ -159,18 +161,39 @@ const COMIC_DATA_666: ComicData = {
 
 export default {
     component: ItemNavigation,
+    argTypes: {
+        mode: {
+            control: 'select',
+            options: [
+                NavElementMode[NavElementMode.Present],
+                NavElementMode[NavElementMode.Missing],
+            ],
+        },
+    },
 } as ComponentMeta<typeof ItemNavigation>
 
-const Template: ComponentStory<typeof ItemNavigation> = (args) => (
-    <ItemNavigation {...args} />
-)
+const Template: ComponentStory<typeof ItemNavigation> = (args) => {
+    // For better Storybook experience, we pretend this field is a string
+    // and then turn it into a number here
+    const mode = args.mode
+    if (typeof mode === 'string') {
+        args.mode = NavElementMode[mode] as unknown as
+            | NavElementMode.Present
+            | NavElementMode.Missing
+    }
+
+    return <ItemNavigation {...args} />
+}
 
 export const Default = Template.bind({})
 Default.args = {
     itemNavigationData: COMIC_DATA_666.items,
     useColors: true,
     isLoading: false,
-    isAllItems: false,
+    mode: NavElementMode[NavElementMode.Present] as unknown as
+        | NavElementMode.Present
+        | NavElementMode.Missing,
+    editMode: false,
 }
 
 export const WithoutColor = Template.bind({})
@@ -194,12 +217,31 @@ NoData.args = {
 export const AllItemsMode = Template.bind({})
 AllItemsMode.args = {
     ...Default.args,
-    isAllItems: true,
+    mode: NavElementMode[NavElementMode.Missing] as unknown as
+        | NavElementMode.Present
+        | NavElementMode.Missing,
 }
 
 export const AllItemsModeNoData = Template.bind({})
 AllItemsModeNoData.args = {
     ...Default.args,
     itemNavigationData: [],
-    isAllItems: true,
+    mode: NavElementMode[NavElementMode.Missing] as unknown as
+        | NavElementMode.Present
+        | NavElementMode.Missing,
+}
+
+export const EditMode = Template.bind({})
+EditMode.args = {
+    ...Default.args,
+    editMode: true,
+}
+
+export const AllItemsEditMode = Template.bind({})
+AllItemsEditMode.args = {
+    ...Default.args,
+    editMode: true,
+    mode: NavElementMode[NavElementMode.Missing] as unknown as
+        | NavElementMode.Present
+        | NavElementMode.Missing,
 }

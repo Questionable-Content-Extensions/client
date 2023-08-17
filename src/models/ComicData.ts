@@ -9,7 +9,7 @@ export type ComicDataListing = {
 
 export type ComicDataShared = {
     comic: number
-    editorData?: EditorData
+    editorData: EditorData
     allItems?: ItemNavigationData[]
 }
 
@@ -45,9 +45,16 @@ export type ComicDataMissing = {
 
 export type ComicData = ComicDataShared & (ComicDataPresent | ComicDataMissing)
 
-export type EditorData = {
+export type EditorDataMissing = {
+    present: false
+}
+
+export type EditorDataPresent = {
+    present: true
     missing: MissingNavigationData
 }
+
+export type EditorData = EditorDataMissing | EditorDataPresent
 
 export type MissingNavigationData = {
     cast: NavigationData
