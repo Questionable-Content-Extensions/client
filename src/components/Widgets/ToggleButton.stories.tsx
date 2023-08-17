@@ -42,4 +42,11 @@ Default.args = {
     // For better Storybook experience, pretend this field is a string
     kind: Kind[Kind.Skinny] as unknown as Kind,
     checked: false,
+    disabled: false,
+}
+
+export const Disabled = Template.bind({})
+Disabled.args = {
+    ...Default.args,
+    disabled: true,
 }

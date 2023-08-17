@@ -1,5 +1,62 @@
 input.toggle:checked ~ .dot {
     transform: translateX(100%);
-    @apply bg-qc-header-second;
-    @apply border-transparent;
 }
+
+input.toggle:checked ~ .background {
+    @apply bg-qc-header-second;
+}
+
+input.toggle:checked ~ .background.disabled {
+    filter: brightness(1.5) grayscale(0.5);
+}
+
+/* These need to be here to make the TS type checker happy.
+ * Cause: The commented out code below used to require them.
+ */
+input.toggle ~ .skinny {
+}
+input.toggle ~ .thick {
+}
+/*
+ * Enabling this puts text inside the switch. I decided I didn't care for it,
+ * so I've commented it out, but I didn't want to lose the effort spent,
+ * so here it stays:
+
+input.toggle ~ .background {
+    @apply relative;
+}
+
+input.toggle ~ .background:before,
+input.toggle ~ .background:after {
+    @apply absolute;
+}
+
+input.toggle ~ .background.skinny:before,
+input.toggle ~ .background.skinny:after {
+    @apply top-0.5;
+    @apply text-[0.5em];
+}
+
+input.toggle ~ .background.thick:before,
+input.toggle ~ .background.thick:after {
+    @apply top-[0.5rem];
+    @apply text-xs;
+}
+
+input.toggle ~ .background:before {
+    content: 'ON';
+    @apply text-white;
+    @apply left-1;
+}
+
+input.toggle ~ .background:after {
+    content: 'OFF';
+    @apply text-black;
+    @apply right-0.5;
+}
+
+input.toggle:checked ~ .background.thick:after {
+    @apply hidden;
+}
+
+*/
