@@ -1,27 +1,35 @@
 import { useEffect, useState } from 'react'
+import { ConnectedProps, connect } from 'react-redux'
 
 import styles from './GoToComicDialog.module.css'
 
 import Spinner from '@components/Spinner'
 import useComic from '@hooks/useComic'
-import useSettings from '@hooks/useSettings'
 import ModalDialog from '@modals/ModalDialog'
 import { ComicList as ComicDataListing } from '@models/ComicList'
 import comicDataService from '@services/comicDataService'
+import { RootState } from '@store/store'
 
 import { debug } from '~/utils'
 
-// TODO: Add a search/filter function to this dialog
+const mapState = (state: RootState) => {
+    return {
+        settings: state.settings.values,
+    }
+}
 
-export default function GoToComicDialog({
-    show,
-    onClose,
-}: {
+const mapDispatch = () => ({})
+
+const connector = connect(mapState, mapDispatch)
+type PropsFromRedux = ConnectedProps<typeof connector>
+type GoToComicDialogProps = PropsFromRedux & {
     show: boolean
     onClose: () => void
-}) {
-    const [settings, _updateSettings] = useSettings()
+}
 
+// TODO: Add a search/filter function to this dialog
+
+function GoToComicDialog({ show, onClose, settings }: GoToComicDialogProps) {
     const {
         currentComic: [_currentComic, setCurrentComic],
     } = useComic()
@@ -73,6 +81,8 @@ export default function GoToComicDialog({
         />
     )
 }
+
+export default connector(GoToComicDialog)
 
 export function ComicList({
     allComicData,

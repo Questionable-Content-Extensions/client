@@ -1,4 +1,3 @@
-import { SettingsUpdater } from '@hooks/useSettings'
 import { ComicData } from '@models/ComicData'
 import { useArgs } from '@storybook/client-api'
 import { ComponentMeta, ComponentStory } from '@storybook/react'

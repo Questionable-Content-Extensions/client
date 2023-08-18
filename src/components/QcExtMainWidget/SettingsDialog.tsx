@@ -1,20 +1,48 @@
 import { useState } from 'react'
+import { ConnectedProps, connect } from 'react-redux'
 
-import useSettings, { SettingsUpdater } from '@hooks/useSettings'
 import ModalDialog from '@modals/ModalDialog'
+import { updateSettings } from '@store/settingsSlice'
+import { AppDispatch, RootState } from '@store/store'
 import ToggleButton from '@widgets/ToggleButton'
 
 import { SettingValues } from '~/settings'
 import { KeyOfType } from '~/tsUtils'
 
-export default function SettingsDialog({
-    show: _show,
-    onClose,
-}: {
+const mapState = (state: RootState) => {
+    return {
+        settings: state.settings.values,
+    }
+}
+
+const mapDispatch = (dispatch: AppDispatch) => {
+    return {
+        updateSettings: (values: SettingValues) => {
+            dispatch(updateSettings(values))
+        },
+    }
+}
+
+const connector = connect(mapState, mapDispatch)
+type PropsFromRedux = ConnectedProps<typeof connector>
+type SettingsDialogProps = PropsFromRedux & {
     show: boolean
     onClose: () => void
-}) {
-    const [settings, updateSettings] = useSettings()
+}
+
+export type SettingsUpdater = (s: SettingValues) => void
+
+function SettingsDialog({
+    show: _show,
+    onClose,
+    settings,
+    updateSettings,
+}: SettingsDialogProps) {
+    const settingsUpdater = (u: SettingsUpdater) => {
+        const updatedSettings = { ...settings }
+        u(updatedSettings)
+        updateSettings(updatedSettings)
+    }
 
     return (
         <ModalDialog
@@ -27,7 +55,7 @@ export default function SettingsDialog({
             body={
                 <SettingsPanel
                     settings={settings}
-                    updateSettings={updateSettings}
+                    updateSettings={settingsUpdater}
                 />
             }
             footer={
@@ -41,6 +69,8 @@ export default function SettingsDialog({
         />
     )
 }
+
+export default connector(SettingsDialog)
 
 export function SettingsPanel({
     settings,

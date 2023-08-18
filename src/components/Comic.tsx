@@ -1,8 +1,9 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { ConnectedProps, connect } from 'react-redux'
 
 import useComic from '@hooks/useComic'
 import useComicData from '@hooks/useComicData'
-import useSettings from '@hooks/useSettings'
+import { RootState } from '@store/store'
 
 import { debug, info } from '~/utils'
 
@@ -10,14 +11,22 @@ import ComicImage from './ComicImage'
 import ComicRibbon, { RibbonType } from './ComicRibbon'
 import FullPageLoader from './FullPageLoader'
 
-export default function Comic({
-    initialComic,
-    initialComicSrc,
-}: {
+const mapState = (state: RootState) => {
+    return {
+        settings: state.settings.values,
+    }
+}
+
+const mapDispatch = () => ({})
+
+const connector = connect(mapState, mapDispatch)
+type PropsFromRedux = ConnectedProps<typeof connector>
+type ComicProps = PropsFromRedux & {
     initialComic: number
     initialComicSrc: string
-}) {
-    const [settings, _updateSettings] = useSettings()
+}
+
+function Comic({ initialComic, initialComicSrc, settings }: ComicProps) {
     const [isInitializing, setIsInitializing] = useState(true)
 
     const {
@@ -124,6 +133,8 @@ export default function Comic({
         </div>
     )
 }
+
+export default connector(Comic)
 
 function useComicLoaderTimeout(
     currentComic: number | null,

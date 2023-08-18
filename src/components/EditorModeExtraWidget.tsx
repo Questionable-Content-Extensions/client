@@ -1,12 +1,13 @@
 import { createContext, useContext, useEffect, useMemo, useState } from 'react'
+import { ConnectedProps, connect } from 'react-redux'
 
 import useComic from '@hooks/useComic'
 import useComicData from '@hooks/useComicData'
-import useSettings from '@hooks/useSettings'
 import { ItemNavigationData } from '@models/ItemNavigationData'
 import { ItemType } from '@models/ItemType'
 import { NavigationData } from '@models/NavigationData'
 import comicDataService from '@services/comicDataService'
+import { RootState } from '@store/store'
 import FilteredNavigationData from '@widgets/FilteredNavigationData'
 
 import { debug } from '~/utils'
@@ -14,8 +15,19 @@ import { debug } from '~/utils'
 import NavElement, { NavElementMode } from './QcExtMainWidget/NavElement'
 import ToggleButton from './Widgets/ToggleButton'
 
-export default function EditorModeExtraWidget() {
-    const [settings, _updateSettings] = useSettings()
+const mapState = (state: RootState) => {
+    return {
+        settings: state.settings.values,
+    }
+}
+
+const mapDispatch = () => ({})
+
+const connector = connect(mapState, mapDispatch)
+type PropsFromRedux = ConnectedProps<typeof connector>
+type EditorModeExtraWidgetProps = PropsFromRedux & {}
+
+function EditorModeExtraWidget({ settings }: EditorModeExtraWidgetProps) {
     const {
         currentComic: [_currentComic, setCurrentComic],
     } = useComic()
@@ -396,6 +408,8 @@ export default function EditorModeExtraWidget() {
         </div>
     )
 }
+
+export default connector(EditorModeExtraWidget)
 
 function MissingNavElement({
     navigationData,

@@ -1,13 +1,14 @@
 import { useEffect, useMemo, useState } from 'react'
+import { ConnectedProps, connect } from 'react-redux'
 
 import useComic from '@hooks/useComic'
 import useComicData from '@hooks/useComicData'
-import useSettings from '@hooks/useSettings'
 import ModalDialogSeat from '@modals/ModalDialogSeat'
 import ModalPageOverlay from '@modals/ModalPageOverlay'
 import ModalPortal from '@modals/ModalPortal'
 import { ItemNavigationData } from '@models/ItemNavigationData'
 import comicDataService from '@services/comicDataService'
+import { RootState } from '@store/store'
 import FilteredNavigationData from '@widgets/FilteredNavigationData'
 
 import constants from '~/constants'
@@ -19,8 +20,19 @@ import ItemNavigation from './ItemNavigation'
 import { NavElementMode } from './NavElement'
 import SettingsDialog from './SettingsDialog'
 
-export default function QcExtMainWidget() {
-    const [settings, _updateSettings] = useSettings()
+const mapState = (state: RootState) => {
+    return {
+        settings: state.settings.values,
+    }
+}
+
+const mapDispatch = () => ({})
+
+const connector = connect(mapState, mapDispatch)
+type PropsFromRedux = ConnectedProps<typeof connector>
+type QcExtMainWidgetProps = PropsFromRedux & {}
+
+function QcExtMainWidget({ settings }: QcExtMainWidgetProps) {
     const {
         setFirstComic,
         previousComic: [previousComic, setPreviousComic],
@@ -253,3 +265,5 @@ export default function QcExtMainWidget() {
         </>
     )
 }
+
+export default connector(QcExtMainWidget)

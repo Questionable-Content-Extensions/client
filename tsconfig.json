@@ -3,6 +3,7 @@
         "baseUrl": ".",
         "paths": {
             "@models/*": ["src/models/*"],
+            "@store/*": ["src/store/*"],
             "@components/*": ["src/components/*"],
             "@hooks/*": ["src/hooks/*"],
             "@modals/*": ["src/components/Modals/*"],

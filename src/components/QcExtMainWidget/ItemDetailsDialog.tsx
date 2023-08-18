@@ -1,16 +1,17 @@
 import { useEffect, useMemo, useState } from 'react'
+import { ConnectedProps, connect } from 'react-redux'
 
 import styles from './ItemDetailsDialog.module.css'
 
 import ModalDialog from '@components/Modals/ModalDialog'
 import Spinner from '@components/Spinner'
 import useComic from '@hooks/useComic'
-import useSettings from '@hooks/useSettings'
 import { Item as ItemData } from '@models/Item'
 import { ItemImageList as ItemImageData } from '@models/ItemImageList'
 import { ItemType } from '@models/ItemType'
 import { RelatedItem as ItemRelationData } from '@models/RelatedItem'
 import itemDataService, { AllItemData } from '@services/itemDataService'
+import { RootState } from '@store/store'
 
 import { createTintOrShade } from '~/color'
 import constants from '~/constants'
@@ -18,14 +19,28 @@ import { debug } from '~/utils'
 
 import NavElement, { NavElementMode } from './NavElement'
 
-export default function ItemDetailsDialog({
-    onClose,
-    initialItemId,
-}: {
+const mapState = (state: RootState) => {
+    return {
+        settings: state.settings.values,
+    }
+}
+
+const mapDispatch = () => ({})
+
+const connector = connect(mapState, mapDispatch)
+type PropsFromRedux = ConnectedProps<typeof connector>
+type ItemDetailsDialogProps = PropsFromRedux & {
     onClose: () => void
     initialItemId: number | null
-}) {
-    const [settings, _updateSettings] = useSettings()
+}
+
+// TODO: Keep showing item until dialog has vanished again
+
+function ItemDetailsDialog({
+    onClose,
+    initialItemId,
+    settings,
+}: ItemDetailsDialogProps) {
     const [itemId, setItemId] = useState<number | null>(null)
     const [_isLoading, setIsLoading] = useState(0)
     const [itemData, setItemData] = useState<AllItemData | null>(null)
@@ -92,6 +107,8 @@ export default function ItemDetailsDialog({
         />
     )
 }
+
+export default connector(ItemDetailsDialog)
 
 export function ItemDataPanel({
     itemData,

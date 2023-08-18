@@ -16,6 +16,7 @@
  */
 import React from 'react'
 import ReactDOM from 'react-dom'
+import { Provider } from 'react-redux'
 
 import './index.css'
 
@@ -27,8 +28,10 @@ import News from '@components/News'
 import QcExtMainWidget from '@components/QcExtMainWidget/QcExtMainWidget'
 import '@services/comicDataService'
 import comicService from '@services/comicService'
+import { loadSettings } from '@store/settingsSlice'
 
 import Settings from '~/settings'
+import store from '~/store/store'
 import { awaitElement, debug, error, fetch, info, qcBug, setup } from '~/utils'
 
 import { BODY_CONTAINER_ID, PORTAL_CONTAINER_ID } from './shared'
@@ -58,6 +61,8 @@ async function main() {
     if (!latestComic) {
         return
     }
+
+    store.dispatch(loadSettings())
 
     encaseBody()
     initializePortal()
@@ -161,7 +166,9 @@ async function initializeComic() {
 
     ReactDOM.render(
         <QcStrictMode>
-            <Comic initialComic={comic} initialComicSrc={comicLinkUrl} />
+            <Provider store={store}>
+                <Comic initialComic={comic} initialComicSrc={comicLinkUrl} />
+            </Provider>
         </QcStrictMode>,
         comicContainer
     )
@@ -237,7 +244,9 @@ function initializeComicNavigation() {
     comicNavParent.replaceChild(comicNavContainer, comicNav)
     ReactDOM.render(
         <QcStrictMode>
-            <ComicNavigation />
+            <Provider store={store}>
+                <ComicNavigation />
+            </Provider>
         </QcStrictMode>,
         comicNavContainer
     )
@@ -270,7 +279,9 @@ function initializeComicNavigation() {
 
     ReactDOM.render(
         <QcStrictMode>
-            <ComicNavigation />
+            <Provider store={store}>
+                <ComicNavigation />
+            </Provider>
         </QcStrictMode>,
         comicNavContainer
     )
@@ -295,7 +306,9 @@ function initializeDateAndNews() {
     newsParent.insertBefore(dateContainer, news)
     ReactDOM.render(
         <QcStrictMode>
-            <DateComponent />
+            <Provider store={store}>
+                <DateComponent />
+            </Provider>
         </QcStrictMode>,
         dateContainer
     )
@@ -305,7 +318,9 @@ function initializeDateAndNews() {
     newsParent.replaceChild(newsContainer, news)
     ReactDOM.render(
         <QcStrictMode>
-            <News initialNews={newsData} />
+            <Provider store={store}>
+                <News initialNews={newsData} />
+            </Provider>
         </QcStrictMode>,
         newsContainer
     )
@@ -328,8 +343,10 @@ function initializeExtraNavigation() {
     container.insertAdjacentElement('beforebegin', extraContainer)
     ReactDOM.render(
         <QcStrictMode>
-            <QcExtMainWidget />
-            <EditorModeExtraWidget />
+            <Provider store={store}>
+                <QcExtMainWidget />
+                <EditorModeExtraWidget />
+            </Provider>
         </QcStrictMode>,
         extraContainer
     )

@@ -1,10 +1,10 @@
-import { SettingsUpdater } from '@hooks/useSettings'
+//import { SettingsUpdater } from '@hooks/useSettings'
 import { useArgs } from '@storybook/client-api'
 import { ComponentMeta, ComponentStory } from '@storybook/react'
 
 import Settings from '~/settings'
 
-import { SettingsPanel } from './SettingsDialog'
+import { SettingsPanel, SettingsUpdater } from './SettingsDialog'
 
 export default {
     component: SettingsPanel,

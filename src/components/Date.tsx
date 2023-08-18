@@ -1,12 +1,25 @@
-import useComicData from '@hooks/useComicData'
-import useSettings from '@hooks/useSettings'
+import { ConnectedProps, connect } from 'react-redux'
 
-export default function DateComponent() {
+import useComicData from '@hooks/useComicData'
+import { RootState } from '@store/store'
+
+const mapState = (state: RootState) => {
+    return {
+        settings: state.settings.values,
+    }
+}
+
+const mapDispatch = () => ({})
+
+const connector = connect(mapState, mapDispatch)
+type PropsFromRedux = ConnectedProps<typeof connector>
+type DateComponentProps = PropsFromRedux & {}
+
+function DateComponent({ settings }: DateComponentProps) {
     const {
         comicDataLoading: [comicDataLoading, _comicDataComicLoading],
         comicData,
     } = useComicData()
-    const [settings, _] = useSettings()
 
     let useCorrectTimeFormat
     if (!settings) {
@@ -67,3 +80,5 @@ export default function DateComponent() {
         </div>
     )
 }
+
+export default connector(DateComponent)
