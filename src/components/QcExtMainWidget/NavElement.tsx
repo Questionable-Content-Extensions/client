@@ -1,4 +1,4 @@
-import { ItemNavigationData } from '@models/ComicData'
+import { ItemNavigationData } from '@models/ItemNavigationData'
 
 import { createTintOrShade } from '~/color'
 

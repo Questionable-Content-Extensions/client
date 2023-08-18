@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react'
 
-import { ImageType, KnownImageType } from '@models/ComicData'
+import { ImageType } from '@models/ImageType'
 
 import constants from '~/constants'
+import { KnownImageType } from '~/models/KnownImageType'
 import { debug, error } from '~/utils'
 
 const comicExtensionCache: { [extension: string]: KnownImageType } = {}

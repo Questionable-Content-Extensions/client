@@ -1,6 +1,7 @@
-import { ComicData, ComicDataListing } from '@models/ComicData'
+import { ComicList as ComicDataListing } from '@models/ComicList'
 
 import constants from '~/constants'
+import { Comic as ComicData } from '~/models/Comic'
 import Settings from '~/settings'
 import { debug, error, fetch, warn } from '~/utils'
 
@@ -18,7 +19,7 @@ function previous(): number | null {
     if (currentComic === null) {
         return null
     }
-    if (comicData === null || !comicData.previous) {
+    if (comicData === null || !comicData.hasData) {
         return currentComic > 1 ? currentComic - 1 : currentComic
     } else {
         return comicData.previous
@@ -29,7 +30,7 @@ function next(): number | null {
     if (currentComic === null || latestComic === null) {
         return null
     }
-    if (comicData === null || !comicData.next) {
+    if (comicData === null || !comicData.hasData) {
         return currentComic < latestComic ? currentComic + 1 : currentComic
     } else {
         return comicData.next

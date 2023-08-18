@@ -36,7 +36,7 @@ const siteUrl = 'https://questionablextensions.net/' as const
 
 function getWebserviceBaseUrl() {
     if (developmentMode) {
-        return 'http://localhost:3000/api/' as const
+        return 'http://localhost:3000/api/v2/' as const
     } else {
         return `${siteUrl}api/` as const
     }

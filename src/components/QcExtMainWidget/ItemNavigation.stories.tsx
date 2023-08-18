@@ -1,5 +1,6 @@
-import { ComicData } from '@models/ComicData'
 import { ComponentMeta, ComponentStory } from '@storybook/react'
+
+import { Comic as ComicData } from '~/models/Comic'
 
 import ItemNavigation from './ItemNavigation'
 import { NavElementMode } from './NavElement'

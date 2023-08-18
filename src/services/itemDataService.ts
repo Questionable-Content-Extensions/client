@@ -1,4 +1,6 @@
-import { ItemData, ItemImageData, ItemRelationData } from '@models/ItemData'
+import { Item as ItemData } from '@models/Item'
+import { ItemImageList as ItemImageData } from '@models/ItemImageList'
+import { RelatedItem as ItemRelationData } from '@models/RelatedItem'
 
 import constants from '~/constants'
 import { error, fetch, warn } from '~/utils'

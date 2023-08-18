@@ -1,10 +1,8 @@
-import {
-    ComicData,
-    ComicDataListing,
-    ItemNavigationData,
-} from '@models/ComicData'
+import { ComicList as ComicDataListing } from '@models/ComicList'
+import { ItemNavigationData } from '@models/ItemNavigationData'
 
 import constants from '~/constants'
+import { Comic as ComicData } from '~/models/Comic'
 import Settings from '~/settings'
 import { debug, error, fetch, info, warn } from '~/utils'
 
@@ -103,9 +101,6 @@ async function comicChanged(refresh?: boolean) {
             }
         }
     } else {
-        comicData.next =
-            currentComic + 1 > latestComic ? latestComic : currentComic + 1
-        comicData.previous = currentComic - 1 < 1 ? 1 : currentComic - 1
         if (settings.values.showAllMembers) {
             for (const item of comicData.allItems ?? []) {
                 fixItem(item, currentComic)

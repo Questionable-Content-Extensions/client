@@ -6,12 +6,10 @@ import ModalDialog from '@components/Modals/ModalDialog'
 import Spinner from '@components/Spinner'
 import useComic from '@hooks/useComic'
 import useSettings from '@hooks/useSettings'
-import {
-    ItemData,
-    ItemImageData,
-    ItemRelationData,
-    ItemType,
-} from '@models/ItemData'
+import { Item as ItemData } from '@models/Item'
+import { ItemImageList as ItemImageData } from '@models/ItemImageList'
+import { ItemType } from '@models/ItemType'
+import { RelatedItem as ItemRelationData } from '@models/RelatedItem'
 import itemDataService, { AllItemData } from '@services/itemDataService'
 
 import { createTintOrShade } from '~/color'

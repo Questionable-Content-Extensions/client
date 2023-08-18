@@ -6,7 +6,7 @@ import useSettings from '@hooks/useSettings'
 import ModalDialogSeat from '@modals/ModalDialogSeat'
 import ModalPageOverlay from '@modals/ModalPageOverlay'
 import ModalPortal from '@modals/ModalPortal'
-import { ItemNavigationData } from '@models/ComicData'
+import { ItemNavigationData } from '@models/ItemNavigationData'
 import comicDataService from '@services/comicDataService'
 import FilteredNavigationData from '@widgets/FilteredNavigationData'
 

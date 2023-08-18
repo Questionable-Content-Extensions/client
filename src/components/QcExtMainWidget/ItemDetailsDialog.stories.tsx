@@ -1,5 +1,6 @@
-import { ComicDataListing } from '@models/ComicData'
-import { ItemData, ItemImageData, ItemRelationData } from '@models/ItemData'
+import { Item as ItemData } from '@models/Item'
+import { ItemImageList as ItemImageData } from '@models/ItemImageList'
+import { RelatedItem as ItemRelationData } from '@models/RelatedItem'
 import { ComponentMeta, ComponentStory } from '@storybook/react'
 
 import { ItemDataPanel } from './ItemDetailsDialog'

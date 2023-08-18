@@ -1,4 +1,4 @@
-import { ComicDataListing } from '@models/ComicData'
+import { ComicList as ComicDataListing } from '@models/ComicList'
 import { ComponentMeta, ComponentStory } from '@storybook/react'
 
 import { ComicList } from './GoToComicDialog'

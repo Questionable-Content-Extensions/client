@@ -1,5 +1,5 @@
 import Spinner from '@components/Spinner'
-import { ItemNavigationData } from '@models/ComicData'
+import { ItemNavigationData } from '@models/ItemNavigationData'
 
 import { PickEnum } from '~/tsUtils'
 

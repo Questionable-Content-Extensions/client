@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 
 import ItemNavigation from '@components/QcExtMainWidget/ItemNavigation'
 import { NavElementMode } from '@components/QcExtMainWidget/NavElement'
-import { ItemNavigationData } from '@models/ComicData'
+import { ItemNavigationData } from '@models/ItemNavigationData'
 
 export default function FilteredNavigationData({
     isLoading,
