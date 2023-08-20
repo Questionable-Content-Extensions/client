@@ -39,6 +39,7 @@ export default function FilteredNavigationData({
 
     return (
         <>
+            {/* TODO: Right clicking filter makes it empty and focused(?) */}
             <input
                 type="text"
                 placeholder="Filter non-present"
@@ -49,6 +50,7 @@ export default function FilteredNavigationData({
                 disabled={isLoading}
             />
             <div className="overflow-y-auto overflow-x-hidden max-h-80">
+                {/* TODO: Show indication that no items matched the filter(?) */}
                 <ItemNavigation
                     itemNavigationData={filterItems(itemData, activeFilter)}
                     isLoading={isLoading}

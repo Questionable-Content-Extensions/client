@@ -1,16 +1,34 @@
-import useComicData from '@hooks/useComicData'
+import { ConnectedProps, connect } from 'react-redux'
+
+import { skipToken } from '@reduxjs/toolkit/dist/query'
+import { toGetDataQueryArgs, useGetDataQuery } from '@store/api/comicApiSlice'
+import { RootState } from '@store/store'
 
 import { debug, nl2br } from '~/utils'
 
-export default function News({ initialNews }: { initialNews: string }) {
-    const {
-        comicDataLoading: [comicDataLoading, comicDataComicLoading],
-        comicData,
-    } = useComicData()
+const mapState = (state: RootState) => {
+    return {
+        settings: state.settings.values,
+        currentComic: state.comic.current,
+    }
+}
+
+const mapDispatch = () => ({})
+
+const connector = connect(mapState, mapDispatch)
+type PropsFromRedux = ConnectedProps<typeof connector>
+type NewsProps = PropsFromRedux & { initialNews: string }
+
+function News({ initialNews, settings, currentComic }: NewsProps) {
+    const { data: comicData, isFetching: comicDataLoading } = useGetDataQuery(
+        currentComic === 0 || !settings
+            ? skipToken
+            : toGetDataQueryArgs(currentComic, settings)
+    )
 
     let news
     if (comicDataLoading) {
-        news = `Loading news for #${comicDataComicLoading}...`
+        news = `Loading news for comic ${currentComic}...`
     } else if (comicData) {
         if (comicData.hasData && comicData.news !== null) {
             news = nl2br(comicData.news)
@@ -32,3 +50,5 @@ export default function News({ initialNews }: { initialNews: string }) {
         ></div>
     )
 }
+
+export default connector(News)

@@ -38,12 +38,12 @@ function getWebserviceBaseUrl() {
     if (developmentMode) {
         return 'http://localhost:3000/api/v2/' as const
     } else {
-        return `${siteUrl}api/` as const
+        return `${siteUrl}api/v2/` as const
     }
 }
 const webserviceBaseUrl = getWebserviceBaseUrl()
 
-const comicDataUrl = `${webserviceBaseUrl}comicdata/` as const
+const comicDataEndpoint = `comicdata/` as const
 const itemDataUrl = `${webserviceBaseUrl}itemdata/` as const
 const editLogUrl = `${webserviceBaseUrl}log` as const
 
@@ -52,7 +52,7 @@ const constants = {
 
     developmentMode,
     siteUrl,
-    comicDataUrl,
+    comicDataEndpoint,
     itemDataUrl,
     editLogUrl,
 
@@ -65,19 +65,13 @@ const constants = {
      */
     webserviceBaseUrl,
 
-    excludedComicsUrl: `${comicDataUrl}excluded` as const,
-    addItemToComicUrl: `${comicDataUrl}additem` as const,
-    removeItemFromComicUrl: `${comicDataUrl}removeitem` as const,
-    setComicTitleUrl: `${comicDataUrl}settitle` as const,
-    setComicTaglineUrl: `${comicDataUrl}settagline` as const,
-    setPublishDateUrl: `${comicDataUrl}setpublishdate` as const,
-    setGuestComicUrl: `${comicDataUrl}setguest` as const,
-    setNonCanonUrl: `${comicDataUrl}setnoncanon` as const,
-    setNoCastUrl: `${comicDataUrl}setnocast` as const,
-    setNoLocationUrl: `${comicDataUrl}setnolocation` as const,
-    setNoStorylineUrl: `${comicDataUrl}setnostoryline` as const,
-    setNoTitleUrl: `${comicDataUrl}setnotitle` as const,
-    setNoTaglineUrl: `${comicDataUrl}setnotagline` as const,
+    excludedComicsEndpoint: `${comicDataEndpoint}excluded` as const,
+    addItemToComicEndpoint: `${comicDataEndpoint}additem` as const,
+    removeItemFromComicEndpoint: `${comicDataEndpoint}removeitem` as const,
+    setComicTitleEndpoint: `${comicDataEndpoint}settitle` as const,
+    setComicTaglineEndpoint: `${comicDataEndpoint}settagline` as const,
+    setPublishDateEndpoint: `${comicDataEndpoint}setpublishdate` as const,
+    setFlagEndpoint: `${comicDataEndpoint}setflag` as const,
 
     itemImageUrl: `${itemDataUrl}image/` as const,
     itemFriendDataUrl: `${itemDataUrl}friends/` as const,

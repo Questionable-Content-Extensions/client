@@ -1,18 +1,24 @@
 import { useEffect, useMemo, useState } from 'react'
 import { ConnectedProps, connect } from 'react-redux'
 
-import useComic from '@hooks/useComic'
-import useComicData from '@hooks/useComicData'
 import ModalDialogSeat from '@modals/ModalDialogSeat'
 import ModalPageOverlay from '@modals/ModalPageOverlay'
 import ModalPortal from '@modals/ModalPortal'
 import { ItemNavigationData } from '@models/ItemNavigationData'
-import comicDataService from '@services/comicDataService'
-import { RootState } from '@store/store'
+import { skipToken } from '@reduxjs/toolkit/dist/query'
+import {
+    nextComicSelector,
+    previousComicSelector,
+    toGetDataQueryArgs,
+    useAddItemMutation,
+    useGetDataQuery,
+    useRemoveItemMutation,
+} from '@store/api/comicApiSlice'
+import { setCurrentComic } from '@store/comicSlice'
+import { AppDispatch, RootState } from '@store/store'
 import FilteredNavigationData from '@widgets/FilteredNavigationData'
 
 import constants from '~/constants'
-import { debug } from '~/utils'
 
 import ExtraNavigation from './ExtraNavigation'
 import ItemDetailsDialog from './ItemDetailsDialog'
@@ -23,36 +29,56 @@ import SettingsDialog from './SettingsDialog'
 const mapState = (state: RootState) => {
     return {
         settings: state.settings.values,
+        currentComic: state.comic.current,
+        latestComic: state.comic.latest,
+        randomComic: state.comic.random,
+        previousComic: previousComicSelector(state),
+        nextComic: nextComicSelector(state),
     }
 }
 
-const mapDispatch = () => ({})
+const mapDispatch = (dispatch: AppDispatch) => {
+    return {
+        setCurrentComic: (comic: number) => {
+            dispatch(setCurrentComic(comic))
+        },
+    }
+}
 
 const connector = connect(mapState, mapDispatch)
 type PropsFromRedux = ConnectedProps<typeof connector>
 type QcExtMainWidgetProps = PropsFromRedux & {}
 
-function QcExtMainWidget({ settings }: QcExtMainWidgetProps) {
+function QcExtMainWidget({
+    settings,
+    currentComic,
+    latestComic,
+    randomComic,
+    previousComic,
+    nextComic,
+    setCurrentComic,
+}: QcExtMainWidgetProps) {
     const {
-        setFirstComic,
-        previousComic: [previousComic, setPreviousComic],
-        currentComic: [currentComic, setCurrentComic],
-        nextComic: [nextComic, setNextComic],
-        latestComic: [latestComic, setLatestComic],
-        randomComic: [randomComic, setRandomComic],
-    } = useComic()
-    const {
-        comicDataLoading: [comicDataLoading, _comicDataComicLoading],
-        comicData,
-        refreshComicData,
-    } = useComicData()
+        data: comicData,
+        isFetching: isFetchingComicData,
+        refetch: refreshComicData,
+    } = useGetDataQuery(
+        currentComic === 0 || !settings
+            ? skipToken
+            : toGetDataQueryArgs(currentComic, settings)
+    )
+
+    const [addItem, { isLoading: isAddingItem }] = useAddItemMutation()
+    const [removeItem, { isLoading: isRemovingItem }] = useRemoveItemMutation()
+
+    const isLoading = isFetchingComicData || isAddingItem || isRemovingItem
 
     const [comicSelectorNo, setComicSelectorNo] = useState<string | null>(null)
-    const [refreshCheckNeeded, setRefreshCheckNeeded] = useState(true)
+    //const [refreshCheckNeeded, setRefreshCheckNeeded] = useState(true)
     useEffect(() => {
         if (comicData) {
             setComicSelectorNo(comicData.comic.toString())
-            setRefreshCheckNeeded(true)
+            //setRefreshCheckNeeded(true)
         }
     }, [comicData])
     const [showSettingsDialog, setShowSettingsDialog] = useState(false)
@@ -76,38 +102,6 @@ function QcExtMainWidget({ settings }: QcExtMainWidgetProps) {
             ),
         []
     )
-    useEffect(() => {
-        if (!refreshCheckNeeded) {
-            return
-        }
-
-        // We need to reload the comic data *if* `showAllMembers` or `editMode`
-        // was enabled and the currently loaded comic data does not already
-        // have the extra data
-        // TODO: This check should probably be moved out to RootWidgetHost when
-        // it gets added
-        if (
-            (settings.showAllMembers && comicData && !comicData.allItems) ||
-            (settings.editMode &&
-                comicData &&
-                (!comicData.editorData || !comicData.allItems))
-        ) {
-            setRefreshCheckNeeded(false)
-
-            debug(
-                'Refreshing comic data because a setting was enabled ' +
-                    'that requires more data to be loaded'
-            )
-            refreshComicData()
-        }
-    }, [
-        settings,
-        comicData,
-        comicData?.editorData,
-        comicData?.allItems,
-        refreshComicData,
-        refreshCheckNeeded,
-    ])
 
     // TODO: Add a setting for placing the widget on the left or right side of the comic.
 
@@ -118,6 +112,10 @@ function QcExtMainWidget({ settings }: QcExtMainWidgetProps) {
                 setCurrentComic(comicNo)
             }
         }
+    }
+
+    if (!settings) {
+        return <></>
     }
 
     return (
@@ -161,28 +159,32 @@ function QcExtMainWidget({ settings }: QcExtMainWidgetProps) {
                 </h1>
                 <ExtraNavigation
                     currentComic={currentComic}
-                    onSetFirstComic={setFirstComic}
+                    onSetFirstComic={() => setCurrentComic(1)}
                     previousComic={previousComic}
-                    onSetPreviousComic={setPreviousComic}
+                    onSetPreviousComic={() => setCurrentComic(previousComic)}
                     nextComic={nextComic}
-                    onSetNextComic={setNextComic}
+                    onSetNextComic={() => setCurrentComic(nextComic)}
                     latestComic={latestComic}
-                    onSetLatestComic={setLatestComic}
+                    onSetLatestComic={() => setCurrentComic(latestComic)}
                     randomComic={randomComic}
-                    onSetRandomComic={setRandomComic}
+                    onSetRandomComic={() => setCurrentComic(randomComic)}
                 />
                 <ItemNavigation
                     itemNavigationData={
                         comicData && comicData.hasData ? comicData.items : []
                     }
-                    isLoading={comicDataLoading}
+                    isLoading={isLoading}
                     useColors={settings.useColors}
                     onSetCurrentComic={setCurrentComic}
                     onShowInfoFor={setShowInfoItem}
                     mode={NavElementMode.Present}
                     editMode={settings.editMode}
                     onRemoveItem={(item) => {
-                        comicDataService.removeItemFromComic(item.id)
+                        removeItem({
+                            editModeToken: settings.editModeToken,
+                            comicId: currentComic,
+                            itemId: item.id,
+                        })
                     }}
                 />
                 <hr className="my-4 mx-0 border-solid border-b max-w-none" />
@@ -191,7 +193,7 @@ function QcExtMainWidget({ settings }: QcExtMainWidgetProps) {
                         <button
                             className="bg-qc-header hover:bg-qc-header-second focus:bg-qc-header-second text-white py-2 rounded-sm disabled:opacity-75"
                             onClick={() => refreshComicData()}
-                            disabled={comicDataLoading}
+                            disabled={isLoading}
                         >
                             Refresh
                         </button>
@@ -214,7 +216,7 @@ function QcExtMainWidget({ settings }: QcExtMainWidgetProps) {
                             htmlFor="qc-ext-extra-navigation-comic"
                             className={
                                 `bg-qc-header text-white py-2 px-4 flex-initial rounded-l-sm rounded-r-none` +
-                                (comicDataLoading ? ' opacity-75' : '')
+                                (isLoading ? ' opacity-75' : '')
                             }
                         >
                             #
@@ -228,11 +230,11 @@ function QcExtMainWidget({ settings }: QcExtMainWidgetProps) {
                             value={comicSelectorNo ?? ''}
                             onChange={(e) => setComicSelectorNo(e.target.value)}
                             className="min-w-0 border border-qc-header focus:outline-none flex-auto rounded-none pl-2 disabled:opacity-75"
-                            disabled={comicDataLoading}
+                            disabled={isLoading}
                         />
                         <button
                             className="bg-qc-header hover:bg-qc-header-second focus:bg-qc-header-second text-white py-2 px-4 rounded-l-none rounded-r-sm disabled:opacity-75"
-                            disabled={comicDataLoading}
+                            disabled={isLoading}
                             title="Go to selected comic"
                             type="submit"
                         >
@@ -243,18 +245,23 @@ function QcExtMainWidget({ settings }: QcExtMainWidgetProps) {
                         </button>
                     </form>
                 </div>
-                {settings.showAllMembers ? (
+                {settings.showAllMembers ?? false ? (
                     <>
                         <hr className="my-4 mx-0 border-solid border-b max-w-none" />
                         <FilteredNavigationData
-                            isLoading={comicDataLoading}
+                            isLoading={isLoading}
                             itemData={(comicData && comicData.allItems) ?? []}
                             onSetCurrentComic={setCurrentComic}
                             onShowInfoFor={setShowInfoItem}
                             useColors={settings.useColors}
                             editMode={settings.editMode}
                             onAddItem={(item) => {
-                                comicDataService.addItemToComic(item.id)
+                                addItem({
+                                    editModeToken: settings.editModeToken,
+                                    comicId: currentComic,
+                                    newItem: false,
+                                    itemId: item.id,
+                                })
                             }}
                         />
                     </>

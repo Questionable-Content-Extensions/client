@@ -22,12 +22,16 @@ import './index.css'
 
 import Comic from '@components/Comic'
 import ComicNavigation from '@components/ComicNavigation'
+import ComicTitle from '@components/ComicTitle'
 import DateComponent from '@components/Date'
 import EditorModeExtraWidget from '@components/EditorModeExtraWidget'
 import News from '@components/News'
 import QcExtMainWidget from '@components/QcExtMainWidget/QcExtMainWidget'
-import '@services/comicDataService'
-import comicService from '@services/comicService'
+import {
+    nextComicSelector,
+    previousComicSelector,
+} from '@store/api/comicApiSlice'
+import { setCurrentComic, setLatestComic } from '@store/comicSlice'
 import { loadSettings } from '@store/settingsSlice'
 
 import Settings from '~/settings'
@@ -49,20 +53,33 @@ const NAVIGATION_CONTAINER_CLASSNAME = 'qc-ext-navigation-container'
 async function main() {
     const settings = await Settings.loadSettings()
     setup(settings.values.showDebugLogs)
+    store.dispatch(loadSettings())
 
     info('Running QC Extensions v' + GM.info.script.version)
 
-    const comic = await initializeComic()
-    if (!comic) {
+    const currentComic = await initializeComic()
+    if (!currentComic) {
         return
     }
 
-    const latestComic = await getLatestComic(comic)
+    const latestComic = await getLatestComic(currentComic)
     if (!latestComic) {
         return
     }
 
-    store.dispatch(loadSettings())
+    store.dispatch(setCurrentComic(currentComic))
+    store.dispatch(setLatestComic(latestComic))
+
+    // Handle popstate events to go back to previous comics that were
+    // added using pushState/replaceState above
+    window.addEventListener('popstate', (event) => {
+        let state = event.state as { comic: number } | undefined
+        if (state && state.comic) {
+            store.dispatch(setCurrentComic(state.comic, false))
+        }
+    })
+
+    hijackShortcut()
 
     encaseBody()
     initializePortal()
@@ -71,9 +88,6 @@ async function main() {
     initializeExtraNavigation()
 
     // TODO: Initialize "message seat"
-
-    comicService.updateLatestComic(latestComic)
-    comicService.setCurrentComic(comic)
 }
 
 async function developmentMain() {
@@ -344,10 +358,76 @@ function initializeExtraNavigation() {
     ReactDOM.render(
         <QcStrictMode>
             <Provider store={store}>
+                <ComicTitle />
                 <QcExtMainWidget />
                 <EditorModeExtraWidget />
             </Provider>
         </QcStrictMode>,
         extraContainer
     )
+}
+
+function hijackShortcut() {
+    const setPrevious = () =>
+        store.dispatch((dispatch, getState) => {
+            const state = getState()
+            let previous = previousComicSelector(state)
+            dispatch(setCurrentComic(previous))
+        })
+    const setNext = () =>
+        store.dispatch((dispatch, getState) => {
+            const state = getState()
+            let previous = nextComicSelector(state)
+            dispatch(setCurrentComic(previous))
+        })
+
+    try {
+        if (typeof unsafeWindow !== undefined) {
+            const shortcut = (unsafeWindow as any).shortcut
+
+            shortcut.remove('Left')
+            shortcut.remove('Right')
+
+            const disable_in_input = createObjectIn<any>(unsafeWindow)
+            disable_in_input.disable_in_input = true
+
+            console.debug('Adding Left')
+            shortcut.add(
+                'Left',
+                exportFunction(() => setPrevious(), unsafeWindow),
+                disable_in_input
+            )
+            shortcut.add(
+                'Alt+Left',
+                exportFunction(() => setPrevious(), unsafeWindow)
+            )
+
+            console.debug('Adding Right')
+            shortcut.add(
+                'Right',
+                exportFunction(() => setNext(), unsafeWindow),
+                disable_in_input
+            )
+            shortcut.add(
+                'Alt+Right',
+                exportFunction(() => setNext(), unsafeWindow)
+            )
+
+            console.debug('Adding Q')
+            shortcut.add(
+                'Q',
+                exportFunction(function () {
+                    // TODO
+                    // if (settings.values.editMode) {
+                    //     $('input[id^="addItem"]').focus()
+                    // }
+                }, unsafeWindow),
+                disable_in_input
+            )
+        }
+    } catch (ex) {
+        if (ex !== 'ReferenceError: unsafeWindow is not defined') {
+            console.error(ex)
+        }
+    }
 }

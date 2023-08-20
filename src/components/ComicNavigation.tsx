@@ -1,16 +1,43 @@
-import useComic from '@hooks/useComic'
+import { ConnectedProps, connect } from 'react-redux'
 
-export default function ComicNavigation() {
-    const {
-        currentComic: [currentComic, setCurrentComic],
-        previousComic: [previousComic, setPreviousComic],
-        nextComic: [nextComic, setNextComic],
-        latestComic: [latestComic, setLatestComic],
-        randomComic: [randomComic, setRandomComic],
-    } = useComic()
+import {
+    nextComicSelector,
+    previousComicSelector,
+} from '@store/api/comicApiSlice'
+import { setCurrentComic } from '@store/comicSlice'
+import { AppDispatch, RootState } from '@store/store'
 
-    // TODO: Switch to useComicData when data is loaded (for exclusions) with fallback to useComic otherwise.
+const mapState = (state: RootState) => {
+    return {
+        settings: state.settings.values,
+        currentComic: state.comic.current,
+        latestComic: state.comic.latest,
+        randomComic: state.comic.random,
+        previousComic: previousComicSelector(state),
+        nextComic: nextComicSelector(state),
+    }
+}
 
+const mapDispatch = (dispatch: AppDispatch) => {
+    return {
+        setCurrentComic: (comic: number) => {
+            dispatch(setCurrentComic(comic))
+        },
+    }
+}
+
+const connector = connect(mapState, mapDispatch)
+type PropsFromRedux = ConnectedProps<typeof connector>
+type ComicNavigationProps = PropsFromRedux & {}
+
+function ComicNavigation({
+    currentComic,
+    latestComic,
+    previousComic,
+    nextComic,
+    randomComic,
+    setCurrentComic,
+}: ComicNavigationProps) {
     return (
         <ul className="menu qc-ext qc-ext-navigation-menu" id="comicnav">
             <li>
@@ -29,7 +56,7 @@ export default function ComicNavigation() {
                     href={'view.php?comic=' + previousComic}
                     onClick={(e) => {
                         e.preventDefault()
-                        setPreviousComic()
+                        setCurrentComic(previousComic)
                     }}
                 >
                     Previous
@@ -40,7 +67,7 @@ export default function ComicNavigation() {
                     href={'view.php?comic=' + nextComic}
                     onClick={(e) => {
                         e.preventDefault()
-                        setNextComic()
+                        setCurrentComic(nextComic)
                     }}
                 >
                     Next
@@ -51,7 +78,7 @@ export default function ComicNavigation() {
                     href={'view.php?comic=' + latestComic}
                     onClick={(e) => {
                         e.preventDefault()
-                        setLatestComic()
+                        setCurrentComic(latestComic)
                     }}
                 >
                     {currentComic === latestComic ? 'Last' : 'Latest'}
@@ -62,7 +89,7 @@ export default function ComicNavigation() {
                     href={'view.php?comic=' + randomComic}
                     onClick={(e) => {
                         e.preventDefault()
-                        setRandomComic()
+                        setCurrentComic(randomComic)
                     }}
                 >
                     Random
@@ -71,3 +98,5 @@ export default function ComicNavigation() {
         </ul>
     )
 }
+
+export default connector(ComicNavigation)

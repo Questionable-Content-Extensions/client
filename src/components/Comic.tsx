@@ -1,9 +1,14 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { ConnectedProps, connect } from 'react-redux'
 
-import useComic from '@hooks/useComic'
-import useComicData from '@hooks/useComicData'
-import { RootState } from '@store/store'
+import { skipToken } from '@reduxjs/toolkit/dist/query'
+import {
+    nextComicSelector,
+    toGetDataQueryArgs,
+    useGetDataQuery,
+} from '@store/api/comicApiSlice'
+import { setCurrentComic } from '@store/comicSlice'
+import { AppDispatch, RootState } from '@store/store'
 
 import { debug, info } from '~/utils'
 
@@ -14,10 +19,18 @@ import FullPageLoader from './FullPageLoader'
 const mapState = (state: RootState) => {
     return {
         settings: state.settings.values,
+        currentComic: state.comic.current,
+        nextComic: nextComicSelector(state),
     }
 }
 
-const mapDispatch = () => ({})
+const mapDispatch = (dispatch: AppDispatch) => {
+    return {
+        setCurrentComic: (comic: number) => {
+            dispatch(setCurrentComic(comic))
+        },
+    }
+}
 
 const connector = connect(mapState, mapDispatch)
 type PropsFromRedux = ConnectedProps<typeof connector>
@@ -26,28 +39,31 @@ type ComicProps = PropsFromRedux & {
     initialComicSrc: string
 }
 
-function Comic({ initialComic, initialComicSrc, settings }: ComicProps) {
+function Comic({
+    initialComic,
+    initialComicSrc,
+    settings,
+    currentComic,
+    nextComic,
+    setCurrentComic,
+}: ComicProps) {
     const [isInitializing, setIsInitializing] = useState(true)
 
-    const {
-        currentComic: [currentComic, _setCurrentComic],
-        nextComic: [_nextComic, setNextComic],
-    } = useComic()
+    const { data: comicData } = useGetDataQuery(
+        currentComic === 0 || !settings
+            ? skipToken
+            : toGetDataQueryArgs(currentComic, settings)
+    )
 
     useEffect(() => {
-        if (settings.scrollToTop) {
+        if (settings?.scrollToTop ?? true) {
             window.scrollTo({
                 top: 0,
                 behavior: 'smooth', // for smoothly scrolling
             })
             let _comic = currentComic
         }
-    }, [settings.scrollToTop, currentComic])
-
-    const {
-        comicDataLoading: [_comicDataLoading, _comicDataComicLoading],
-        comicData,
-    } = useComicData()
+    }, [settings?.scrollToTop, currentComic])
 
     if (comicData && isInitializing) {
         setIsInitializing(false)
@@ -62,16 +78,17 @@ function Comic({ initialComic, initialComicSrc, settings }: ComicProps) {
     }, [currentComic, initialComic])
 
     let comicLoadingTimeout = useMemo(() => {
-        let comicLoadingIndicatorDelay = settings.comicLoadingIndicatorDelay
+        let comicLoadingIndicatorDelay =
+            settings?.comicLoadingIndicatorDelay ?? 0
         if (comicLoadingIndicatorDelay < 0) {
             comicLoadingIndicatorDelay = 0
         }
 
         debug(`loading timeout is ${comicLoadingIndicatorDelay}`)
         return comicLoadingIndicatorDelay
-    }, [settings.comicLoadingIndicatorDelay])
+    }, [settings?.comicLoadingIndicatorDelay])
 
-    let [isLoading, doneLoading] = useComicLoaderTimeout(
+    let [loadingTimedOut, doneLoadingWithTimeout] = useComicLoaderTimeout(
         currentComic,
         comicLoadingTimeout
     )
@@ -90,10 +107,10 @@ function Comic({ initialComic, initialComicSrc, settings }: ComicProps) {
     }, [comicData])
 
     let imageReady = useCallback(() => {
-        doneLoading()
+        const _comicData = comicData
+        doneLoadingWithTimeout()
         info('Comic data and image loaded.')
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [comicData])
+    }, [comicData, doneLoadingWithTimeout])
 
     let ribbonType = RibbonType.None
     if (comicData?.hasData) {
@@ -110,7 +127,9 @@ function Comic({ initialComic, initialComicSrc, settings }: ComicProps) {
                 href={`view.php?comic=${currentComic}`}
                 onClick={(e) => {
                     e.preventDefault()
-                    setNextComic()
+                    if (nextComic) {
+                        setCurrentComic(nextComic)
+                    }
                 }}
             >
                 <ComicImage
@@ -124,11 +143,11 @@ function Comic({ initialComic, initialComicSrc, settings }: ComicProps) {
                 height="h-10"
                 width="w-10"
                 loadingText={`Loading comic ${comicNo}...`}
-                show={!isInitializing && isLoading}
+                show={!isInitializing && loadingTimedOut}
             />
             <ComicRibbon
                 ribbonType={ribbonType}
-                show={settings.showIndicatorRibbon}
+                show={settings?.showIndicatorRibbon ?? true}
             />
         </div>
     )

@@ -1,11 +1,13 @@
 import { ConnectedProps, connect } from 'react-redux'
 
-import useComicData from '@hooks/useComicData'
+import { skipToken } from '@reduxjs/toolkit/dist/query'
+import { toGetDataQueryArgs, useGetDataQuery } from '@store/api/comicApiSlice'
 import { RootState } from '@store/store'
 
 const mapState = (state: RootState) => {
     return {
         settings: state.settings.values,
+        currentComic: state.comic.current,
     }
 }
 
@@ -15,18 +17,14 @@ const connector = connect(mapState, mapDispatch)
 type PropsFromRedux = ConnectedProps<typeof connector>
 type DateComponentProps = PropsFromRedux & {}
 
-function DateComponent({ settings }: DateComponentProps) {
-    const {
-        comicDataLoading: [comicDataLoading, _comicDataComicLoading],
-        comicData,
-    } = useComicData()
+function DateComponent({ settings, currentComic }: DateComponentProps) {
+    const { data: comicData, isFetching: comicDataLoading } = useGetDataQuery(
+        currentComic === 0 || !settings
+            ? skipToken
+            : toGetDataQueryArgs(currentComic, settings)
+    )
 
-    let useCorrectTimeFormat
-    if (!settings) {
-        useCorrectTimeFormat = true
-    } else {
-        useCorrectTimeFormat = settings.useCorrectTimeFormat
-    }
+    const useCorrectTimeFormat = settings?.useCorrectTimeFormat ?? true
 
     let date
     let approximateDate

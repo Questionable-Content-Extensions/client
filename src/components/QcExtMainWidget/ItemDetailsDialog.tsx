@@ -5,13 +5,13 @@ import styles from './ItemDetailsDialog.module.css'
 
 import ModalDialog from '@components/Modals/ModalDialog'
 import Spinner from '@components/Spinner'
-import useComic from '@hooks/useComic'
 import { Item as ItemData } from '@models/Item'
 import { ItemImageList as ItemImageData } from '@models/ItemImageList'
 import { ItemType } from '@models/ItemType'
 import { RelatedItem as ItemRelationData } from '@models/RelatedItem'
 import itemDataService, { AllItemData } from '@services/itemDataService'
-import { RootState } from '@store/store'
+import { setCurrentComic } from '@store/comicSlice'
+import { AppDispatch, RootState } from '@store/store'
 
 import { createTintOrShade } from '~/color'
 import constants from '~/constants'
@@ -25,7 +25,13 @@ const mapState = (state: RootState) => {
     }
 }
 
-const mapDispatch = () => ({})
+const mapDispatch = (dispatch: AppDispatch) => {
+    return {
+        setCurrentComic: (comic: number) => {
+            dispatch(setCurrentComic(comic))
+        },
+    }
+}
 
 const connector = connect(mapState, mapDispatch)
 type PropsFromRedux = ConnectedProps<typeof connector>
@@ -40,13 +46,12 @@ function ItemDetailsDialog({
     onClose,
     initialItemId,
     settings,
+    setCurrentComic,
 }: ItemDetailsDialogProps) {
     const [itemId, setItemId] = useState<number | null>(null)
     const [_isLoading, setIsLoading] = useState(0)
     const [itemData, setItemData] = useState<AllItemData | null>(null)
-    const {
-        currentComic: [_currentComic, setCurrentComic],
-    } = useComic()
+
     useEffect(() => {
         setItemId(initialItemId)
     }, [initialItemId])
@@ -85,7 +90,7 @@ function ItemDetailsDialog({
                     itemImageData={itemData?.imageData ?? null}
                     itemFriendData={itemData?.friendData ?? null}
                     itemLocationData={itemData?.locationData ?? null}
-                    editMode={settings.editMode}
+                    editMode={settings?.editMode ?? false}
                     onGoToComic={(comicId) => {
                         setCurrentComic(comicId)
                         onClose()

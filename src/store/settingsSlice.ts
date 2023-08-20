@@ -3,13 +3,13 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 import Settings, { SettingValues } from '~/settings'
 
 interface SettingsState {
-    values: SettingValues
+    values: SettingValues | null
     isLoading: boolean
     isSaving: boolean
 }
 
 const initialState: SettingsState = {
-    values: Settings.DEFAULTS,
+    values: null,
     isLoading: false,
     isSaving: false,
 }

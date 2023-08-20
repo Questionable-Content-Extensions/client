@@ -86,7 +86,7 @@ export default function ComicImage({
             downloadingImage.src = `./comics/${comicNo}.${imageExtension}`
         } else {
             debug(
-                `comic service isn't ready yet, nothing yet to do for image loading`
+                `comic data isn't ready yet, nothing to do yet for image loading`
             )
         }
     }, [imageData, imageReady])

@@ -1,14 +1,14 @@
-import { useEffect, useState } from 'react'
 import { ConnectedProps, connect } from 'react-redux'
 
 import styles from './GoToComicDialog.module.css'
 
 import Spinner from '@components/Spinner'
-import useComic from '@hooks/useComic'
 import ModalDialog from '@modals/ModalDialog'
 import { ComicList as ComicDataListing } from '@models/ComicList'
-import comicDataService from '@services/comicDataService'
-import { RootState } from '@store/store'
+import { skipToken } from '@reduxjs/toolkit/dist/query'
+import { useListAllQuery } from '@store/api/comicApiSlice'
+import { setCurrentComic } from '@store/comicSlice'
+import { AppDispatch, RootState } from '@store/store'
 
 import { debug } from '~/utils'
 
@@ -18,7 +18,13 @@ const mapState = (state: RootState) => {
     }
 }
 
-const mapDispatch = () => ({})
+const mapDispatch = (dispatch: AppDispatch) => {
+    return {
+        setCurrentComic: (comic: number) => {
+            dispatch(setCurrentComic(comic))
+        },
+    }
+}
 
 const connector = connect(mapState, mapDispatch)
 type PropsFromRedux = ConnectedProps<typeof connector>
@@ -29,28 +35,15 @@ type GoToComicDialogProps = PropsFromRedux & {
 
 // TODO: Add a search/filter function to this dialog
 
-function GoToComicDialog({ show, onClose, settings }: GoToComicDialogProps) {
-    const {
-        currentComic: [_currentComic, setCurrentComic],
-    } = useComic()
-    const [isLoading, setIsLoading] = useState(true)
-    const [allComicData, setAllComicData] = useState<ComicDataListing[] | null>(
-        null
+function GoToComicDialog({
+    show,
+    onClose,
+    settings,
+    setCurrentComic,
+}: GoToComicDialogProps) {
+    const { data: allComicData, isFetching: isLoading } = useListAllQuery(
+        !show ? skipToken : undefined
     )
-    useEffect(() => {
-        const fetchAllComicData = async () => {
-            const comicData = await comicDataService.all()
-            if (comicData) {
-                setAllComicData(comicData)
-            }
-            setIsLoading(false)
-        }
-        if (show && allComicData === null) {
-            debug('Fetching all comics')
-            setIsLoading(true)
-            fetchAllComicData()
-        }
-    }, [allComicData, show, setIsLoading])
     return (
         <ModalDialog
             onCloseClicked={onClose}
@@ -62,7 +55,7 @@ function GoToComicDialog({ show, onClose, settings }: GoToComicDialogProps) {
             body={
                 <ComicList
                     allComicData={allComicData ?? []}
-                    subDivideGotoComics={settings.subDivideGotoComics}
+                    subDivideGotoComics={settings?.subDivideGotoComics ?? true}
                     onGoToComic={(comic) => {
                         setCurrentComic(comic)
                         onClose()

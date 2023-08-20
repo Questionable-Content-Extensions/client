@@ -1,15 +1,24 @@
 import { createContext, useContext, useEffect, useMemo, useState } from 'react'
 import { ConnectedProps, connect } from 'react-redux'
 
-import useComic from '@hooks/useComic'
-import useComicData from '@hooks/useComicData'
 import { ItemNavigationData } from '@models/ItemNavigationData'
 import { ItemType } from '@models/ItemType'
 import { NavigationData } from '@models/NavigationData'
-import comicDataService from '@services/comicDataService'
-import { RootState } from '@store/store'
+import { skipToken } from '@reduxjs/toolkit/dist/query'
+import {
+    toGetDataQueryArgs,
+    useAddItemMutation,
+    useGetDataQuery,
+    useSetFlagMutation,
+    useSetPublishDateMutation,
+    useSetTaglineMutation,
+    useSetTitleMutation,
+} from '@store/api/comicApiSlice'
+import { setCurrentComic } from '@store/comicSlice'
+import { AppDispatch, RootState } from '@store/store'
 import FilteredNavigationData from '@widgets/FilteredNavigationData'
 
+import constants from '~/constants'
 import { debug } from '~/utils'
 
 import NavElement, { NavElementMode } from './QcExtMainWidget/NavElement'
@@ -18,24 +27,50 @@ import ToggleButton from './Widgets/ToggleButton'
 const mapState = (state: RootState) => {
     return {
         settings: state.settings.values,
+        currentComic: state.comic.current,
     }
 }
 
-const mapDispatch = () => ({})
+const mapDispatch = (dispatch: AppDispatch) => {
+    return {
+        setCurrentComic: (comic: number) => {
+            dispatch(setCurrentComic(comic))
+        },
+    }
+}
 
 const connector = connect(mapState, mapDispatch)
 type PropsFromRedux = ConnectedProps<typeof connector>
 type EditorModeExtraWidgetProps = PropsFromRedux & {}
 
-function EditorModeExtraWidget({ settings }: EditorModeExtraWidgetProps) {
-    const {
-        currentComic: [_currentComic, setCurrentComic],
-    } = useComic()
-    const {
-        comicDataLoading: [comicDataLoading, _comicDataComicLoading],
-        comicData,
-        refreshComicData: _refreshComicData,
-    } = useComicData()
+function EditorModeExtraWidget({
+    settings,
+    currentComic,
+    setCurrentComic,
+}: EditorModeExtraWidgetProps) {
+    const { data: comicData, isFetching: isFetchingComicData } =
+        useGetDataQuery(
+            currentComic === 0 || !settings
+                ? skipToken
+                : toGetDataQueryArgs(currentComic, settings)
+        )
+
+    const [setFlag, { isLoading: isSettingFlag }] = useSetFlagMutation()
+    const [setTitle, { isLoading: isSettingTitle }] = useSetTitleMutation()
+    const [setTagline, { isLoading: isSettingTagline }] =
+        useSetTaglineMutation()
+    const [setPublishDate, { isLoading: isSettingPublishDate }] =
+        useSetPublishDateMutation()
+
+    const [addItem, { isLoading: isAddingItem }] = useAddItemMutation()
+
+    const isLoading =
+        isFetchingComicData ||
+        isSettingFlag ||
+        isSettingTitle ||
+        isSettingTagline ||
+        isSettingPublishDate ||
+        isAddingItem
 
     const [comicTitle, setComicTitle] = useState('')
     const [comicTagline, setComicTagline] = useState('')
@@ -94,11 +129,11 @@ function EditorModeExtraWidget({ settings }: EditorModeExtraWidgetProps) {
         if (!hasTitle) {
             missingData.push('a title')
         }
-        if (!hasTagline) {
+        if (!hasTagline && currentComic > constants.taglineThreshold) {
             missingData.push('a tagline')
         }
 
-        if (!comicDataLoading && missingData.length) {
+        if (!isLoading && missingData.length) {
             return (
                 <p className="text-[#ff3030] mt-2 leading-5">
                     This comic is missing{' '}
@@ -111,7 +146,7 @@ function EditorModeExtraWidget({ settings }: EditorModeExtraWidgetProps) {
                     })}
                 </p>
             )
-        } else if (!comicDataLoading && comicData && !comicData.hasData) {
+        } else if (!isLoading && comicData && !comicData.hasData) {
             return (
                 <div className="text-center pt-4">
                     <i
@@ -125,7 +160,7 @@ function EditorModeExtraWidget({ settings }: EditorModeExtraWidgetProps) {
         } else {
             return <></>
         }
-    }, [comicData, comicDataLoading])
+    }, [comicData, isLoading, currentComic])
 
     const [clientWidth, setClientWidth] = useState(
         document.documentElement.clientWidth
@@ -145,7 +180,7 @@ function EditorModeExtraWidget({ settings }: EditorModeExtraWidgetProps) {
         [clientWidth]
     )
 
-    if (!settings.editMode) {
+    if (!settings || !settings.editMode) {
         return <></>
     }
 
@@ -159,12 +194,14 @@ function EditorModeExtraWidget({ settings }: EditorModeExtraWidgetProps) {
                         (comicData.hasData && comicData.isGuestComic) || false
                     }
                     onChange={(e) => {
-                        comicDataService.updateComicFlag(
-                            'isGuestComic',
-                            e.target.checked
-                        )
+                        setFlag({
+                            comicId: currentComic,
+                            editModeToken: settings.editModeToken,
+                            flagType: 'isGuestComic',
+                            value: e.target.checked,
+                        })
                     }}
-                    disabled={comicDataLoading}
+                    disabled={isLoading}
                 />
                 <ToggleButton
                     label="Non-canon"
@@ -172,10 +209,12 @@ function EditorModeExtraWidget({ settings }: EditorModeExtraWidgetProps) {
                         (comicData.hasData && comicData.isNonCanon) || false
                     }
                     onChange={(e) => {
-                        comicDataService.updateComicFlag(
-                            'isNonCanon',
-                            e.target.checked
-                        )
+                        setFlag({
+                            comicId: currentComic,
+                            editModeToken: settings.editModeToken,
+                            flagType: 'isNonCanon',
+                            value: e.target.checked,
+                        })
                     }}
                 />
                 <ToggleButton
@@ -185,15 +224,17 @@ function EditorModeExtraWidget({ settings }: EditorModeExtraWidgetProps) {
                         (comicData.hasData && comicData.hasNoCast) || false
                     }
                     disabled={
-                        comicDataLoading ||
+                        isLoading ||
                         (comicData.hasData &&
                             hasItemsOfType(comicData.items, 'cast'))
                     }
                     onChange={(e) => {
-                        comicDataService.updateComicFlag(
-                            'hasNoCast',
-                            e.target.checked
-                        )
+                        setFlag({
+                            comicId: currentComic,
+                            editModeToken: settings.editModeToken,
+                            flagType: 'hasNoCast',
+                            value: e.target.checked,
+                        })
                     }}
                 />
                 <ToggleButton
@@ -203,15 +244,17 @@ function EditorModeExtraWidget({ settings }: EditorModeExtraWidgetProps) {
                         (comicData.hasData && comicData.hasNoLocation) || false
                     }
                     disabled={
-                        comicDataLoading ||
+                        isLoading ||
                         (comicData.hasData &&
                             hasItemsOfType(comicData.items, 'location'))
                     }
                     onChange={(e) => {
-                        comicDataService.updateComicFlag(
-                            'hasNoLocation',
-                            e.target.checked
-                        )
+                        setFlag({
+                            comicId: currentComic,
+                            editModeToken: settings.editModeToken,
+                            flagType: 'hasNoLocation',
+                            value: e.target.checked,
+                        })
                     }}
                 />
                 <ToggleButton
@@ -221,15 +264,17 @@ function EditorModeExtraWidget({ settings }: EditorModeExtraWidgetProps) {
                         (comicData.hasData && comicData.hasNoStoryline) || false
                     }
                     disabled={
-                        comicDataLoading ||
+                        isLoading ||
                         (comicData.hasData &&
                             hasItemsOfType(comicData.items, 'storyline'))
                     }
                     onChange={(e) => {
-                        comicDataService.updateComicFlag(
-                            'hasNoStoryline',
-                            e.target.checked
-                        )
+                        setFlag({
+                            comicId: currentComic,
+                            editModeToken: settings.editModeToken,
+                            flagType: 'hasNoStoryline',
+                            value: e.target.checked,
+                        })
                     }}
                 />
                 <ToggleButton
@@ -238,12 +283,14 @@ function EditorModeExtraWidget({ settings }: EditorModeExtraWidgetProps) {
                     checked={
                         (comicData.hasData && comicData.hasNoTitle) || false
                     }
-                    disabled={comicDataLoading}
+                    disabled={isLoading}
                     onChange={(e) => {
-                        comicDataService.updateComicFlag(
-                            'hasNoTitle',
-                            e.target.checked
-                        )
+                        setFlag({
+                            comicId: currentComic,
+                            editModeToken: settings.editModeToken,
+                            flagType: 'hasNoTitle',
+                            value: e.target.checked,
+                        })
                     }}
                 />
                 <ToggleButton
@@ -252,12 +299,14 @@ function EditorModeExtraWidget({ settings }: EditorModeExtraWidgetProps) {
                     checked={
                         (comicData.hasData && comicData.hasNoTagline) || false
                     }
-                    disabled={comicDataLoading}
+                    disabled={isLoading}
                     onChange={(e) => {
-                        comicDataService.updateComicFlag(
-                            'hasNoTagline',
-                            e.target.checked
-                        )
+                        setFlag({
+                            comicId: currentComic,
+                            editModeToken: settings.editModeToken,
+                            flagType: 'hasNoTagline',
+                            value: e.target.checked,
+                        })
                     }}
                 />
             </div>
@@ -333,7 +382,7 @@ function EditorModeExtraWidget({ settings }: EditorModeExtraWidgetProps) {
                 <>
                     <hr className="my-4 mx-0 border-solid border-b max-w-none" />
                     <FilteredNavigationData
-                        isLoading={comicDataLoading}
+                        isLoading={isLoading}
                         itemData={(comicData && comicData.allItems) ?? []}
                         onSetCurrentComic={setCurrentComic}
                         onShowInfoFor={() => {
@@ -344,7 +393,12 @@ function EditorModeExtraWidget({ settings }: EditorModeExtraWidgetProps) {
                         useColors={settings.useColors}
                         editMode={settings.editMode}
                         onAddItem={(item) => {
-                            comicDataService.addItemToComic(item.id)
+                            addItem({
+                                newItem: false,
+                                comicId: currentComic,
+                                editModeToken: settings.editModeToken,
+                                itemId: item.id,
+                            })
                         }}
                     />
                 </>
@@ -356,7 +410,7 @@ function EditorModeExtraWidget({ settings }: EditorModeExtraWidgetProps) {
             <hr className="my-4 mx-0 border-solid border-b max-w-none" />
             <ExpandingEditor>
                 <TextEditor
-                    disabled={comicDataLoading}
+                    disabled={isLoading}
                     buttonContent="Set"
                     buttonTitle="Set comic title"
                     label="Title"
@@ -364,13 +418,17 @@ function EditorModeExtraWidget({ settings }: EditorModeExtraWidgetProps) {
                     value={comicTitle}
                     onValueChange={setComicTitle}
                     onSubmit={() =>
-                        comicDataService.updateComicTitle(comicTitle)
+                        setTitle({
+                            editModeToken: settings.editModeToken,
+                            comicId: currentComic,
+                            value: comicTitle,
+                        })
                     }
                 />
             </ExpandingEditor>
             <ExpandingEditor>
                 <TextEditor
-                    disabled={comicDataLoading}
+                    disabled={isLoading}
                     buttonContent="Set"
                     buttonTitle="Set comic tagline"
                     label="Tagline"
@@ -378,13 +436,17 @@ function EditorModeExtraWidget({ settings }: EditorModeExtraWidgetProps) {
                     value={comicTagline}
                     onValueChange={setComicTagline}
                     onSubmit={() =>
-                        comicDataService.updateComicTagline(comicTagline)
+                        setTagline({
+                            editModeToken: settings.editModeToken,
+                            comicId: currentComic,
+                            value: comicTagline,
+                        })
                     }
                 />
             </ExpandingEditor>
             <ExpandingEditor>
                 <DateEditor
-                    disabled={comicDataLoading}
+                    disabled={isLoading}
                     buttonContent="Set"
                     buttonTitle="Set comic publish date"
                     label="Date"
@@ -395,14 +457,15 @@ function EditorModeExtraWidget({ settings }: EditorModeExtraWidgetProps) {
                     onDateValueChange={setComicDate}
                     onIsAccurateValueChange={setComicIsAccurateDate}
                     onSubmit={() =>
-                        comicDataService.updateComicPublishDate(
-                            comicDate,
-                            comicIsAccurateDate
-                        )
+                        setPublishDate({
+                            editModeToken: settings.editModeToken,
+                            comicId: currentComic,
+                            publishDate: comicDate,
+                            isAccuratePublishDate: comicIsAccurateDate,
+                        })
                     }
                 />
             </ExpandingEditor>
-            {/* TODO: Publish date */}
             <hr className="my-4 mx-0 border-solid border-b max-w-none" />
             {comicFlags}
         </div>

@@ -5,13 +5,13 @@ import type { ItemType } from './ItemType'
 
 export interface ItemNavigationData {
     id: ItemId
-    shortName: string
-    name: string
-    type: ItemType
-    color: string
     first: ComicId | null
     previous: ComicId | null
     next: ComicId | null
     last: ComicId | null
     count: number
+    shortName: string
+    name: string
+    type: ItemType
+    color: string
 }

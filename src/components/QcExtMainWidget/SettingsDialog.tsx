@@ -38,6 +38,10 @@ function SettingsDialog({
     settings,
     updateSettings,
 }: SettingsDialogProps) {
+    if (!settings) {
+        return <></>
+    }
+
     const settingsUpdater = (u: SettingsUpdater) => {
         const updatedSettings = { ...settings }
         u(updatedSettings)
