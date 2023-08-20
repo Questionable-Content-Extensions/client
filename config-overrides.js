@@ -18,7 +18,7 @@ module.exports = function override(config, env) {
     // Inline the source map during development for nice stack traces and
     // correct logging filename:line values
     config.devtool =
-        env.toLowerCase() == 'development' ? 'inline-source-map' : false
+        env.toLowerCase() === 'development' ? 'inline-source-map' : false
 
     // minimize only the .min.js files and .min.cs files in development
     // mode
@@ -29,13 +29,13 @@ module.exports = function override(config, env) {
         }
         if (
             plugin.constructor.name === 'TerserPlugin' &&
-            env.toLowerCase() == 'development'
+            env.toLowerCase() === 'development'
         ) {
             Object.assign(plugin.options, { include: /\.min\.js$/ })
         }
         if (
             plugin.constructor.name === 'OptimizeCssAssetsWebpackPlugin' &&
-            env.toLowerCase() == 'development'
+            env.toLowerCase() === 'development'
         ) {
             Object.assign(plugin.options, { assetNameRegExp: /\.min\.css$/ })
         }

@@ -8,7 +8,7 @@ import comicReducer from './comicSlice'
 import settingsReducer from './settingsSlice'
 
 const consoleProxy = {
-    get(target: any, prop: any, receiver: any) {
+    get(target: any, prop: any, _receiver: any) {
         if (prop in target) {
             return target[prop]
         }

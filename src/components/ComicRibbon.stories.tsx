@@ -1,8 +1,4 @@
-import { ComicData } from '@models/ComicData'
-import { useArgs } from '@storybook/client-api'
 import { ComponentMeta, ComponentStory } from '@storybook/react'
-
-import Settings from '~/settings'
 
 import ComicRibbon, { RibbonType } from './ComicRibbon'
 
