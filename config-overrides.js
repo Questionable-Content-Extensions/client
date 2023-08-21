@@ -95,6 +95,8 @@ module.exports = function override(config, env) {
         ...config.externals,
         react: 'React',
         'react-dom': 'ReactDOM',
+        'react-redux': 'ReactRedux',
+        'redux-logger': 'reduxLogger',
     }
 
     config.resolve = {

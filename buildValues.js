@@ -50,6 +50,8 @@ const userscriptHeader = `\
 // @match        *://*.questionablecontent.net/view.php*
 // @require      <%=react-js%>
 // @require      <%=react-dom-js%>
+// @require      <%=react-redux-js%>
+// @require      <%=redux-logger-js%>
 // @connect      questionablextensions.net
 // @connect      questionablecontent.herokuapp.com
 // @connect      localhost
@@ -64,6 +66,8 @@ const pjson = require('./package.json')
 
 const userscriptHeaderVariables = {
     version: pjson.version,
+    'redux-logger-js':
+        'https://unpkg.com/redux-logger@3.0.6/dist/redux-logger.js',
     development: {
         name: 'Questionable Content Extensions Development Script',
         description:
@@ -72,6 +76,8 @@ const userscriptHeaderVariables = {
         'react-js': 'https://unpkg.com/react@17/umd/react.development.js',
         'react-dom-js':
             'https://unpkg.com/react-dom@17/umd/react-dom.development.js',
+        'react-redux-js':
+            'https://unpkg.com/react-redux@7.1.3/dist/react-redux.js',
         version: pjson.version + '+development',
     },
     production: {
@@ -82,6 +88,8 @@ const userscriptHeaderVariables = {
         'react-js': 'https://unpkg.com/react@17/umd/react.production.min.js',
         'react-dom-js':
             'https://unpkg.com/react-dom@17/umd/react-dom.production.min.js',
+        'react-redux-js':
+            'https://unpkg.com/react-redux@7.1.3/dist/react-redux.min.js',
     },
 }
 

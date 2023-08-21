@@ -10,7 +10,7 @@
         "debug-build": "react-app-rewired --inspect-brk=5858 build",
         "test": "react-app-rewired test",
         "eject": "react-scripts eject",
-        "storybook": "cross-env NODE_OPTIONS=--openssl-legacy-provider start-storybook -p 6006 -s public",
+        "storybook": "cross-env NODE_OPTIONS=--openssl-legacy-provider start-storybook -p 6006 -s public --no-open",
         "build-storybook": "build-storybook -s public",
         "prepare": "husky install"
     },
@@ -60,7 +60,6 @@
         "react-dom": "^17.0.2",
         "react-redux": "^7.0.0",
         "react-scripts": "5.0.0",
-        "redux-actions": "^2.3.0",
         "redux-logger": "^3.0.6",
         "use-between": "^1.0.1"
     },
