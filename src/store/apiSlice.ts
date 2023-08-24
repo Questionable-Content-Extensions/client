@@ -2,12 +2,12 @@ import { EndpointBuilder } from '@reduxjs/toolkit/dist/query/endpointDefinitions
 import { BaseQueryFn, createApi } from '@reduxjs/toolkit/query/react'
 
 import constants from '~/constants'
-import { fetch } from '~/utils'
+import { error, fetch, warn } from '~/utils'
 
-type GreaseMonkeyError =
+export type GreasemonkeyError =
     | {
           type: 'TRY_CATCH'
-          error: any
+          error: GM.Response<undefined> | any
       }
     | {
           type: 'MAINTENANCE'
@@ -17,7 +17,13 @@ type GreaseMonkeyError =
           response: GM.Response<undefined>
       }
 
-type GreasemonkeyBaseQuery = BaseQueryFn<
+export function isGreasemonkeyResponse(
+    possibleResponse: any
+): possibleResponse is GM.Response<undefined> {
+    return 'finalUrl' in possibleResponse
+}
+
+export type GreasemonkeyBaseQuery = BaseQueryFn<
     {
         url: string
         configuration?: {
@@ -42,7 +48,7 @@ type GreasemonkeyBaseQuery = BaseQueryFn<
         }
     },
     GM.Response<undefined>,
-    GreaseMonkeyError,
+    GreasemonkeyError,
     {}, // DefinitionExtraOptions
     {} // Meta
 >
@@ -52,10 +58,15 @@ const greasemonkeyBaseQuery = ({
     baseUrl: string
 }): GreasemonkeyBaseQuery => {
     return async ({ url, configuration }, _api, _extraOptions) => {
+        const requestUrl = `${baseUrl}${url}`
         let response
         try {
-            response = await fetch(`${baseUrl}${url}`, configuration)
+            response = await fetch(requestUrl, configuration)
         } catch (e) {
+            error(
+                `Error while fetching URL '${requestUrl}'; config was`,
+                configuration
+            )
             return {
                 error: {
                     type: 'TRY_CATCH',
@@ -64,8 +75,12 @@ const greasemonkeyBaseQuery = ({
             }
         }
         if (response.status === 503) {
+            warn(
+                'The server responded with 503, which indicates maintenance is ongoing.'
+            )
             return { error: { type: 'MAINTENANCE' } }
         } else if (response.status >= 300 || response.status === 0) {
+            error(`Got unexpected response from server`, response)
             return { error: { type: 'STATUS_ERROR', response: response } }
         }
         return { data: response }
