@@ -5,14 +5,11 @@ import { ComicList } from '@models/ComicList'
 import { FlagType } from '@models/FlagType'
 import { ItemId } from '@models/ItemId'
 import { ItemType } from '@models/ItemType'
+import { PatchComicBody } from '@models/PatchComicBody'
 import { RemoveItemFromComicBody } from '@models/RemoveItemFromComicBody'
-import { SetFlagBody } from '@models/SetFlagBody'
-import { SetPublishDateBody } from '@models/SetPublishDateBody'
-import { SetTaglineBody } from '@models/SetTaglineBody'
-import { SetTitleBody } from '@models/SetTitleBody'
 import { Token } from '@models/Token'
 import { createSelector } from '@reduxjs/toolkit'
-import { setRandom } from '@store/comicSlice'
+import { TagDescription } from '@reduxjs/toolkit/dist/query'
 import { RootState } from '@store/store'
 
 import constants from '~/constants'
@@ -99,54 +96,6 @@ export const comicApiSlice = apiSlice.injectEndpoints({
             },
             providesTags: (result) =>
                 result ? [{ type: 'Comic', id: result.comic }] : [],
-            onQueryStarted: async (
-                { skipGuest, skipNonCanon },
-                { dispatch, queryFulfilled, getState }
-            ) => {
-                try {
-                    await queryFulfilled
-
-                    let excludedComics: number[] = []
-                    if (skipGuest || skipNonCanon) {
-                        const excludedComicDataQuery = dispatch(
-                            comicApiSlice.endpoints.getExcluded.initiate({
-                                skipGuest,
-                                skipNonCanon,
-                            })
-                        )
-
-                        const { data } = await excludedComicDataQuery
-
-                        if (data) {
-                            excludedComics = data.map((c) => c.comic)
-                        }
-
-                        excludedComicDataQuery.unsubscribe()
-                    }
-
-                    const state = getState() as RootState
-
-                    // We only need to update the random comic if it's the same as
-                    // current or if it's part of the excluded ones
-                    if (
-                        state.comic.random === 0 ||
-                        state.comic.random === state.comic.current ||
-                        excludedComics.includes(state.comic.random)
-                    ) {
-                        let newRandomComic = state.comic.current
-                        while (
-                            newRandomComic === state.comic.current ||
-                            excludedComics.includes(newRandomComic)
-                        ) {
-                            newRandomComic = Math.floor(
-                                Math.random() * (state.comic.latest + 1)
-                            )
-                        }
-
-                        dispatch(setRandom(newRandomComic))
-                    }
-                } catch {}
-            },
         }),
         getExcluded: builder.query<ComicList[], GetExcludedQueryArgs>({
             query: ({ skipGuest, skipNonCanon }) => {
@@ -199,128 +148,49 @@ export const comicApiSlice = apiSlice.injectEndpoints({
                       ]
                     : [],
         }),
-        setFlag: builder.mutation<string, SetFlagMutationArgs>({
-            query: ({ comicId, editModeToken, flagType, value }) => {
-                const data: SetFlagBody = {
-                    token: editModeToken,
-                    comicId,
-                    flagType,
-                    flagValue: value,
-                }
-                const url = constants.setFlagEndpoint
+        patchComic: builder.mutation<
+            string,
+            { comic: ComicId; body: PatchComicBody }
+        >({
+            query: ({ comic, body }) => {
+                const url = `${constants.comicDataEndpoint}${comic}`
                 return {
                     url,
                     configuration: {
-                        data: JSON.stringify(data),
-                        method: 'POST',
+                        data: JSON.stringify(body),
+                        method: 'PATCH',
                         headers: {
                             'Content-Type': 'application/json; charset=utf-8',
                         },
                     },
                 }
             },
-            transformResponse: (response) => response.responseText,
-            invalidatesTags: (result, _error, args) => {
-                return result
-                    ? [
-                          { type: 'Comic', id: args.comicId },
-                          {
-                              type: 'Comic',
-                              id: 'EXCLUDED',
-                          },
-                          {
-                              type: 'Comic',
-                              id: 'ALL',
-                          },
-                      ]
-                    : []
-            },
-        }),
-        setTitle: builder.mutation<string, SetTextMutationArgs>({
-            query: ({ comicId, editModeToken, value }) => {
-                const data: SetTitleBody = {
-                    token: editModeToken,
-                    comicId,
-                    title: value,
-                }
-                const url = constants.setComicTitleEndpoint
-                return {
-                    url,
-                    configuration: {
-                        data: JSON.stringify(data),
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json; charset=utf-8',
-                        },
-                    },
-                }
+            onQueryStarted: async (
+                { comic, body },
+                { dispatch, queryFulfilled }
+            ) => {
+                try {
+                    await queryFulfilled
+
+                    const tags: TagDescription<'Comic' | 'Item'>[] = []
+                    tags.push({ type: 'Comic', id: comic })
+                    if (body.isGuestComic || body.isNonCanon) {
+                        tags.push({
+                            type: 'Comic',
+                            id: 'EXCLUDED',
+                        })
+                    }
+                    if (body.title || body.isGuestComic || body.isNonCanon) {
+                        tags.push({
+                            type: 'Comic',
+                            id: 'ALL',
+                        })
+                    }
+
+                    dispatch(apiSlice.util.invalidateTags(tags))
+                } catch {}
             },
             transformResponse: (response) => response.responseText,
-            invalidatesTags: (result, _error, args) => {
-                return result
-                    ? [
-                          { type: 'Comic', id: args.comicId },
-                          {
-                              type: 'Comic',
-                              id: 'ALL',
-                          },
-                      ]
-                    : []
-            },
-        }),
-        setTagline: builder.mutation<string, SetTextMutationArgs>({
-            query: ({ comicId, editModeToken, value }) => {
-                const data: SetTaglineBody = {
-                    token: editModeToken,
-                    comicId,
-                    tagline: value,
-                }
-                const url = constants.setComicTaglineEndpoint
-                return {
-                    url,
-                    configuration: {
-                        data: JSON.stringify(data),
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json; charset=utf-8',
-                        },
-                    },
-                }
-            },
-            transformResponse: (response) => response.responseText,
-            invalidatesTags: (result, _error, args) => {
-                return result ? [{ type: 'Comic', id: args.comicId }] : []
-            },
-        }),
-        setPublishDate: builder.mutation<string, SetPublishDateMutationArgs>({
-            query: ({
-                comicId,
-                editModeToken,
-                publishDate,
-                isAccuratePublishDate,
-            }) => {
-                const data: SetPublishDateBody = {
-                    token: editModeToken,
-                    comicId,
-                    publishDate,
-                    isAccuratePublishDate,
-                }
-                const url = constants.setPublishDateEndpoint
-                return {
-                    url,
-                    configuration: {
-                        data: JSON.stringify(data),
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json; charset=utf-8',
-                        },
-                    },
-                }
-            },
-            transformResponse: (response) => response.responseText,
-            invalidatesTags: (result, _error, args) => {
-                return result ? [{ type: 'Comic', id: args.comicId }] : []
-            },
         }),
         addItem: builder.mutation<string, AddItemMutationArgs>({
             query: (args) => {
@@ -385,11 +255,9 @@ export const comicApiSlice = apiSlice.injectEndpoints({
 
 export const {
     useGetDataQuery,
+    useGetExcludedQuery,
     useListAllQuery,
-    useSetFlagMutation,
-    useSetTitleMutation,
-    useSetTaglineMutation,
-    useSetPublishDateMutation,
+    usePatchComicMutation,
     useAddItemMutation,
     useRemoveItemMutation,
 } = comicApiSlice
@@ -402,6 +270,15 @@ export function toGetDataQueryArgs(
         comic,
         editModeToken: settings.editModeToken,
         showAllMembers: settings.showAllMembers,
+        skipGuest: settings.skipGuest,
+        skipNonCanon: settings.skipNonCanon,
+    }
+}
+
+export function toGetExcludedQueryArgs(
+    settings: SettingValues
+): GetExcludedQueryArgs {
+    return {
         skipGuest: settings.skipGuest,
         skipNonCanon: settings.skipNonCanon,
     }

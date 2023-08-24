@@ -5,22 +5,29 @@ import { ItemNavigationData } from '@models/ItemNavigationData'
 import { ItemType } from '@models/ItemType'
 import { NavigationData } from '@models/NavigationData'
 import { skipToken } from '@reduxjs/toolkit/dist/query'
-import {
-    toGetDataQueryArgs,
-    useAddItemMutation,
-    useGetDataQuery,
-    useSetFlagMutation,
-    useSetPublishDateMutation,
-    useSetTaglineMutation,
-    useSetTitleMutation,
-} from '@store/api/comicApiSlice'
+import { toGetDataQueryArgs, useGetDataQuery } from '@store/api/comicApiSlice'
 import { setCurrentComic } from '@store/comicSlice'
+import {
+    isIsAccuratePublishDateDirtySelector,
+    isPublishDateDirtySelector,
+    isStateDirtySelector,
+    isTaglineDirtySelector,
+    isTitleDirtySelector,
+    reset as resetEditorData,
+    saveChanges,
+    setFromComic as setEditorDataFromComic,
+    setIsAccuratePublishDate,
+    setPublishDate,
+    setTagline,
+    setTitle,
+} from '@store/editorSlice'
+import { useAppDispatch } from '@store/hooks'
 import { AppDispatch, RootState } from '@store/store'
-import FilteredNavigationData from '@widgets/FilteredNavigationData'
 
 import constants from '~/constants'
-import { debug } from '~/utils'
 
+import ComicFlagsWidget from './ComicFlagsWidget'
+import ErrorPresenter from './ErrorPresenter'
 import NavElement, { NavElementMode } from './QcExtMainWidget/NavElement'
 import ToggleButton from './Widgets/ToggleButton'
 
@@ -28,6 +35,17 @@ const mapState = (state: RootState) => {
     return {
         settings: state.settings.values,
         currentComic: state.comic.current,
+        isEditorSaving: state.editor.isSaving,
+        title: state.editor.title,
+        isTitleDirty: isTitleDirtySelector(state),
+        tagline: state.editor.tagline,
+        isTaglineDirty: isTaglineDirtySelector(state),
+        publishDate: state.editor.publishDate,
+        isPublishDateDirty: isPublishDateDirtySelector(state),
+        isAccuratePublishDate: state.editor.isAccuratePublishDate,
+        isIsAccuratePublishDateDirty:
+            isIsAccuratePublishDateDirtySelector(state),
+        editorStateDirty: isStateDirtySelector(state),
     }
 }
 
@@ -35,6 +53,21 @@ const mapDispatch = (dispatch: AppDispatch) => {
     return {
         setCurrentComic: (comic: number) => {
             dispatch(setCurrentComic(comic))
+        },
+        setTitle: (title: string) => {
+            dispatch(setTitle(title))
+        },
+        setTagline: (tagline: string) => {
+            dispatch(setTagline(tagline))
+        },
+        setPublishDate: (publishDate: string) => {
+            dispatch(setPublishDate(publishDate))
+        },
+        setIsAccuratePublishDate: (isAccuratePublishDate: boolean) => {
+            dispatch(setIsAccuratePublishDate(isAccuratePublishDate))
+        },
+        saveChanges: () => {
+            dispatch(saveChanges())
         },
     }
 }
@@ -46,54 +79,50 @@ type EditorModeExtraWidgetProps = PropsFromRedux & {}
 function EditorModeExtraWidget({
     settings,
     currentComic,
+    isEditorSaving,
+    title,
+    isTitleDirty,
+    tagline,
+    isTaglineDirty,
+    publishDate,
+    isPublishDateDirty,
+    isAccuratePublishDate,
+    isIsAccuratePublishDateDirty,
+    editorStateDirty,
     setCurrentComic,
+    setTitle,
+    setTagline,
+    setPublishDate,
+    setIsAccuratePublishDate,
+    saveChanges,
 }: EditorModeExtraWidgetProps) {
-    const { data: comicData, isFetching: isFetchingComicData } =
-        useGetDataQuery(
-            currentComic === 0 || !settings
-                ? skipToken
-                : toGetDataQueryArgs(currentComic, settings)
-        )
+    const dispatch = useAppDispatch()
 
-    const [setFlag, { isLoading: isSettingFlag }] = useSetFlagMutation()
-    const [setTitle, { isLoading: isSettingTitle }] = useSetTitleMutation()
-    const [setTagline, { isLoading: isSettingTagline }] =
-        useSetTaglineMutation()
-    const [setPublishDate, { isLoading: isSettingPublishDate }] =
-        useSetPublishDateMutation()
+    const {
+        data: comicData,
+        isFetching: isFetchingComicData,
+        isLoading: isLoadingInitialComicData,
+        isError: hasErrorLoadingComicData,
+        error: comicDataError,
+    } = useGetDataQuery(
+        currentComic === 0 || !settings
+            ? skipToken
+            : toGetDataQueryArgs(currentComic, settings)
+    )
 
-    const [addItem, { isLoading: isAddingItem }] = useAddItemMutation()
-
-    const isLoading =
-        isFetchingComicData ||
-        isSettingFlag ||
-        isSettingTitle ||
-        isSettingTagline ||
-        isSettingPublishDate ||
-        isAddingItem
-
-    const [comicTitle, setComicTitle] = useState('')
-    const [comicTagline, setComicTagline] = useState('')
-    const [comicDate, setComicDate] = useState('')
-    const [comicIsAccurateDate, setComicIsAccurateDate] = useState(false)
+    // When comicData loads, update the editorData
     useEffect(() => {
-        setComicTitle(
-            comicData && comicData.hasData ? comicData.title ?? '' : ''
-        )
-        setComicTagline(
-            comicData && comicData.hasData ? comicData.tagline ?? '' : ''
-        )
-        setComicDate(
-            comicData && comicData.hasData ? comicData.publishDate ?? '' : ''
-        )
-        setComicIsAccurateDate(
-            comicData && comicData.hasData
-                ? comicData.isAccuratePublishDate
-                : false
-        )
-    }, [comicData])
+        if (!comicData) {
+            return
+        }
+        if (comicData.hasData) {
+            dispatch(setEditorDataFromComic(comicData))
+        } else {
+            dispatch(resetEditorData())
+        }
+    }, [comicData, dispatch])
 
-    const missingData = useMemo(() => {
+    const missingDataText = useMemo(() => {
         const hasCast =
             !comicData?.hasData ||
             comicData.hasNoCast ||
@@ -133,7 +162,9 @@ function EditorModeExtraWidget({
             missingData.push('a tagline')
         }
 
-        if (!isLoading && missingData.length) {
+        if (hasErrorLoadingComicData) {
+            return <ErrorPresenter error={comicDataError} />
+        } else if (!isLoadingInitialComicData && missingData.length) {
             return (
                 <p className="text-[#ff3030] mt-2 leading-5">
                     This comic is missing{' '}
@@ -146,7 +177,11 @@ function EditorModeExtraWidget({
                     })}
                 </p>
             )
-        } else if (!isLoading && comicData && !comicData.hasData) {
+        } else if (
+            !isLoadingInitialComicData &&
+            comicData &&
+            !comicData.hasData
+        ) {
             return (
                 <div className="text-center pt-4">
                     <i
@@ -160,7 +195,13 @@ function EditorModeExtraWidget({
         } else {
             return <></>
         }
-    }, [comicData, isLoading, currentComic])
+    }, [
+        comicData,
+        isLoadingInitialComicData,
+        currentComic,
+        hasErrorLoadingComicData,
+        comicDataError,
+    ])
 
     const [clientWidth, setClientWidth] = useState(
         document.documentElement.clientWidth
@@ -184,138 +225,9 @@ function EditorModeExtraWidget({
         return <></>
     }
 
-    let comicFlags = <></>
-    if (comicData) {
-        comicFlags = (
-            <div className="flex flex-col gap-1">
-                <ToggleButton
-                    label="Guest comic"
-                    checked={
-                        (comicData.hasData && comicData.isGuestComic) || false
-                    }
-                    onChange={(e) => {
-                        setFlag({
-                            comicId: currentComic,
-                            editModeToken: settings.editModeToken,
-                            flagType: 'isGuestComic',
-                            value: e.target.checked,
-                        })
-                    }}
-                    disabled={isLoading}
-                />
-                <ToggleButton
-                    label="Non-canon"
-                    checked={
-                        (comicData.hasData && comicData.isNonCanon) || false
-                    }
-                    onChange={(e) => {
-                        setFlag({
-                            comicId: currentComic,
-                            editModeToken: settings.editModeToken,
-                            flagType: 'isNonCanon',
-                            value: e.target.checked,
-                        })
-                    }}
-                />
-                <ToggleButton
-                    label="No cast"
-                    title="Indicates that it is not a mistake that there are no cast members in this comic"
-                    checked={
-                        (comicData.hasData && comicData.hasNoCast) || false
-                    }
-                    disabled={
-                        isLoading ||
-                        (comicData.hasData &&
-                            hasItemsOfType(comicData.items, 'cast'))
-                    }
-                    onChange={(e) => {
-                        setFlag({
-                            comicId: currentComic,
-                            editModeToken: settings.editModeToken,
-                            flagType: 'hasNoCast',
-                            value: e.target.checked,
-                        })
-                    }}
-                />
-                <ToggleButton
-                    label="No location"
-                    title="Indicates that it is not a mistake that there are no locations in this comic"
-                    checked={
-                        (comicData.hasData && comicData.hasNoLocation) || false
-                    }
-                    disabled={
-                        isLoading ||
-                        (comicData.hasData &&
-                            hasItemsOfType(comicData.items, 'location'))
-                    }
-                    onChange={(e) => {
-                        setFlag({
-                            comicId: currentComic,
-                            editModeToken: settings.editModeToken,
-                            flagType: 'hasNoLocation',
-                            value: e.target.checked,
-                        })
-                    }}
-                />
-                <ToggleButton
-                    label="No storyline"
-                    title="Indicates that it is not a mistake that there are no storylines in this comic"
-                    checked={
-                        (comicData.hasData && comicData.hasNoStoryline) || false
-                    }
-                    disabled={
-                        isLoading ||
-                        (comicData.hasData &&
-                            hasItemsOfType(comicData.items, 'storyline'))
-                    }
-                    onChange={(e) => {
-                        setFlag({
-                            comicId: currentComic,
-                            editModeToken: settings.editModeToken,
-                            flagType: 'hasNoStoryline',
-                            value: e.target.checked,
-                        })
-                    }}
-                />
-                <ToggleButton
-                    label="No title"
-                    title="Indicates that it is not a mistake that this comic has no title"
-                    checked={
-                        (comicData.hasData && comicData.hasNoTitle) || false
-                    }
-                    disabled={isLoading}
-                    onChange={(e) => {
-                        setFlag({
-                            comicId: currentComic,
-                            editModeToken: settings.editModeToken,
-                            flagType: 'hasNoTitle',
-                            value: e.target.checked,
-                        })
-                    }}
-                />
-                <ToggleButton
-                    label="No tagline"
-                    title="Indicates that it is not a mistake that this comic has no tagline"
-                    checked={
-                        (comicData.hasData && comicData.hasNoTagline) || false
-                    }
-                    disabled={isLoading}
-                    onChange={(e) => {
-                        setFlag({
-                            comicId: currentComic,
-                            editModeToken: settings.editModeToken,
-                            flagType: 'hasNoTagline',
-                            value: e.target.checked,
-                        })
-                    }}
-                />
-            </div>
-        )
-    }
-
     const editorData = comicData?.editorData
     return (
-        <div
+        <form
             className={
                 'bg-stone-100 border-solid border-0 border-b border-qc-header lg:border lg:border-stone-300 ' +
                 'shadow-md lg:fixed lg:top-20 xl:top-48 lg:left-[50%] lg:-ml-[750px] lg:w-64 z-10 p-2 ' +
@@ -326,6 +238,10 @@ function EditorModeExtraWidget({
                     '--corrected-margin': `${correctionWidth}px`,
                 } as any
             }
+            onSubmit={(e) => {
+                e.preventDefault()
+                saveChanges()
+            }}
         >
             <h1 className="-mx-2 -mt-2 mb-2 text-center small-caps text-sm font-thin border-b border-solid border-b-stone-300 border-l-0 border-t-0 border-r-0">
                 Editor Mode
@@ -376,99 +292,109 @@ function EditorModeExtraWidget({
             ) : (
                 <></>
             )}
-            {missingData}
-            {/* TODO: show recent items before all items */}
-            {!settings.showAllMembers ? (
-                <>
-                    <hr className="my-4 mx-0 border-solid border-b max-w-none" />
-                    <FilteredNavigationData
-                        isLoading={isLoading}
-                        itemData={(comicData && comicData.allItems) ?? []}
-                        onSetCurrentComic={setCurrentComic}
-                        onShowInfoFor={() => {
-                            debug(
-                                'TODO: Set up after adding RootWidgetHost component'
-                            )
-                        }}
-                        useColors={settings.useColors}
-                        editMode={settings.editMode}
-                        onAddItem={(item) => {
-                            addItem({
-                                newItem: false,
-                                comicId: currentComic,
-                                editModeToken: settings.editModeToken,
-                                itemId: item.id,
-                            })
-                        }}
-                    />
-                </>
-            ) : (
-                <></>
-            )}
-            {/* TODO: Track comic "dirty" state and warn if closing page/navigating away without saving */}
-
+            {missingDataText}
             <hr className="my-4 mx-0 border-solid border-b max-w-none" />
             <ExpandingEditor>
                 <TextEditor
-                    disabled={isLoading}
-                    buttonContent="Set"
-                    buttonTitle="Set comic title"
+                    disabled={
+                        isLoadingInitialComicData ||
+                        isFetchingComicData ||
+                        isEditorSaving ||
+                        hasErrorLoadingComicData
+                    }
                     label="Title"
                     inputId="qcext-comic-title"
-                    value={comicTitle}
-                    onValueChange={setComicTitle}
-                    onSubmit={() =>
-                        setTitle({
-                            editModeToken: settings.editModeToken,
-                            comicId: currentComic,
-                            value: comicTitle,
-                        })
-                    }
+                    value={title}
+                    onValueChange={setTitle}
+                    dirty={isTitleDirty}
                 />
             </ExpandingEditor>
             <ExpandingEditor>
                 <TextEditor
-                    disabled={isLoading}
-                    buttonContent="Set"
-                    buttonTitle="Set comic tagline"
+                    disabled={
+                        isLoadingInitialComicData ||
+                        isFetchingComicData ||
+                        isEditorSaving ||
+                        hasErrorLoadingComicData
+                    }
                     label="Tagline"
                     inputId="qcext-comic-tagline"
-                    value={comicTagline}
-                    onValueChange={setComicTagline}
-                    onSubmit={() =>
-                        setTagline({
-                            editModeToken: settings.editModeToken,
-                            comicId: currentComic,
-                            value: comicTagline,
-                        })
-                    }
+                    value={tagline}
+                    onValueChange={setTagline}
+                    dirty={isTaglineDirty}
                 />
             </ExpandingEditor>
             <ExpandingEditor>
                 <DateEditor
-                    disabled={isLoading}
-                    buttonContent="Set"
-                    buttonTitle="Set comic publish date"
+                    disabled={
+                        isLoadingInitialComicData ||
+                        isFetchingComicData ||
+                        isEditorSaving ||
+                        hasErrorLoadingComicData
+                    }
                     label="Date"
                     labelTitle={'Publish date'}
                     inputId="qcext-comic-publish-date"
-                    dateValue={comicDate}
-                    isAccurateValue={comicIsAccurateDate}
-                    onDateValueChange={setComicDate}
-                    onIsAccurateValueChange={setComicIsAccurateDate}
-                    onSubmit={() =>
-                        setPublishDate({
-                            editModeToken: settings.editModeToken,
-                            comicId: currentComic,
-                            publishDate: comicDate,
-                            isAccuratePublishDate: comicIsAccurateDate,
-                        })
+                    dateValue={publishDate}
+                    isAccurateValue={isAccuratePublishDate}
+                    onDateValueChange={(date) => setPublishDate(date)}
+                    onIsAccurateValueChange={(isAccuratePublishDate) =>
+                        setIsAccuratePublishDate(isAccuratePublishDate)
                     }
+                    isDateValueDirty={isPublishDateDirty}
+                    isIsAccurateValueDirty={isIsAccuratePublishDateDirty}
                 />
             </ExpandingEditor>
             <hr className="my-4 mx-0 border-solid border-b max-w-none" />
-            {comicFlags}
-        </div>
+            {comicData ? (
+                <ComicFlagsWidget
+                    isLoading={
+                        isLoadingInitialComicData ||
+                        isFetchingComicData ||
+                        isEditorSaving
+                    }
+                    hasError={hasErrorLoadingComicData}
+                    hasCastItems={
+                        isLoadingInitialComicData ||
+                        (comicData.hasData &&
+                            hasItemsOfType(comicData.items, 'cast'))
+                    }
+                    hasLocationItems={
+                        isLoadingInitialComicData ||
+                        (comicData.hasData &&
+                            hasItemsOfType(comicData.items, 'location'))
+                    }
+                    hasStorylineItems={
+                        isLoadingInitialComicData ||
+                        (comicData.hasData &&
+                            hasItemsOfType(comicData.items, 'storyline'))
+                    }
+                />
+            ) : (
+                <></>
+            )}
+            <hr className="my-4 mx-0 border-solid border-b max-w-none" />
+            <div className="flex">
+                <button
+                    className="flex-auto bg-qc-header hover:bg-qc-header-second focus:bg-qc-header-second text-white py-3 rounded-sm disabled:opacity-75"
+                    disabled={
+                        isLoadingInitialComicData ||
+                        isFetchingComicData ||
+                        isEditorSaving ||
+                        !editorStateDirty
+                    }
+                    type="submit"
+                >
+                    {hasErrorLoadingComicData
+                        ? 'Error'
+                        : isFetchingComicData || isEditorSaving
+                        ? 'Loading...'
+                        : editorStateDirty
+                        ? 'Save changes'
+                        : 'No changes'}
+                </button>
+            </div>
+        </form>
     )
 }
 
@@ -520,44 +446,35 @@ function MissingNavElement({
 
 function TextEditor({
     disabled,
-    buttonContent,
-    buttonTitle,
     label,
     labelTitle,
     inputId,
     value,
     onValueChange,
-    onSubmit,
+    dirty,
 }: {
     disabled: boolean
-    buttonContent: React.ReactChild
-    buttonTitle?: string
     label: string
     labelTitle?: string
     inputId: string
     value: string
     onValueChange: (newValue: string) => void
-    onSubmit: () => void
+    dirty?: boolean
 }) {
     const [_expanded, setExpanded] = useContext(ExpandedContext)
     return (
-        <form
-            className="flex min-w-0"
-            onSubmit={(e) => {
-                e.preventDefault()
-                setExpanded(false)
-                onSubmit()
-            }}
-        >
+        <div className="flex min-w-0">
             <label
                 title={labelTitle}
                 htmlFor={inputId}
                 className={
                     `bg-qc-header text-white py-2 px-4 flex-initial rounded-l-sm rounded-r-none` +
+                    (dirty ? ' bg-qc-header-second italic' : '') +
                     (disabled ? ' opacity-75' : '')
                 }
             >
                 {label}
+                {dirty ? '*' : ''}
             </label>
             <input
                 id={inputId}
@@ -571,24 +488,12 @@ function TextEditor({
                 onFocus={() => setExpanded(true)}
                 onBlur={() => setExpanded(false)}
             />
-            <button
-                className="bg-qc-header hover:bg-qc-header-second focus:bg-qc-header-second text-white py-2 px-4 rounded-l-none rounded-r-sm disabled:opacity-75"
-                disabled={disabled}
-                title={buttonTitle}
-                type="submit"
-                onFocus={() => setExpanded(true)}
-                onBlur={() => setExpanded(false)}
-            >
-                {buttonContent}
-            </button>
-        </form>
+        </div>
     )
 }
 
 function DateEditor({
     disabled,
-    buttonContent,
-    buttonTitle,
     label,
     labelTitle,
     inputId,
@@ -596,19 +501,19 @@ function DateEditor({
     isAccurateValue,
     onDateValueChange,
     onIsAccurateValueChange,
-    onSubmit,
+    isDateValueDirty,
+    isIsAccurateValueDirty,
 }: {
     disabled: boolean
-    buttonContent: React.ReactChild
-    buttonTitle?: string
     label: string
     labelTitle?: string
     inputId: string
     dateValue: string
     isAccurateValue: boolean
+    isDateValueDirty: boolean
+    isIsAccurateValueDirty: boolean
     onDateValueChange: (newValue: string) => void
     onIsAccurateValueChange: (newValue: boolean) => void
-    onSubmit: () => void
 }) {
     const [_expanded, setExpanded] = useContext(ExpandedContext)
 
@@ -625,23 +530,21 @@ function DateEditor({
     }
 
     return (
-        <form
-            onSubmit={(e) => {
-                e.preventDefault()
-                setExpanded(false)
-                onSubmit()
-            }}
-        >
+        <>
             <div className="flex min-w-0">
                 <label
                     title={labelTitle}
                     htmlFor={inputId}
                     className={
                         `bg-qc-header text-white py-2 px-4 flex-initial rounded-l-sm rounded-r-none` +
+                        (isDateValueDirty
+                            ? ' bg-qc-header-second italic'
+                            : '') +
                         (disabled ? ' opacity-75' : '')
                     }
                 >
                     {label}
+                    {isDateValueDirty ? '*' : ''}
                 </label>
 
                 <input
@@ -662,16 +565,6 @@ function DateEditor({
                     onFocus={() => setExpanded(true)}
                     onBlur={() => setExpanded(false)}
                 />
-                <button
-                    className="bg-qc-header hover:bg-qc-header-second focus:bg-qc-header-second text-white py-2 px-4 rounded-l-none rounded-r-sm disabled:opacity-75"
-                    disabled={disabled}
-                    title={buttonTitle}
-                    type="submit"
-                    onFocus={() => setExpanded(true)}
-                    onBlur={() => setExpanded(false)}
-                >
-                    {buttonContent}
-                </button>
             </div>
             <div className="bg-stone-100">
                 <ToggleButton
@@ -679,9 +572,10 @@ function DateEditor({
                     checked={isAccurateValue}
                     disabled={disabled}
                     onChange={(e) => onIsAccurateValueChange(e.target.checked)}
+                    dirty={isIsAccurateValueDirty}
                 />
             </div>
-        </form>
+        </>
     )
 }
 

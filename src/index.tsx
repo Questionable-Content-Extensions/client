@@ -114,7 +114,8 @@ async function developmentMain() {
                 error('Could not fetch script. Are you running `npm start`?')
             } else {
                 error(
-                    'Could not fetch script. See response error object for potential clues.'
+                    'Could not fetch script. See response error object for potential clues.',
+                    response
                 )
             }
         })

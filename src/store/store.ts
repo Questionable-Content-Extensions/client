@@ -5,6 +5,7 @@ import { setupListeners } from '@reduxjs/toolkit/query'
 
 import { apiSlice } from './apiSlice'
 import comicReducer from './comicSlice'
+import editorSlice from './editorSlice'
 import settingsReducer from './settingsSlice'
 
 const consoleProxy = {
@@ -37,6 +38,7 @@ const store = configureStore({
     reducer: {
         settings: settingsReducer,
         comic: comicReducer,
+        editor: editorSlice,
         [apiSlice.reducerPath]: apiSlice.reducer,
     },
     middleware: (getDefaultMiddleware) =>

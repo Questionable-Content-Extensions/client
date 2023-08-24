@@ -68,10 +68,6 @@ const constants = {
     excludedComicsEndpoint: `${comicDataEndpoint}excluded` as const,
     addItemToComicEndpoint: `${comicDataEndpoint}additem` as const,
     removeItemFromComicEndpoint: `${comicDataEndpoint}removeitem` as const,
-    setComicTitleEndpoint: `${comicDataEndpoint}settitle` as const,
-    setComicTaglineEndpoint: `${comicDataEndpoint}settagline` as const,
-    setPublishDateEndpoint: `${comicDataEndpoint}setpublishdate` as const,
-    setFlagEndpoint: `${comicDataEndpoint}setflag` as const,
 
     itemImageUrl: `${itemDataUrl}image/` as const,
     itemFriendDataUrl: `${itemDataUrl}friends/` as const,

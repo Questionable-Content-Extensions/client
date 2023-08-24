@@ -12,6 +12,7 @@ export default function ToggleButton({
     checked,
     disabled,
     title,
+    dirty,
 }: {
     label: string
     kind?: Kind
@@ -19,6 +20,7 @@ export default function ToggleButton({
     checked?: boolean
     disabled?: boolean
     title?: string
+    dirty?: boolean
 }) {
     let background
     let dot
@@ -65,6 +67,7 @@ export default function ToggleButton({
         <label
             className={
                 'flex items-center ' +
+                (dirty ? 'bg-amber-100 ' : '') +
                 (disabled ? 'cursor-not-allowed' : 'cursor-pointer')
             }
             title={title}
@@ -83,10 +86,12 @@ export default function ToggleButton({
             <div
                 className={
                     'ml-3 font-medium ' +
+                    (dirty ? 'italic ' : '') +
                     (disabled ? 'text-gray-500' : 'text-gray-700')
                 }
             >
                 {label}
+                {dirty ? '*' : ''}
             </div>
         </label>
     )

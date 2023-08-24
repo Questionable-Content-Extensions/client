@@ -6,6 +6,8 @@ import { ItemNavigationData } from '@models/ItemNavigationData'
 
 export default function FilteredNavigationData({
     isLoading,
+    isFetching,
+    hasError,
     itemData,
     onSetCurrentComic,
     onShowInfoFor,
@@ -14,6 +16,8 @@ export default function FilteredNavigationData({
     onAddItem,
 }: {
     isLoading: boolean
+    isFetching: boolean
+    hasError: boolean
     itemData: ItemNavigationData[]
     onSetCurrentComic: (comicId: number) => void
     onShowInfoFor: (item: ItemNavigationData) => void
@@ -47,13 +51,15 @@ export default function FilteredNavigationData({
                 value={filter}
                 onChange={(e) => setFilter(e.target.value)}
                 className="w-full border border-qc-header focus:outline-none flex-auto rounded-none pl-2 disabled:opacity-75 mb-2"
-                disabled={isLoading}
+                disabled={isLoading || hasError}
             />
-            <div className="overflow-y-auto overflow-x-hidden max-h-80">
+
+            <div className="overflow-y-auto overflow-x-hidden max-h-52">
                 {/* TODO: Show indication that no items matched the filter(?) */}
                 <ItemNavigation
                     itemNavigationData={filterItems(itemData, activeFilter)}
                     isLoading={isLoading}
+                    isFetching={isFetching}
                     useColors={useColors}
                     onSetCurrentComic={onSetCurrentComic}
                     onShowInfoFor={onShowInfoFor}
