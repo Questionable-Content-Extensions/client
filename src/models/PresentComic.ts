@@ -9,7 +9,7 @@ export interface PresentComic {
     imageType: ImageType | null
     publishDate: string | null
     isAccuratePublishDate: boolean
-    title: string | null
+    title: string
     tagline: string | null
     isGuestComic: boolean
     isNonCanon: boolean

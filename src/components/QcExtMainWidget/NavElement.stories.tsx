@@ -1,20 +1,9 @@
 import { ItemNavigationData } from '@models/ItemNavigationData'
 import { ComponentMeta, ComponentStory } from '@storybook/react'
 
-import NavElement, { NavElementMode } from './NavElement'
+import { MARTEN } from '~/mocks'
 
-const MARTEN: ItemNavigationData = {
-    id: 1,
-    shortName: 'Marten',
-    name: 'Marten Reed',
-    type: 'cast',
-    color: '7d929e',
-    first: 1,
-    previous: 1233,
-    next: 1235,
-    last: 2345,
-    count: 6969,
-}
+import NavElement, { NavElementMode } from './NavElement'
 
 export default {
     component: NavElement,
