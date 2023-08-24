@@ -49,7 +49,7 @@ function Comic({
 }: ComicProps) {
     const [isInitializing, setIsInitializing] = useState(true)
 
-    const { data: comicData } = useGetDataQuery(
+    const { data: comicData, isError: hasComicDataError } = useGetDataQuery(
         currentComic === 0 || !settings
             ? skipToken
             : toGetDataQueryArgs(currentComic, settings)
@@ -65,9 +65,11 @@ function Comic({
         }
     }, [settings?.scrollToTop, currentComic])
 
-    if (comicData && isInitializing) {
-        setIsInitializing(false)
-    }
+    useEffect(() => {
+        if (comicData && isInitializing) {
+            setIsInitializing(false)
+        }
+    }, [comicData, isInitializing, setIsInitializing])
 
     const comicNo = useMemo(() => {
         if (!currentComic) {
@@ -94,22 +96,26 @@ function Comic({
     )
 
     let imageData = useMemo(() => {
-        let imageType
-        if (comicData?.hasData) {
-            imageType = comicData.imageType
+        if (!hasComicDataError) {
+            let imageType
+            if (comicData?.hasData) {
+                imageType = comicData.imageType
+            } else {
+                imageType = null
+            }
+            return {
+                comicNo: comicData?.comic || null,
+                imageType,
+            }
         } else {
-            imageType = null
+            return { comicNo, imageType: null }
         }
-        return {
-            comicNo: comicData?.comic || null,
-            imageType,
-        }
-    }, [comicData])
+    }, [comicData, hasComicDataError, comicNo])
 
     let imageReady = useCallback(() => {
         const _comicData = comicData
         doneLoadingWithTimeout()
-        info('Comic data and image loaded.')
+        info('Comic image loaded.')
     }, [comicData, doneLoadingWithTimeout])
 
     let ribbonType = RibbonType.None
