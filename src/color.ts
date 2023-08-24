@@ -1,4 +1,3 @@
-// @flow
 /*
  * Copyright (C) 2016-2022 Alexander Krivács Schrøder <alexschrod@gmail.com>
  *

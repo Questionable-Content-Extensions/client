@@ -34,6 +34,7 @@ type GoToComicDialogProps = PropsFromRedux & {
 }
 
 // TODO: Add a search/filter function to this dialog
+// TODO: Show Guest Comic/Non Canon status as pill
 
 function GoToComicDialog({
     show,
