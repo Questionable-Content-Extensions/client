@@ -1,4 +1,3 @@
-import { ItemNavigationData } from '@models/ItemNavigationData'
 import { ComponentMeta, ComponentStory } from '@storybook/react'
 
 import { MARTEN } from '~/mocks'

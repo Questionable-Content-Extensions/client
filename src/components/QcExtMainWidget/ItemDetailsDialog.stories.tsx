@@ -1,6 +1,3 @@
-import { Item as ItemData } from '@models/Item'
-import { ItemImageList as ItemImageData } from '@models/ItemImageList'
-import { RelatedItem as ItemRelationData } from '@models/RelatedItem'
 import { ComponentMeta, ComponentStory } from '@storybook/react'
 
 import {

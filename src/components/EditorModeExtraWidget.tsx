@@ -5,7 +5,10 @@ import { ItemNavigationData } from '@models/ItemNavigationData'
 import { ItemType } from '@models/ItemType'
 import { NavigationData } from '@models/NavigationData'
 import { skipToken } from '@reduxjs/toolkit/dist/query'
-import { toGetDataQueryArgs, useGetDataQuery } from '@store/api/comicApiSlice'
+import {
+    toGetDataQueryArgs,
+    useGetComicDataQuery,
+} from '@store/api/comicApiSlice'
 import { setCurrentComic } from '@store/comicSlice'
 import {
     isIsAccuratePublishDateDirtySelector,
@@ -76,6 +79,8 @@ const connector = connect(mapState, mapDispatch)
 type PropsFromRedux = ConnectedProps<typeof connector>
 type EditorModeExtraWidgetProps = PropsFromRedux & {}
 
+// TODO: Show editor log function
+
 function EditorModeExtraWidget({
     settings,
     currentComic,
@@ -104,7 +109,7 @@ function EditorModeExtraWidget({
         isLoading: isLoadingInitialComicData,
         isError: hasErrorLoadingComicData,
         error: comicDataError,
-    } = useGetDataQuery(
+    } = useGetComicDataQuery(
         currentComic === 0 || !settings
             ? skipToken
             : toGetDataQueryArgs(currentComic, settings)

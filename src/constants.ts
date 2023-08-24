@@ -44,7 +44,7 @@ function getWebserviceBaseUrl() {
 const webserviceBaseUrl = getWebserviceBaseUrl()
 
 const comicDataEndpoint = `comicdata/` as const
-const itemDataUrl = `${webserviceBaseUrl}itemdata/` as const
+const itemDataEndpoint = `itemdata/` as const
 const editLogUrl = `${webserviceBaseUrl}log` as const
 
 const constants = {
@@ -53,7 +53,7 @@ const constants = {
     developmentMode,
     siteUrl,
     comicDataEndpoint,
-    itemDataUrl,
+    itemDataEndpoint,
     editLogUrl,
 
     // Comics after 3132 should have a tagline
@@ -69,10 +69,10 @@ const constants = {
     addItemToComicEndpoint: `${comicDataEndpoint}additem` as const,
     removeItemFromComicEndpoint: `${comicDataEndpoint}removeitem` as const,
 
-    itemImageUrl: `${itemDataUrl}image/` as const,
-    itemFriendDataUrl: `${itemDataUrl}friends/` as const,
-    itemLocationDataUrl: `${itemDataUrl}locations/` as const,
-    setItemDataPropertyUrl: `${itemDataUrl}setproperty` as const,
+    itemImageUrl: `${itemDataEndpoint}image/` as const,
+    itemFriendDataUrl: `${itemDataEndpoint}friends/` as const,
+    itemLocationDataUrl: `${itemDataEndpoint}locations/` as const,
+    setItemDataPropertyUrl: `${itemDataEndpoint}setproperty` as const,
 
     comicExtensions: ['png' as const, 'gif' as const, 'jpg' as const] as const,
 

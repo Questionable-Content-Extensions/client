@@ -5,7 +5,7 @@ import { skipToken } from '@reduxjs/toolkit/dist/query'
 import {
     nextComicSelector,
     toGetDataQueryArgs,
-    useGetDataQuery,
+    useGetComicDataQuery,
 } from '@store/api/comicApiSlice'
 import { setCurrentComic } from '@store/comicSlice'
 import { AppDispatch, RootState } from '@store/store'
@@ -49,11 +49,12 @@ function Comic({
 }: ComicProps) {
     const [isInitializing, setIsInitializing] = useState(true)
 
-    const { data: comicData, isError: hasComicDataError } = useGetDataQuery(
-        currentComic === 0 || !settings
-            ? skipToken
-            : toGetDataQueryArgs(currentComic, settings)
-    )
+    const { data: comicData, isError: hasComicDataError } =
+        useGetComicDataQuery(
+            currentComic === 0 || !settings
+                ? skipToken
+                : toGetDataQueryArgs(currentComic, settings)
+        )
 
     useEffect(() => {
         if (settings?.scrollToTop ?? true) {

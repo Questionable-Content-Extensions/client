@@ -15,7 +15,7 @@ import { RootState } from '@store/store'
 import constants from '~/constants'
 import { SettingValues } from '~/settings'
 
-import { apiSlice } from '../apiSlice'
+import { apiSlice, transformResponseByJsonParseResultText } from '../apiSlice'
 
 export type GetDataQueryArgs = {
     comic: number
@@ -61,7 +61,7 @@ export type RemoveItemMutationArgs = SharedMutationArgs & {
 
 export const comicApiSlice = apiSlice.injectEndpoints({
     endpoints: (builder) => ({
-        getData: builder.query<Comic, GetDataQueryArgs>({
+        getComicData: builder.query<Comic, GetDataQueryArgs>({
             query: ({
                 comic,
                 editModeToken,
@@ -91,9 +91,7 @@ export const comicApiSlice = apiSlice.injectEndpoints({
                     url: `${constants.comicDataEndpoint}${comic}?${urlQuery}`,
                 }
             },
-            transformResponse: (response) => {
-                return JSON.parse(response.responseText) as Comic
-            },
+            transformResponse: transformResponseByJsonParseResultText,
             providesTags: (result) =>
                 result ? [{ type: 'Comic', id: result.comic }] : [],
         }),
@@ -112,9 +110,7 @@ export const comicApiSlice = apiSlice.injectEndpoints({
                     url: `${constants.excludedComicsEndpoint}?${urlQuery}`,
                 }
             },
-            transformResponse: (response) => {
-                return JSON.parse(response.responseText) as ComicList[]
-            },
+            transformResponse: transformResponseByJsonParseResultText,
             providesTags: (result, error, args) =>
                 result
                     ? [
@@ -135,9 +131,7 @@ export const comicApiSlice = apiSlice.injectEndpoints({
                     url: constants.comicDataEndpoint,
                 }
             },
-            transformResponse: (response) => {
-                return JSON.parse(response.responseText) as ComicList[]
-            },
+            transformResponse: transformResponseByJsonParseResultText,
             providesTags: (result, _error, _args) =>
                 result
                     ? [
@@ -190,7 +184,7 @@ export const comicApiSlice = apiSlice.injectEndpoints({
                     dispatch(apiSlice.util.invalidateTags(tags))
                 } catch {}
             },
-            transformResponse: (response) => response.responseText,
+            transformResponse: transformResponseByJsonParseResultText,
         }),
         addItem: builder.mutation<string, AddItemMutationArgs>({
             query: (args) => {
@@ -221,7 +215,7 @@ export const comicApiSlice = apiSlice.injectEndpoints({
                     },
                 }
             },
-            transformResponse: (response) => response.responseText,
+            transformResponse: transformResponseByJsonParseResultText,
             invalidatesTags: (result, _error, args) => {
                 return result ? [{ type: 'Comic', id: args.comicId }] : []
             },
@@ -245,7 +239,7 @@ export const comicApiSlice = apiSlice.injectEndpoints({
                     },
                 }
             },
-            transformResponse: (response) => response.responseText,
+            transformResponse: transformResponseByJsonParseResultText,
             invalidatesTags: (result, _error, args) => {
                 return result ? [{ type: 'Comic', id: args.comicId }] : []
             },
@@ -254,7 +248,7 @@ export const comicApiSlice = apiSlice.injectEndpoints({
 })
 
 export const {
-    useGetDataQuery,
+    useGetComicDataQuery,
     useGetExcludedQuery,
     useListAllQuery,
     usePatchComicMutation,
@@ -289,7 +283,7 @@ const getComicDataSelector = createSelector(
     (state: RootState) => state.settings.values,
     (currentComic, settings) => {
         if (settings) {
-            return comicApiSlice.endpoints.getData.select(
+            return comicApiSlice.endpoints.getComicData.select(
                 toGetDataQueryArgs(currentComic, settings)
             )
         } else {

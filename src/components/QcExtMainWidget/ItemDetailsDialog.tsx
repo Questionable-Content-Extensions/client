@@ -9,13 +9,13 @@ import { Item as ItemData } from '@models/Item'
 import { ItemImageList as ItemImageData } from '@models/ItemImageList'
 import { ItemType } from '@models/ItemType'
 import { RelatedItem as ItemRelationData } from '@models/RelatedItem'
-import itemDataService, { AllItemData } from '@services/itemDataService'
+import { skipToken } from '@reduxjs/toolkit/dist/query'
+import { useAllDataQuery } from '@store/api/itemApiSlice'
 import { setCurrentComic } from '@store/comicSlice'
 import { AppDispatch, RootState } from '@store/store'
 
 import { createTintOrShade } from '~/color'
 import constants from '~/constants'
-import { debug } from '~/utils'
 
 import NavElement, { NavElementMode } from './NavElement'
 
@@ -41,6 +41,7 @@ type ItemDetailsDialogProps = PropsFromRedux & {
 }
 
 // TODO: Keep showing item until dialog has vanished again
+// TODO: Allow editing item when editor
 
 function ItemDetailsDialog({
     onClose,
@@ -48,55 +49,41 @@ function ItemDetailsDialog({
     settings,
     setCurrentComic,
 }: ItemDetailsDialogProps) {
+    const [previousItemId, setPreviousItemId] = useState(initialItemId)
     const [itemId, setItemId] = useState<number | null>(null)
-    const [_isLoading, setIsLoading] = useState(0)
-    const [itemData, setItemData] = useState<AllItemData | null>(null)
 
-    useEffect(() => {
+    if (previousItemId !== initialItemId) {
+        setPreviousItemId(initialItemId)
         setItemId(initialItemId)
-    }, [initialItemId])
-    useEffect(() => {
-        const fetchItemData = async (itemId: number) => {
-            const itemData = await itemDataService.getAllItemData(itemId)
-            if (itemData) {
-                setItemData(itemData)
-            } else {
-                // TOOD: Report error?
-            }
-            setIsLoading((l) => l - 1)
-        }
-        if (itemId !== null && itemData === null) {
-            debug('Fetching item')
-            setIsLoading((l) => l + 1)
-            fetchItemData(itemId)
-        } else if (itemId === null && itemData !== null) {
-            debug('Clearing item')
-            setItemData(null)
-        }
-    }, [itemId, itemData, setIsLoading, setItemData])
+    }
+
+    const { itemData, imageData, friendData, locationData } = useAllDataQuery(
+        itemId ? { itemId } : skipToken
+    )
 
     return (
         <ModalDialog
             onCloseClicked={onClose}
             header={
                 <h5 className="m-0 text-xl font-medium leading-normal text-gray-800">
-                    {itemData?.itemData.name ?? 'Loading...'}
+                    {itemData?.name ?? 'Loading...'}
                 </h5>
             }
             body={
                 <ItemDataPanel
-                    itemDataUrl={constants.itemDataUrl}
-                    itemData={itemData?.itemData ?? null}
-                    itemImageData={itemData?.imageData ?? null}
-                    itemFriendData={itemData?.friendData ?? null}
-                    itemLocationData={itemData?.locationData ?? null}
+                    itemDataUrl={
+                        constants.webserviceBaseUrl + constants.itemDataEndpoint
+                    }
+                    itemData={itemData ?? null}
+                    itemImageData={imageData ?? null}
+                    itemFriendData={friendData ?? null}
+                    itemLocationData={locationData ?? null}
                     editMode={settings?.editMode ?? false}
                     onGoToComic={(comicId) => {
                         setCurrentComic(comicId)
                         onClose()
                     }}
                     onShowItemData={(itemId: number) => {
-                        setItemData(null)
                         setItemId(itemId)
                     }}
                 />
@@ -293,17 +280,20 @@ function ItemImageViewer({
     itemDataUrl: string
     itemImageData: ItemImageData[]
 }) {
+    const [currentImages, setCurrentImages] = useState(itemImageData)
     const [currentImage, setCurrentImage] = useState(0)
-    useEffect(() => {
-        // Reset when image data changes
-        // TODO: Reset to "prefered" image (not yet implemented on server-side)
+
+    if (currentImages !== itemImageData) {
+        setCurrentImages(itemImageData)
+        // TODO: Reset to "prefered" image instead of image 0
+        // (not yet implemented on server-side)
         setCurrentImage(0)
-    }, [itemImageData])
+    }
 
     const image = useMemo(() => {
         if (!itemImageData.length) {
             return (
-                <div className="flex flex-col items-center p-4">
+                <div className="flex flex-col items-center justify-center p-4">
                     <i className="fa fa-camera text-5xl text-gray-500"></i>
                     <div className="no-image-text text-gray-500">No image</div>
                 </div>
@@ -383,7 +373,7 @@ function ItemImageViewer({
                 navigator = <></>
             }
             return (
-                <div className="flex flex-col items-center p-4">
+                <div className="flex flex-col items-center justify-between p-4">
                     <img
                         src={`${itemDataUrl}image/${currentImageData.id}`}
                         alt={itemShortName}

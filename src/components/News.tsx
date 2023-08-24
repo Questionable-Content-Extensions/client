@@ -1,7 +1,10 @@
 import { ConnectedProps, connect } from 'react-redux'
 
 import { skipToken } from '@reduxjs/toolkit/dist/query'
-import { toGetDataQueryArgs, useGetDataQuery } from '@store/api/comicApiSlice'
+import {
+    toGetDataQueryArgs,
+    useGetComicDataQuery,
+} from '@store/api/comicApiSlice'
 import { RootState } from '@store/store'
 
 import { debug, nl2br } from '~/utils'
@@ -20,11 +23,12 @@ type PropsFromRedux = ConnectedProps<typeof connector>
 type NewsProps = PropsFromRedux & { initialNews: string }
 
 function News({ initialNews, settings, currentComic }: NewsProps) {
-    const { data: comicData, isFetching: comicDataLoading } = useGetDataQuery(
-        currentComic === 0 || !settings
-            ? skipToken
-            : toGetDataQueryArgs(currentComic, settings)
-    )
+    const { data: comicData, isFetching: comicDataLoading } =
+        useGetComicDataQuery(
+            currentComic === 0 || !settings
+                ? skipToken
+                : toGetDataQueryArgs(currentComic, settings)
+        )
 
     let news
     if (comicDataLoading) {

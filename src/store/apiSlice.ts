@@ -100,3 +100,9 @@ export const apiSlice = createApi({
     tagTypes: ['Comic', 'Item'],
     endpoints: () => ({}),
 })
+
+export function transformResponseByJsonParseResultText<T>(
+    response: GM.Response<undefined>
+) {
+    return JSON.parse(response.responseText) as T
+}

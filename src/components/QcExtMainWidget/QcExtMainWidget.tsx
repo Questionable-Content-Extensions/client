@@ -13,7 +13,7 @@ import {
     toGetDataQueryArgs,
     toGetExcludedQueryArgs,
     useAddItemMutation,
-    useGetDataQuery,
+    useGetComicDataQuery,
     useGetExcludedQuery,
     useRemoveItemMutation,
 } from '@store/api/comicApiSlice'
@@ -71,7 +71,7 @@ function QcExtMainWidget({
         isError: hasErrorLoadingComicData,
         error: comicDataError,
         refetch: refreshComicData,
-    } = useGetDataQuery(
+    } = useGetComicDataQuery(
         currentComic === 0 || !settings
             ? skipToken
             : toGetDataQueryArgs(currentComic, settings)
