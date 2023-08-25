@@ -1,5 +1,6 @@
-import type { StorybookConfig } from '@storybook/core-common'
 import TsconfigPathsPlugin from 'tsconfig-paths-webpack-plugin'
+
+import type { StorybookConfig } from '@storybook/core-common'
 
 const config: StorybookConfig = {
     stories: [
@@ -26,6 +27,9 @@ const config: StorybookConfig = {
         config.resolve.plugins.push(new TsconfigPathsPlugin())
 
         return config
+    },
+    features: {
+        interactionsDebugger: true,
     },
 }
 

@@ -21,12 +21,13 @@ import { Provider } from 'react-redux'
 import './index.css'
 
 import Comic from '@components/Comic'
+import ComicDetailsPanel from '@components/ComicDetailsPanel/ComicDetailsPanel'
 import ComicNavigation from '@components/ComicNavigation'
 import ComicTitle from '@components/ComicTitle'
 import DateComponent from '@components/Date'
-import EditorModeExtraWidget from '@components/EditorModeExtraWidget'
+import EditorModePanel from '@components/EditorModePanel'
 import News from '@components/News'
-import QcExtMainWidget from '@components/QcExtMainWidget/QcExtMainWidget'
+import Portals from '@components/Portals'
 import {
     nextComicSelector,
     previousComicSelector,
@@ -360,8 +361,9 @@ function initializeExtraNavigation() {
         <QcStrictMode>
             <Provider store={store}>
                 <ComicTitle />
-                <QcExtMainWidget />
-                <EditorModeExtraWidget />
+                <Portals />
+                <ComicDetailsPanel />
+                <EditorModePanel />
             </Provider>
         </QcStrictMode>,
         extraContainer

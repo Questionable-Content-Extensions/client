@@ -13,7 +13,7 @@ import {
 } from '@store/editorSlice'
 import { AppDispatch, RootState } from '@store/store'
 
-import ToggleButton from './Widgets/ToggleButton'
+import ToggleButton from './ToggleButton/ToggleButton'
 
 const mapState = (state: RootState) => {
     return {

@@ -69,7 +69,7 @@ const initialState: EditorDataState = {
 
 export const saveChanges = createAppAsyncThunk(
     'editor/saveChanges',
-    async (_type, { dispatch, getState }) => {
+    async (_type, { dispatch, getState, rejectWithValue }) => {
         const state = getState()
         // Setting values should always be loaded by the time we get here
         const editModeToken = state.settings.values!.editModeToken
@@ -118,8 +118,11 @@ export const saveChanges = createAppAsyncThunk(
                 body: patchBody,
             })
         )
-        await action
+        const result = await action
         action.reset()
+        if ('error' in result) {
+            return rejectWithValue(undefined)
+        }
     }
 )
 

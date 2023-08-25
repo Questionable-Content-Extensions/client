@@ -10,12 +10,14 @@ import { RemoveItemFromComicBody } from '@models/RemoveItemFromComicBody'
 import { Token } from '@models/Token'
 import { createSelector } from '@reduxjs/toolkit'
 import { TagDescription } from '@reduxjs/toolkit/dist/query'
+import {
+    apiSlice,
+    transformResponseByJsonParseResultText,
+} from '@store/apiSlice'
 import { RootState } from '@store/store'
 
 import constants from '~/constants'
 import { SettingValues } from '~/settings'
-
-import { apiSlice, transformResponseByJsonParseResultText } from '../apiSlice'
 
 export type GetDataQueryArgs = {
     comic: number

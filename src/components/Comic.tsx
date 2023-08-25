@@ -13,7 +13,7 @@ import { AppDispatch, RootState } from '@store/store'
 import { debug, info } from '~/utils'
 
 import ComicImage from './ComicImage'
-import ComicRibbon, { RibbonType } from './ComicRibbon'
+import ComicRibbon, { RibbonType } from './ComicRibbon/ComicRibbon'
 import FullPageLoader from './FullPageLoader'
 
 const mapState = (state: RootState) => {

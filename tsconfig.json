@@ -4,11 +4,10 @@
         "paths": {
             "@models/*": ["src/models/*"],
             "@store/*": ["src/store/*"],
-            "@components/*": ["src/components/*"],
             "@hooks/*": ["src/hooks/*"],
             "@modals/*": ["src/components/Modals/*"],
             "@services/*": ["src/services/*"],
-            "@widgets/*": ["src/components/Widgets/*"],
+            "@components/*": ["src/components/*"],
             "~/*": ["src/*"]
         },
         "target": "es2016",

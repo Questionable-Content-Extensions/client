@@ -2,10 +2,12 @@ import { Item } from '@models/Item'
 import { ItemImageList } from '@models/ItemImageList'
 import { RelatedItem } from '@models/RelatedItem'
 import { skipToken } from '@reduxjs/toolkit/dist/query'
+import {
+    apiSlice,
+    transformResponseByJsonParseResultText,
+} from '@store/apiSlice'
 
 import constants from '~/constants'
-
-import { apiSlice, transformResponseByJsonParseResultText } from '../apiSlice'
 
 export type GetDataQueryArgs = {
     itemId: number

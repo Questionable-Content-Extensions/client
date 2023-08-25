@@ -26,17 +26,21 @@ try {
     scriptVersion = 'Unknown'
 }
 
-// Set this to true when working against your local test server.
+// Set this to true when testing a production build of a script
+// against your local test server. The development builds will automatically
+// pick development mode due to the version check below.
+//
 // NEVER CHECK THIS FILE IN WITH forceDevelopmentMode = true!
 const forceDevelopmentMode = false
 const developmentMode =
     forceDevelopmentMode || scriptVersion.indexOf('+development') !== -1
 
 const siteUrl = 'https://questionablextensions.net/' as const
+const developmentBaseUrl = 'http://localhost:3000/api/v2/' as const
 
 function getWebserviceBaseUrl() {
     if (developmentMode) {
-        return 'http://localhost:3000/api/v2/' as const
+        return developmentBaseUrl
     } else {
         return `${siteUrl}api/v2/` as const
     }
@@ -50,8 +54,9 @@ const editLogUrl = `${webserviceBaseUrl}log` as const
 const constants = {
     settingsKey: 'settings' as const,
 
-    developmentMode,
     siteUrl,
+    developmentBaseUrl,
+    developmentMode,
     comicDataEndpoint,
     itemDataEndpoint,
     editLogUrl,
