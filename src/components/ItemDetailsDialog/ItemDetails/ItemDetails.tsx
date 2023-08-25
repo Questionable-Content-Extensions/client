@@ -1,25 +1,91 @@
+import { ConnectedProps, connect } from 'react-redux'
+
 import styles from './ItemDetails.module.css'
 
 import NavElement, { NavElementMode } from '@components/NavElement/NavElement'
 import { Item } from '@models/Item'
+import { ItemType } from '@models/ItemType'
+import {
+    isColorDirtySelector,
+    isNameDirtySelector,
+    isShortNameDirtySelector,
+    isTypeDirtySelector,
+    setColor,
+    setName,
+    setShortName,
+    setType,
+} from '@store/itemEditorSlice'
+import { AppDispatch, RootState } from '@store/store'
 
 import { createTintOrShade } from '~/color'
 
-export default function ItemDetails({
-    item,
-    editMode,
-    onGoToComic,
-}: {
-    item: Item
+import ColorPicker from './ColorPicker/ColorPicker'
+import ValueEditor from './ValueEditor/ValueEditor'
+
+const mapState = (state: RootState) => {
+    return {
+        isEditorSaving: state.itemEditor.isSaving,
+        name: state.itemEditor.name,
+        isNameDirty: isNameDirtySelector(state),
+        shortName: state.itemEditor.shortName,
+        isShortNameDirty: isShortNameDirtySelector(state),
+        color: state.itemEditor.color,
+        isColorDirty: isColorDirtySelector(state),
+        type: state.itemEditor.type,
+        isTypeDirty: isTypeDirtySelector(state),
+        isSaving: state.itemEditor.isSaving,
+    }
+}
+
+const mapDispatch = (dispatch: AppDispatch) => {
+    return {
+        setName: (name: string) => {
+            dispatch(setName(name))
+        },
+        setShortName: (shortName: string) => {
+            dispatch(setShortName(shortName))
+        },
+        setColor: (color: string) => {
+            dispatch(setColor(color))
+        },
+        setType: (type: ItemType) => {
+            dispatch(setType(type))
+        },
+    }
+}
+
+const connector = connect(mapState, mapDispatch)
+type PropsFromRedux = ConnectedProps<typeof connector>
+type ItemDetailsProps = PropsFromRedux & {
     editMode: boolean
+    item: Item
     onGoToComic: (comicId: number) => void
-}) {
-    let backgroundColor = item.color
+}
+
+export function ItemDetails({
+    name,
+    isNameDirty,
+    shortName,
+    isShortNameDirty,
+    color,
+    isColorDirty,
+    type,
+    isTypeDirty,
+    isSaving,
+    setName,
+    setShortName,
+    setColor,
+    setType,
+    editMode,
+    item,
+    onGoToComic,
+}: ItemDetailsProps) {
+    let backgroundColor = color
     if (!backgroundColor.startsWith('#')) {
         backgroundColor = `#${backgroundColor}`
     }
-    const foregroundColor = createTintOrShade(item.color)
-    const hoverFocusColor = createTintOrShade(item.color, 2)
+    const foregroundColor = createTintOrShade(color)
+    const hoverFocusColor = createTintOrShade(color, 2)
 
     return (
         <div className={styles.smallGapped}>
@@ -35,12 +101,65 @@ export default function ItemDetails({
             ) : (
                 <></>
             )}
-            <p>
-                <strong>Full name:</strong> {item.name}
-            </p>
-            <p>
-                <strong>Abbreviated name:</strong> {item.shortName}
-            </p>
+            {editMode ? (
+                <p>
+                    <label
+                        className={
+                            'font-bold' +
+                            (isTypeDirty ? ' italic' : '') +
+                            (isTypeDirty ? ' bg-amber-100' : '')
+                        }
+                    >
+                        Type
+                        {isTypeDirty ? '*' : ''}:{' '}
+                        <select
+                            className="font-normal not-italic disabled:opacity-50 w-52"
+                            value={type}
+                            onChange={(e) =>
+                                setType(e.target.value as ItemType)
+                            }
+                            disabled={isSaving}
+                        >
+                            <option value="cast">Cast</option>
+                            <option value="location">Location</option>
+                            <option value="storyline">Storyline</option>
+                        </select>
+                    </label>
+                </p>
+            ) : (
+                <></>
+            )}
+            {editMode ? (
+                <p>
+                    <ValueEditor
+                        label="Full name"
+                        dirty={isNameDirty}
+                        value={name}
+                        setValue={setName}
+                        isSaving={isSaving}
+                    />
+                </p>
+            ) : (
+                <p>
+                    <strong>Full name:</strong> {item.name}
+                </p>
+            )}
+
+            {editMode ? (
+                <p>
+                    <ValueEditor
+                        label="Abbreviated name"
+                        dirty={isShortNameDirty}
+                        value={shortName}
+                        setValue={setShortName}
+                        isSaving={isSaving}
+                    />
+                </p>
+            ) : (
+                <p>
+                    <strong>Abbreviated name:</strong> {item.shortName}
+                </p>
+            )}
             <p>
                 <strong>First appearance:</strong>{' '}
                 <button
@@ -66,7 +185,15 @@ export default function ItemDetails({
                 {item.totalComics} ({Math.round(item.presence * 10) / 10}%)
             </p>
             <p className="align-baseline">
-                <strong>Associated colors:</strong>{' '}
+                <span
+                    className={
+                        'font-bold' +
+                        (isColorDirty ? ' italic' : '') +
+                        (isColorDirty ? ' bg-amber-100' : '')
+                    }
+                >
+                    Associated colors{isColorDirty ? '*' : ''}:
+                </span>{' '}
                 <span
                     className="inline-block h-4 w-4 align-middle"
                     style={{ backgroundColor: backgroundColor }}
@@ -82,6 +209,19 @@ export default function ItemDetails({
                     style={{ backgroundColor: hoverFocusColor }}
                     title={`Highlight RGB color ${hoverFocusColor}`}
                 ></span>
+                {editMode ? (
+                    <>
+                        <ColorPicker
+                            color={backgroundColor}
+                            setColor={setColor}
+                            resetColor={() => setColor(item.color)}
+                            isColorDirty={isColorDirty}
+                            isSaving={isSaving}
+                        />
+                    </>
+                ) : (
+                    <></>
+                )}
             </p>
             <p>
                 <strong>Navigation bar preview:</strong>
@@ -92,6 +232,7 @@ export default function ItemDetails({
                     previous: item.first,
                     next: item.last,
                     count: item.appearances,
+                    color: backgroundColor,
                 }}
                 useColors={true}
                 onSetCurrentComic={() => {}}
@@ -101,3 +242,5 @@ export default function ItemDetails({
         </div>
     )
 }
+
+export default connector(ItemDetails)

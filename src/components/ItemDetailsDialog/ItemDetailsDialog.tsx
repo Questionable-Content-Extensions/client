@@ -1,10 +1,16 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { ConnectedProps, connect } from 'react-redux'
 
 import ModalDialog from '@modals/ModalDialog/ModalDialog'
+import { Item } from '@models/Item'
 import { skipToken } from '@reduxjs/toolkit/dist/query'
 import { useAllDataQuery } from '@store/api/itemApiSlice'
 import { setCurrentComic } from '@store/comicSlice'
+import {
+    isStateDirtySelector,
+    saveChanges,
+    setFromItem,
+} from '@store/itemEditorSlice'
 import { AppDispatch, RootState } from '@store/store'
 
 import constants from '~/constants'
@@ -14,6 +20,8 @@ import ItemDataPanel from './ItemDataPanel/ItemDataPanel'
 const mapState = (state: RootState) => {
     return {
         settings: state.settings.values,
+        editorItemId: state.itemEditor.id,
+        isItemDirty: isStateDirtySelector(state),
     }
 }
 
@@ -21,6 +29,12 @@ const mapDispatch = (dispatch: AppDispatch) => {
     return {
         setCurrentComic: (comic: number) => {
             dispatch(setCurrentComic(comic))
+        },
+        setFromItem: (item: Item) => {
+            dispatch(setFromItem(item))
+        },
+        saveChanges: () => {
+            dispatch(saveChanges())
         },
     }
 }
@@ -32,26 +46,39 @@ type ItemDetailsDialogProps = PropsFromRedux & {
     initialItemId: number | null
 }
 
-// TODO: Keep showing item until dialog has vanished again
-// TODO: Allow editing item when editor
-
 function ItemDetailsDialog({
+    settings,
+    editorItemId,
+    isItemDirty,
     onClose,
     initialItemId,
-    settings,
     setCurrentComic,
+    setFromItem,
+    saveChanges,
 }: ItemDetailsDialogProps) {
-    const [previousItemId, setPreviousItemId] = useState(initialItemId)
-    const [itemId, setItemId] = useState<number | null>(null)
+    const [previousInitialItemId, setPreviousInitialItemId] =
+        useState(initialItemId)
+    const [currentItemId, setCurrentItemId] = useState<number | null>(null)
 
-    if (previousItemId !== initialItemId) {
-        setPreviousItemId(initialItemId)
-        setItemId(initialItemId)
+    if (previousInitialItemId !== initialItemId) {
+        setPreviousInitialItemId(initialItemId)
+        setCurrentItemId(initialItemId)
     }
 
     const { itemData, imageData, friendData, locationData } = useAllDataQuery(
-        itemId ? { itemId } : skipToken
+        currentItemId ? { itemId: currentItemId } : skipToken
     )
+
+    const [previousItem, setPreviousItem] = useState(itemData)
+    if (previousItem !== itemData && itemData) {
+        setPreviousItem(itemData)
+    }
+
+    useEffect(() => {
+        if (itemData && itemData.id !== editorItemId) {
+            setFromItem(itemData)
+        }
+    }, [itemData, editorItemId, setFromItem])
 
     return (
         <ModalDialog
@@ -76,17 +103,31 @@ function ItemDetailsDialog({
                         onClose()
                     }}
                     onShowItemData={(itemId: number) => {
-                        setItemId(itemId)
+                        setCurrentItemId(itemId)
                     }}
                 />
             }
             footer={
-                <button
-                    className="bg-qc-header hover:bg-qc-header-second focus:bg-qc-header-second text-white py-3 px-4 rounded-sm"
-                    onClick={() => onClose()}
-                >
-                    Close
-                </button>
+                <>
+                    {settings?.editMode ?? false ? (
+                        <button
+                            className="bg-qc-header hover:bg-qc-header-second focus:bg-qc-header-second text-white py-3 px-4 rounded-sm disabled:opacity-75"
+                            disabled={!isItemDirty}
+                            onClick={() => saveChanges()}
+                        >
+                            {isItemDirty ? 'Save changes' : 'No changes'}
+                        </button>
+                    ) : (
+                        <></>
+                    )}
+
+                    <button
+                        className="bg-qc-header hover:bg-qc-header-second focus:bg-qc-header-second text-white py-3 px-4 rounded-sm ml-2"
+                        onClick={onClose}
+                    >
+                        Close
+                    </button>
+                </>
             }
         />
     )

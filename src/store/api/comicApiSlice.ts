@@ -165,6 +165,7 @@ export const comicApiSlice = apiSlice.injectEndpoints({
                 { comic, body },
                 { dispatch, queryFulfilled }
             ) => {
+                // TODO: Convert to `invalidatesTags`
                 try {
                     await queryFulfilled
 
@@ -186,7 +187,7 @@ export const comicApiSlice = apiSlice.injectEndpoints({
                     dispatch(apiSlice.util.invalidateTags(tags))
                 } catch {}
             },
-            transformResponse: transformResponseByJsonParseResultText,
+            transformResponse: (response) => response.responseText,
         }),
         addItem: builder.mutation<string, AddItemMutationArgs>({
             query: (args) => {
@@ -217,7 +218,7 @@ export const comicApiSlice = apiSlice.injectEndpoints({
                     },
                 }
             },
-            transformResponse: transformResponseByJsonParseResultText,
+            transformResponse: (response) => response.responseText,
             invalidatesTags: (result, _error, args) => {
                 return result ? [{ type: 'Comic', id: args.comicId }] : []
             },
@@ -241,7 +242,7 @@ export const comicApiSlice = apiSlice.injectEndpoints({
                     },
                 }
             },
-            transformResponse: transformResponseByJsonParseResultText,
+            transformResponse: (response) => response.responseText,
             invalidatesTags: (result, _error, args) => {
                 return result ? [{ type: 'Comic', id: args.comicId }] : []
             },

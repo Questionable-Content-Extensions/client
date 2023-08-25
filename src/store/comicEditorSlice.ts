@@ -5,6 +5,7 @@ import { PayloadAction, createSelector, createSlice } from '@reduxjs/toolkit'
 
 import { comicApiSlice } from './api/comicApiSlice'
 import createAppAsyncThunk from './createAppAsyncThunk'
+import { createDirtySelector } from './createDirtySelector'
 import { RootState } from './store'
 
 interface ComicEditorDataState {
@@ -277,18 +278,6 @@ export const {
 } = comicEditorSlice.actions
 
 export default comicEditorSlice.reducer
-
-type RootStateValueSelector<T> = (state: RootState) => T
-function createDirtySelector<T>(
-    valueSelector: RootStateValueSelector<T>,
-    originalValueSelector: RootStateValueSelector<T>
-) {
-    return createSelector(
-        valueSelector,
-        originalValueSelector,
-        (value, originalValue) => value !== originalValue
-    )
-}
 
 export const isTitleDirtySelector = createDirtySelector(
     (state: RootState) => state.comicEditor.title,

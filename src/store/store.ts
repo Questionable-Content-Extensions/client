@@ -7,6 +7,7 @@ import { apiSlice } from './apiSlice'
 import comicEditorReducer from './comicEditorSlice'
 import comicReducer from './comicSlice'
 import dialogReducer from './dialogSlice'
+import itemEditorReducer from './itemEditorSlice'
 import settingsReducer from './settingsSlice'
 
 const consoleProxy = {
@@ -22,14 +23,13 @@ const consoleProxy = {
     },
 }
 
+var debug = console.debug.bind(console)
 const logger = createLogger({
     diff: true,
     collapsed: true,
     logger: new Proxy(
         {
-            log: (...args: any[]) => {
-                console.debug(...args)
-            },
+            log: debug,
         },
         consoleProxy
     ),
@@ -39,6 +39,7 @@ const store = configureStore({
     reducer: {
         comic: comicReducer,
         dialog: dialogReducer,
+        itemEditor: itemEditorReducer,
         comicEditor: comicEditorReducer,
         settings: settingsReducer,
         [apiSlice.reducerPath]: apiSlice.reducer,

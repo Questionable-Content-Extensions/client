@@ -1,3 +1,8 @@
+import { useState } from 'react'
+
+import { Item } from '@models/Item'
+import { useAppDispatch } from '@store/hooks'
+import { setFromItem } from '@store/itemEditorSlice'
 import { ComponentMeta, ComponentStory } from '@storybook/react'
 
 import constants from '~/constants'
@@ -30,6 +35,12 @@ export default {
 } as ComponentMeta<typeof ItemDataPanel>
 
 const Template: ComponentStory<typeof ItemDataPanel> = (args) => {
+    const dispatch = useAppDispatch()
+    const [previousItem, setPreviousItem] = useState<Item | null>(null)
+    if (previousItem !== args.itemData && args.itemData) {
+        setPreviousItem(args.itemData)
+        dispatch(setFromItem(args.itemData))
+    }
     return <ItemDataPanel {...args} />
 }
 

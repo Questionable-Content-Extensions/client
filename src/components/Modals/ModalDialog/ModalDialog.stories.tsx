@@ -77,7 +77,7 @@ Default.args = {
                 Button 1
             </button>
 
-            <button className="bg-qc-header hover:bg-qc-header-second focus:bg-qc-header-second text-white py-3 px-4 rounded-sm">
+            <button className="bg-qc-header hover:bg-qc-header-second focus:bg-qc-header-second text-white py-3 px-4 rounded-sm ml-2">
                 Button 2
             </button>
         </>

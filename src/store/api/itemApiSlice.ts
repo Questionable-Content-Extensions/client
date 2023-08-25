@@ -1,5 +1,7 @@
 import { Item } from '@models/Item'
+import { ItemId } from '@models/ItemId'
 import { ItemImageList } from '@models/ItemImageList'
+import { PatchItemBody } from '@models/PatchItemBody'
 import { RelatedItem } from '@models/RelatedItem'
 import { skipToken } from '@reduxjs/toolkit/dist/query'
 import {
@@ -99,6 +101,29 @@ export const itemApiSlice = apiSlice.injectEndpoints({
                       ]
                     : [],
         }),
+        patchItem: builder.mutation<
+            string,
+            { item: ItemId; body: PatchItemBody }
+        >({
+            query: ({ item, body }) => {
+                const url = `${constants.itemDataEndpoint}${item}`
+                return {
+                    url,
+                    configuration: {
+                        data: JSON.stringify(body),
+                        method: 'PATCH',
+                        headers: {
+                            'Content-Type': 'application/json; charset=utf-8',
+                        },
+                    },
+                }
+            },
+            transformResponse: (response) => response.responseText,
+            invalidatesTags: (result, _error, args) =>
+                result
+                    ? [{ type: 'Comic' }, { type: 'Item', id: args.item }]
+                    : [],
+        }),
     }),
 })
 
@@ -107,6 +132,7 @@ export const {
     useImageDataQuery,
     useFriendDataQuery,
     useLocationDataQuery,
+    usePatchItemMutation,
 } = itemApiSlice
 
 export function useAllDataQuery(args: typeof skipToken | GetDataQueryArgs) {
