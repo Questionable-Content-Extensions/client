@@ -10,26 +10,26 @@ import {
     isIsGuestComicDirtySelector,
     isIsNonCanonDirtySelector,
     setFlag,
-} from '@store/editorSlice'
+} from '@store/comicEditorSlice'
 import { AppDispatch, RootState } from '@store/store'
 
 import ToggleButton from './ToggleButton/ToggleButton'
 
 const mapState = (state: RootState) => {
     return {
-        isGuestComic: state.editor.isGuestComic,
+        isGuestComic: state.comicEditor.isGuestComic,
         isGuestComicDirty: isIsGuestComicDirtySelector(state),
-        isNonCanon: state.editor.isNonCanon,
+        isNonCanon: state.comicEditor.isNonCanon,
         isNonCanonDirty: isIsNonCanonDirtySelector(state),
-        hasNoCast: state.editor.hasNoCast,
+        hasNoCast: state.comicEditor.hasNoCast,
         hasNoCastDirty: isHasNoCastDirtySelector(state),
-        hasNoLocation: state.editor.hasNoLocation,
+        hasNoLocation: state.comicEditor.hasNoLocation,
         hasNoLocationDirty: isHasNoLocationDirtySelector(state),
-        hasNoStoryline: state.editor.hasNoStoryline,
+        hasNoStoryline: state.comicEditor.hasNoStoryline,
         hasNoStorylineDirty: isHasNoStorylineDirtySelector(state),
-        hasNoTitle: state.editor.hasNoTitle,
+        hasNoTitle: state.comicEditor.hasNoTitle,
         hasNoTitleDirty: isHasNoTitleDirtySelector(state),
-        hasNoTagline: state.editor.hasNoTagline,
+        hasNoTagline: state.comicEditor.hasNoTagline,
         hasNoTaglineDirty: isHasNoTaglineDirtySelector(state),
     }
 }

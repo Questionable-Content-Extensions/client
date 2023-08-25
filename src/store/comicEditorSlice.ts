@@ -7,7 +7,7 @@ import { comicApiSlice } from './api/comicApiSlice'
 import createAppAsyncThunk from './createAppAsyncThunk'
 import { RootState } from './store'
 
-interface EditorDataState {
+interface ComicEditorDataState {
     title: string
     tagline: string
     publishDate: string
@@ -37,7 +37,7 @@ interface EditorDataState {
     isSaving: boolean
 }
 
-const initialState: EditorDataState = {
+const initialState: ComicEditorDataState = {
     title: '',
     tagline: '',
     publishDate: '',
@@ -68,7 +68,7 @@ const initialState: EditorDataState = {
 }
 
 export const saveChanges = createAppAsyncThunk(
-    'editor/saveChanges',
+    'comicEditor/saveChanges',
     async (_type, { dispatch, getState, rejectWithValue }) => {
         const state = getState()
         // Setting values should always be loaded by the time we get here
@@ -79,37 +79,37 @@ export const saveChanges = createAppAsyncThunk(
         }
 
         if (isTitleDirtySelector(state)) {
-            patchBody.title = state.editor.title
+            patchBody.title = state.comicEditor.title
         }
         if (isTaglineDirtySelector(state)) {
-            patchBody.tagline = state.editor.tagline
+            patchBody.tagline = state.comicEditor.tagline
         }
         if (isPublishDateDataDirtySelector(state)) {
             patchBody.publishDate = {
-                publishDate: state.editor.publishDate,
-                isAccuratePublishDate: state.editor.isAccuratePublishDate,
+                publishDate: state.comicEditor.publishDate,
+                isAccuratePublishDate: state.comicEditor.isAccuratePublishDate,
             }
         }
         if (isIsGuestComicDirtySelector(state)) {
-            patchBody.isGuestComic = state.editor.isGuestComic
+            patchBody.isGuestComic = state.comicEditor.isGuestComic
         }
         if (isIsNonCanonDirtySelector(state)) {
-            patchBody.isNonCanon = state.editor.isNonCanon
+            patchBody.isNonCanon = state.comicEditor.isNonCanon
         }
         if (isHasNoCastDirtySelector(state)) {
-            patchBody.hasNoCast = state.editor.hasNoCast
+            patchBody.hasNoCast = state.comicEditor.hasNoCast
         }
         if (isHasNoLocationDirtySelector(state)) {
-            patchBody.hasNoLocation = state.editor.hasNoLocation
+            patchBody.hasNoLocation = state.comicEditor.hasNoLocation
         }
         if (isHasNoStorylineDirtySelector(state)) {
-            patchBody.hasNoStoryline = state.editor.hasNoStoryline
+            patchBody.hasNoStoryline = state.comicEditor.hasNoStoryline
         }
         if (isHasNoTitleDirtySelector(state)) {
-            patchBody.hasNoTitle = state.editor.hasNoTitle
+            patchBody.hasNoTitle = state.comicEditor.hasNoTitle
         }
         if (isHasNoTaglineDirtySelector(state)) {
-            patchBody.hasNoTagline = state.editor.hasNoTagline
+            patchBody.hasNoTagline = state.comicEditor.hasNoTagline
         }
 
         const action = dispatch(
@@ -126,8 +126,8 @@ export const saveChanges = createAppAsyncThunk(
     }
 )
 
-export const editorSlice = createSlice({
-    name: 'editor',
+export const comicEditorSlice = createSlice({
+    name: 'comicEditor',
     initialState,
     reducers: {
         reset: (state) => {
@@ -274,9 +274,9 @@ export const {
     setPublishDate,
     setIsAccuratePublishDate,
     setFlag,
-} = editorSlice.actions
+} = comicEditorSlice.actions
 
-export default editorSlice.reducer
+export default comicEditorSlice.reducer
 
 type RootStateValueSelector<T> = (state: RootState) => T
 function createDirtySelector<T>(
@@ -291,23 +291,23 @@ function createDirtySelector<T>(
 }
 
 export const isTitleDirtySelector = createDirtySelector(
-    (state: RootState) => state.editor.title,
-    (state: RootState) => state.editor.originalTitle
+    (state: RootState) => state.comicEditor.title,
+    (state: RootState) => state.comicEditor.originalTitle
 )
 
 export const isTaglineDirtySelector = createDirtySelector(
-    (state: RootState) => state.editor.tagline,
-    (state: RootState) => state.editor.originalTagline
+    (state: RootState) => state.comicEditor.tagline,
+    (state: RootState) => state.comicEditor.originalTagline
 )
 
 export const isPublishDateDirtySelector = createDirtySelector(
-    (state: RootState) => state.editor.publishDate,
-    (state: RootState) => state.editor.originalPublishDate
+    (state: RootState) => state.comicEditor.publishDate,
+    (state: RootState) => state.comicEditor.originalPublishDate
 )
 
 export const isIsAccuratePublishDateDirtySelector = createDirtySelector(
-    (state: RootState) => state.editor.isAccuratePublishDate,
-    (state: RootState) => state.editor.originalIsAccuratePublishDate
+    (state: RootState) => state.comicEditor.isAccuratePublishDate,
+    (state: RootState) => state.comicEditor.originalIsAccuratePublishDate
 )
 
 export const isPublishDateDataDirtySelector = createSelector(
@@ -318,38 +318,38 @@ export const isPublishDateDataDirtySelector = createSelector(
 )
 
 export const isIsGuestComicDirtySelector = createDirtySelector(
-    (state: RootState) => state.editor.isGuestComic,
-    (state: RootState) => state.editor.originalIsGuestComic
+    (state: RootState) => state.comicEditor.isGuestComic,
+    (state: RootState) => state.comicEditor.originalIsGuestComic
 )
 
 export const isIsNonCanonDirtySelector = createDirtySelector(
-    (state: RootState) => state.editor.isNonCanon,
-    (state: RootState) => state.editor.originalIsNonCanon
+    (state: RootState) => state.comicEditor.isNonCanon,
+    (state: RootState) => state.comicEditor.originalIsNonCanon
 )
 
 export const isHasNoCastDirtySelector = createDirtySelector(
-    (state: RootState) => state.editor.hasNoCast,
-    (state: RootState) => state.editor.originalHasNoCast
+    (state: RootState) => state.comicEditor.hasNoCast,
+    (state: RootState) => state.comicEditor.originalHasNoCast
 )
 
 export const isHasNoLocationDirtySelector = createDirtySelector(
-    (state: RootState) => state.editor.hasNoLocation,
-    (state: RootState) => state.editor.originalHasNoLocation
+    (state: RootState) => state.comicEditor.hasNoLocation,
+    (state: RootState) => state.comicEditor.originalHasNoLocation
 )
 
 export const isHasNoStorylineDirtySelector = createDirtySelector(
-    (state: RootState) => state.editor.hasNoStoryline,
-    (state: RootState) => state.editor.originalHasNoStoryline
+    (state: RootState) => state.comicEditor.hasNoStoryline,
+    (state: RootState) => state.comicEditor.originalHasNoStoryline
 )
 
 export const isHasNoTitleDirtySelector = createDirtySelector(
-    (state: RootState) => state.editor.hasNoTitle,
-    (state: RootState) => state.editor.originalHasNoTitle
+    (state: RootState) => state.comicEditor.hasNoTitle,
+    (state: RootState) => state.comicEditor.originalHasNoTitle
 )
 
 export const isHasNoTaglineDirtySelector = createDirtySelector(
-    (state: RootState) => state.editor.hasNoTagline,
-    (state: RootState) => state.editor.originalHasNoTagline
+    (state: RootState) => state.comicEditor.hasNoTagline,
+    (state: RootState) => state.comicEditor.originalHasNoTagline
 )
 
 export const isFlagStateDirty = createSelector(

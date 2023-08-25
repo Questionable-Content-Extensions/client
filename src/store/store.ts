@@ -4,9 +4,9 @@ import { configureStore } from '@reduxjs/toolkit'
 import { setupListeners } from '@reduxjs/toolkit/query'
 
 import { apiSlice } from './apiSlice'
+import comicEditorReducer from './comicEditorSlice'
 import comicReducer from './comicSlice'
 import dialogReducer from './dialogSlice'
-import editorReducer from './editorSlice'
 import settingsReducer from './settingsSlice'
 
 const consoleProxy = {
@@ -39,7 +39,7 @@ const store = configureStore({
     reducer: {
         comic: comicReducer,
         dialog: dialogReducer,
-        editor: editorReducer,
+        comicEditor: comicEditorReducer,
         settings: settingsReducer,
         [apiSlice.reducerPath]: apiSlice.reducer,
     },

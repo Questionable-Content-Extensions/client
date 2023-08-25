@@ -9,7 +9,6 @@ import {
     toGetDataQueryArgs,
     useGetComicDataQuery,
 } from '@store/api/comicApiSlice'
-import { setCurrentComic } from '@store/comicSlice'
 import {
     isIsAccuratePublishDateDirtySelector,
     isPublishDateDirtySelector,
@@ -23,7 +22,8 @@ import {
     setPublishDate,
     setTagline,
     setTitle,
-} from '@store/editorSlice'
+} from '@store/comicEditorSlice'
+import { setCurrentComic } from '@store/comicSlice'
 import { useAppDispatch } from '@store/hooks'
 import { AppDispatch, RootState } from '@store/store'
 
@@ -38,14 +38,14 @@ const mapState = (state: RootState) => {
     return {
         settings: state.settings.values,
         currentComic: state.comic.current,
-        isEditorSaving: state.editor.isSaving,
-        title: state.editor.title,
+        isEditorSaving: state.comicEditor.isSaving,
+        title: state.comicEditor.title,
         isTitleDirty: isTitleDirtySelector(state),
-        tagline: state.editor.tagline,
+        tagline: state.comicEditor.tagline,
         isTaglineDirty: isTaglineDirtySelector(state),
-        publishDate: state.editor.publishDate,
+        publishDate: state.comicEditor.publishDate,
         isPublishDateDirty: isPublishDateDirtySelector(state),
-        isAccuratePublishDate: state.editor.isAccuratePublishDate,
+        isAccuratePublishDate: state.comicEditor.isAccuratePublishDate,
         isIsAccuratePublishDateDirty:
             isIsAccuratePublishDateDirtySelector(state),
         editorStateDirty: isStateDirtySelector(state),
