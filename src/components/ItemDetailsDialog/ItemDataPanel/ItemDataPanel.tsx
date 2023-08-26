@@ -1,5 +1,8 @@
 import Spinner from '@components/Spinner'
+import { ComicId } from '@models/ComicId'
+import { ImageId } from '@models/ImageId'
 import { Item as ItemData } from '@models/Item'
+import { ItemId } from '@models/ItemId'
 import { ItemImageList as ItemImageData } from '@models/ItemImageList'
 import { ItemType } from '@models/ItemType'
 import { RelatedItem as ItemRelationData } from '@models/RelatedItem'
@@ -20,15 +23,19 @@ export default function ItemDataPanel({
     onGoToComic,
     itemDataUrl,
     onShowItemData,
+    onDeleteImage,
+    onSetPrimaryImage,
 }: {
     itemData: ItemData | null
     itemImageData: ItemImageData[] | null
     itemFriendData: ItemRelationData[] | null
     itemLocationData: ItemRelationData[] | null
     editMode: boolean
-    onGoToComic: (comicId: number) => void
+    onGoToComic: (comicId: ComicId) => void
     itemDataUrl: string
-    onShowItemData: (itemId: number) => void
+    onShowItemData: (itemId: ItemId) => void
+    onDeleteImage: (imageId: ImageId) => void
+    onSetPrimaryImage: (imageId: ImageId) => void
 }) {
     const isLoading =
         itemData === null ||
@@ -63,6 +70,10 @@ export default function ItemDataPanel({
                     itemShortName={itemData.shortName}
                     itemImageData={itemImageData}
                     itemDataUrl={itemDataUrl}
+                    primaryImage={itemData.primaryImage}
+                    editMode={editMode}
+                    onDeleteImage={onDeleteImage}
+                    onSetPrimaryImage={onSetPrimaryImage}
                 />
                 <DonutGraph
                     amount={itemData.appearances}

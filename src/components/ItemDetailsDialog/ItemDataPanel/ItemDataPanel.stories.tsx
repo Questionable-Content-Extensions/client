@@ -5,7 +5,6 @@ import { useAppDispatch } from '@store/hooks'
 import { setFromItem } from '@store/itemEditorSlice'
 import { ComponentMeta, ComponentStory } from '@storybook/react'
 
-import constants from '~/constants'
 import {
     COFFEE_OF_DOOM,
     COFFEE_OF_DOOM_FRIENDS,
@@ -15,22 +14,18 @@ import {
     FAYE_IMAGES,
     FAYE_LOCATIONS,
     MANY_IMAGES,
+    QCEXT_SERVER_DEVELOPMENT_URL,
 } from '~/mocks'
 
 import ItemDataPanel from './ItemDataPanel'
 
-/**
- * This URL will be functional if you start the QC dev server
- * with its default port
- */
-const QCEXT_SERVER_DEVELOPMENT_URL =
-    `${constants.developmentBaseUrl}itemdata/` as const
-
 export default {
     component: ItemDataPanel,
     argTypes: {
-        onGoToComic: { action: 'goto-comic' },
-        onShowItemData: { action: 'show-item-data' },
+        onGoToComic: { action: 'onGoToComic' },
+        onShowItemData: { action: 'onShowItemData' },
+        onDeleteImage: { action: 'onDeleteImage' },
+        onSetPrimaryImage: { action: 'onSetPrimaryImage' },
     },
 } as ComponentMeta<typeof ItemDataPanel>
 

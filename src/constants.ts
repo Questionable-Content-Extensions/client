@@ -74,10 +74,9 @@ const constants = {
     addItemToComicEndpoint: `${comicDataEndpoint}additem` as const,
     removeItemFromComicEndpoint: `${comicDataEndpoint}removeitem` as const,
 
-    itemImageUrl: `${itemDataEndpoint}image/` as const,
-    itemFriendDataUrl: `${itemDataEndpoint}friends/` as const,
-    itemLocationDataUrl: `${itemDataEndpoint}locations/` as const,
-    setItemDataPropertyUrl: `${itemDataEndpoint}setproperty` as const,
+    itemImageEndpoint: `${itemDataEndpoint}image/` as const,
+    itemFriendDataEndpoint: `${itemDataEndpoint}friends/` as const,
+    itemLocationDataEndpoint: `${itemDataEndpoint}locations/` as const,
 
     comicExtensions: ['png' as const, 'gif' as const, 'jpg' as const] as const,
 

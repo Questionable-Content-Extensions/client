@@ -3,8 +3,13 @@ import { ConnectedProps, connect } from 'react-redux'
 
 import ModalDialog from '@modals/ModalDialog/ModalDialog'
 import { Item } from '@models/Item'
+import { ItemId } from '@models/ItemId'
 import { skipToken } from '@reduxjs/toolkit/dist/query'
-import { useAllDataQuery } from '@store/api/itemApiSlice'
+import {
+    useAllDataQuery,
+    useDeleteImageMutation,
+    useSetPrimaryImageMutation,
+} from '@store/api/itemApiSlice'
 import { setCurrentComic } from '@store/comicSlice'
 import {
     isStateDirtySelector,
@@ -80,6 +85,12 @@ function ItemDetailsDialog({
         }
     }, [itemData, editorItemId, setFromItem])
 
+    const [deleteImage, { isLoading: _isDeletingImage }] =
+        useDeleteImageMutation()
+
+    const [setPrimaryImage, { isLoading: _isSettingPrimaryImage }] =
+        useSetPrimaryImageMutation()
+
     return (
         <ModalDialog
             onCloseClicked={onClose}
@@ -102,9 +113,22 @@ function ItemDetailsDialog({
                         setCurrentComic(comicId)
                         onClose()
                     }}
-                    onShowItemData={(itemId: number) => {
+                    onShowItemData={(itemId: ItemId) => {
                         setCurrentItemId(itemId)
                     }}
+                    onDeleteImage={(imageId: number) => {
+                        deleteImage({
+                            itemId: editorItemId,
+                            imageId,
+                            body: { token: settings!.editModeToken },
+                        })
+                    }}
+                    onSetPrimaryImage={(imageId) =>
+                        setPrimaryImage({
+                            itemId: editorItemId,
+                            body: { token: settings!.editModeToken, imageId },
+                        })
+                    }
                 />
             }
             footer={

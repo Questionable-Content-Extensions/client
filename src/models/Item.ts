@@ -15,4 +15,5 @@ export interface Item {
     totalComics: number
     presence: number
     hasImage: boolean
+    primaryImage: number | null
 }

@@ -4,6 +4,8 @@ import { ItemImageList } from '@models/ItemImageList'
 import { ItemNavigationData } from '@models/ItemNavigationData'
 import { RelatedItem } from '@models/RelatedItem'
 
+import constants from './constants'
+
 export const COMIC_DATA_666: Comic = {
     editorData: { present: false },
     comic: 666,
@@ -171,6 +173,7 @@ export const FAYE: Item = {
     totalComics: 4866,
     presence: 40.5672009864365,
     hasImage: true,
+    primaryImage: null,
 }
 
 export const FAYE_IMAGES: ItemImageList[] = [{ id: 4, crc32cHash: 776532179 }]
@@ -280,6 +283,7 @@ export const COFFEE_OF_DOOM: Item = {
     totalComics: 4866,
     presence: 21.845458281956432,
     hasImage: false,
+    primaryImage: null,
 }
 
 export const COFFEE_OF_DOOM_FRIENDS: RelatedItem[] = [
@@ -380,3 +384,10 @@ export const MARTEN: ItemNavigationData = {
     last: 2345,
     count: 6969,
 }
+
+/**
+ * This URL will be functional if you start the QC dev server
+ * with its default port
+ */
+export const QCEXT_SERVER_DEVELOPMENT_URL =
+    `${constants.developmentBaseUrl}itemdata/` as const

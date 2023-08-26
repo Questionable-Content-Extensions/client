@@ -1,8 +1,11 @@
+import { DeleteImageBody } from '@models/DeleteImageBody'
+import { ImageId } from '@models/ImageId'
 import { Item } from '@models/Item'
 import { ItemId } from '@models/ItemId'
 import { ItemImageList } from '@models/ItemImageList'
 import { PatchItemBody } from '@models/PatchItemBody'
 import { RelatedItem } from '@models/RelatedItem'
+import { SetPrimaryImageBody } from '@models/SetPrimaryImageBody'
 import { skipToken } from '@reduxjs/toolkit/dist/query'
 import {
     apiSlice,
@@ -124,6 +127,61 @@ export const itemApiSlice = apiSlice.injectEndpoints({
                     ? [{ type: 'Comic' }, { type: 'Item', id: args.item }]
                     : [],
         }),
+        deleteImage: builder.mutation<
+            string,
+            { itemId: ItemId; imageId: ImageId; body: DeleteImageBody }
+        >({
+            query: ({ imageId, body }) => {
+                const url = `${constants.itemImageEndpoint}${imageId}`
+                return {
+                    url,
+                    configuration: {
+                        data: JSON.stringify(body),
+                        method: 'DELETE',
+                        headers: {
+                            'Content-Type': 'application/json; charset=utf-8',
+                        },
+                    },
+                }
+            },
+            transformResponse: (response) => response.responseText,
+            invalidatesTags: (result, _error, args) =>
+                result
+                    ? [
+                          {
+                              type: 'Item',
+                              id: `${args.itemId}-images`,
+                          },
+                      ]
+                    : [],
+        }),
+        setPrimaryImage: builder.mutation<
+            string,
+            { itemId: ItemId; body: SetPrimaryImageBody }
+        >({
+            query: ({ itemId, body }) => {
+                return {
+                    url: `${constants.itemDataEndpoint}${itemId}/images/primary`,
+                    configuration: {
+                        data: JSON.stringify(body),
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json; charset=utf-8',
+                        },
+                    },
+                }
+            },
+            transformResponse: (response) => response.responseText,
+            invalidatesTags: (result, _error, args) =>
+                result
+                    ? [
+                          {
+                              type: 'Item',
+                              id: args.itemId,
+                          },
+                      ]
+                    : [],
+        }),
     }),
 })
 
@@ -133,6 +191,8 @@ export const {
     useFriendDataQuery,
     useLocationDataQuery,
     usePatchItemMutation,
+    useDeleteImageMutation,
+    useSetPrimaryImageMutation,
 } = itemApiSlice
 
 export function useAllDataQuery(args: typeof skipToken | GetDataQueryArgs) {

@@ -44,6 +44,8 @@ export default function FilteredNavigationData({
     return (
         <>
             {/* TODO: Right clicking filter makes it empty and focused(?) */}
+            {/* TODO: Add back support for prefixing ! for cast, @ for location, # for storyline */}
+            {/* TODO: Add back support for adding a new item */}
             <input
                 type="text"
                 placeholder="Filter non-present"
