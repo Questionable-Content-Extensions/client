@@ -1,6 +1,7 @@
 import NavElement, { NavElementMode } from '@components/NavElement/NavElement'
 import Spinner from '@components/Spinner'
-import { ItemNavigationData } from '@models/ItemNavigationData'
+import { HydratedItemNavigationData } from '@models/HydratedItemData'
+import { ItemId } from '@models/ItemId'
 
 import { PickEnum } from '~/tsUtils'
 
@@ -16,19 +17,19 @@ export default function ItemNavigation({
     onRemoveItem,
     onAddItem,
 }: {
-    itemNavigationData: ItemNavigationData[]
+    itemNavigationData: HydratedItemNavigationData[]
     isLoading: boolean
     isFetching: boolean
     useColors: boolean
     onSetCurrentComic: (comicNo: number) => void
-    onShowInfoFor: (item: ItemNavigationData) => void
+    onShowInfoFor: (item: ItemId) => void
     mode: PickEnum<
         NavElementMode,
         NavElementMode.Present | NavElementMode.Missing
     >
     editMode?: boolean
-    onRemoveItem?: (_: ItemNavigationData) => void
-    onAddItem?: (_: ItemNavigationData) => void
+    onRemoveItem?: (_: ItemId) => void
+    onAddItem?: (_: ItemId) => void
 }) {
     let itemNavElements: {
         cast: React.ReactNode[]

@@ -5,6 +5,7 @@ import ErrorPresenter from '@components/ErrorPresenter'
 import ExtraNavigation from '@components/ExtraNavigation/ExtraNavigation'
 import FilteredNavigationData from '@components/FilteredNavigationData/FilteredNavigationData'
 import { NavElementMode } from '@components/NavElement/NavElement'
+import useHydratedItemData from '@hooks/useHydratedItemData'
 import { skipToken } from '@reduxjs/toolkit/dist/query'
 import {
     nextComicSelector,
@@ -87,6 +88,17 @@ function QcExtMainWidget({
             ? skipToken
             : toGetDataQueryArgs(currentComic, settings)
     )
+
+    const {
+        comicItems,
+        allItems,
+        isLoading: isLoadingInitialItemData,
+        isFetching: isFetchingItemData,
+    } = useHydratedItemData(currentComic, settings)
+
+    const isLoadingInitial =
+        isLoadingInitialComicData || isLoadingInitialItemData
+    const isFetching = isFetchingComicData || isFetchingItemData
 
     const excludedQueryArgs = settings ? toGetExcludedQueryArgs(settings) : null
     const { data: excludedComicData } = useGetExcludedQuery(
@@ -191,21 +203,19 @@ function QcExtMainWidget({
                 <></>
             )}
             <ItemNavigation
-                itemNavigationData={
-                    comicData && comicData.hasData ? comicData.items : []
-                }
-                isLoading={isLoadingInitialComicData}
-                isFetching={isFetchingComicData}
+                itemNavigationData={comicItems ?? []}
+                isLoading={isLoadingInitial}
+                isFetching={isFetching}
                 useColors={settings.useColors}
                 onSetCurrentComic={setCurrentComic}
-                onShowInfoFor={(item) => setShowItemDetailsDialogFor(item.id)}
+                onShowInfoFor={setShowItemDetailsDialogFor}
                 mode={NavElementMode.Present}
                 editMode={settings.editMode}
-                onRemoveItem={(item) => {
+                onRemoveItem={(itemId) => {
                     removeItem({
                         editModeToken: settings.editModeToken,
                         comicId: currentComic,
-                        itemId: item.id,
+                        itemId,
                     })
                 }}
             />
@@ -215,7 +225,7 @@ function QcExtMainWidget({
                     <button
                         className="bg-qc-header hover:bg-qc-header-second focus:bg-qc-header-second text-white py-2 rounded-sm disabled:opacity-75"
                         onClick={() => refreshComicData()}
-                        disabled={isFetchingComicData || isSaving}
+                        disabled={isFetching || isSaving}
                     >
                         Refresh
                     </button>
@@ -238,7 +248,7 @@ function QcExtMainWidget({
                         htmlFor="qc-ext-extra-navigation-comic"
                         className={
                             `bg-qc-header text-white py-2 px-4 flex-initial rounded-l-sm rounded-r-none` +
-                            (isLoadingInitialComicData ? ' opacity-75' : '')
+                            (isLoadingInitial ? ' opacity-75' : '')
                         }
                     >
                         #
@@ -252,11 +262,11 @@ function QcExtMainWidget({
                         value={comicSelectorNo ?? ''}
                         onChange={(e) => setComicSelectorNo(e.target.value)}
                         className="min-w-0 border border-qc-header focus:outline-none flex-auto rounded-none pl-2 disabled:opacity-75"
-                        disabled={isLoadingInitialComicData}
+                        disabled={isLoadingInitial}
                     />
                     <button
                         className="bg-qc-header hover:bg-qc-header-second focus:bg-qc-header-second text-white py-2 px-4 rounded-l-none rounded-r-sm disabled:opacity-75"
-                        disabled={isFetchingComicData || isSaving}
+                        disabled={isFetching || isSaving}
                         title="Go to selected comic"
                         type="submit"
                     >
@@ -269,21 +279,19 @@ function QcExtMainWidget({
                     <hr className="my-4 mx-0 border-solid border-b max-w-none" />
                     {/* TODO: show recent items before all items when in edit mode */}
                     <FilteredNavigationData
-                        isLoading={isLoadingInitialComicData}
-                        isFetching={isFetchingComicData}
-                        itemData={(comicData && comicData.allItems) ?? []}
+                        isLoading={isLoadingInitial}
+                        isFetching={isFetching}
+                        itemData={allItems ?? []}
                         onSetCurrentComic={setCurrentComic}
-                        onShowInfoFor={(item) =>
-                            setShowItemDetailsDialogFor(item.id)
-                        }
+                        onShowInfoFor={setShowItemDetailsDialogFor}
                         useColors={settings.useColors}
                         editMode={settings.editMode}
-                        onAddItem={(item) => {
+                        onAddItem={(itemId) => {
                             addItem({
                                 editModeToken: settings.editModeToken,
                                 comicId: currentComic,
                                 newItem: false,
-                                itemId: item.id,
+                                itemId,
                             })
                         }}
                         hasError={hasErrorLoadingComicData}

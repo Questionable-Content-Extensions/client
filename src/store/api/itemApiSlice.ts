@@ -3,6 +3,7 @@ import { ImageId } from '@models/ImageId'
 import { Item } from '@models/Item'
 import { ItemId } from '@models/ItemId'
 import { ItemImageList } from '@models/ItemImageList'
+import { ItemList } from '@models/ItemList'
 import { PatchItemBody } from '@models/PatchItemBody'
 import { RelatedItem } from '@models/RelatedItem'
 import { SetPrimaryImageBody } from '@models/SetPrimaryImageBody'
@@ -20,6 +21,24 @@ export type GetDataQueryArgs = {
 
 export const itemApiSlice = apiSlice.injectEndpoints({
     endpoints: (builder) => ({
+        all: builder.query<ItemList[], void>({
+            query: () => {
+                return {
+                    url: `${constants.itemDataEndpoint}`,
+                }
+            },
+            transformResponse: transformResponseByJsonParseResultText,
+            providesTags: (result, _error, _args) =>
+                result
+                    ? [
+                          {
+                              type: 'Item',
+                              id: 'LIST-ALL',
+                          },
+                      ]
+                    : [],
+            //keepUnusedDataFor: 60 * 60 * 24,
+        }),
         getItemData: builder.query<Item, GetDataQueryArgs>({
             query: ({ itemId }) => {
                 return {
@@ -124,7 +143,11 @@ export const itemApiSlice = apiSlice.injectEndpoints({
             transformResponse: (response) => response.responseText,
             invalidatesTags: (result, _error, args) =>
                 result
-                    ? [{ type: 'Comic' }, { type: 'Item', id: args.item }]
+                    ? [
+                          { type: 'Comic' },
+                          { type: 'Item', id: args.item },
+                          { type: 'Item', id: 'LIST-ALL' },
+                      ]
                     : [],
         }),
         deleteImage: builder.mutation<
@@ -186,6 +209,7 @@ export const itemApiSlice = apiSlice.injectEndpoints({
 })
 
 export const {
+    useAllQuery: useAllItemsQuery,
     useGetItemDataQuery,
     useImageDataQuery,
     useFriendDataQuery,

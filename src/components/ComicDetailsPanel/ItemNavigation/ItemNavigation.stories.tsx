@@ -1,8 +1,7 @@
 import { NavElementMode } from '@components/NavElement/NavElement'
-import { PresentComic } from '@models/PresentComic'
 import { ComponentMeta, ComponentStory } from '@storybook/react'
 
-import { COMIC_DATA_666 } from '~/mocks'
+import { COMIC_DATA_666_HYDRATED_ITEMS } from '~/mocks'
 
 import ItemNavigation from './ItemNavigation'
 
@@ -34,7 +33,7 @@ const Template: ComponentStory<typeof ItemNavigation> = (args) => {
 
 export const Default = Template.bind({})
 Default.args = {
-    itemNavigationData: (COMIC_DATA_666 as PresentComic).items,
+    itemNavigationData: COMIC_DATA_666_HYDRATED_ITEMS,
     useColors: true,
     isLoading: false,
     isFetching: false,

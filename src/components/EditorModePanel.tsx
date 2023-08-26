@@ -1,7 +1,8 @@
 import { createContext, useContext, useEffect, useMemo, useState } from 'react'
 import { ConnectedProps, connect } from 'react-redux'
 
-import { ItemNavigationData } from '@models/ItemNavigationData'
+import useHydratedItemData from '@hooks/useHydratedItemData'
+import { HydratedItemNavigationData } from '@models/HydratedItemData'
 import { ItemType } from '@models/ItemType'
 import { NavigationData } from '@models/NavigationData'
 import { skipToken } from '@reduxjs/toolkit/dist/query'
@@ -80,6 +81,8 @@ type PropsFromRedux = ConnectedProps<typeof connector>
 type EditorModeExtraWidgetProps = PropsFromRedux & {}
 
 // TODO: Show editor log function
+// Make it so it's possible to both show all logs and only logs for the
+// current comic / item
 
 function EditorModePanel({
     settings,
@@ -105,8 +108,8 @@ function EditorModePanel({
 
     const {
         data: comicData,
-        isFetching: isFetchingComicData,
-        isLoading: isLoadingInitialComicData,
+        isFetching: isFetchingComicDataz,
+        isLoading: isLoadingInitialComicDataz,
         isError: hasErrorLoadingComicData,
         error: comicDataError,
     } = useGetComicDataQuery(
@@ -114,6 +117,16 @@ function EditorModePanel({
             ? skipToken
             : toGetDataQueryArgs(currentComic, settings)
     )
+
+    const {
+        comicItems,
+        isLoading: isLoadingInitialItemData,
+        isFetching: isFetchingItemData,
+    } = useHydratedItemData(currentComic, settings)
+
+    const isLoadingInitial =
+        isLoadingInitialComicDataz || isLoadingInitialItemData
+    const isFetching = isFetchingComicDataz || isFetchingItemData
 
     // When comicData loads, update the editorData
     useEffect(() => {
@@ -131,15 +144,15 @@ function EditorModePanel({
         const hasCast =
             !comicData?.hasData ||
             comicData.hasNoCast ||
-            comicData.items.filter((i) => i.type === 'cast').length !== 0
+            comicItems?.filter((i) => i.type === 'cast').length !== 0
         const hasLocation =
             !comicData?.hasData ||
             comicData.hasNoLocation ||
-            comicData.items.filter((i) => i.type === 'location').length !== 0
+            comicItems?.filter((i) => i.type === 'location').length !== 0
         const hasStoryline =
             !comicData?.hasData ||
             comicData.hasNoStoryline ||
-            comicData.items.filter((i) => i.type === 'storyline').length !== 0
+            comicItems?.filter((i) => i.type === 'storyline').length !== 0
         const hasTitle =
             !comicData?.hasData ||
             comicData.hasNoTitle ||
@@ -169,7 +182,7 @@ function EditorModePanel({
 
         if (hasErrorLoadingComicData) {
             return <ErrorPresenter error={comicDataError} />
-        } else if (!isLoadingInitialComicData && missingData.length) {
+        } else if (!isLoadingInitial && missingData.length) {
             return (
                 <p className="text-[#ff3030] mt-2 leading-5">
                     This comic is missing{' '}
@@ -182,11 +195,7 @@ function EditorModePanel({
                     })}
                 </p>
             )
-        } else if (
-            !isLoadingInitialComicData &&
-            comicData &&
-            !comicData.hasData
-        ) {
+        } else if (!isLoadingInitial && comicData && !comicData.hasData) {
             return (
                 <div className="text-center pt-4">
                     <i
@@ -202,10 +211,11 @@ function EditorModePanel({
         }
     }, [
         comicData,
-        isLoadingInitialComicData,
+        isLoadingInitial,
         currentComic,
         hasErrorLoadingComicData,
         comicDataError,
+        comicItems,
     ])
 
     const [clientWidth, setClientWidth] = useState(
@@ -302,8 +312,8 @@ function EditorModePanel({
             <ExpandingEditor>
                 <TextEditor
                     disabled={
-                        isLoadingInitialComicData ||
-                        isFetchingComicData ||
+                        isLoadingInitial ||
+                        isFetching ||
                         isEditorSaving ||
                         hasErrorLoadingComicData
                     }
@@ -317,8 +327,8 @@ function EditorModePanel({
             <ExpandingEditor>
                 <TextEditor
                     disabled={
-                        isLoadingInitialComicData ||
-                        isFetchingComicData ||
+                        isLoadingInitial ||
+                        isFetching ||
                         isEditorSaving ||
                         hasErrorLoadingComicData
                     }
@@ -332,8 +342,8 @@ function EditorModePanel({
             <ExpandingEditor>
                 <DateEditor
                     disabled={
-                        isLoadingInitialComicData ||
-                        isFetchingComicData ||
+                        isLoadingInitial ||
+                        isFetching ||
                         isEditorSaving ||
                         hasErrorLoadingComicData
                     }
@@ -353,26 +363,22 @@ function EditorModePanel({
             <hr className="my-4 mx-0 border-solid border-b max-w-none" />
             {comicData ? (
                 <ComicFlagsWidget
-                    isLoading={
-                        isLoadingInitialComicData ||
-                        isFetchingComicData ||
-                        isEditorSaving
-                    }
+                    isLoading={isLoadingInitial || isFetching || isEditorSaving}
                     hasError={hasErrorLoadingComicData}
                     hasCastItems={
-                        isLoadingInitialComicData ||
-                        (comicData.hasData &&
-                            hasItemsOfType(comicData.items, 'cast'))
+                        isLoadingInitial ||
+                        (comicItems !== undefined &&
+                            hasItemsOfType(comicItems, 'cast'))
                     }
                     hasLocationItems={
-                        isLoadingInitialComicData ||
-                        (comicData.hasData &&
-                            hasItemsOfType(comicData.items, 'location'))
+                        isLoadingInitial ||
+                        (comicItems !== undefined &&
+                            hasItemsOfType(comicItems, 'location'))
                     }
                     hasStorylineItems={
-                        isLoadingInitialComicData ||
-                        (comicData.hasData &&
-                            hasItemsOfType(comicData.items, 'storyline'))
+                        isLoadingInitial ||
+                        (comicItems !== undefined &&
+                            hasItemsOfType(comicItems, 'storyline'))
                     }
                 />
             ) : (
@@ -383,8 +389,8 @@ function EditorModePanel({
                 <button
                     className="flex-auto bg-qc-header hover:bg-qc-header-second focus:bg-qc-header-second text-white py-3 rounded-sm disabled:opacity-75"
                     disabled={
-                        isLoadingInitialComicData ||
-                        isFetchingComicData ||
+                        isLoadingInitial ||
+                        isFetching ||
                         isEditorSaving ||
                         !editorStateDirty
                     }
@@ -392,7 +398,7 @@ function EditorModePanel({
                 >
                     {hasErrorLoadingComicData
                         ? 'Error'
-                        : isFetchingComicData || isEditorSaving
+                        : isFetching || isEditorSaving
                         ? 'Loading...'
                         : editorStateDirty
                         ? 'Save changes'
@@ -604,6 +610,6 @@ function ExpandingEditor({ children }: { children: React.ReactChild }) {
     )
 }
 
-function hasItemsOfType(items: ItemNavigationData[], type: ItemType) {
+function hasItemsOfType(items: HydratedItemNavigationData[], type: ItemType) {
     return items.filter((i) => i.type === type).length !== 0
 }

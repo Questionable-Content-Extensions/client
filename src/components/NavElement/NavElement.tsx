@@ -1,5 +1,6 @@
 import NavButton from '@components/ComicDetailsPanel/NavButton/NavButton'
-import { ItemNavigationData } from '@models/ItemNavigationData'
+import { HydratedItemNavigationData } from '@models/HydratedItemData'
+import { ItemId } from '@models/ItemId'
 
 import { createTintOrShade } from '~/color'
 
@@ -20,14 +21,14 @@ export default function NavElement({
     onRemoveItem,
     onAddItem,
 }: {
-    item: ItemNavigationData
+    item: HydratedItemNavigationData
     onSetCurrentComic: (_: number) => void
     useColors: boolean
-    onShowInfoFor: (_: ItemNavigationData) => void
+    onShowInfoFor: (_: ItemId) => void
     mode: NavElementMode
     editMode?: boolean
-    onRemoveItem?: (_: ItemNavigationData) => void
-    onAddItem?: (_: ItemNavigationData) => void
+    onRemoveItem?: (_: ItemId) => void
+    onAddItem?: (_: ItemId) => void
 }) {
     let backgroundColor = item.color
     if (!backgroundColor.startsWith('#')) {
@@ -47,7 +48,7 @@ export default function NavElement({
                             title={`Remove ${item.shortName} from comic`}
                             onClick={() => {
                                 if (onRemoveItem) {
-                                    onRemoveItem(item)
+                                    onRemoveItem(item.id)
                                 }
                             }}
                         >
@@ -65,7 +66,7 @@ export default function NavElement({
                             title={`Add ${item.shortName} to comic`}
                             onClick={() => {
                                 if (onAddItem) {
-                                    onAddItem(item)
+                                    onAddItem(item.id)
                                 }
                             }}
                         >
@@ -110,7 +111,7 @@ export default function NavElement({
                 />
                 <button
                     className="font-bold flex-auto py-1"
-                    onClick={() => onShowInfoFor(item)}
+                    onClick={() => onShowInfoFor(item.id)}
                 >
                     <span
                         className="inline-block text-center"

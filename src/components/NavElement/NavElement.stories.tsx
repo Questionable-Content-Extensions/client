@@ -2,7 +2,7 @@ import { expect } from '@storybook/jest'
 import { ComponentMeta, ComponentStory } from '@storybook/react'
 import { userEvent, within } from '@storybook/testing-library'
 
-import { MARTEN } from '~/mocks'
+import { MARTEN, MARTEN_HYDRATED, MARTEN_ITEM } from '~/mocks'
 
 import NavElement, { NavElementMode } from './NavElement'
 
@@ -34,7 +34,7 @@ const Template: ComponentStory<typeof NavElement> = (args) => {
 
 export const Default = Template.bind({})
 Default.args = {
-    item: MARTEN,
+    item: MARTEN_HYDRATED,
     useColors: true,
     mode: NavElementMode[NavElementMode.Present] as unknown as NavElementMode,
     editMode: false,
@@ -59,7 +59,7 @@ Default.play = ({ canvasElement, args }) => {
     expect(args.onSetCurrentComic).toBeCalledWith(MARTEN.last)
 
     expect(args.onShowInfoFor).not.toBeCalledWith(MARTEN)
-    userEvent.click(canvas.getByTitle(MARTEN.name))
+    userEvent.click(canvas.getByTitle(MARTEN_ITEM.name))
     expect(args.onShowInfoFor).toBeCalledWith(MARTEN)
 }
 

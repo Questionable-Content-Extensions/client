@@ -1,6 +1,8 @@
 import { Comic } from '@models/Comic'
+import { HydratedItemNavigationData } from '@models/HydratedItemData'
 import { Item } from '@models/Item'
 import { ItemImageList } from '@models/ItemImageList'
+import { ItemList } from '@models/ItemList'
 import { ItemNavigationData } from '@models/ItemNavigationData'
 import { RelatedItem } from '@models/RelatedItem'
 
@@ -28,138 +30,180 @@ export const COMIC_DATA_666: Comic = {
     items: [
         {
             id: 4,
-            shortName: 'Faye',
-            name: 'Faye Whitaker',
-            type: 'cast',
-            color: '341400',
             first: 3,
             previous: 665,
             next: 667,
             last: 4805,
-            count: 1974,
         },
         {
             id: 1,
-            shortName: 'Marten',
-            name: 'Marten Reed',
-            type: 'cast',
-            color: '7d929e',
             first: 1,
             previous: 664,
             next: 667,
             last: 4857,
-            count: 1869,
         },
         {
             id: 10,
-            shortName: 'Dora',
-            name: 'Dora Bianchi',
-            type: 'cast',
-            color: '1d1d1d',
             first: 75,
             previous: 661,
             next: 671,
             last: 4857,
-            count: 1204,
         },
         {
             id: 23,
-            shortName: 'Hannelore',
-            name: 'Hannelore Ellicott-Chatham',
-            type: 'cast',
-            color: '00c1d6',
             first: 515,
             previous: 665,
             next: 667,
             last: 4857,
-            count: 910,
         },
         {
             id: 141,
-            shortName: "Marten and Faye's Apartment",
-            name: "Marten, Claire, Faye, and Bubbles' Apartment",
-            type: 'location',
-            color: 'daeff6',
             first: 313,
             previous: 665,
             next: 667,
             last: 4840,
-            count: 758,
         },
         {
             id: 2,
-            shortName: 'Pintsize',
-            name: 'Pintsize',
-            type: 'cast',
-            color: '8dbd9a',
             first: 1,
             previous: 665,
             next: 667,
             last: 4840,
-            count: 486,
         },
         {
             id: 3,
-            shortName: 'Steve',
-            name: 'Steve',
-            type: 'cast',
-            color: '5b2900',
             first: 3,
             previous: 619,
             next: 712,
             last: 4510,
-            count: 232,
         },
         {
             id: 24,
-            shortName: 'Winslow',
-            name: 'Winslow',
-            type: 'cast',
-            color: 'eeeeee',
             first: 527,
             previous: 612,
             next: 668,
             last: 4798,
-            count: 148,
         },
         {
             id: 17,
-            shortName: 'Amir',
-            name: 'Amir Afridi',
-            type: 'cast',
-            color: '003388',
             first: 366,
             previous: 664,
             next: 669,
             last: 2607,
-            count: 37,
         },
         {
             id: 14,
-            shortName: 'Natasha',
-            name: 'Natasha',
-            type: 'cast',
-            color: '000000',
             first: 248,
             previous: 664,
             next: 669,
             last: 1178,
-            count: 33,
         },
         {
             id: 153,
-            shortName: 'Practice space',
-            name: 'Practice space on Ward avenue',
-            type: 'location',
-            color: 'eae2dd',
             first: 553,
             previous: 664,
             next: 843,
             last: 2606,
-            count: 22,
         },
     ],
 }
+
+export const COMIC_DATA_666_ITEMS: Array<ItemList> = [
+    {
+        id: 4,
+        shortName: 'Faye',
+        name: 'Faye Whitaker',
+        type: 'cast',
+        color: '341400',
+        count: 1974,
+    },
+    {
+        id: 1,
+        shortName: 'Marten',
+        name: 'Marten Reed',
+        type: 'cast',
+        color: '7d929e',
+        count: 1869,
+    },
+    {
+        id: 10,
+        shortName: 'Dora',
+        name: 'Dora Bianchi',
+        type: 'cast',
+        color: '1d1d1d',
+        count: 1204,
+    },
+    {
+        id: 23,
+        shortName: 'Hannelore',
+        name: 'Hannelore Ellicott-Chatham',
+        type: 'cast',
+        color: '00c1d6',
+        count: 910,
+    },
+    {
+        id: 141,
+        shortName: "Marten and Faye's Apartment",
+        name: "Marten, Claire, Faye, and Bubbles' Apartment",
+        type: 'location',
+        color: 'daeff6',
+        count: 758,
+    },
+    {
+        id: 2,
+        shortName: 'Pintsize',
+        name: 'Pintsize',
+        type: 'cast',
+        color: '8dbd9a',
+        count: 486,
+    },
+    {
+        id: 3,
+        shortName: 'Steve',
+        name: 'Steve',
+        type: 'cast',
+        color: '5b2900',
+        count: 232,
+    },
+    {
+        id: 24,
+        shortName: 'Winslow',
+        name: 'Winslow',
+        type: 'cast',
+        color: 'eeeeee',
+        count: 148,
+    },
+    {
+        id: 17,
+        shortName: 'Amir',
+        name: 'Amir Afridi',
+        type: 'cast',
+        color: '003388',
+        count: 37,
+    },
+    {
+        id: 14,
+        shortName: 'Natasha',
+        name: 'Natasha',
+        type: 'cast',
+        color: '000000',
+        count: 33,
+    },
+    {
+        id: 153,
+        shortName: 'Practice space',
+        name: 'Practice space on Ward avenue',
+        type: 'location',
+        color: 'eae2dd',
+        count: 22,
+    },
+]
+
+export const COMIC_DATA_666_HYDRATED_ITEMS: Array<HydratedItemNavigationData> =
+    COMIC_DATA_666_ITEMS.map((e, i) => ({
+        ...e,
+        ...COMIC_DATA_666.items[i],
+    }))
 
 export const FAYE: Item = {
     id: 4,
@@ -374,15 +418,24 @@ export const COFFEE_OF_DOOM_LOCATIONS: RelatedItem[] = [
 
 export const MARTEN: ItemNavigationData = {
     id: 1,
-    shortName: 'Marten',
-    name: 'Marten Reed',
-    type: 'cast',
-    color: '7d929e',
     first: 1,
     previous: 1233,
     next: 1235,
     last: 2345,
+}
+
+export const MARTEN_ITEM: ItemList = {
+    id: 1,
+    shortName: 'Marten',
+    name: 'Marten Reed',
+    type: 'cast',
+    color: '7d929e',
     count: 6969,
+}
+
+export const MARTEN_HYDRATED: HydratedItemNavigationData = {
+    ...MARTEN,
+    ...MARTEN_ITEM,
 }
 
 /**

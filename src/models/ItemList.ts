@@ -8,5 +8,5 @@ export interface ItemList {
     name: string
     type: ItemType
     color: string
-    count: bigint
+    count: number
 }

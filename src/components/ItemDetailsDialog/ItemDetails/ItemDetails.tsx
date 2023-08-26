@@ -228,11 +228,16 @@ export function ItemDetails({
             </p>
             <NavElement
                 item={{
-                    ...item,
+                    id: item.id,
+                    shortName: item.shortName,
+                    name: item.name,
+                    type: item.type,
+                    color: item.color,
+                    first: item.first,
                     previous: item.first,
                     next: item.last,
-                    count: item.appearances,
-                    color: backgroundColor,
+                    last: item.last,
+                    count: item.totalComics,
                 }}
                 useColors={true}
                 onSetCurrentComic={() => {}}

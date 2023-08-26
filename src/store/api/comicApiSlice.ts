@@ -1,4 +1,5 @@
 import { AddItemToComicBody } from '@models/AddItemToComicBody'
+import { ByIdQuery } from '@models/ByIdQuery'
 import { Comic } from '@models/Comic'
 import { ComicId } from '@models/ComicId'
 import { ComicList } from '@models/ComicList'
@@ -71,11 +72,7 @@ export const comicApiSlice = apiSlice.injectEndpoints({
                 skipNonCanon,
                 showAllMembers,
             }) => {
-                const urlParameters: {
-                    token?: string
-                    exclude?: 'guest' | 'non-canon'
-                    include?: 'all'
-                } = {}
+                const urlParameters: ByIdQuery = {}
                 if (editModeToken) {
                     urlParameters.token = editModeToken
                 }
@@ -87,7 +84,9 @@ export const comicApiSlice = apiSlice.injectEndpoints({
                 if (showAllMembers || editModeToken) {
                     urlParameters.include = 'all'
                 }
-                const urlQuery = new URLSearchParams(urlParameters).toString()
+                const urlQuery = new URLSearchParams(
+                    urlParameters as Record<string, string>
+                ).toString()
 
                 return {
                     url: `${constants.comicDataEndpoint}${comic}?${urlQuery}`,
@@ -265,7 +264,7 @@ export function toGetDataQueryArgs(
 ): GetDataQueryArgs {
     return {
         comic,
-        editModeToken: settings.editModeToken,
+        editModeToken: settings.editMode ? settings.editModeToken : undefined,
         showAllMembers: settings.showAllMembers,
         skipGuest: settings.skipGuest,
         skipNonCanon: settings.skipNonCanon,

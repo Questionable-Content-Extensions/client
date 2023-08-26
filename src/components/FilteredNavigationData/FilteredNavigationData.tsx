@@ -2,7 +2,9 @@ import { useEffect, useState } from 'react'
 
 import ItemNavigation from '@components/ComicDetailsPanel/ItemNavigation/ItemNavigation'
 import { NavElementMode } from '@components/NavElement/NavElement'
-import { ItemNavigationData } from '@models/ItemNavigationData'
+import { ComicId } from '@models/ComicId'
+import { HydratedItemNavigationData } from '@models/HydratedItemData'
+import { ItemId } from '@models/ItemId'
 
 export default function FilteredNavigationData({
     isLoading,
@@ -18,12 +20,12 @@ export default function FilteredNavigationData({
     isLoading: boolean
     isFetching: boolean
     hasError: boolean
-    itemData: ItemNavigationData[]
-    onSetCurrentComic: (comicId: number) => void
-    onShowInfoFor: (item: ItemNavigationData) => void
+    itemData: HydratedItemNavigationData[]
+    onSetCurrentComic: (comicId: ComicId) => void
+    onShowInfoFor: (item: ItemId) => void
     useColors: boolean
     editMode: boolean
-    onAddItem: (item: ItemNavigationData) => void
+    onAddItem: (item: ItemId) => void
 }) {
     const [filter, setFilter] = useState('')
     const [activeFilter, setActiveFilter] = useState('')
@@ -74,8 +76,11 @@ export default function FilteredNavigationData({
     )
 }
 
-function filterItems(allItems: ItemNavigationData[], filter: string) {
-    return allItems.filter(
+function filterItems(
+    allNavigationItems: HydratedItemNavigationData[],
+    filter: string
+) {
+    return allNavigationItems.filter(
         (i) =>
             i.shortName.toUpperCase().indexOf(filter.toUpperCase()) !== -1 ||
             i.name.toUpperCase().indexOf(filter.toUpperCase()) !== -1

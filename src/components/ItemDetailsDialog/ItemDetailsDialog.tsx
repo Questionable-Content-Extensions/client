@@ -51,6 +51,8 @@ type ItemDetailsDialogProps = PropsFromRedux & {
     initialItemId: number | null
 }
 
+// TODO: Find a way to list all comics this item is in
+
 function ItemDetailsDialog({
     settings,
     editorItemId,
