@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { ConnectedProps, connect } from 'react-redux'
 
+import { PaddedButton } from '@components/Button'
 import ModalDialog from '@modals/ModalDialog/ModalDialog'
 import { ComicList as ComicListModel } from '@models/ComicList'
 import { skipToken } from '@reduxjs/toolkit/dist/query'
@@ -69,12 +70,7 @@ export function GoToComicDialog({
                 />
             }
             footer={
-                <button
-                    className="bg-qc-header hover:bg-qc-header-second focus:bg-qc-header-second text-white py-3 px-4 rounded-sm"
-                    onClick={() => onClose()}
-                >
-                    Close
-                </button>
+                <PaddedButton onClick={() => onClose()}>Close</PaddedButton>
             }
         />
     )

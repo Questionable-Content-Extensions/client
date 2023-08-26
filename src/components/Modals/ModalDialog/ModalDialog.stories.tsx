@@ -1,3 +1,4 @@
+import { PaddedButton } from '@components/Button'
 import { ComponentMeta, ComponentStory } from '@storybook/react'
 
 import ModalDialog from './ModalDialog'
@@ -73,13 +74,9 @@ Default.args = {
 
     footer: (
         <>
-            <button className="bg-qc-header hover:bg-qc-header-second focus:bg-qc-header-second text-white py-3 px-4 rounded-sm">
-                Button 1
-            </button>
+            <PaddedButton>Button 1</PaddedButton>
 
-            <button className="bg-qc-header hover:bg-qc-header-second focus:bg-qc-header-second text-white py-3 px-4 rounded-sm ml-2">
-                Button 2
-            </button>
+            <PaddedButton className="ml-2">Button 2</PaddedButton>
         </>
     ),
 }

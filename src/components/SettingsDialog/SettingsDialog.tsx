@@ -1,5 +1,6 @@
 import { ConnectedProps, connect } from 'react-redux'
 
+import { PaddedButton } from '@components/Button'
 import ModalDialog from '@modals/ModalDialog/ModalDialog'
 import { updateSettings } from '@store/settingsSlice'
 import { AppDispatch, RootState } from '@store/store'
@@ -60,12 +61,7 @@ function SettingsDialog({
                 />
             }
             footer={
-                <button
-                    className="bg-qc-header hover:bg-qc-header-second focus:bg-qc-header-second text-white py-3 px-4 rounded-sm"
-                    onClick={() => onClose()}
-                >
-                    Close
-                </button>
+                <PaddedButton onClick={() => onClose()}>Close</PaddedButton>
             }
         />
     )

@@ -30,6 +30,7 @@ import { AppDispatch, RootState } from '@store/store'
 
 import constants from '~/constants'
 
+import Button from './Button'
 import ComicFlagsWidget from './ComicFlagsWidget'
 import ErrorPresenter from './ErrorPresenter'
 import NavElement, { NavElementMode } from './NavElement/NavElement'
@@ -386,8 +387,8 @@ function EditorModePanel({
             )}
             <hr className="my-4 mx-0 border-solid border-b max-w-none" />
             <div className="flex">
-                <button
-                    className="flex-auto bg-qc-header hover:bg-qc-header-second focus:bg-qc-header-second text-white py-3 rounded-sm disabled:opacity-75"
+                <Button
+                    className="flex-auto py-3"
                     disabled={
                         isLoadingInitial ||
                         isFetching ||
@@ -403,7 +404,7 @@ function EditorModePanel({
                         : editorStateDirty
                         ? 'Save changes'
                         : 'No changes'}
-                </button>
+                </Button>
             </div>
         </form>
     )

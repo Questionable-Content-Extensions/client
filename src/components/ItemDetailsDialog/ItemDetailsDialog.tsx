@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { ConnectedProps, connect } from 'react-redux'
 
+import { PaddedButton } from '@components/Button'
 import ModalDialog from '@modals/ModalDialog/ModalDialog'
 import { Item } from '@models/Item'
 import { ItemId } from '@models/ItemId'
@@ -136,23 +137,17 @@ function ItemDetailsDialog({
             footer={
                 <>
                     {settings?.editMode ?? false ? (
-                        <button
-                            className="bg-qc-header hover:bg-qc-header-second focus:bg-qc-header-second text-white py-3 px-4 rounded-sm disabled:opacity-75"
+                        <PaddedButton
                             disabled={!isItemDirty}
                             onClick={() => saveChanges()}
                         >
                             {isItemDirty ? 'Save changes' : 'No changes'}
-                        </button>
+                        </PaddedButton>
                     ) : (
                         <></>
                     )}
 
-                    <button
-                        className="bg-qc-header hover:bg-qc-header-second focus:bg-qc-header-second text-white py-3 px-4 rounded-sm ml-2"
-                        onClick={onClose}
-                    >
-                        Close
-                    </button>
+                    <PaddedButton onClick={onClose}>Close</PaddedButton>
                 </>
             }
         />

@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { ConnectedProps, connect } from 'react-redux'
 
+import Button from '@components/Button'
 import ErrorPresenter from '@components/ErrorPresenter'
 import ExtraNavigation from '@components/ExtraNavigation/ExtraNavigation'
 import FilteredNavigationData from '@components/FilteredNavigationData/FilteredNavigationData'
@@ -222,19 +223,19 @@ function QcExtMainWidget({
             <hr className="my-4 mx-0 border-solid border-b max-w-none" />
             <div className="grid grid-rows-2 space-y-1">
                 <div className="grid grid-cols-2 space-x-1">
-                    <button
-                        className="bg-qc-header hover:bg-qc-header-second focus:bg-qc-header-second text-white py-2 rounded-sm disabled:opacity-75"
+                    <Button
+                        className="py-2"
                         onClick={() => refreshComicData()}
                         disabled={isFetching || isSaving}
                     >
                         Refresh
-                    </button>
-                    <button
-                        className="bg-qc-header hover:bg-qc-header-second focus:bg-qc-header-second text-white py-2 rounded-sm"
+                    </Button>
+                    <Button
+                        className="py-2"
                         onClick={() => setShowSettingsDialog(true)}
                     >
                         Settings
-                    </button>
+                    </Button>
                 </div>
                 <form
                     className="flex min-w-0"
@@ -264,14 +265,14 @@ function QcExtMainWidget({
                         className="min-w-0 border border-qc-header focus:outline-none flex-auto rounded-none pl-2 disabled:opacity-75"
                         disabled={isLoadingInitial}
                     />
-                    <button
-                        className="bg-qc-header hover:bg-qc-header-second focus:bg-qc-header-second text-white py-2 px-4 rounded-l-none rounded-r-sm disabled:opacity-75"
+                    <Button
+                        className="py-2 px-4 rounded-l-none"
                         disabled={isFetching || isSaving}
                         title="Go to selected comic"
                         type="submit"
                     >
                         <i className="fa fa-arrow-right" aria-hidden="true"></i>
-                    </button>
+                    </Button>
                 </form>
             </div>
             {settings.showAllMembers || settings.editMode ? (
