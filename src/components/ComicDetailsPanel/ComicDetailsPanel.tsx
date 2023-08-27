@@ -282,17 +282,17 @@ function QcExtMainWidget({
                     <FilteredNavigationData
                         isLoading={isLoadingInitial}
                         isFetching={isFetching}
+                        isSaving={isSaving}
                         itemData={allItems ?? []}
                         onSetCurrentComic={setCurrentComic}
                         onShowInfoFor={setShowItemDetailsDialogFor}
                         useColors={settings.useColors}
                         editMode={settings.editMode}
-                        onAddItem={(itemId) => {
+                        onAddItem={(itemBody) => {
                             addItem({
-                                editModeToken: settings.editModeToken,
+                                token: settings.editModeToken,
                                 comicId: currentComic,
-                                newItem: false,
-                                itemId,
+                                ...itemBody,
                             })
                         }}
                         hasError={hasErrorLoadingComicData}

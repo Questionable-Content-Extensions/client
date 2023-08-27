@@ -1,15 +1,18 @@
 import { useEffect, useMemo, useState } from 'react'
 
+import { PaddedButton } from '@components/Button'
 import ItemNavigation from '@components/ComicDetailsPanel/ItemNavigation/ItemNavigation'
 import { NavElementMode } from '@components/NavElement/NavElement'
 import { ComicId } from '@models/ComicId'
 import { HydratedItemNavigationData } from '@models/HydratedItemData'
+import { ItemBody } from '@models/ItemBody'
 import { ItemId } from '@models/ItemId'
 import { ItemType } from '@models/ItemType'
 
 export default function FilteredNavigationData({
     isLoading,
     isFetching,
+    isSaving,
     hasError,
     itemData,
     onSetCurrentComic,
@@ -20,13 +23,14 @@ export default function FilteredNavigationData({
 }: {
     isLoading: boolean
     isFetching: boolean
+    isSaving: boolean
     hasError: boolean
     itemData: HydratedItemNavigationData[]
     onSetCurrentComic: (comicId: ComicId) => void
     onShowInfoFor: (item: ItemId) => void
     useColors: boolean
     editMode: boolean
-    onAddItem: (item: ItemId) => void
+    onAddItem: (item: ItemBody) => void
 }) {
     const [filter, setFilter] = useState('')
     const [activeFilter, setActiveFilter] = useState('')
@@ -49,17 +53,25 @@ export default function FilteredNavigationData({
         [itemData, activeFilter]
     )
 
+    const [filterType, filterName] = useMemo(
+        () => [
+            getTypeFromFilter(activeFilter),
+            getFilterWithoutType(activeFilter),
+        ],
+        [activeFilter]
+    )
+
     return (
         <>
-            {/* TODO: Add back support for adding a new item */}
             <input
+                id="qcext-allitems-filter"
                 type="text"
                 placeholder="Filter non-present"
                 title="The value entered here filters the non-present members by their name or abbreviated name"
                 value={filter}
                 onChange={(e) => setFilter(e.target.value)}
                 className="w-full border border-qc-header focus:outline-none flex-auto rounded-none pl-2 disabled:opacity-75 mb-2"
-                disabled={isLoading || hasError}
+                disabled={isLoading || isSaving || hasError}
                 onMouseUp={(e) => {
                     // 1 is middle click, supposedly
                     if (e.button === 1) {
@@ -68,7 +80,7 @@ export default function FilteredNavigationData({
                 }}
             />
 
-            {filteredItemData.length > 0 ? (
+            {filteredItemData.length > 0 || isLoading ? (
                 <div className="overflow-y-auto overflow-x-hidden max-h-52">
                     <ItemNavigation
                         itemNavigationData={filteredItemData}
@@ -79,14 +91,45 @@ export default function FilteredNavigationData({
                         onShowInfoFor={onShowInfoFor}
                         mode={NavElementMode.Missing}
                         editMode={editMode}
-                        onAddItem={onAddItem}
+                        onAddItem={(itemId) =>
+                            onAddItem({ new: false, itemId })
+                        }
                     />
                 </div>
             ) : (
                 <p className="italic">
-                    No {getTypeFromFilter(activeFilter)} found matching '
-                    {getFilterWithoutType(activeFilter)}'
+                    No {filterType} found matching '{filterName}'
                 </p>
+            )}
+            {editMode ? (
+                <PaddedButton
+                    className="mt-2 w-full"
+                    onClick={async () => {
+                        if (filterType === 'item') {
+                            alert(
+                                'Prefix the filter by ! for cast, @ for location or # for storyline to choose the type of item to create'
+                            )
+                        } else {
+                            onAddItem({
+                                new: true,
+                                newItemName: filterName,
+                                newItemType: filterType,
+                            })
+                        }
+                    }}
+                    disabled={filterName === '' || isSaving}
+                    title={
+                        filterName === ''
+                            ? 'Enter something in the filter box to create an item'
+                            : 'Add ' + filterType
+                    }
+                >
+                    Add new {filterType}{' '}
+                    {filterName !== '' ? <>named '{filterName}'</> : <></>} to
+                    comic
+                </PaddedButton>
+            ) : (
+                <></>
             )}
         </>
     )

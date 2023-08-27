@@ -384,6 +384,14 @@ function hijackShortcut() {
             dispatch(setCurrentComic(previous))
         })
 
+    const focusFilter = () =>
+        store.dispatch((_dispatch, getState) => {
+            const state = getState()
+            if (state.settings.values!.editMode) {
+                document.getElementById('qcext-allitems-filter')?.focus()
+            }
+        })
+
     try {
         if (typeof unsafeWindow !== undefined) {
             const shortcut = (unsafeWindow as any).shortcut
@@ -419,12 +427,7 @@ function hijackShortcut() {
             console.debug('Adding Q')
             shortcut.add(
                 'Q',
-                exportFunction(function () {
-                    // TODO
-                    // if (settings.values.editMode) {
-                    //     $('input[id^="addItem"]').focus()
-                    // }
-                }, unsafeWindow),
+                exportFunction(() => focusFilter(), unsafeWindow),
                 disable_in_input
             )
         }

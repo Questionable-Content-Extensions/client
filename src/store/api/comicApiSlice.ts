@@ -5,7 +5,6 @@ import { ComicId } from '@models/ComicId'
 import { ComicList } from '@models/ComicList'
 import { FlagType } from '@models/FlagType'
 import { ItemId } from '@models/ItemId'
-import { ItemType } from '@models/ItemType'
 import { PatchComicBody } from '@models/PatchComicBody'
 import { RemoveItemFromComicBody } from '@models/RemoveItemFromComicBody'
 import { Token } from '@models/Token'
@@ -19,6 +18,7 @@ import { RootState } from '@store/store'
 
 import constants from '~/constants'
 import { SettingValues } from '~/settings'
+import { EndpointBuilderTagTypeExtractor } from '~/tsUtils'
 
 export type GetDataQueryArgs = {
     comic: number
@@ -52,11 +52,7 @@ export type SetPublishDateMutationArgs = SharedMutationArgs & {
     isAccuratePublishDate: boolean
 }
 
-export type AddItemMutationArgs = SharedMutationArgs &
-    (
-        | { newItem: true; newItemName: string; newItemType: ItemType }
-        | { newItem: false; itemId: ItemId }
-    )
+export type AddItemMutationArgs = AddItemToComicBody
 
 export type RemoveItemMutationArgs = SharedMutationArgs & {
     itemId: ItemId
@@ -189,27 +185,12 @@ export const comicApiSlice = apiSlice.injectEndpoints({
             transformResponse: (response) => response.responseText,
         }),
         addItem: builder.mutation<string, AddItemMutationArgs>({
-            query: (args) => {
-                const sharedData = {
-                    token: args.editModeToken,
-                    comicId: args.comicId,
-                }
-                let data: AddItemToComicBody
-                if (args.newItem) {
-                    data = {
-                        ...sharedData,
-                        new: true,
-                        newItemName: args.newItemName,
-                        newItemType: args.newItemType,
-                    }
-                } else {
-                    data = { ...sharedData, new: false, itemId: args.itemId }
-                }
+            query: (body) => {
                 const url = constants.addItemToComicEndpoint
                 return {
                     url,
                     configuration: {
-                        data: JSON.stringify(data),
+                        data: JSON.stringify(body),
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json; charset=utf-8',
@@ -219,7 +200,20 @@ export const comicApiSlice = apiSlice.injectEndpoints({
             },
             transformResponse: (response) => response.responseText,
             invalidatesTags: (result, _error, args) => {
-                return result ? [{ type: 'Comic', id: args.comicId }] : []
+                const tags: TagDescription<
+                    EndpointBuilderTagTypeExtractor<typeof builder>
+                >[] = []
+                if (result) {
+                    tags.push({ type: 'Comic', id: args.comicId })
+                    if (args.new) {
+                        // If there's a new item, we need to reload the items
+                        tags.push({
+                            type: 'Item',
+                            id: 'LIST-ALL',
+                        })
+                    }
+                }
+                return tags
             },
         }),
         removeItem: builder.mutation<string, RemoveItemMutationArgs>({
