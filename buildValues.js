@@ -52,6 +52,7 @@ const userscriptHeader = `\
 // @require      <%=react-dom-js%>
 // @require      <%=react-redux-js%>
 // @require      <%=redux-logger-js%>
+// @require      <%=redux-toolkit-js%>
 // @connect      questionablextensions.net
 // @connect      questionablecontent.herokuapp.com
 // @connect      localhost
@@ -78,6 +79,8 @@ const userscriptHeaderVariables = {
             'https://unpkg.com/react-dom@17/umd/react-dom.development.js',
         'react-redux-js':
             'https://unpkg.com/react-redux@7.1.3/dist/react-redux.js',
+        'redux-toolkit-js':
+            'https://unpkg.com/@reduxjs/toolkit@1.9.5/dist/redux-toolkit.umd.js',
         version: pjson.version + '+development',
     },
     production: {
@@ -90,6 +93,8 @@ const userscriptHeaderVariables = {
             'https://unpkg.com/react-dom@17/umd/react-dom.production.min.js',
         'react-redux-js':
             'https://unpkg.com/react-redux@7.1.3/dist/react-redux.min.js',
+        'redux-toolkit-js':
+            'https://unpkg.com/@reduxjs/toolkit@1.9.5/dist/redux-toolkit.umd.min.js',
     },
 }
 

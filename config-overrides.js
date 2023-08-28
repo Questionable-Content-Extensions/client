@@ -90,13 +90,14 @@ module.exports = function override(config, env) {
         return globalThis
     }())`
 
-    // Don't bundle React; we're loading it from a CDN
+    // Don't bundle React and friends; we're loading them from a CDN
     config.externals = {
         ...config.externals,
         react: 'React',
         'react-dom': 'ReactDOM',
         'react-redux': 'ReactRedux',
         'redux-logger': 'reduxLogger',
+        '@reduxjs/toolkit': 'RTK',
     }
 
     config.resolve = {
