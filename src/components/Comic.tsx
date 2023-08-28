@@ -163,34 +163,55 @@ function Comic({
 export default connector(Comic)
 
 function useComicLoaderTimeout(
-    currentComic: number | null,
+    nextComic: number | null,
     timeout: number
 ): [boolean, () => void] {
-    const comicLoadingTimeout: React.MutableRefObject<ReturnType<
+    const [currentComic, setCurrentComic] = useState(nextComic)
+    if (currentComic !== nextComic) {
+        setCurrentComic(nextComic)
+    }
+
+    const comicLoadingTimeoutId: React.MutableRefObject<ReturnType<
         typeof setTimeout
     > | null> = useRef(null)
-    const [isLoading, __setIsLoading] = useState(false)
-    function doneLoading() {
-        if (comicLoadingTimeout.current) {
-            clearTimeout(comicLoadingTimeout.current)
-            comicLoadingTimeout.current = null
+    const [isLoading, setIsLoading] = useState(false)
+    const doneLoading = useCallback(function () {
+        if (comicLoadingTimeoutId.current) {
+            clearTimeout(comicLoadingTimeoutId.current)
+            comicLoadingTimeoutId.current = null
         }
 
-        __setIsLoading(false)
-    }
+        setIsLoading(false)
+    }, [])
     useEffect(() => {
+        // I do this just to make the effect "need" the value as a dependency;
+        // it's not actually used at all here.
         let _comic = currentComic
-        comicLoadingTimeout.current = setTimeout(() => {
-            __setIsLoading(true)
-            debug('imageLoadingTimeout triggered')
+        debug('Starting imageLoadingTimeout...')
+        comicLoadingTimeoutId.current = setTimeout(() => {
+            setIsLoading(true)
+            debug('...imageLoadingTimeout triggered')
         }, timeout)
         return () => {
-            if (comicLoadingTimeout.current) {
-                clearTimeout(comicLoadingTimeout.current)
-                comicLoadingTimeout.current = null
+            if (comicLoadingTimeoutId.current) {
+                clearTimeout(comicLoadingTimeoutId.current)
+                comicLoadingTimeoutId.current = null
             }
         }
-    }, [currentComic, timeout])
+
+        // It's really frowned upon in the React community to not use
+        // an exhaustive dependency array, but by leaving `timeout` out
+        // of it, it behaves exactly like it should, and trying to re-create
+        // that behavior manually adds a lot of extra unnecessary complexity,
+        // so I've made an executive decision to override this lint in this
+        // particular instance.
+        //
+        // If you find yourself needing to edit this hook later, disable this
+        // lint override momentarily to make sure you don't miss any other
+        // potential dependency issues.
+        //
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [currentComic /* , timeout */])
 
     return [isLoading, doneLoading]
 }

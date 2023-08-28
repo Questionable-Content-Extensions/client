@@ -21,6 +21,20 @@ export default function ComicImage({
     imageReady: () => void
 }) {
     const [comicSrc, setComicSrc] = useState(initialComicSrc)
+    const [previousImageData, setPreviousImageData] = useState(imageData)
+
+    // We need this "buffer" here because for each navigation event, we get a new
+    // `imageData` which has *the same exact values* but is a new object, and thus
+    // would cause the `useEffect` below to trigger. So by only calling
+    // `setPreviousImageData` when the *fields* are different, we prevent this
+    // unwanted extraneous `useEffect` cycle.
+    if (
+        previousImageData.comicNo !== imageData.comicNo ||
+        previousImageData.imageType !== imageData.imageType
+    ) {
+        setPreviousImageData(imageData)
+    }
+
     useEffect(() => {
         function tryImage(comic: number, imageType: KnownImageType) {
             const downloadingImage = new Image()
@@ -40,7 +54,7 @@ export default function ComicImage({
             downloadingImage.src = `./comics/${comic}.${imageExtension}`
         }
 
-        let { comicNo, imageType } = imageData
+        let { comicNo, imageType } = previousImageData
         if (comicNo && comicNo in comicExtensionCache) {
             debug(
                 `using cached image extension ${comicExtensionCache[comicNo]} for ${comicNo}`
@@ -89,14 +103,14 @@ export default function ComicImage({
                 `comic data isn't ready yet, nothing to do yet for image loading`
             )
         }
-    }, [imageData, imageReady])
+    }, [previousImageData, imageReady])
 
     return (
         <img
             id="strip"
             className="qc-ext qc-ext-comic"
             src={comicSrc}
-            alt={`Comic #${imageData.comicNo || initialComic}`}
+            alt={`Comic #${previousImageData.comicNo || initialComic}`}
         />
     )
 }
