@@ -6,13 +6,14 @@
     "scripts": {
         "start": "cross-env PORT=8124 BROWSER=none FAST_REFRESH=false WDS_SOCKET_HOST=localhost EXTEND_ESLINT=true react-app-rewired start",
         "build": "node build",
-        "react-build": "react-app-rewired build",
+        "react-build": "react-app-rewired build --stats",
         "debug-build": "react-app-rewired --inspect-brk=5858 build",
         "test": "react-app-rewired test",
         "eject": "react-scripts eject",
         "storybook": "cross-env NODE_OPTIONS=--openssl-legacy-provider start-storybook -p 6006 -s public --no-open",
         "build-storybook": "build-storybook -s public",
-        "prepare": "husky install"
+        "prepare": "husky install",
+        "analyze": "webpack-bundle-analyzer build/bundle-stats.json"
     },
     "author": "Alexander Krivács Schrøder",
     "license": "GPL-3.0",
@@ -49,7 +50,8 @@
         "tsconfig-paths-webpack-plugin": "^4.1.0",
         "typescript": "^4.9.5",
         "typescript-plugin-css-modules": "^3.4.0",
-        "webpack": "^5.74.0"
+        "webpack": "^5.74.0",
+        "webpack-bundle-analyzer": "^4.9.0"
     },
     "dependencies": {
         "@reduxjs/toolkit": "^1.7.2",
