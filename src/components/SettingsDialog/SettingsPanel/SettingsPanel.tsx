@@ -1,18 +1,15 @@
-import { SettingValues } from '~/settings'
+import { SettingValues, SettingsUpdaterFunction } from '~/settings'
 
 import NumberSetting from '../NumberSetting/NumberSetting'
 import SecretStringSetting from '../SecretStringSetting/SecretStringSetting'
 import ToggleSetting from '../ToggleSetting/ToggleSetting'
-
-// XXX: Where does this thing go?!
-export type SettingsUpdater = (s: SettingValues) => void
 
 export default function SettingsPanel({
     settings,
     updateSettings,
 }: {
     settings: SettingValues
-    updateSettings: (u: SettingsUpdater) => void
+    updateSettings: (u: SettingsUpdaterFunction) => void
 }) {
     return (
         <>

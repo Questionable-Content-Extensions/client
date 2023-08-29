@@ -1,10 +1,9 @@
-//import { SettingsUpdater } from '@hooks/useSettings'
 import { useArgs } from '@storybook/client-api'
 import { ComponentMeta, ComponentStory } from '@storybook/react'
 
-import Settings from '~/settings'
+import Settings, { SettingsUpdaterFunction } from '~/settings'
 
-import SettingsPanel, { SettingsUpdater } from './SettingsPanel'
+import SettingsPanel from './SettingsPanel'
 
 export default {
     component: SettingsPanel,
@@ -15,7 +14,7 @@ export default {
 
 const Template: ComponentStory<typeof SettingsPanel> = (args) => {
     const [_, setArgs] = useArgs()
-    const updateSettings = (s: SettingsUpdater) => {
+    const updateSettings = (s: SettingsUpdaterFunction) => {
         if (args.updateSettings) {
             args.updateSettings(s)
         }

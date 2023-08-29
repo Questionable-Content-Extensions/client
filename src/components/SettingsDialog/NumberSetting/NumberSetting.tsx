@@ -1,9 +1,7 @@
 import { useState } from 'react'
 
-import { SettingValues } from '~/settings'
+import { SettingValues, SettingsUpdaterFunction } from '~/settings'
 import { KeyOfType } from '~/tsUtils'
-
-import { SettingsUpdater } from '../SettingsPanel/SettingsPanel'
 
 export default function NumberSetting({
     settings,
@@ -15,7 +13,7 @@ export default function NumberSetting({
 }: {
     settings: SettingValues
     setting: KeyOfType<SettingValues, number>
-    updateSettings: (u: SettingsUpdater) => void
+    updateSettings: (u: SettingsUpdaterFunction) => void
     label: string
     description: string
     positiveOnly?: boolean

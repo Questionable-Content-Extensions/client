@@ -1,9 +1,7 @@
 import { useState } from 'react'
 
-import { SettingValues } from '~/settings'
+import { SettingValues, SettingsUpdaterFunction } from '~/settings'
 import { KeyOfType } from '~/tsUtils'
-
-import { SettingsUpdater } from '../SettingsPanel/SettingsPanel'
 
 export default function SecretStringSetting({
     settings,
@@ -14,7 +12,7 @@ export default function SecretStringSetting({
 }: {
     settings: SettingValues
     setting: KeyOfType<SettingValues, string>
-    updateSettings: (u: SettingsUpdater) => void
+    updateSettings: (u: SettingsUpdaterFunction) => void
     label: string
     description: string
 }) {

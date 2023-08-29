@@ -5,9 +5,9 @@ import ModalDialog from '@modals/ModalDialog/ModalDialog'
 import { updateSettings } from '@store/settingsSlice'
 import { AppDispatch, RootState } from '@store/store'
 
-import { SettingValues } from '~/settings'
+import { SettingValues, SettingsUpdaterFunction } from '~/settings'
 
-import SettingsPanel, { SettingsUpdater } from './SettingsPanel/SettingsPanel'
+import SettingsPanel from './SettingsPanel/SettingsPanel'
 
 const mapState = (state: RootState) => {
     return {
@@ -40,7 +40,7 @@ function SettingsDialog({
         return <></>
     }
 
-    const settingsUpdater = (u: SettingsUpdater) => {
+    const settingsUpdater = (u: SettingsUpdaterFunction) => {
         const updatedSettings = { ...settings }
         u(updatedSettings)
         updateSettings(updatedSettings)

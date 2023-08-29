@@ -1,9 +1,7 @@
 import ToggleButton from '@components/ToggleButton/ToggleButton'
 
-import { SettingValues } from '~/settings'
+import { SettingValues, SettingsUpdaterFunction } from '~/settings'
 import { KeyOfType } from '~/tsUtils'
-
-import { SettingsUpdater } from '../SettingsPanel/SettingsPanel'
 
 export default function ToggleSetting({
     settings,
@@ -14,7 +12,7 @@ export default function ToggleSetting({
 }: {
     settings: SettingValues
     setting: KeyOfType<SettingValues, boolean>
-    updateSettings: (u: SettingsUpdater) => void
+    updateSettings: (u: SettingsUpdaterFunction) => void
     label: string
     description: string
 }) {

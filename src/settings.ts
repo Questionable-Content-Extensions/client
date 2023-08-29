@@ -153,3 +153,5 @@ export class Settings {
 let instance: Settings | null = null
 
 export default Settings
+
+export type SettingsUpdaterFunction = (s: SettingValues) => void
