@@ -1,8 +1,9 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useMemo } from 'react'
 
 import { PaddedButton } from '@components/Button'
 import ItemNavigation from '@components/ComicDetailsPanel/ItemNavigation/ItemNavigation'
 import { NavElementMode } from '@components/NavElement/NavElement'
+import useDebouncedFilter from '@hooks/useDebouncedFilter'
 import { ComicId } from '@models/ComicId'
 import { HydratedItemNavigationData } from '@models/HydratedItemData'
 import { ItemBody } from '@models/ItemBody'
@@ -32,21 +33,7 @@ export default function FilteredNavigationData({
     editMode: boolean
     onAddItem: (item: ItemBody) => void
 }) {
-    const [filter, setFilter] = useState('')
-    const [activeFilter, setActiveFilter] = useState('')
-    useEffect(() => {
-        let filterDebounceTimeout: ReturnType<typeof setTimeout> | null =
-            setTimeout(() => {
-                setActiveFilter(filter)
-                filterDebounceTimeout = null
-            }, 500)
-        return () => {
-            if (filterDebounceTimeout !== null) {
-                clearTimeout(filterDebounceTimeout)
-                filterDebounceTimeout = null
-            }
-        }
-    }, [filter])
+    const { activeFilter, filter, setFilter } = useDebouncedFilter()
 
     const filteredItemData = useMemo(
         () => filterItems(itemData, activeFilter),
