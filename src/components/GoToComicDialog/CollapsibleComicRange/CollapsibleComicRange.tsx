@@ -3,9 +3,11 @@ import styles from './CollapsibleComicRange.module.css'
 export default function CollapsibleComicRange({
     summary,
     children,
+    initiallyOpen,
 }: {
     summary: string
     children: React.ReactChild
+    initiallyOpen: boolean
 }) {
     return (
         <details
@@ -13,6 +15,7 @@ export default function CollapsibleComicRange({
                 'mx-1 py-4 border-0 border-b border-solid border-gray-200 ' +
                 styles.details
             }
+            open={initiallyOpen}
         >
             <summary className="flex items-center font-bold">
                 {summary}

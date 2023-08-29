@@ -1,4 +1,8 @@
+import { useMemo } from 'react'
+
 import Spinner from '@components/Spinner'
+import useDebouncedFilter from '@hooks/useDebouncedFilter'
+import { ComicId } from '@models/ComicId'
 import { ComicList as ComicListModel } from '@models/ComicList'
 
 import CollapsibleComicRange from '../CollapsibleComicRange/CollapsibleComicRange'
@@ -14,6 +18,105 @@ export default function ComicList({
     onGoToComic: (comic: number) => void
     isLoading: boolean
 }) {
+    const { activeFilter, filter, setFilter } = useDebouncedFilter()
+
+    const filteredComicData = useMemo(
+        () =>
+            allComicData
+                ? filterComics(allComicData, activeFilter)
+                : allComicData,
+        [allComicData, activeFilter]
+    )
+
+    const [comicList, comicCount] = useMemo(() => {
+        const comicEntries: {
+            [thousandRange: number]: {
+                [hundredRange: number]: JSX.Element[]
+            }
+        } = {}
+        if (subDivideGotoComics) {
+            let lastThousandsRange = -1
+            let lastHundredsRange = -1
+            let lastComic = -1
+            let count = 0
+            if (filteredComicData) {
+                for (const comic of filteredComicData) {
+                    const thousandsRange = getThousandsRange(comic.comic)
+                    const hundredsRange = getHundredsRange(comic.comic)
+                    if (!(thousandsRange in comicEntries)) {
+                        comicEntries[thousandsRange] = {}
+                    }
+                    if (!(hundredsRange in comicEntries[thousandsRange])) {
+                        comicEntries[thousandsRange][hundredsRange] = []
+                    }
+
+                    comicEntries[thousandsRange][hundredsRange].push(
+                        <li key={comic.comic}>
+                            <GoToComicButton
+                                comic={comic}
+                                onClick={(comic) => onGoToComic(comic.comic)}
+                            />
+                        </li>
+                    )
+                    lastThousandsRange = thousandsRange
+                    lastHundredsRange = hundredsRange
+                    lastComic = comic.comic
+                    count++
+                }
+            }
+            const thousandDividers: JSX.Element[] = []
+            for (const thousandRange in comicEntries) {
+                const hundredDividers: JSX.Element[] = []
+                for (const hundredRange in comicEntries[thousandRange]) {
+                    let endRange = `${Number(hundredRange) + 100}`
+                    if (Number(hundredRange) === lastHundredsRange) {
+                        endRange = `${lastComic}`
+                    }
+                    hundredDividers.push(
+                        <CollapsibleComicRange
+                            initiallyOpen={count < 100}
+                            summary={`${Number(hundredRange) + 1}..${endRange}`}
+                            key={hundredRange}
+                        >
+                            <>{comicEntries[thousandRange][hundredRange]}</>
+                        </CollapsibleComicRange>
+                    )
+                }
+
+                let endRange = `${Number(thousandRange) + 1000}`
+                if (Number(thousandRange) === lastThousandsRange) {
+                    endRange = `${lastComic}`
+                }
+                thousandDividers.push(
+                    <CollapsibleComicRange
+                        initiallyOpen={count < 100}
+                        summary={`${Number(thousandRange) + 1}..${endRange}`}
+                        key={thousandRange}
+                    >
+                        <>{hundredDividers}</>
+                    </CollapsibleComicRange>
+                )
+            }
+
+            return [<div>{thousandDividers}</div>, count]
+        } else {
+            const comicEntries: JSX.Element[] = []
+            if (filteredComicData) {
+                for (const comic of filteredComicData) {
+                    comicEntries.push(
+                        <li key={comic.comic}>
+                            <GoToComicButton
+                                comic={comic}
+                                onClick={(comic) => onGoToComic(comic.comic)}
+                            />
+                        </li>
+                    )
+                }
+            }
+            return [<ul>{comicEntries}</ul>, comicEntries.length]
+        }
+    }, [filteredComicData, onGoToComic, subDivideGotoComics])
+
     if (isLoading) {
         return (
             <div className="text-center pt-4">
@@ -29,96 +132,29 @@ export default function ComicList({
         )
     }
 
-    if (subDivideGotoComics) {
-        const thousandDividers: JSX.Element[] = []
-        if (allComicData) {
-            let i = 1
-            let hundredDividers: JSX.Element[] = []
-            let lastThousand: number = 0
-            let lastHundred: number = 0
-            let comicEntries: JSX.Element[] = []
-            for (const comic of allComicData) {
-                comicEntries.push(
-                    <li key={comic.comic}>
-                        <GoToComicButton
-                            comic={comic}
-                            onClick={(comic) => onGoToComic(comic.comic)}
-                        />
-                    </li>
-                )
-
-                if (i % 100 === 0) {
-                    let start = i - 99
-                    let end = i
-                    lastHundred = i
-
-                    hundredDividers.push(
-                        <CollapsibleComicRange
-                            summary={`${start}..${end}`}
-                            key={`hundreds-${i}`}
-                        >
-                            <ul>{comicEntries}</ul>
-                        </CollapsibleComicRange>
-                    )
-                    comicEntries = []
-                }
-
-                if (i % 1000 === 0) {
-                    let start = i - 999
-                    let end = i
-                    lastThousand = i
-
-                    thousandDividers.push(
-                        <CollapsibleComicRange
-                            summary={`${start}..${end}`}
-                            key={`thousands-${i}`}
-                        >
-                            <>{hundredDividers}</>
-                        </CollapsibleComicRange>
-                    )
-                    hundredDividers = []
-                }
-                i++
-            }
-            if (comicEntries.length) {
-                // Add the last hundred and thousand things
-                hundredDividers.push(
-                    <CollapsibleComicRange
-                        summary={`${lastHundred + 1}..${allComicData.length}`}
-                        key="hundreds-last"
-                    >
-                        <ul>{comicEntries}</ul>
-                    </CollapsibleComicRange>
-                )
-            }
-            if (hundredDividers.length) {
-                thousandDividers.push(
-                    <CollapsibleComicRange
-                        summary={`${lastThousand + 1}..${allComicData.length}`}
-                        key="thousands-last"
-                    >
-                        <>{hundredDividers}</>
-                    </CollapsibleComicRange>
-                )
-            }
-        }
-        return <div>{thousandDividers}</div>
-    } else {
-        const comicEntries: JSX.Element[] = []
-        if (allComicData) {
-            for (const comic of allComicData) {
-                comicEntries.push(
-                    <li key={comic.comic}>
-                        <GoToComicButton
-                            comic={comic}
-                            onClick={(comic) => onGoToComic(comic.comic)}
-                        />
-                    </li>
-                )
-            }
-        }
-        return <ul>{comicEntries}</ul>
-    }
+    return (
+        <>
+            <input
+                id="qcext-allitems-filter"
+                type="text"
+                placeholder="Filter comics"
+                title="The value entered here filters the comics by their title"
+                value={filter}
+                onChange={(e) => setFilter(e.target.value)}
+                className="w-full border border-qc-header focus:outline-none flex-auto rounded-none pl-2 disabled:opacity-75 mb-2"
+                disabled={isLoading}
+                onMouseUp={(e) => {
+                    // 1 is middle click, supposedly
+                    if (e.button === 1) {
+                        setFilter('')
+                        e.preventDefault()
+                    }
+                }}
+            />
+            {activeFilter !== '' ? <p>{comicCount} comics match</p> : <></>}
+            {comicList}
+        </>
+    )
 }
 
 function GoToComicButton({
@@ -135,7 +171,27 @@ function GoToComicButton({
                 onClick(comic)
             }}
         >
-            Comic {comic.comic}: {comic.title}
+            Comic {comic.comic}: {comic.title}{' '}
+            {comic.tagline ? <>({comic.tagline})</> : <></>}
         </button>
     )
+}
+
+function filterComics(allComics: ComicListModel[], filter: string) {
+    return allComics.filter(
+        (c) =>
+            c.title.toUpperCase().indexOf(filter.toUpperCase()) !== -1 ||
+            (c.tagline &&
+                c.tagline.toUpperCase().indexOf(filter.toUpperCase()) !== -1)
+    )
+}
+
+function getThousandsRange(comic: ComicId) {
+    const rest = comic % 1000
+    return comic - rest
+}
+
+function getHundredsRange(comic: ComicId) {
+    const rest = comic % 100
+    return comic - rest
 }

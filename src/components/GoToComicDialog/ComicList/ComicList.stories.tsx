@@ -25,7 +25,11 @@ const Template: ComponentStory<typeof ComicList> = (args) => {
         for (let c = 1; c <= (args as any).comicCount; c++) {
             allComicData.push({
                 comic: c,
-                title: `Comic ${c}`,
+                title: generateRandomName(Math.floor(Math.random() * 10) + 5),
+                tagline:
+                    c % 3 === 0
+                        ? generateRandomName(Math.floor(Math.random() * 10) + 5)
+                        : undefined,
                 isGuestComic: false,
                 isNonCanon: false,
             })
@@ -56,3 +60,15 @@ NonSubDivided.args = {
     subDivideGotoComics: false,
 }
 NonSubDivided.storyName = 'Non-Subdivided'
+
+const randomNamePool =
+    'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
+function generateRandomName(length: number) {
+    let randomName = ''
+    for (let i = 0; i < length; i++) {
+        randomName =
+            randomName +
+            randomNamePool[Math.floor(Math.random() * randomNamePool.length)]
+    }
+    return randomName
+}

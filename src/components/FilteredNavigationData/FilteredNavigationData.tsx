@@ -63,6 +63,7 @@ export default function FilteredNavigationData({
                     // 1 is middle click, supposedly
                     if (e.button === 1) {
                         setFilter('')
+                        e.preventDefault()
                     }
                 }}
             />

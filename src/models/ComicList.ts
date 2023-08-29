@@ -4,6 +4,7 @@ import type { ComicId } from './ComicId'
 export interface ComicList {
     comic: ComicId
     title: string
+    tagline?: string
     isNonCanon: boolean
     isGuestComic: boolean
 }
