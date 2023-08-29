@@ -156,15 +156,11 @@ export const comicApiSlice = apiSlice.injectEndpoints({
                     },
                 }
             },
-            onQueryStarted: async (
-                { comic, body },
-                { dispatch, queryFulfilled }
-            ) => {
-                // TODO: Convert to `invalidatesTags`
-                try {
-                    await queryFulfilled
-
-                    const tags: TagDescription<'Comic' | 'Item'>[] = []
+            invalidatesTags: (result, _error, { body, comic }) => {
+                const tags: TagDescription<
+                    EndpointBuilderTagTypeExtractor<typeof builder>
+                >[] = []
+                if (result) {
                     tags.push({ type: 'Comic', id: comic })
                     if (body.isGuestComic || body.isNonCanon) {
                         tags.push({
@@ -178,9 +174,9 @@ export const comicApiSlice = apiSlice.injectEndpoints({
                             id: 'ALL',
                         })
                     }
+                }
 
-                    dispatch(apiSlice.util.invalidateTags(tags))
-                } catch {}
+                return tags
             },
             transformResponse: (response) => response.responseText,
         }),
