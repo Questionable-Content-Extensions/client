@@ -25,7 +25,7 @@ import ComicDetailsPanel from '@components/ComicDetailsPanel/ComicDetailsPanel'
 import ComicNavigation from '@components/ComicNavigation'
 import ComicTitle from '@components/ComicTitle'
 import DateComponent from '@components/Date'
-import EditorModePanel from '@components/EditorModePanel'
+import EditorModePanel from '@components/EditorModePanel/EditorModePanel'
 import News from '@components/News'
 import Portals from '@components/Portals'
 import {

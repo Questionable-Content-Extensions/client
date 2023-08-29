@@ -1,10 +1,9 @@
-import { createContext, useContext, useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { ConnectedProps, connect } from 'react-redux'
 
 import useHydratedItemData from '@hooks/useHydratedItemData'
 import { HydratedItemNavigationData } from '@models/HydratedItemData'
 import { ItemType } from '@models/ItemType'
-import { NavigationData } from '@models/NavigationData'
 import { skipToken } from '@reduxjs/toolkit/dist/query'
 import {
     toGetDataQueryArgs,
@@ -30,11 +29,13 @@ import { AppDispatch, RootState } from '@store/store'
 
 import constants from '~/constants'
 
-import Button from './Button'
-import ComicFlagsWidget from './ComicFlagsWidget'
-import ErrorPresenter from './ErrorPresenter'
-import NavElement, { NavElementMode } from './NavElement/NavElement'
-import ToggleButton from './ToggleButton/ToggleButton'
+import Button from '../Button'
+import ComicFlagsWidget from '../ComicFlagsWidget'
+import ErrorPresenter from '../ErrorPresenter'
+import DateEditor from './DateEditor/DateEditor'
+import ExpandingEditor from './ExpandingEditor/ExpandingEditor'
+import MissingNavElement from './MissingNavElement/MissingNavElement'
+import TextEditor from './TextEditor/TextEditor'
 
 const mapState = (state: RootState) => {
     return {
@@ -411,205 +412,6 @@ function EditorModePanel({
 }
 
 export default connector(EditorModePanel)
-
-function MissingNavElement({
-    navigationData,
-    id,
-    title,
-    description,
-    onSetCurrentComic,
-    useColors,
-}: {
-    navigationData: NavigationData | null
-    id: number
-    title: string
-    description: string
-    onSetCurrentComic: (comic: number) => void
-    useColors: boolean
-}) {
-    if (navigationData) {
-        if (
-            navigationData.first ||
-            navigationData.previous ||
-            navigationData.next ||
-            navigationData.last
-        ) {
-            return (
-                <NavElement
-                    item={{
-                        ...navigationData,
-                        color: '5f0000',
-                        id,
-                        name: description,
-                        shortName: title,
-                        type: 'cast',
-                        count: 0,
-                    }}
-                    onSetCurrentComic={onSetCurrentComic}
-                    useColors={useColors}
-                    onShowInfoFor={() => {}}
-                    mode={NavElementMode.Editor}
-                />
-            )
-        }
-    }
-    return <></>
-}
-
-function TextEditor({
-    disabled,
-    label,
-    labelTitle,
-    inputId,
-    value,
-    onValueChange,
-    dirty,
-}: {
-    disabled: boolean
-    label: string
-    labelTitle?: string
-    inputId: string
-    value: string
-    onValueChange: (newValue: string) => void
-    dirty?: boolean
-}) {
-    const [_expanded, setExpanded] = useContext(ExpandedContext)
-    return (
-        <div className="flex min-w-0">
-            <label
-                title={labelTitle}
-                htmlFor={inputId}
-                className={
-                    `bg-qc-header text-white py-2 px-4 flex-initial rounded-l-sm rounded-r-none` +
-                    (dirty ? ' bg-qc-header-second italic' : '') +
-                    (disabled ? ' opacity-75' : '')
-                }
-            >
-                {label}
-                {dirty ? '*' : ''}
-            </label>
-            <input
-                id={inputId}
-                type="text"
-                placeholder={labelTitle ?? label}
-                value={value}
-                title={value}
-                onChange={(e) => onValueChange(e.target.value)}
-                className="min-w-0 border border-qc-header focus:outline-none flex-auto rounded-none pl-2 disabled:opacity-75"
-                disabled={disabled}
-                onFocus={() => setExpanded(true)}
-                onBlur={() => setExpanded(false)}
-            />
-        </div>
-    )
-}
-
-function DateEditor({
-    disabled,
-    label,
-    labelTitle,
-    inputId,
-    dateValue,
-    isAccurateValue,
-    onDateValueChange,
-    onIsAccurateValueChange,
-    isDateValueDirty,
-    isIsAccurateValueDirty,
-}: {
-    disabled: boolean
-    label: string
-    labelTitle?: string
-    inputId: string
-    dateValue: string
-    isAccurateValue: boolean
-    isDateValueDirty: boolean
-    isIsAccurateValueDirty: boolean
-    onDateValueChange: (newValue: string) => void
-    onIsAccurateValueChange: (newValue: boolean) => void
-}) {
-    const [_expanded, setExpanded] = useContext(ExpandedContext)
-
-    function toISOLocal(d: Date) {
-        return new Date(d.getTime() - d.getTimezoneOffset() * 60000)
-            .toISOString()
-            .slice(0, -1)
-    }
-    let dateString
-    try {
-        dateString = toISOLocal(new Date(dateValue))
-    } catch {
-        dateString = ''
-    }
-
-    return (
-        <>
-            <div className="flex min-w-0">
-                <label
-                    title={labelTitle}
-                    htmlFor={inputId}
-                    className={
-                        `bg-qc-header text-white py-2 px-4 flex-initial rounded-l-sm rounded-r-none` +
-                        (isDateValueDirty
-                            ? ' bg-qc-header-second italic'
-                            : '') +
-                        (disabled ? ' opacity-75' : '')
-                    }
-                >
-                    {label}
-                    {isDateValueDirty ? '*' : ''}
-                </label>
-
-                <input
-                    id={inputId}
-                    type="datetime-local"
-                    placeholder={labelTitle ?? label}
-                    value={dateString}
-                    title={dateValue}
-                    onChange={(e) => {
-                        try {
-                            onDateValueChange(
-                                new Date(e.target.value).toISOString()
-                            )
-                        } catch {}
-                    }}
-                    className="min-w-0 border border-qc-header focus:outline-none flex-auto rounded-none pl-2 disabled:opacity-75"
-                    disabled={disabled}
-                    onFocus={() => setExpanded(true)}
-                    onBlur={() => setExpanded(false)}
-                />
-            </div>
-            <div className="bg-stone-100">
-                <ToggleButton
-                    label="Accurate Date"
-                    checked={isAccurateValue}
-                    disabled={disabled}
-                    onChange={(e) => onIsAccurateValueChange(e.target.checked)}
-                    dirty={isIsAccurateValueDirty}
-                />
-            </div>
-        </>
-    )
-}
-
-const ExpandedContext = createContext<
-    [boolean, React.Dispatch<React.SetStateAction<boolean>>]
->([false, () => {}])
-function ExpandingEditor({ children }: { children: React.ReactChild }) {
-    const [expanded, setExpanded] = useState(false)
-
-    return (
-        <div
-            className={
-                'mt-2 transition-[width] ' +
-                (expanded ? 'lg:w-[1080px] lg:shadow-md' : 'lg:w-60')
-            }
-        >
-            <ExpandedContext.Provider value={[expanded, setExpanded]}>
-                {children}
-            </ExpandedContext.Provider>
-        </div>
-    )
-}
 
 function hasItemsOfType(items: HydratedItemNavigationData[], type: ItemType) {
     return items.filter((i) => i.type === type).length !== 0
