@@ -1,5 +1,9 @@
+import { useCallback, useMemo } from 'react'
+
+import InlineSpinner from '@components/InlineSpinner'
 import NavElement, { NavElementMode } from '@components/NavElement/NavElement'
 import Spinner from '@components/Spinner'
+import useItemNavigationDataByType from '@hooks/useItemNavigationDataByType'
 import { HydratedItemNavigationData } from '@models/HydratedItemData'
 import { ItemId } from '@models/ItemId'
 
@@ -31,30 +35,43 @@ export default function ItemNavigation({
     onRemoveItem?: (_: ItemId) => void
     onAddItem?: (_: ItemId) => void
 }) {
-    let itemNavElements: {
-        cast: React.ReactNode[]
-        location: React.ReactNode[]
-        storyline: React.ReactNode[]
-    } = {
-        cast: [],
-        location: [],
-        storyline: [],
-    }
-    for (const item of itemNavigationData) {
-        itemNavElements[item.type].push(
-            <NavElement
-                key={item.id}
-                item={item}
-                onSetCurrentComic={onSetCurrentComic}
-                useColors={useColors}
-                onShowInfoFor={onShowInfoFor}
-                mode={mode}
-                editMode={editMode}
-                onAddItem={onAddItem}
-                onRemoveItem={onRemoveItem}
-            />
-        )
-    }
+    const { cast, location, storyline } =
+        useItemNavigationDataByType(itemNavigationData)
+
+    const itemNavigationToNavElement = useCallback(
+        (item: HydratedItemNavigationData) => {
+            return (
+                <NavElement
+                    key={item.id}
+                    item={item}
+                    onSetCurrentComic={onSetCurrentComic}
+                    useColors={useColors}
+                    onShowInfoFor={onShowInfoFor}
+                    mode={mode}
+                    editMode={editMode}
+                    onAddItem={onAddItem}
+                    onRemoveItem={onRemoveItem}
+                />
+            )
+        },
+        [
+            editMode,
+            mode,
+            onAddItem,
+            onRemoveItem,
+            onSetCurrentComic,
+            onShowInfoFor,
+            useColors,
+        ]
+    )
+
+    const itemNavElements = useMemo(() => {
+        return {
+            cast: cast.map(itemNavigationToNavElement),
+            location: location.map(itemNavigationToNavElement),
+            storyline: storyline.map(itemNavigationToNavElement),
+        }
+    }, [cast, location, storyline, itemNavigationToNavElement])
 
     if (isLoading) {
         return (
@@ -78,86 +95,32 @@ export default function ItemNavigation({
     return (
         <div className="text-center">
             {itemNavElements.cast.length ? (
-                <>
-                    <h1 className="text-base font-normal text-center m-2">
-                        <span className="invisible">
-                            <SpinningLoader />
-                        </span>
-                        Cast Members
-                        <span
-                            className={
-                                'inline-block align-middle' +
-                                (!isFetching ? ' invisible' : '')
-                            }
-                        >
-                            <SpinningLoader />
-                        </span>
-                    </h1>
-                    {mode === NavElementMode.Missing ? (
-                        <h2 className="text-xs font-normal text-center">
-                            (Non-Present)
-                        </h2>
-                    ) : (
-                        <></>
-                    )}
-                    {itemNavElements.cast}
-                </>
+                <ItemTypeSection
+                    header="Cast Members"
+                    isFetching={isFetching}
+                    mode={mode}
+                    elements={itemNavElements.cast}
+                />
             ) : (
                 <></>
             )}
             {itemNavElements.location.length ? (
-                <>
-                    <h1 className="text-base font-normal text-center m-2">
-                        <span className="invisible">
-                            <SpinningLoader />
-                        </span>
-                        Locations
-                        <span
-                            className={
-                                'inline-block align-middle' +
-                                (!isFetching ? ' invisible' : '')
-                            }
-                        >
-                            <SpinningLoader />
-                        </span>
-                    </h1>
-                    {mode === NavElementMode.Missing ? (
-                        <h2 className="text-xs font-normal text-center">
-                            (Non-Present)
-                        </h2>
-                    ) : (
-                        <></>
-                    )}
-                    {itemNavElements.location}
-                </>
+                <ItemTypeSection
+                    header="Locations"
+                    isFetching={isFetching}
+                    mode={mode}
+                    elements={itemNavElements.location}
+                />
             ) : (
                 <></>
             )}
             {itemNavElements.storyline.length ? (
-                <>
-                    <h1 className="text-base font-normal text-center m-2">
-                        <span className="invisible">
-                            <SpinningLoader />
-                        </span>
-                        Storylines
-                        <span
-                            className={
-                                'inline-block align-middle' +
-                                (!isFetching ? ' invisible' : '')
-                            }
-                        >
-                            <SpinningLoader />
-                        </span>
-                    </h1>
-                    {mode === NavElementMode.Missing ? (
-                        <h2 className="text-xs font-normal text-center">
-                            (Non-Present)
-                        </h2>
-                    ) : (
-                        <></>
-                    )}
-                    {itemNavElements.storyline}
-                </>
+                <ItemTypeSection
+                    header="Storylines"
+                    isFetching={isFetching}
+                    mode={mode}
+                    elements={itemNavElements.storyline}
+                />
             ) : (
                 <></>
             )}
@@ -165,27 +128,41 @@ export default function ItemNavigation({
     )
 }
 
-function SpinningLoader() {
+function ItemTypeSection({
+    header,
+    isFetching,
+    mode,
+    elements,
+}: {
+    header: string
+    isFetching: boolean
+    mode: NavElementMode
+    elements: JSX.Element[]
+}) {
     return (
-        <svg
-            className="animate-spin ml-1 mr-3 h-5 w-5 text-qc-header"
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-        >
-            <circle
-                className="opacity-25"
-                cx="12"
-                cy="12"
-                r="10"
-                stroke="currentColor"
-                strokeWidth="4"
-            ></circle>
-            <path
-                className="opacity-75"
-                fill="currentColor"
-                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-            ></path>
-        </svg>
+        <>
+            <h1 className="text-base font-normal text-center m-2">
+                <span className="invisible">
+                    <InlineSpinner />
+                </span>
+                {header}
+                <span
+                    className={
+                        'inline-block align-middle' +
+                        (!isFetching ? ' invisible' : '')
+                    }
+                >
+                    <InlineSpinner />
+                </span>
+            </h1>
+            {mode === NavElementMode.Missing ? (
+                <h2 className="text-xs font-normal text-center">
+                    (Non-Present)
+                </h2>
+            ) : (
+                <></>
+            )}
+            {elements}
+        </>
     )
 }

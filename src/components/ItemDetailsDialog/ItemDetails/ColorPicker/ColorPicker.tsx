@@ -1,6 +1,8 @@
 import { useState } from 'react'
 import { SketchPicker } from 'react-color'
 
+import Popup from '@components/Popup'
+
 import { createTintOrShade } from '~/color'
 
 export default function ColorPicker({
@@ -39,27 +41,16 @@ export default function ColorPicker({
                         aria-hidden="true"
                     ></i>
                 </button>
-                {showPicker ? (
-                    <span className="absolute z-[2] pt-2">
-                        <span
-                            className="fixed inset-0"
-                            onClick={(e) => {
-                                e.preventDefault()
-                                setShowPicker(false)
-                            }}
-                        ></span>
-                        <SketchPicker
-                            color={color}
-                            disableAlpha={true}
-                            onChange={(r) => {
-                                setColor(r.hex)
-                            }}
-                            presetColors={[]}
-                        />
-                    </span>
-                ) : (
-                    <></>
-                )}
+                <Popup show={showPicker} onClose={() => setShowPicker(false)}>
+                    <SketchPicker
+                        color={color}
+                        disableAlpha={true}
+                        onChange={(r) => {
+                            setColor(r.hex)
+                        }}
+                        presetColors={[]}
+                    />
+                </Popup>
             </span>
 
             <span className="p-1 ml-1 inline-block align-middle rounded-sm border border-solid border-gray-200">

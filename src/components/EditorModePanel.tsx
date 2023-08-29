@@ -79,7 +79,7 @@ const mapDispatch = (dispatch: AppDispatch) => {
 
 const connector = connect(mapState, mapDispatch)
 type PropsFromRedux = ConnectedProps<typeof connector>
-type EditorModeExtraWidgetProps = PropsFromRedux & {}
+type EditorModePanelProps = PropsFromRedux & {}
 
 // TODO: Show editor log function
 // Make it so it's possible to both show all logs and only logs for the
@@ -104,7 +104,7 @@ function EditorModePanel({
     setPublishDate,
     setIsAccuratePublishDate,
     saveChanges,
-}: EditorModeExtraWidgetProps) {
+}: EditorModePanelProps) {
     const dispatch = useAppDispatch()
 
     const {

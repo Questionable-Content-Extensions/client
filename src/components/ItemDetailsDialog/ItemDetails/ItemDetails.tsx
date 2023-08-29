@@ -184,7 +184,7 @@ export function ItemDetails({
                 <strong>Number of appearances:</strong> {item.appearances} of{' '}
                 {item.totalComics} ({Math.round(item.presence * 10) / 10}%)
             </p>
-            <p className="align-baseline">
+            <div className="align-baseline">
                 <span
                     className={
                         'font-bold' +
@@ -222,7 +222,7 @@ export function ItemDetails({
                 ) : (
                     <></>
                 )}
-            </p>
+            </div>
             <p>
                 <strong>Navigation bar preview:</strong>
             </p>
