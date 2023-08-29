@@ -6,6 +6,7 @@ import { ComicId } from '@models/ComicId'
 import { ComicList as ComicListModel } from '@models/ComicList'
 
 import CollapsibleComicRange from '../CollapsibleComicRange/CollapsibleComicRange'
+import GoToComicButton from './GoToComicButton/GoToComicButton'
 
 export default function ComicList({
     allComicData,
@@ -55,6 +56,7 @@ export default function ComicList({
                             <GoToComicButton
                                 comic={comic}
                                 onClick={(comic) => onGoToComic(comic.comic)}
+                                highlight={activeFilter}
                             />
                         </li>
                     )
@@ -108,6 +110,7 @@ export default function ComicList({
                             <GoToComicButton
                                 comic={comic}
                                 onClick={(comic) => onGoToComic(comic.comic)}
+                                highlight={activeFilter}
                             />
                         </li>
                     )
@@ -115,7 +118,7 @@ export default function ComicList({
             }
             return [<ul>{comicEntries}</ul>, comicEntries.length]
         }
-    }, [filteredComicData, onGoToComic, subDivideGotoComics])
+    }, [filteredComicData, onGoToComic, subDivideGotoComics, activeFilter])
 
     if (isLoading) {
         return (
@@ -151,29 +154,15 @@ export default function ComicList({
                     }
                 }}
             />
-            {activeFilter !== '' ? <p>{comicCount} comics match</p> : <></>}
+            {activeFilter !== '' ? (
+                <p>
+                    {comicCount} comic titles or taglines match '{activeFilter}'
+                </p>
+            ) : (
+                <></>
+            )}
             {comicList}
         </>
-    )
-}
-
-function GoToComicButton({
-    comic,
-    onClick,
-}: {
-    comic: ComicListModel
-    onClick: (comic: ComicListModel) => void
-}) {
-    return (
-        <button
-            className="text-left"
-            onClick={() => {
-                onClick(comic)
-            }}
-        >
-            Comic {comic.comic}: {comic.title}{' '}
-            {comic.tagline ? <>({comic.tagline})</> : <></>}
-        </button>
     )
 }
 
