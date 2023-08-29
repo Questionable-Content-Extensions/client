@@ -106,7 +106,8 @@ export default function SettingsPanel({
                 updateSettings={updateSettings}
                 label="Enable debug logs in console"
                 description={
-                    'Print debugging information in the Javascript console. Useful for debugging. Changing the setting requires a page refresh to take effect.'
+                    'Print debugging information in the Javascript console. Useful for debugging. ' +
+                    'If you discover a bug in the script, it is helpful if you include the log with this setting enabled in your bug report.'
                 }
             />
             <ToggleSetting
@@ -116,8 +117,7 @@ export default function SettingsPanel({
                 label="Enable editor mode"
                 description={
                     'Enables features for creating and changing the navigation data, such as adding cast members. Requires a valid editor token. ' +
-                    'Feel free to turn on edit mode regardless if you are curious what it is like. ' +
-                    'You simply will not be able to save any changes you make.'
+                    'Feel free to turn on edit mode regardless if you are curious what it is like.'
                 }
             />
             {/* If you are supposed to have one, you do. */}

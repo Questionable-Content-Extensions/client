@@ -52,8 +52,8 @@ const QC_EXT_CLASSNAME = 'qc-ext'
 const NAVIGATION_CONTAINER_CLASSNAME = 'qc-ext-navigation-container'
 
 async function main() {
-    const settings = await Settings.loadSettings()
-    setup(settings.values.showDebugLogs)
+    await Settings.loadSettings()
+    setup()
     store.dispatch(loadSettings())
 
     info('Running QC Extensions v' + GM.info.script.version)
@@ -92,8 +92,8 @@ async function main() {
 }
 
 async function developmentMain() {
-    const settings = await Settings.loadSettings()
-    setup(settings.values.showDebugLogs)
+    await Settings.loadSettings()
+    setup()
 
     const scriptUrl = 'http://localhost:8124/static/js/main.js'
     info(

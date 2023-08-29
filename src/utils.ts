@@ -1,9 +1,19 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-let log = function (...args: any[]) {
-    forgotSetup()
+import Settings from './settings'
+
+const qcDebug = Function.prototype.bind.call(
+    console.debug,
+    console,
+    '%c[QC-Ext]:',
+    'color: purple; font-weight: bold'
+)
+let debug = function (...args: any[]) {
+    if (Settings.get().values.showDebugLogs) {
+        qcDebug(...args)
+    }
 }
 
-let debug = function (...args: any[]) {
+/* eslint-disable @typescript-eslint/no-unused-vars */
+let log = function (...args: any[]) {
     forgotSetup()
 }
 
@@ -28,26 +38,13 @@ function forgotSetup() {
     console.error('Console function used before call to setup()')
 }
 
-function setup(enableDebug: boolean) {
+function setup() {
     log = Function.prototype.bind.call(
         console.log,
         console,
         '%c[QC-Ext]:',
         'color: purple; font-weight: bold'
     )
-
-    // TODO: See if there's a way to make this dynamic based on the setting
-    // instead of requiring a restart.
-    if (enableDebug) {
-        debug = Function.prototype.bind.call(
-            console.debug,
-            console,
-            '%c[QC-Ext]:',
-            'color: purple; font-weight: bold'
-        )
-    } else {
-        debug = () => {}
-    }
 
     info = Function.prototype.bind.call(
         console.info,
