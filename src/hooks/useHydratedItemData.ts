@@ -16,9 +16,17 @@ export default function useHydratedItemData(
     currentComic: ComicId,
     settings: SettingValues | null
 ) {
-    const { data: itemData, isLoading, isFetching } = useAllItemsQuery()
+    const {
+        data: itemData,
+        isLoading: isLoadingAllItems,
+        isFetching: isFetchingAllItems,
+    } = useAllItemsQuery()
 
-    const { data: comicData } = useGetComicDataQuery(
+    const {
+        data: comicData,
+        isLoading: isLoadingComicData,
+        isFetching: isFetchingComicData,
+    } = useGetComicDataQuery(
         currentComic === 0 || !settings
             ? skipToken
             : toGetDataQueryArgs(currentComic, settings)
@@ -57,14 +65,21 @@ export default function useHydratedItemData(
             return {
                 comicItems: hydratedComicItemData,
                 allItems: hydratedAllItemData,
-                isLoading,
-                isFetching,
+                isLoading: isLoadingAllItems || isLoadingComicData,
+                isFetching: isFetchingAllItems || isFetchingComicData,
             }
         } else {
             return {
-                isLoading,
-                isFetching,
+                isLoading: isLoadingAllItems || isLoadingComicData,
+                isFetching: isFetchingAllItems || isFetchingComicData,
             }
         }
-    }, [itemData, comicData, isLoading, isFetching])
+    }, [
+        itemData,
+        comicData,
+        isLoadingAllItems,
+        isLoadingComicData,
+        isFetchingAllItems,
+        isFetchingComicData,
+    ])
 }
