@@ -1,4 +1,4 @@
-import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
+import { PayloadAction, createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 
 import Settings, { SettingValues } from '~/settings'
 
@@ -32,7 +32,14 @@ export const updateSettings = createAsyncThunk<SettingValues, SettingValues>(
 export const settingSlice = createSlice({
     name: 'settings',
     initialState,
-    reducers: {},
+    reducers: {
+        setSettings: (
+            state,
+            { payload: values }: PayloadAction<SettingValues>
+        ) => {
+            state.values = values
+        },
+    },
     extraReducers: (builder) => {
         builder.addCase(loadSettings.pending, (state) => {
             state.isLoading = true
@@ -51,5 +58,14 @@ export const settingSlice = createSlice({
         })
     },
 })
+
+export const {
+    /**
+     * Don't use this action outside of tests or storybook; it exists to
+     * circumvent the lack of the Greasemonkey API in those situations
+     */
+    // TODO: Maybe fake the `GM` rather than work around it(?)
+    setSettings,
+} = settingSlice.actions
 
 export default settingSlice.reducer

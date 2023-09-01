@@ -1,6 +1,8 @@
 import { ComicList as ComicDataListing } from '@models/ComicList'
 import { ComponentMeta, ComponentStory } from '@storybook/react'
 
+import { generateRandomName } from '~/mocks'
+
 import ComicList from './ComicList'
 
 export default {
@@ -60,15 +62,3 @@ NonSubDivided.args = {
     subDivideGotoComics: false,
 }
 NonSubDivided.storyName = 'Non-Subdivided'
-
-const randomNamePool =
-    'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
-function generateRandomName(length: number) {
-    let randomName = ''
-    for (let i = 0; i < length; i++) {
-        randomName =
-            randomName +
-            randomNamePool[Math.floor(Math.random() * randomNamePool.length)]
-    }
-    return randomName
-}

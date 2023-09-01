@@ -1,8 +1,8 @@
 import { EndpointBuilder } from '@reduxjs/toolkit/dist/query/endpointDefinitions'
 import { BaseQueryFn, createApi } from '@reduxjs/toolkit/query/react'
 
-import constants from '~/constants'
-import { error, fetch, warn } from '~/utils'
+import constants, { HAS_GREASEMONKEY } from '~/constants'
+import { error, fetch as gmFetch, warn } from '~/utils'
 
 export type GreasemonkeyError =
     | {
@@ -61,7 +61,7 @@ const greasemonkeyBaseQuery = ({
         const requestUrl = `${baseUrl}${url}`
         let response
         try {
-            response = await fetch(requestUrl, configuration)
+            response = await gmFetch(requestUrl, configuration)
         } catch (e) {
             error(
                 `Error while fetching URL '${requestUrl}'; config was`,
@@ -87,6 +87,67 @@ const greasemonkeyBaseQuery = ({
     }
 }
 
+const fakeGreasemonkeyBaseQuery = ({
+    baseUrl,
+}: {
+    baseUrl: string
+}): GreasemonkeyBaseQuery => {
+    return async ({ url, configuration }, _api, _extraOptions) => {
+        const requestUrl = `${baseUrl}${url}`
+
+        const requestOptions: RequestInit = {}
+        if (configuration) {
+            requestOptions.body = configuration.data
+            requestOptions.headers = configuration.headers
+            requestOptions.method = configuration.method
+        }
+
+        let response: Response
+        try {
+            response = await fetch(requestUrl, requestOptions)
+        } catch (e) {
+            error(
+                `Error while fetching URL '${requestUrl}'; config was`,
+                configuration
+            )
+            return {
+                error: {
+                    type: 'TRY_CATCH',
+                    error: e,
+                },
+            }
+        }
+
+        const gmResponse: GM.Response<undefined> = {
+            finalUrl: response.url,
+            readyState: 4,
+            responseHeaders: Array.from(response.headers).reduce((p, c) => {
+                if (p !== '') {
+                    p = p + '\n'
+                }
+                return p + `${c[0]}: ${c[1]}`
+            }, ''),
+            response: undefined,
+            responseText: await response.text(),
+            responseXML: false,
+            status: response.status,
+            statusText: response.statusText,
+        }
+
+        if (gmResponse.status === 503) {
+            warn(
+                'The server responded with 503, which indicates maintenance is ongoing.'
+            )
+            return { error: { type: 'MAINTENANCE' } }
+        } else if (gmResponse.status >= 300 || gmResponse.status === 0) {
+            error(`Got unexpected response from server`, gmResponse)
+            return { error: { type: 'STATUS_ERROR', response: gmResponse } }
+        }
+
+        return { data: gmResponse }
+    }
+}
+
 export type Builder = EndpointBuilder<
     GreasemonkeyBaseQuery,
     'Comic' | 'Item',
@@ -94,9 +155,13 @@ export type Builder = EndpointBuilder<
 >
 
 export const apiSlice = createApi({
-    baseQuery: greasemonkeyBaseQuery({
-        baseUrl: constants.webserviceBaseUrl,
-    }),
+    baseQuery: HAS_GREASEMONKEY
+        ? greasemonkeyBaseQuery({
+              baseUrl: constants.webserviceBaseUrl,
+          })
+        : fakeGreasemonkeyBaseQuery({
+              baseUrl: constants.webserviceBaseUrl,
+          }),
     tagTypes: ['Comic', 'Item'],
     endpoints: () => ({}),
 })

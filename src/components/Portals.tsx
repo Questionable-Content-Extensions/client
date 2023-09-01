@@ -1,3 +1,4 @@
+import CopyItemsDialogPortal from './CopyItemsDialog/CopyItemsDialogPortal/CopyItemsDialogPortal'
 import GoToComicDialogPortal from './GoToComicDialog/GoToComicDialogPortal'
 import ItemDetailsDialogPortal from './ItemDetailsDialog/ItemDetailsDialogPortal/ItemDetailsDialogPortal'
 import SettingsDialogPortal from './SettingsDialog/SettingDialogPortal/SettingsDialogPortal'
@@ -5,9 +6,10 @@ import SettingsDialogPortal from './SettingsDialog/SettingDialogPortal/SettingsD
 export default function Portals() {
     return (
         <>
+            <CopyItemsDialogPortal />
             <GoToComicDialogPortal />
-            <SettingsDialogPortal />
             <ItemDetailsDialogPortal />
+            <SettingsDialogPortal />
         </>
     )
 }

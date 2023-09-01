@@ -15,15 +15,21 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+/**
+ * This will be false in test environments like storybook and unit testing,
+ * which lets us avoid trying access GM.* in those cases.
+ */
+export const HAS_GREASEMONKEY = typeof GM !== 'undefined'
+
 let scriptVersion
 try {
-    if (typeof GM !== undefined) {
+    if (HAS_GREASEMONKEY) {
         scriptVersion = GM.info.script.version
     } else {
-        scriptVersion = 'Unknown'
+        scriptVersion = 'Unknown+development'
     }
 } catch {
-    scriptVersion = 'Unknown'
+    scriptVersion = 'Unknown+development'
 }
 
 // Set this to true when testing a production build of a script
@@ -72,6 +78,7 @@ const constants = {
 
     excludedComicsEndpoint: `${comicDataEndpoint}excluded` as const,
     addItemToComicEndpoint: `${comicDataEndpoint}additem` as const,
+    addItemsToComicEndpoint: `${comicDataEndpoint}additems` as const,
     removeItemFromComicEndpoint: `${comicDataEndpoint}removeitem` as const,
 
     itemImageEndpoint: `${itemDataEndpoint}image/` as const,

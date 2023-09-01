@@ -1,6 +1,6 @@
 {
     "extends": ["react-app"],
-    "ignorePatterns": ["dist/**", "build/**"],
+    "ignorePatterns": ["dist/**", "build/**", "!.storybook"],
     "rules": {
         "no-unused-vars": "off"
     },

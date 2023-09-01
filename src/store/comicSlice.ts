@@ -1,5 +1,7 @@
 import { PayloadAction, createSlice } from '@reduxjs/toolkit'
 
+import { HAS_GREASEMONKEY } from '~/constants'
+
 interface ComicState {
     current: number
     latest: number
@@ -25,6 +27,13 @@ export const comicSlice = createSlice({
                 action: PayloadAction<{ comic: number; updateHistory: boolean }>
             ) => {
                 const comic = action.payload.comic
+                state.current = comic
+
+                if (!HAS_GREASEMONKEY) {
+                    // When we're not in GM mode, we don't want to modify the browser history here
+                    return
+                }
+
                 if (action.payload.updateHistory) {
                     if (state.current === 0) {
                         window.history.replaceState(
@@ -40,7 +49,6 @@ export const comicSlice = createSlice({
                         )
                     }
                 }
-                state.current = comic
             },
             prepare: (comic: number, updateHistory: boolean = true) => {
                 return { payload: { comic, updateHistory } }

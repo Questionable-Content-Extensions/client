@@ -1,4 +1,5 @@
 import { AddItemToComicBody } from '@models/AddItemToComicBody'
+import { AddItemsToComicBody } from '@models/AddItemsToComicBody'
 import { ByIdQuery } from '@models/ByIdQuery'
 import { Comic } from '@models/Comic'
 import { ComicId } from '@models/ComicId'
@@ -57,6 +58,8 @@ export type AddItemMutationArgs = AddItemToComicBody
 export type RemoveItemMutationArgs = SharedMutationArgs & {
     itemId: ItemId
 }
+
+export type AddItemsMutationArgs = AddItemsToComicBody
 
 export const comicApiSlice = apiSlice.injectEndpoints({
     endpoints: (builder) => ({
@@ -236,6 +239,25 @@ export const comicApiSlice = apiSlice.injectEndpoints({
                 return result ? [{ type: 'Comic', id: args.comicId }] : []
             },
         }),
+        addItems: builder.mutation<string, AddItemsMutationArgs>({
+            query: (body) => {
+                const url = constants.addItemsToComicEndpoint
+                return {
+                    url,
+                    configuration: {
+                        data: JSON.stringify(body),
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json; charset=utf-8',
+                        },
+                    },
+                }
+            },
+            transformResponse: (response) => response.responseText,
+            invalidatesTags: (result, _error, args) => {
+                return result ? [{ type: 'Comic', id: args.comicId }] : []
+            },
+        }),
     }),
 })
 
@@ -246,6 +268,7 @@ export const {
     usePatchComicMutation,
     useAddItemMutation,
     useRemoveItemMutation,
+    useAddItemsMutation,
 } = comicApiSlice
 
 export function toGetDataQueryArgs(

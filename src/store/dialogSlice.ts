@@ -1,15 +1,19 @@
+import { ComicId } from '@models/ComicId'
+import { ItemId } from '@models/ItemId'
 import { PayloadAction, createSlice } from '@reduxjs/toolkit'
 
 interface DialogState {
     showGoToComicDialog: boolean
     showSettingsDialog: boolean
     showItemDetailsDialogFor: number | null
+    showCopyItemsDialogFor: number | null
 }
 
 const initialState: DialogState = {
     showGoToComicDialog: false,
     showSettingsDialog: false,
     showItemDetailsDialogFor: null,
+    showCopyItemsDialogFor: null,
 }
 
 export const dialogSlice = createSlice({
@@ -30,9 +34,15 @@ export const dialogSlice = createSlice({
         },
         setShowItemDetailsDialogFor: (
             state,
-            { payload: showItemDetailsDialogFor }: PayloadAction<number | null>
+            { payload: showItemDetailsDialogFor }: PayloadAction<ItemId | null>
         ) => {
             state.showItemDetailsDialogFor = showItemDetailsDialogFor
+        },
+        setShowCopyItemsDialog: (
+            state,
+            { payload: showCopyItemsDialog }: PayloadAction<ComicId | null>
+        ) => {
+            state.showCopyItemsDialogFor = showCopyItemsDialog
         },
     },
 })
@@ -43,4 +53,5 @@ export const {
     setShowGoToComicDialog,
     setShowSettingsDialog,
     setShowItemDetailsDialogFor,
+    setShowCopyItemsDialog,
 } = dialogSlice.actions

@@ -1,4 +1,5 @@
 import { Comic } from '@models/Comic'
+import { ComicList } from '@models/ComicList'
 import { HydratedItemNavigationData } from '@models/HydratedItemData'
 import { Item } from '@models/Item'
 import { ItemImageList } from '@models/ItemImageList'
@@ -444,3 +445,369 @@ export const MARTEN_HYDRATED: HydratedItemNavigationData = {
  */
 export const QCEXT_SERVER_DEVELOPMENT_URL =
     `${constants.developmentBaseUrl}itemdata/` as const
+
+/**
+ * Well. All the major items, and the few minor ones that appear
+ * in the mock data above.
+ */
+export const ALL_ITEMS: ItemList[] = [
+    {
+        id: 4,
+        shortName: 'Faye',
+        name: 'Faye Whitaker',
+        type: 'cast',
+        color: '341400',
+        count: 1974,
+    },
+    {
+        id: 1,
+        shortName: 'Marten',
+        name: 'Marten Reed',
+        type: 'cast',
+        color: '7d929e',
+        count: 1870,
+    },
+    {
+        id: 10,
+        shortName: 'Dora',
+        name: 'Dora Bianchi',
+        type: 'cast',
+        color: '1d1d1d',
+        count: 1205,
+    },
+    {
+        id: 94,
+        shortName: 'Coffee of Doom',
+        name: 'Coffee of Doom',
+        type: 'location',
+        color: 'f0d6bd',
+        count: 1064,
+    },
+    {
+        id: 23,
+        shortName: 'Hannelore',
+        name: 'Hannelore Ellicott-Chatham',
+        type: 'cast',
+        color: '00c1d6',
+        count: 911,
+    },
+    {
+        id: 141,
+        shortName: "Marten and Faye's Apartment",
+        name: "Marten, Claire, Faye, and Bubbles' Apartment",
+        type: 'location',
+        color: 'daeff6',
+        count: 758,
+    },
+    {
+        id: 76,
+        shortName: 'Claire',
+        name: 'Claire Augustus',
+        type: 'cast',
+        color: 'c13232',
+        count: 527,
+    },
+    {
+        id: 2,
+        shortName: 'Pintsize',
+        name: 'Pintsize',
+        type: 'cast',
+        color: '8dbd9a',
+        count: 486,
+    },
+    {
+        id: 46,
+        shortName: 'Marigold',
+        name: 'Marigold Louise Farmer',
+        type: 'cast',
+        color: '5a3e1c',
+        count: 465,
+    },
+    {
+        id: 109,
+        shortName: 'Bubbles',
+        name: 'Bubbles',
+        type: 'cast',
+        color: 'b26262',
+        count: 431,
+    },
+    {
+        id: 96,
+        shortName: 'Downtown Northampton',
+        name: 'Downtown Northampton',
+        type: 'location',
+        color: '95dffd',
+        count: 394,
+    },
+    {
+        id: 27,
+        shortName: 'Tai',
+        name: 'Tai Hubbert',
+        type: 'cast',
+        color: '5f0000',
+        count: 333,
+    },
+    {
+        id: 64,
+        shortName: 'Clinton',
+        name: 'Clinton P. Augustus',
+        type: 'cast',
+        color: 'c0c0c0',
+        count: 307,
+    },
+    {
+        id: 82,
+        shortName: 'May',
+        name: 'May (Virtual companion)',
+        type: 'cast',
+        color: 'e4f9ff',
+        count: 276,
+    },
+    {
+        id: 43,
+        shortName: 'Momo',
+        name: 'Momo-tan',
+        type: 'cast',
+        color: 'dd2875',
+        count: 263,
+    },
+    {
+        id: 259,
+        shortName: 'Roko',
+        name: 'Roko Basilisk',
+        type: 'cast',
+        color: 'debedf',
+        count: 253,
+    },
+    {
+        id: 195,
+        shortName: "Marigold's Apartment",
+        name: "Marigold's Apartment",
+        type: 'location',
+        color: '8186b6',
+        count: 247,
+    },
+    {
+        id: 3,
+        shortName: 'Steve',
+        name: 'Steve',
+        type: 'cast',
+        color: '5b2900',
+        count: 232,
+    },
+    {
+        id: 61,
+        shortName: 'Elliot',
+        name: 'Elliot',
+        type: 'cast',
+        color: 'b26d24',
+        count: 225,
+    },
+    {
+        id: 15,
+        shortName: 'Sven',
+        name: 'Sven Bianchi',
+        type: 'cast',
+        color: 'c17b27',
+        count: 220,
+    },
+    {
+        id: 144,
+        shortName: 'Brun',
+        name: 'Brunhilde Khoury',
+        type: 'cast',
+        color: 'd5d5da',
+        count: 209,
+    },
+    {
+        id: 282,
+        shortName: 'Union Robotics',
+        name: 'Union Robotics',
+        type: 'location',
+        color: '96aac3',
+        count: 205,
+    },
+    {
+        id: 29,
+        shortName: 'Angus',
+        name: 'Angus McPhee',
+        type: 'cast',
+        color: 'ce7700',
+        count: 195,
+    },
+    {
+        id: 164,
+        shortName: 'SMIF Library',
+        name: 'Smith College Williston Library',
+        type: 'location',
+        color: 'bfb757',
+        count: 191,
+    },
+    {
+        id: 56,
+        shortName: 'Dale',
+        name: 'Dale',
+        type: 'cast',
+        color: 'fafafa',
+        count: 185,
+    },
+    {
+        id: 74,
+        shortName: 'Emily',
+        name: 'Emily Azuma',
+        type: 'cast',
+        color: 'ee9c6b',
+        count: 176,
+    },
+    {
+        id: 89,
+        shortName: "Marten's Initial Apartment",
+        name: "Marten's Initial Apartment",
+        type: 'location',
+        color: '455293',
+        count: 173,
+    },
+    {
+        id: 67,
+        shortName: 'Sam',
+        name: 'Samantha Bean',
+        type: 'cast',
+        color: 'f8a673',
+        count: 160,
+    },
+    {
+        id: 11,
+        shortName: 'Raven',
+        name: 'Blodwyn Raven Pritchard',
+        type: 'cast',
+        color: 'fb0b65',
+        count: 159,
+    },
+    {
+        id: 24,
+        shortName: 'Winslow',
+        name: 'Winslow',
+        type: 'cast',
+        color: 'eeeeee',
+        count: 148,
+    },
+    {
+        id: 62,
+        shortName: 'Renee',
+        name: 'Renee',
+        type: 'cast',
+        color: '060666',
+        count: 143,
+    },
+    {
+        id: 28,
+        shortName: 'Penelope',
+        name: 'Penelope Gaines',
+        type: 'cast',
+        color: 'f3cf75',
+        count: 139,
+    },
+    {
+        id: 152,
+        shortName: "Hannelore's apartment",
+        name: "Hannelore's apartment",
+        type: 'location',
+        color: 'fbfaf3',
+        count: 135,
+    },
+    {
+        id: 185,
+        shortName: 'Bar / Restaurant (Horrible Revelation)',
+        name: 'Bar / Restaurant (Horrible Revelation)',
+        type: 'location',
+        color: '7c1414',
+        count: 131,
+    },
+    {
+        id: 262,
+        shortName: 'Yay',
+        name: 'Yaaaaaaaay Newfriend',
+        type: 'cast',
+        color: 'eff7ff',
+        count: 127,
+    },
+    {
+        id: 132,
+        shortName: 'Outside Coffee of Doom',
+        name: 'Outside Coffee of Doom',
+        type: 'location',
+        color: 'f0d5ac',
+        count: 69,
+    },
+    {
+        id: 17,
+        shortName: 'Amir',
+        name: 'Amir Afridi',
+        type: 'cast',
+        color: '003388',
+        count: 37,
+    },
+    {
+        id: 14,
+        shortName: 'Natasha',
+        name: 'Natasha',
+        type: 'cast',
+        color: '000000',
+        count: 33,
+    },
+    {
+        id: 153,
+        shortName: 'Practice space',
+        name: 'Practice space on Ward avenue',
+        type: 'location',
+        color: 'eae2dd',
+        count: 22,
+    },
+    {
+        id: 298,
+        shortName: 'Unicorn Grove',
+        name: 'Unicorn Grove',
+        type: 'location',
+        color: '7f7f7f',
+        count: 6,
+    },
+]
+
+const randomNamePool =
+    'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
+export function generateRandomName(length: number) {
+    let randomName = ''
+    for (let i = 0; i < length; i++) {
+        randomName =
+            randomName +
+            randomNamePool[Math.floor(Math.random() * randomNamePool.length)]
+    }
+    return randomName
+}
+
+/**
+ * Because thousands of comics worth of data actually takes up
+ * quite a bit of space, we're going to use generated values
+ * for most situations.
+ *
+ * @param count the number of fake comics to generate
+ * @returns a list of comics from 1 to `count` with randomly
+ * generated names
+ */
+export function getComicListMocks(count: number) {
+    const comicList: ComicList[] = []
+    for (let c = 1; c <= count; c++) {
+        comicList.push({
+            comic: c,
+            title: generateRandomName(Math.floor(Math.random() * 10) + 5),
+            tagline:
+                c % 3 === 0
+                    ? generateRandomName(Math.floor(Math.random() * 10) + 5)
+                    : undefined,
+            isGuestComic: false,
+            isNonCanon: false,
+        })
+    }
+
+    return comicList
+}

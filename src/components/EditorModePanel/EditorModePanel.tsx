@@ -32,6 +32,7 @@ import constants from '~/constants'
 import Button from '../Button'
 import ComicFlagsWidget from '../ComicFlagsWidget'
 import ErrorPresenter from '../ErrorPresenter'
+import OperationsMenu from '../OperationsMenu/OperationsMenu'
 import DateEditor from './DateEditor/DateEditor'
 import ExpandingEditor from './ExpandingEditor/ExpandingEditor'
 import MissingNavElement from './MissingNavElement/MissingNavElement'
@@ -260,9 +261,13 @@ function EditorModePanel({
                 saveChanges()
             }}
         >
-            <h1 className="-mx-2 -mt-2 mb-2 text-center small-caps text-sm font-thin border-b border-solid border-b-stone-300 border-l-0 border-t-0 border-r-0">
-                Editor Mode
-            </h1>
+            <div className="flex justify-between border-b border-solid border-b-stone-300 border-l-0 border-t-0 border-r-0 -mx-2 -mt-2 mb-2">
+                <h1 className="ml-2 mb-0 text-center small-caps text-sm font-thin ">
+                    Editor Mode
+                </h1>
+
+                <OperationsMenu />
+            </div>
             {editorData && editorData.present ? (
                 <>
                     <MissingNavElement

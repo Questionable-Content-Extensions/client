@@ -43,6 +43,7 @@
         "cross-env": "^7.0.3",
         "husky": "^8.0.3",
         "lint-staged": "^13.2.3",
+        "msw": "^1.2.5",
         "postcss": "^8.4.16",
         "prettier": "2.5.1",
         "prop-types": "^15.8.1",
@@ -87,5 +88,8 @@
         "**/*.{js,jsx,ts,tsx}": [
             "eslint --max-warnings 0"
         ]
+    },
+    "msw": {
+        "workerDirectory": "public"
     }
 }

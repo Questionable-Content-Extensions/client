@@ -85,6 +85,7 @@ export default function FilteredNavigationData({
                     />
                 </div>
             ) : (
+                // TODO: This shows when there's an error. Handle error properly.
                 <p className="italic">
                     No {filterType} found matching '{filterName}'
                 </p>
