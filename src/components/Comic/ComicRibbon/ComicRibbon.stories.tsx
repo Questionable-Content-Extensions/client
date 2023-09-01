@@ -1,3 +1,4 @@
+import FakeComic from '@storybook/FakeComic'
 import { ComponentMeta, ComponentStory } from '@storybook/react'
 
 import ComicRibbon, { RibbonType } from './ComicRibbon'
@@ -26,12 +27,7 @@ const Template: ComponentStory<typeof ComicRibbon> = (args) => {
 
     return (
         <div className="relative inline-block mt-4 mr-4">
-            <div
-                className="bg-gray-400 grid place-content-center place-items-center"
-                style={{ width: '600px', height: '1200px' }}
-            >
-                <div className="text-gray-600 text-9xl">Comic</div>
-            </div>
+            <FakeComic />
             <ComicRibbon {...args} />
         </div>
     )

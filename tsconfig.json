@@ -8,6 +8,7 @@
             "@modals/*": ["src/components/Modals/*"],
             "@services/*": ["src/services/*"],
             "@components/*": ["src/components/*"],
+            "@storybook/*": ["src/storybook/*"],
             "~/*": ["src/*"]
         },
         "target": "es2016",
