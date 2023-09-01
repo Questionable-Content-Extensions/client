@@ -68,7 +68,7 @@ export default function FilteredNavigationData({
                 }}
             />
 
-            {filteredItemData.length > 0 || isLoading ? (
+            {(filteredItemData.length > 0 || isLoading) && !hasError ? (
                 <div className="overflow-y-auto overflow-x-hidden max-h-52">
                     <ItemNavigation
                         itemNavigationData={filteredItemData}
@@ -84,8 +84,9 @@ export default function FilteredNavigationData({
                         }
                     />
                 </div>
+            ) : hasError ? (
+                <></>
             ) : (
-                // TODO: This shows when there's an error. Handle error properly.
                 <p className="italic">
                     No {filterType} found matching '{filterName}'
                 </p>
