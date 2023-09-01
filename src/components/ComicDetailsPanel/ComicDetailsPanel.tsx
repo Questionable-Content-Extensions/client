@@ -95,6 +95,8 @@ function QcExtMainWidget({
         allItems,
         isLoading: isLoadingInitialItemData,
         isFetching: isFetchingItemData,
+        isError: hasErrorLoadingItemData,
+        refetch: refreshItemData,
     } = useHydratedItemData(currentComic, settings)
 
     const isLoadingInitial =
@@ -225,7 +227,12 @@ function QcExtMainWidget({
                 <div className="grid grid-cols-2 space-x-1">
                     <Button
                         className="py-2"
-                        onClick={() => refreshComicData()}
+                        onClick={() => {
+                            refreshComicData()
+                            if (hasErrorLoadingItemData) {
+                                refreshItemData()
+                            }
+                        }}
                         disabled={isFetching || isSaving}
                     >
                         Refresh

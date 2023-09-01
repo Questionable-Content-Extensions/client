@@ -12,6 +12,14 @@ import { useAllItemsQuery } from '@store/api/itemApiSlice'
 import { SettingValues } from '~/settings'
 import { error } from '~/utils'
 
+export type HydratedItemData = {
+    comicItems?: HydratedItemNavigationData[]
+    allItems?: HydratedItemNavigationData[]
+    isLoading: boolean
+    isFetching: boolean
+    refetch: () => void
+}
+
 export default function useHydratedItemData(
     currentComic: ComicId,
     settings: SettingValues | null
@@ -20,24 +28,28 @@ export default function useHydratedItemData(
         data: itemData,
         isLoading: isLoadingAllItems,
         isFetching: isFetchingAllItems,
+        isError: isErrorAllItems,
+        refetch: refetchAllItems,
     } = useAllItemsQuery()
 
     const {
         data: comicData,
         isLoading: isLoadingComicData,
         isFetching: isFetchingComicData,
+        isError: isErrorComicData,
+        refetch: refetchComicData,
     } = useGetComicDataQuery(
         currentComic === 0 || !settings
             ? skipToken
             : toGetDataQueryArgs(currentComic, settings)
     )
 
-    return useMemo<{
-        comicItems?: HydratedItemNavigationData[]
-        allItems?: HydratedItemNavigationData[]
-        isLoading: boolean
-        isFetching: boolean
-    }>(() => {
+    const [hydratedComicItemData, hydratedAllItemData] = useMemo<
+        [
+            HydratedItemNavigationData[] | undefined,
+            HydratedItemNavigationData[] | undefined
+        ]
+    >(() => {
         if (itemData && comicData) {
             let hydratedComicItemData: HydratedItemNavigationData[] | undefined
             if (comicData.hasData) {
@@ -51,8 +63,9 @@ export default function useHydratedItemData(
                     hydratedComicItemData.push({ ...comicItem, ...item })
                 }
             }
-            const hydratedAllItemData: HydratedItemNavigationData[] = []
+            let hydratedAllItemData: HydratedItemNavigationData[] | undefined
             if (comicData.allItems) {
+                hydratedAllItemData = []
                 for (const comicItem of comicData.allItems) {
                     const item = itemData.find((i) => i.id === comicItem.id)
                     if (!item) {
@@ -62,24 +75,21 @@ export default function useHydratedItemData(
                     hydratedAllItemData.push({ ...comicItem, ...item })
                 }
             }
-            return {
-                comicItems: hydratedComicItemData,
-                allItems: hydratedAllItemData,
-                isLoading: isLoadingAllItems || isLoadingComicData,
-                isFetching: isFetchingAllItems || isFetchingComicData,
-            }
-        } else {
-            return {
-                isLoading: isLoadingAllItems || isLoadingComicData,
-                isFetching: isFetchingAllItems || isFetchingComicData,
-            }
+
+            return [hydratedComicItemData, hydratedAllItemData]
         }
-    }, [
-        itemData,
-        comicData,
-        isLoadingAllItems,
-        isLoadingComicData,
-        isFetchingAllItems,
-        isFetchingComicData,
-    ])
+        return [undefined, undefined]
+    }, [itemData, comicData])
+
+    return {
+        comicItems: hydratedComicItemData,
+        allItems: hydratedAllItemData,
+        isLoading: isLoadingAllItems || isLoadingComicData,
+        isFetching: isFetchingAllItems || isFetchingComicData,
+        isError: isErrorAllItems || isErrorComicData,
+        refetch: () => {
+            refetchAllItems()
+            refetchComicData()
+        },
+    }
 }
