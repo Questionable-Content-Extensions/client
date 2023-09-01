@@ -1,39 +1,14 @@
-import { createLogger } from 'redux-logger'
-
 import { configureStore } from '@reduxjs/toolkit'
 import { setupListeners } from '@reduxjs/toolkit/query'
 
 import { apiSlice } from './apiSlice'
 import comicEditorReducer from './comicEditorSlice'
 import comicReducer from './comicSlice'
+import customLogger from './customLogger'
 import dialogReducer from './dialogSlice'
 import itemEditorReducer from './itemEditorSlice'
+import { rtkQueryErrorLogger } from './rtkQueryErrorLogger'
 import settingsReducer from './settingsSlice'
-
-const consoleProxy = {
-    get(target: any, prop: any, _receiver: any) {
-        if (prop in target) {
-            return target[prop]
-        }
-        if (prop in console) {
-            return (console as any)[prop]
-        }
-        console.warn(`Property ${prop} does not exist on console`)
-        return undefined
-    },
-}
-
-var debug = console.debug.bind(console)
-const logger = createLogger({
-    diff: true,
-    collapsed: true,
-    logger: new Proxy(
-        {
-            log: debug,
-        },
-        consoleProxy
-    ),
-})
 
 const store = configureStore({
     reducer: {
@@ -45,7 +20,10 @@ const store = configureStore({
         [apiSlice.reducerPath]: apiSlice.reducer,
     },
     middleware: (getDefaultMiddleware) =>
-        getDefaultMiddleware().concat(apiSlice.middleware).concat(logger),
+        getDefaultMiddleware()
+            .concat(apiSlice.middleware)
+            .concat(customLogger)
+            .concat(rtkQueryErrorLogger),
 })
 
 setupListeners(store.dispatch)

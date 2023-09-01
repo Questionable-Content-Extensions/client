@@ -17,8 +17,10 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 import { Provider } from 'react-redux'
+import { ToastContainer } from 'react-toastify'
 
 import './index.css'
+import 'react-toastify/dist/ReactToastify.min.css'
 
 import Comic from '@components/Comic/Comic'
 import ComicDetailsPanel from '@components/ComicDetailsPanel/ComicDetailsPanel'
@@ -364,6 +366,7 @@ function initializeExtraNavigation() {
                 <Portals />
                 <ComicDetailsPanel />
                 <EditorModePanel />
+                <ToastContainer />
             </Provider>
         </QcStrictMode>,
         extraContainer

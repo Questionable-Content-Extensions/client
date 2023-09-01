@@ -4,6 +4,12 @@ import { BaseQueryFn, createApi } from '@reduxjs/toolkit/query/react'
 import constants, { HAS_GREASEMONKEY } from '~/constants'
 import { error, fetch as gmFetch, warn } from '~/utils'
 
+export type GreasemonkeyErrorType = 'TRY_CATCH' | 'MAINTENANCE' | 'STATUS_ERROR'
+export const GREASMONKEY_ERROR_TYPES: GreasemonkeyErrorType[] = [
+    'TRY_CATCH',
+    'MAINTENANCE',
+    'STATUS_ERROR',
+]
 export type GreasemonkeyError =
     | {
           type: 'TRY_CATCH'
