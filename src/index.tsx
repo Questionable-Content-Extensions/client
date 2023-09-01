@@ -20,7 +20,7 @@ import { Provider } from 'react-redux'
 
 import './index.css'
 
-import Comic from '@components/Comic'
+import Comic from '@components/Comic/Comic'
 import ComicDetailsPanel from '@components/ComicDetailsPanel/ComicDetailsPanel'
 import ComicNavigation from '@components/ComicNavigation'
 import ComicTitle from '@components/ComicTitle'

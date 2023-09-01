@@ -30,9 +30,9 @@ import { AppDispatch, RootState } from '@store/store'
 import constants from '~/constants'
 
 import Button from '../Button'
-import ComicFlagsWidget from '../ComicFlagsWidget'
 import ErrorPresenter from '../ErrorPresenter'
 import OperationsMenu from '../OperationsMenu/OperationsMenu'
+import ComicFlags from './ComicFlags/ComicFlags'
 import DateEditor from './DateEditor/DateEditor'
 import ExpandingEditor from './ExpandingEditor/ExpandingEditor'
 import MissingNavElement from './MissingNavElement/MissingNavElement'
@@ -369,7 +369,7 @@ function EditorModePanel({
             </ExpandingEditor>
             <hr className="my-4 mx-0 border-solid border-b max-w-none" />
             {comicData ? (
-                <ComicFlagsWidget
+                <ComicFlags
                     isLoading={isLoadingInitial || isFetching || isEditorSaving}
                     hasError={hasErrorLoadingComicData}
                     hasCastItems={

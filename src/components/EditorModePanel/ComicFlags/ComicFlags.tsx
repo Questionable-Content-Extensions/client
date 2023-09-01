@@ -1,5 +1,6 @@
 import { ConnectedProps, connect } from 'react-redux'
 
+import ToggleButton from '@components/ToggleButton/ToggleButton'
 import { FlagType } from '@models/FlagType'
 import {
     isHasNoCastDirtySelector,
@@ -12,8 +13,6 @@ import {
     setFlag,
 } from '@store/comicEditorSlice'
 import { AppDispatch, RootState } from '@store/store'
-
-import ToggleButton from './ToggleButton/ToggleButton'
 
 const mapState = (state: RootState) => {
     return {
@@ -52,7 +51,7 @@ type ComicFlagsWidgetProps = PropsFromRedux & {
     hasStorylineItems: boolean
 }
 
-function ComicFlagsWidget({
+function ComicFlags({
     isGuestComic,
     isGuestComicDirty,
     isNonCanon,
@@ -149,4 +148,4 @@ function ComicFlagsWidget({
     )
 }
 
-export default connector(ComicFlagsWidget)
+export default connector(ComicFlags)
