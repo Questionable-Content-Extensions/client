@@ -26,7 +26,10 @@ export const rtkQueryErrorLogger: Middleware =
             if (payloadIsGreasemonkeyError(payload)) {
                 switch (payload.type) {
                     case 'MAINTENANCE':
-                        toast.info(constants.messages.maintenance)
+                        toast.info(constants.messages.maintenance, {
+                            autoClose: 30000,
+                            toastId: 'maintenance',
+                        })
                         break
 
                     case 'STATUS_ERROR':
@@ -35,7 +38,10 @@ export const rtkQueryErrorLogger: Middleware =
                                 `status code ${payload.response.status} (` +
                                 `${payload.response.statusText}) and the response was ` +
                                 `"${payload.response.responseText}"`,
-                            { autoClose: 15000 }
+                            {
+                                autoClose: 15000,
+                                toastId: 'unexpected-status-code',
+                            }
                         )
                         break
                     case 'TRY_CATCH':
@@ -44,7 +50,10 @@ export const rtkQueryErrorLogger: Middleware =
                             if (response.status === 0) {
                                 toast.error(
                                     'The QC Extensions server is not responding to requests',
-                                    { autoClose: 15000 }
+                                    {
+                                        autoClose: 15000,
+                                        toastId: 'not-responding',
+                                    }
                                 )
                             } else {
                                 toast.error(
@@ -52,13 +61,16 @@ export const rtkQueryErrorLogger: Middleware =
                                         `status code ${response.status} (` +
                                         `${response.statusText}) and the response was ` +
                                         `"${response.responseText}"`,
-                                    { autoClose: 15000 }
+                                    {
+                                        autoClose: 15000,
+                                        toastId: 'unexpected-status-code',
+                                    }
                                 )
                             }
                         } else {
                             toast.error(
                                 'Unknown error encountered. See JS console for details',
-                                { autoClose: 15000 }
+                                { autoClose: 15000, toastId: 'unknown-error' }
                             )
                         }
                         break

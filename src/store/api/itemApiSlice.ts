@@ -12,6 +12,7 @@ import {
     apiSlice,
     transformResponseByJsonParseResultText,
 } from '@store/apiSlice'
+import toastSuccess from '@store/toastSuccess'
 
 import constants from '~/constants'
 
@@ -140,6 +141,7 @@ export const itemApiSlice = apiSlice.injectEndpoints({
                     },
                 }
             },
+            onQueryStarted: toastSuccess,
             transformResponse: (response) => response.responseText,
             invalidatesTags: (result, _error, args) =>
                 result
@@ -167,6 +169,7 @@ export const itemApiSlice = apiSlice.injectEndpoints({
                     },
                 }
             },
+            onQueryStarted: toastSuccess,
             transformResponse: (response) => response.responseText,
             invalidatesTags: (result, _error, args) =>
                 result
@@ -194,6 +197,7 @@ export const itemApiSlice = apiSlice.injectEndpoints({
                     },
                 }
             },
+            onQueryStarted: toastSuccess,
             transformResponse: (response) => response.responseText,
             invalidatesTags: (result, _error, args) =>
                 result

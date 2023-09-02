@@ -1,3 +1,5 @@
+import { toast } from 'react-toastify'
+
 import { AddItemToComicBody } from '@models/AddItemToComicBody'
 import { AddItemsToComicBody } from '@models/AddItemsToComicBody'
 import { ByIdQuery } from '@models/ByIdQuery'
@@ -16,6 +18,7 @@ import {
     transformResponseByJsonParseResultText,
 } from '@store/apiSlice'
 import { RootState } from '@store/store'
+import toastSuccess from '@store/toastSuccess'
 
 import constants from '~/constants'
 import { SettingValues } from '~/settings'
@@ -159,6 +162,7 @@ export const comicApiSlice = apiSlice.injectEndpoints({
                     },
                 }
             },
+            onQueryStarted: toastSuccess,
             invalidatesTags: (result, _error, { body, comic }) => {
                 const tags: TagDescription<
                     EndpointBuilderTagTypeExtractor<typeof builder>
@@ -197,6 +201,7 @@ export const comicApiSlice = apiSlice.injectEndpoints({
                     },
                 }
             },
+            onQueryStarted: toastSuccess,
             transformResponse: (response) => response.responseText,
             invalidatesTags: (result, _error, args) => {
                 const tags: TagDescription<
@@ -234,6 +239,7 @@ export const comicApiSlice = apiSlice.injectEndpoints({
                     },
                 }
             },
+            onQueryStarted: toastSuccess,
             transformResponse: (response) => response.responseText,
             invalidatesTags: (result, _error, args) => {
                 return result ? [{ type: 'Comic', id: args.comicId }] : []
@@ -252,6 +258,18 @@ export const comicApiSlice = apiSlice.injectEndpoints({
                         },
                     },
                 }
+            },
+            onQueryStarted: async (args, api) => {
+                try {
+                    const result = await api.queryFulfilled
+                    // TODO: Instead of matching on return text (fragile) maybe re-think the return format entirely?
+                    // Take inspiration from WM.org(?)
+                    if (result.data.startsWith('No new')) {
+                        toast.info(result.data)
+                    } else {
+                        toast.success(result.data)
+                    }
+                } catch {}
             },
             transformResponse: (response) => response.responseText,
             invalidatesTags: (result, _error, args) => {
