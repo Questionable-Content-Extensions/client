@@ -37,6 +37,12 @@ export default function ItemImageViewer({
     const [currentImage, setCurrentImage] = useState(
         primaryImage ? primaryImageIndex(primaryImage) ?? 0 : 0
     )
+    const [currentPrimaryImage, setCurrentPrimaryImage] = useState(primaryImage)
+
+    if (currentPrimaryImage !== primaryImage) {
+        setCurrentPrimaryImage(primaryImage)
+        setCurrentImage(primaryImage ? primaryImageIndex(primaryImage) ?? 0 : 0)
+    }
 
     if (currentImages !== itemImageData) {
         setCurrentImages(itemImageData)
