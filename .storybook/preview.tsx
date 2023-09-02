@@ -10,9 +10,12 @@ import { Provider } from 'react-redux'
 import './qc.css'
 import '~/index.css'
 
+import { Comic } from '@models/Comic'
+import { PresentComic } from '@models/PresentComic'
 import { setSettings } from '@store/settingsSlice'
 import store from '@store/store'
 
+import { ALL_ITEMS, COMIC_DATA_666 } from '~/mocks'
 import Settings from '~/settings'
 import { setup } from '~/utils'
 
@@ -57,4 +60,57 @@ if (typeof global.process === 'undefined') {
     // Make the `worker` and `rest` references available globally,
     // so they can be accessed in stories.
     window.msw = { worker, rest }
+
+    // #region Add some default/always there msw handlers:
+    worker.use(
+        rest.get('http://localhost:3000/api/v2/itemdata/', (req, res, ctx) => {
+            const all = [...ALL_ITEMS]
+            const name =
+                'This is a mocked API response and will only be accurate for comic 666'
+            all.push({
+                id: -1,
+                name,
+                shortName: name,
+                count: 0,
+                type: 'storyline',
+                color: 'ffaabb',
+            })
+            return res(ctx.json(all))
+        })
+    )
+    worker.use(
+        rest.get(
+            'http://localhost:3000/api/v2/comicdata/:comicId',
+            (req, res, ctx) => {
+                const { comicId } = req.params
+                if (comicId === '666') {
+                    return res(
+                        ctx.delay(1000 + Math.random() * 1000),
+                        ctx.json(COMIC_DATA_666)
+                    )
+                } else {
+                    const comic: Comic = {
+                        ...COMIC_DATA_666,
+                        items: [
+                            ...(COMIC_DATA_666 as PresentComic).items,
+                            {
+                                id: -1,
+                                first: 0,
+                                last: 0,
+                                next: 0,
+                                previous: 0,
+                            },
+                        ],
+                    } as any
+                    // We pretend this takes 1-2 seconds so we get to
+                    // observe the loading UX
+                    return res(
+                        ctx.delay(1000 + Math.random() * 1000),
+                        ctx.json(comic)
+                    )
+                }
+            }
+        )
+    )
+    //#endregion
 }

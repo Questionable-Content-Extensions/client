@@ -1,11 +1,16 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { ConnectedProps, connect } from 'react-redux'
 
 import { PaddedButton } from '@components/Button'
+import useHydratedItemData from '@hooks/useHydratedItemData'
 import ModalDialog from '@modals/ModalDialog/ModalDialog'
 import { Item } from '@models/Item'
 import { ItemId } from '@models/ItemId'
 import { skipToken } from '@reduxjs/toolkit/dist/query'
+import {
+    useAddItemMutation,
+    useRemoveItemMutation,
+} from '@store/api/comicApiSlice'
 import {
     useAllDataQuery,
     useDeleteImageMutation,
@@ -28,6 +33,7 @@ const mapState = (state: RootState) => {
         settings: state.settings.values,
         editorItemId: state.itemEditor.id,
         isItemDirty: isStateDirtySelector(state),
+        currentComic: state.comic.current,
     }
 }
 
@@ -58,14 +64,16 @@ function ItemDetailsDialog({
     settings,
     editorItemId,
     isItemDirty,
+    currentComic,
     onClose,
     initialItemId,
     setCurrentComic,
     setFromItem,
     saveChanges,
 }: ItemDetailsDialogProps) {
-    const [previousInitialItemId, setPreviousInitialItemId] =
-        useState(initialItemId)
+    const [previousInitialItemId, setPreviousInitialItemId] = useState<
+        number | null
+    >(null)
     const [currentItemId, setCurrentItemId] = useState<number | null>(null)
 
     if (previousInitialItemId !== initialItemId) {
@@ -73,9 +81,14 @@ function ItemDetailsDialog({
         setCurrentItemId(initialItemId)
     }
 
-    const { itemData, imageData, friendData, locationData } = useAllDataQuery(
-        currentItemId ? { itemId: currentItemId } : skipToken
-    )
+    const {
+        itemData,
+        imageData,
+        friendData,
+        locationData,
+        isError: hasItemDataError,
+        isFetching: isItemDataFetching,
+    } = useAllDataQuery(currentItemId ? { itemId: currentItemId } : skipToken)
 
     const [previousItem, setPreviousItem] = useState(itemData)
     if (previousItem !== itemData && itemData) {
@@ -94,12 +107,41 @@ function ItemDetailsDialog({
     const [setPrimaryImage, { isLoading: _isSettingPrimaryImage }] =
         useSetPrimaryImageMutation()
 
+    const {
+        comicItems,
+        isFetching: isFetchingItemData,
+        isError: hasAllItemDataError,
+    } = useHydratedItemData(
+        settings?.editMode ?? false ? currentComic : 0,
+        settings
+    )
+
+    const existsInComic = useMemo(
+        () =>
+            !!comicItems &&
+            comicItems.find((i) => i.id === currentItemId) !== undefined,
+        [comicItems, currentItemId]
+    )
+
+    const [addItem] = useAddItemMutation()
+    const [removeItem] = useRemoveItemMutation()
+
+    const dialogTitle = useMemo(() => {
+        if (hasItemDataError || hasAllItemDataError) {
+            return 'Error'
+        }
+        if (isItemDataFetching) {
+            return 'Loading...'
+        }
+        return itemData?.name ?? 'Loading...'
+    }, [hasAllItemDataError, hasItemDataError, isItemDataFetching, itemData])
+
     return (
         <ModalDialog
             onCloseClicked={onClose}
             header={
                 <h5 className="m-0 text-xl font-medium leading-normal text-gray-800">
-                    {itemData?.name ?? 'Loading...'}
+                    {dialogTitle}
                 </h5>
             }
             body={
@@ -132,17 +174,47 @@ function ItemDetailsDialog({
                             body: { token: settings!.editModeToken, imageId },
                         })
                     }
+                    hasError={hasItemDataError || hasAllItemDataError}
                 />
             }
             footer={
                 <>
                     {settings?.editMode ?? false ? (
-                        <PaddedButton
-                            disabled={!isItemDirty}
-                            onClick={() => saveChanges()}
-                        >
-                            {isItemDirty ? 'Save changes' : 'No changes'}
-                        </PaddedButton>
+                        <>
+                            <PaddedButton
+                                onClick={() => {
+                                    if (existsInComic) {
+                                        removeItem({
+                                            comicId: currentComic,
+                                            editModeToken:
+                                                settings!.editModeToken,
+                                            itemId: currentItemId!,
+                                        })
+                                    } else {
+                                        addItem({
+                                            comicId: currentComic,
+                                            token: settings!.editModeToken,
+                                            new: false,
+                                            itemId: currentItemId!,
+                                        })
+                                    }
+                                }}
+                                disabled={isFetchingItemData}
+                            >
+                                {isFetchingItemData
+                                    ? 'Loading...'
+                                    : !existsInComic
+                                    ? 'Add item to current comic'
+                                    : 'Remove item from current comic'}
+                            </PaddedButton>
+                            <PaddedButton
+                                className="ml-2"
+                                disabled={!isItemDirty}
+                                onClick={() => saveChanges()}
+                            >
+                                {isItemDirty ? 'Save changes' : 'No changes'}
+                            </PaddedButton>
+                        </>
                     ) : (
                         <></>
                     )}

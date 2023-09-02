@@ -25,6 +25,7 @@ export default function ItemDataPanel({
     onShowItemData,
     onDeleteImage,
     onSetPrimaryImage,
+    hasError,
 }: {
     itemData: ItemData | null
     itemImageData: ItemImageData[] | null
@@ -36,7 +37,18 @@ export default function ItemDataPanel({
     onShowItemData: (itemId: ItemId) => void
     onDeleteImage: (imageId: ImageId) => void
     onSetPrimaryImage: (imageId: ImageId) => void
+    hasError: boolean
 }) {
+    if (hasError) {
+        return (
+            <div className="text-center">
+                <i className={`fa fa-warning`} aria-hidden="true"></i>
+                <br />
+                An error occurred loading the item data
+            </div>
+        )
+    }
+
     const isLoading =
         itemData === null ||
         itemImageData === null ||
