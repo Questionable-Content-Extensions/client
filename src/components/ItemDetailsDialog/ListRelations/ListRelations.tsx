@@ -1,4 +1,7 @@
 import { RelatedItem } from '@models/RelatedItem'
+import { useAllItemsQuery } from '@store/api/itemApiSlice'
+
+import { error } from '~/utils'
 
 export default function ListRelations({
     itemRelationData,
@@ -11,16 +14,25 @@ export default function ListRelations({
     totalComics: number
     onShowInfoFor: (id: number) => void
 }) {
-    if (itemRelationData.length > 0) {
+    const { data: itemData, isLoading: isLoadingAllItems } = useAllItemsQuery()
+
+    if (isLoadingAllItems) {
+        return <></>
+    } else if (itemRelationData.length > 0 && itemData) {
         const output: JSX.Element[] = []
         for (const relation of itemRelationData) {
+            const item = itemData.find((i) => i.id === relation.id)
+            if (!item) {
+                error('Item present in relation data but not item data!')
+                continue
+            }
             output.push(
                 <li key={relation.id}>
                     <button
                         className="text-qc-link hover:underline"
                         onClick={() => onShowInfoFor(relation.id)}
                     >
-                        {relation.shortName}
+                        {item.shortName}
                     </button>{' '}
                     {editMode ? (
                         <span>
