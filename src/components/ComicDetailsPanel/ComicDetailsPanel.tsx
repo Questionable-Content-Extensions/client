@@ -63,7 +63,7 @@ const connector = connect(mapState, mapDispatch)
 type PropsFromRedux = ConnectedProps<typeof connector>
 type QcExtMainWidgetProps = PropsFromRedux & {}
 
-function QcExtMainWidget({
+function ComicDetailsPanel({
     settings,
     currentComic,
     latestComic,
@@ -312,4 +312,4 @@ function QcExtMainWidget({
     )
 }
 
-export default connector(QcExtMainWidget)
+export default connector(ComicDetailsPanel)
