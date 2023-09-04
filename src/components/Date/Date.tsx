@@ -9,12 +9,7 @@ import {
 } from '@store/api/comicApiSlice'
 import { RootState } from '@store/store'
 
-const DATE_OPTIONS = {
-    weekday: 'long' as const,
-    day: 'numeric' as const,
-    month: 'long' as const,
-    year: 'numeric' as const,
-}
+import { formatDate } from '~/utils'
 
 const mapState = (state: RootState) => {
     return {
@@ -57,26 +52,11 @@ export function DateComponent({ settings, currentComic }: DateComponentProps) {
     const dateTimeString = useMemo(() => {
         const useCorrectTimeFormat = settings?.useCorrectTimeFormat ?? true
 
-        const timeOptions = {
-            hour: useCorrectTimeFormat
-                ? ('2-digit' as const)
-                : ('numeric' as const),
-            hour12: !useCorrectTimeFormat,
-            minute: '2-digit' as const,
-        }
-
         if (date) {
-            const dateString = new Intl.DateTimeFormat(
-                'en-US',
-                DATE_OPTIONS
-            ).format(date)
-            const timeString = new Intl.DateTimeFormat(
-                'en-US',
-                timeOptions
-            ).format(date)
+            const dateString = formatDate(date, useCorrectTimeFormat)
             const approximateString =
                 date && approximateDate ? ' (Approximately)' : ''
-            return `${dateString} ${timeString}${approximateString}`
+            return `${dateString}${approximateString}`
         } else {
             return null
         }

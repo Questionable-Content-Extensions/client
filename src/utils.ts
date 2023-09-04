@@ -202,3 +202,27 @@ export function nl2br(str: string, isXhtml?: boolean) {
         '$1' + breakTag + '$2'
     )
 }
+
+const DATE_OPTIONS = {
+    weekday: 'long' as const,
+    day: 'numeric' as const,
+    month: 'long' as const,
+    year: 'numeric' as const,
+}
+export function formatDate(date: Date, useCorrectTimeFormat: boolean) {
+    const timeOptions = {
+        hour: useCorrectTimeFormat
+            ? ('2-digit' as const)
+            : ('numeric' as const),
+        hour12: !useCorrectTimeFormat,
+        minute: '2-digit' as const,
+    }
+
+    const dateString = new Intl.DateTimeFormat('en-US', DATE_OPTIONS).format(
+        date
+    )
+    const timeString = new Intl.DateTimeFormat('en-US', timeOptions).format(
+        date
+    )
+    return `${dateString} ${timeString}`
+}
