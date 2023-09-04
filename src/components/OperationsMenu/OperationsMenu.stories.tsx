@@ -2,12 +2,14 @@ import { expect } from '@storybook/jest'
 import { ComponentMeta, ComponentStory } from '@storybook/react'
 import { userEvent, waitFor, within } from '@storybook/testing-library'
 
-import { OperationsMenu } from './OperationsMenu'
+import { OperationsMenu, OperationsMenuProps } from './OperationsMenu'
 
 export default {
     component: OperationsMenu,
     argTypes: {
         setShowCopyItemsDialog: { action: 'setShowCopyItemsDialog' },
+
+        setShowEditLogDialog: { action: 'setShowEditLogDialog' },
     },
 } as ComponentMeta<typeof OperationsMenu>
 
@@ -20,24 +22,53 @@ Default.args = {
     currentComic: 42,
 }
 Default.play = async ({ canvasElement, args }) => {
+    await testMenuItem(
+        canvasElement,
+        args,
+        'Copy items from another comic...',
+        (a) => a.setShowCopyItemsDialog,
+        args.currentComic
+    )
+    await testMenuItem(
+        canvasElement,
+        args,
+        'Show edit log for comic 42...',
+        (a) => a.setShowEditLogDialog,
+        args.currentComic
+    )
+    await testMenuItem(
+        canvasElement,
+        args,
+        'Show edit log...',
+        (a) => a.setShowEditLogDialog,
+        true
+    )
+}
+async function testMenuItem<T>(
+    canvasElement: HTMLElement,
+    args: OperationsMenuProps,
+    menuText: string,
+    argsFieldSelector: (args: OperationsMenuProps) => (_: T) => void,
+    argsFieldExpectedValue: T
+) {
     const canvas = within(canvasElement)
+
+    await waitFor(async () => {
+        expect(canvas.queryByText(menuText)).not.toBeInTheDocument()
+    })
 
     const menuButton = canvas.getByRole('button')
     userEvent.click(menuButton)
 
     await waitFor(async () => {
-        expect(
-            canvas.getByText('Copy items from another comic...')
-        ).toBeInTheDocument()
+        expect(canvas.getByText(menuText)).toBeInTheDocument()
     })
 
-    userEvent.click(canvas.getByText('Copy items from another comic...'))
+    userEvent.click(canvas.getByText(menuText))
 
-    expect(args.setShowCopyItemsDialog).toBeCalledWith(args.currentComic)
+    expect(argsFieldSelector(args)).toBeCalledWith(argsFieldExpectedValue)
 
     await waitFor(async () => {
-        expect(
-            canvas.queryByText('Copy items from another comic...')
-        ).not.toBeInTheDocument()
+        expect(canvas.queryByText(menuText)).not.toBeInTheDocument()
     })
 }

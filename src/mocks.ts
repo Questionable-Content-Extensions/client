@@ -5,6 +5,7 @@ import { Item } from '@models/Item'
 import { ItemImageList } from '@models/ItemImageList'
 import { ItemList } from '@models/ItemList'
 import { ItemNavigationData } from '@models/ItemNavigationData'
+import { LogResponse } from '@models/LogResponse'
 import { RelatedItem } from '@models/RelatedItem'
 
 import constants from './constants'
@@ -357,6 +358,150 @@ export const MARTEN_ITEM: ItemList = {
 export const MARTEN_HYDRATED: HydratedItemNavigationData = {
     ...MARTEN,
     ...MARTEN_ITEM,
+}
+
+export const EDIT_LOG_COMIC_4269: LogResponse = {
+    logEntries: [
+        {
+            identifier: '/u/alexschrod',
+            dateTime: '2020-05-21T14:40:10Z',
+            action: 'Set tagline on comic #4269 to "the hunt for red bot-tober"',
+        },
+        {
+            identifier: '/u/alexschrod',
+            dateTime: '2020-05-21T14:39:57Z',
+            action: 'Added location #94 (Coffee of Doom) to comic #4269',
+        },
+        {
+            identifier: '/u/alexschrod',
+            dateTime: '2020-05-21T14:39:51Z',
+            action: 'Added cast #109 (Bubbles) to comic #4269',
+        },
+        {
+            identifier: '/u/alexschrod',
+            dateTime: '2020-05-21T14:39:45Z',
+            action: 'Added cast #4 (Faye Whitaker) to comic #4269',
+        },
+    ],
+    page: 1,
+    pageCount: 1,
+    logEntryCount: 4,
+}
+
+export const LATEST_EDIT_LOG: LogResponse = {
+    logEntries: [
+        {
+            identifier: '/u/alexschrod',
+            dateTime: '2023-09-02T04:47:38Z',
+            action: 'Added cast #105 (Aurelia Augustus) to comic #4877',
+        },
+        {
+            identifier: '/u/alexschrod',
+            dateTime: '2023-09-02T04:47:34Z',
+            action: "Added location #234 (Mrs. Augustus' House) to comic #4877",
+        },
+        {
+            identifier: '/u/alexschrod',
+            dateTime: '2023-09-02T04:47:22Z',
+            action: 'Added cast #76 (Claire Augustus) to comic #4877',
+        },
+        {
+            identifier: '/u/alexschrod',
+            dateTime: '2023-09-02T04:46:16Z',
+            action: 'Added cast #329 (Hercules) to comic #4876',
+        },
+        {
+            identifier: '/u/alexschrod',
+            dateTime: '2023-09-01T16:00:48Z',
+            action: 'Added cast #64 (Clinton P. Augustus) to comic #4876',
+        },
+        {
+            identifier: '/u/alexschrod',
+            dateTime: '2023-09-01T16:00:48Z',
+            action: "Added location #317 (Elliot's Apartment) to comic #4876",
+        },
+        {
+            identifier: '/u/alexschrod',
+            dateTime: '2023-09-01T16:00:26Z',
+            action: 'Added cast #61 (Elliot) to comic #4876',
+        },
+        {
+            identifier: '/u/alexschrod',
+            dateTime: '2023-09-01T15:59:27Z',
+            action: 'Added cast #23 (Hannelore Ellicott-Chatham) to comic #4875',
+        },
+        {
+            identifier: '/u/alexschrod',
+            dateTime: '2023-09-01T15:59:27Z',
+            action: 'Added cast #64 (Clinton P. Augustus) to comic #4875',
+        },
+        {
+            identifier: '/u/alexschrod',
+            dateTime: '2023-09-01T15:59:27Z',
+            action: 'Added cast #69 (Station) to comic #4875',
+        },
+    ],
+    page: 1,
+    pageCount: 1054,
+    logEntryCount: 10531,
+}
+
+export const FAYE_EDIT_LOG: LogResponse = {
+    logEntries: [
+        {
+            identifier: '/u/alexschrod',
+            dateTime: '2023-08-20T19:10:32Z',
+            action: 'Removed cast #4 (Faye Whitaker) from comic #4865',
+        },
+        {
+            identifier: '/u/alexschrod',
+            dateTime: '2023-08-20T19:10:29Z',
+            action: 'Added cast #4 (Faye Whitaker) to comic #4865',
+        },
+        {
+            identifier: '/u/alexschrod',
+            dateTime: '2023-08-15T19:37:31Z',
+            action: 'Removed cast #4 (Faye Whitaker) from comic #3466',
+        },
+        {
+            identifier: '/u/alexschrod',
+            dateTime: '2023-08-15T19:10:25Z',
+            action: 'Added cast #4 (Faye Whitaker) to comic #3466',
+        },
+        {
+            identifier: '/u/alexschrod',
+            dateTime: '2022-06-13T04:44:03Z',
+            action: 'Added cast #4 (Faye Whitaker) to comic #4805',
+        },
+        {
+            identifier: '/u/alexschrod',
+            dateTime: '2022-06-08T13:24:49Z',
+            action: 'Added cast #4 (Faye Whitaker) to comic #4801',
+        },
+        {
+            identifier: '/u/alexschrod',
+            dateTime: '2022-06-03T02:25:51Z',
+            action: 'Added cast #4 (Faye Whitaker) to comic #4800',
+        },
+        {
+            identifier: '/u/alexschrod',
+            dateTime: '2022-06-02T01:38:18Z',
+            action: 'Added cast #4 (Faye Whitaker) to comic #4799',
+        },
+        {
+            identifier: '/u/alexschrod',
+            dateTime: '2022-06-01T14:51:18Z',
+            action: 'Added cast #4 (Faye Whitaker) to comic #4798',
+        },
+        {
+            identifier: '/u/alexschrod',
+            dateTime: '2022-05-30T01:45:26Z',
+            action: 'Added cast #4 (Faye Whitaker) to comic #4796',
+        },
+    ],
+    page: 1,
+    pageCount: 43,
+    logEntryCount: 429,
 }
 
 /**

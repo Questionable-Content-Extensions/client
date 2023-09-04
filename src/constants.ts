@@ -55,7 +55,7 @@ const webserviceBaseUrl = getWebserviceBaseUrl()
 
 const comicDataEndpoint = `comicdata/` as const
 const itemDataEndpoint = `itemdata/` as const
-const editLogUrl = `${webserviceBaseUrl}log` as const
+const editLogEndpoint = `log/` as const
 
 const constants = {
     settingsKey: 'settings' as const,
@@ -65,7 +65,7 @@ const constants = {
     developmentMode,
     comicDataEndpoint,
     itemDataEndpoint,
-    editLogUrl,
+    editLogEndpoint,
 
     // Comics after 3132 should have a tagline
     taglineThreshold: 3132 as const,

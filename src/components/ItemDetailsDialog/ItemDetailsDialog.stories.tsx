@@ -5,7 +5,7 @@ import { setSettings } from '@store/settingsSlice'
 import store from '@store/store'
 import { ComponentMeta, ComponentStory } from '@storybook/react'
 
-import { FAYE, FAYE_FRIENDS, FAYE_IMAGES } from '~/mocks'
+import { FAYE, FAYE_EDIT_LOG, FAYE_FRIENDS, FAYE_IMAGES } from '~/mocks'
 import Settings from '~/settings'
 
 import ItemDetailsDialog from './ItemDetailsDialog'
@@ -158,6 +158,18 @@ const Template: ComponentStory<typeof ItemDetailsDialog> = function (
                         ctx.text('Item removed from comic')
                     )
                 }
+            ),
+            rest.get(
+                'http://localhost:3000/api/v2/log/item',
+                (req, res, ctx) => {
+                    // We pretend this takes 1-2 seconds so we get to
+                    // observe the loading UX
+                    const page = Number(req.url.searchParams.get('page'))
+                    return res(
+                        ctx.delay(1000 + Math.random() * 1000),
+                        ctx.json({ ...FAYE_EDIT_LOG, page })
+                    )
+                }
             )
         )
     } else {
@@ -248,6 +260,18 @@ const Template: ComponentStory<typeof ItemDetailsDialog> = function (
             ),
             rest.post(
                 'http://localhost:3000/api/v2/comicdata/removeitem',
+                (req, res, ctx) => {
+                    // We pretend this takes 1-2 seconds so we get to
+                    // observe the loading UX
+                    return res(
+                        ctx.delay(1000 + Math.random() * 1000),
+                        ctx.status(500),
+                        ctx.text('Server Error')
+                    )
+                }
+            ),
+            rest.post(
+                'http://localhost:3000/api/v2/log/item',
                 (req, res, ctx) => {
                     // We pretend this takes 1-2 seconds so we get to
                     // observe the loading UX

@@ -168,7 +168,7 @@ export const apiSlice = createApi({
         : fakeGreasemonkeyBaseQuery({
               baseUrl: constants.webserviceBaseUrl,
           }),
-    tagTypes: ['Comic', 'Item'],
+    tagTypes: ['Comic', 'Item', 'Log'],
     endpoints: () => ({}),
 })
 

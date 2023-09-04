@@ -169,6 +169,16 @@ export const comicApiSlice = apiSlice.injectEndpoints({
                 >[] = []
                 if (result) {
                     tags.push({ type: 'Comic', id: comic })
+                    tags.push(
+                        {
+                            type: 'Log',
+                            id: 'FULL',
+                        },
+                        {
+                            type: 'Log',
+                            id: `comic-${comic}`,
+                        }
+                    )
                     if (body.isGuestComic || body.isNonCanon) {
                         tags.push({
                             type: 'Comic',
@@ -209,11 +219,34 @@ export const comicApiSlice = apiSlice.injectEndpoints({
                 >[] = []
                 if (result) {
                     tags.push({ type: 'Comic', id: args.comicId })
-                    if (args.new) {
+                    if (!args.new) {
+                        tags.push(
+                            {
+                                type: 'Log',
+                                id: 'FULL',
+                            },
+                            {
+                                type: 'Log',
+                                id: `comic-${args.comicId}`,
+                            },
+                            {
+                                type: 'Log',
+                                id: `item-${args.itemId}`,
+                            }
+                        )
+                    } else {
                         // If there's a new item, we need to reload the items
                         tags.push({
                             type: 'Item',
                             id: 'LIST-ALL',
+                        })
+                        // TODO: When reworking the response data, add data
+                        // that can make this invalidation less broad. Currently
+                        // we have no idea what the item id of a new item is
+                        // after it gets created on the client side.
+                        tags.push({
+                            type: 'Log',
+                            id: 'ALL',
                         })
                     }
                 }
@@ -242,7 +275,24 @@ export const comicApiSlice = apiSlice.injectEndpoints({
             onQueryStarted: toastSuccess,
             transformResponse: (response) => response.responseText,
             invalidatesTags: (result, _error, args) => {
-                return result ? [{ type: 'Comic', id: args.comicId }] : []
+                return result
+                    ? [
+                          { type: 'Comic', id: args.comicId },
+
+                          {
+                              type: 'Log',
+                              id: 'FULL',
+                          },
+                          {
+                              type: 'Log',
+                              id: `comic-${args.comicId}`,
+                          },
+                          {
+                              type: 'Log',
+                              id: `item-${args.itemId}`,
+                          },
+                      ]
+                    : []
             },
         }),
         addItems: builder.mutation<string, AddItemsMutationArgs>({
@@ -273,7 +323,30 @@ export const comicApiSlice = apiSlice.injectEndpoints({
             },
             transformResponse: (response) => response.responseText,
             invalidatesTags: (result, _error, args) => {
-                return result ? [{ type: 'Comic', id: args.comicId }] : []
+                const tags: TagDescription<
+                    EndpointBuilderTagTypeExtractor<typeof builder>
+                >[] = []
+                if (result) {
+                    tags.push({ type: 'Comic', id: args.comicId })
+
+                    tags.push(
+                        {
+                            type: 'Log',
+                            id: 'FULL',
+                        },
+                        {
+                            type: 'Log',
+                            id: `comic-${args.comicId}`,
+                        }
+                    )
+                    for (const item of args.items) {
+                        tags.push({
+                            type: 'Log',
+                            id: `item-${item.itemId}`,
+                        })
+                    }
+                }
+                return tags
             },
         }),
     }),

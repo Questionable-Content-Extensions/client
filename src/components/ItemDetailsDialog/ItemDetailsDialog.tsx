@@ -2,6 +2,9 @@ import { useEffect, useMemo, useState } from 'react'
 import { ConnectedProps, connect } from 'react-redux'
 
 import { PaddedButton } from '@components/Button'
+import EditLogPanel from '@components/EditLogDialog/EditLogPanel/EditLogPanel'
+import Pagination from '@components/EditLogDialog/Pagination/Pagination'
+import CollapsibleDetails from '@components/GoToComicDialog/CollapsibleDetails/CollapsibleDetails'
 import useHydratedItemData from '@hooks/useHydratedItemData'
 import ModalDialog from '@modals/ModalDialog/ModalDialog'
 import { Item } from '@models/Item'
@@ -16,6 +19,7 @@ import {
     useDeleteImageMutation,
     useSetPrimaryImageMutation,
 } from '@store/api/itemApiSlice'
+import { useGetLogsForItemQuery } from '@store/api/logApiSlice'
 import { setCurrentComic } from '@store/comicSlice'
 import {
     isStateDirtySelector,
@@ -75,10 +79,12 @@ function ItemDetailsDialog({
         number | null
     >(null)
     const [currentItemId, setCurrentItemId] = useState<number | null>(null)
+    const [currentLogPage, setCurrentLogPage] = useState(1)
 
     if (previousInitialItemId !== initialItemId) {
         setPreviousInitialItemId(initialItemId)
         setCurrentItemId(initialItemId)
+        setCurrentLogPage(1)
     }
 
     const {
@@ -136,6 +142,22 @@ function ItemDetailsDialog({
         return itemData?.name ?? 'Loading...'
     }, [hasAllItemDataError, hasItemDataError, isItemDataFetching, itemData])
 
+    const {
+        data: itemLogs,
+        isLoading: isLoadingItemLogs,
+        isFetching: isFetchingItemLogs,
+        isError: hasItemLogsError,
+        //refetch: reloadItemLog,
+    } = useGetLogsForItemQuery(
+        itemData && settings?.editMode && currentItemId
+            ? {
+                  token: settings.editModeToken,
+                  page: currentLogPage,
+                  id: currentItemId,
+              }
+            : skipToken
+    )
+
     return (
         <ModalDialog
             onCloseClicked={onClose}
@@ -145,37 +167,74 @@ function ItemDetailsDialog({
                 </h5>
             }
             body={
-                <ItemDataPanel
-                    itemDataUrl={
-                        constants.webserviceBaseUrl + constants.itemDataEndpoint
-                    }
-                    itemData={itemData ?? null}
-                    itemImageData={imageData ?? null}
-                    itemFriendData={friendData ?? null}
-                    itemLocationData={locationData ?? null}
-                    editMode={settings?.editMode ?? false}
-                    onGoToComic={(comicId) => {
-                        setCurrentComic(comicId)
-                        onClose()
-                    }}
-                    onShowItemData={(itemId: ItemId) => {
-                        setCurrentItemId(itemId)
-                    }}
-                    onDeleteImage={(imageId: number) => {
-                        deleteImage({
-                            itemId: editorItemId,
-                            imageId,
-                            body: { token: settings!.editModeToken },
-                        })
-                    }}
-                    onSetPrimaryImage={(imageId) =>
-                        setPrimaryImage({
-                            itemId: editorItemId,
-                            body: { token: settings!.editModeToken, imageId },
-                        })
-                    }
-                    hasError={hasItemDataError || hasAllItemDataError}
-                />
+                <>
+                    <ItemDataPanel
+                        itemDataUrl={
+                            constants.webserviceBaseUrl +
+                            constants.itemDataEndpoint
+                        }
+                        itemData={itemData ?? null}
+                        itemImageData={imageData ?? null}
+                        itemFriendData={friendData ?? null}
+                        itemLocationData={locationData ?? null}
+                        editMode={settings?.editMode ?? false}
+                        onGoToComic={(comicId) => {
+                            setCurrentComic(comicId)
+                            onClose()
+                        }}
+                        onShowItemData={(itemId: ItemId) => {
+                            setCurrentItemId(itemId)
+                        }}
+                        onDeleteImage={(imageId: number) => {
+                            deleteImage({
+                                itemId: editorItemId,
+                                imageId,
+                                body: { token: settings!.editModeToken },
+                            })
+                        }}
+                        onSetPrimaryImage={(imageId) =>
+                            setPrimaryImage({
+                                itemId: editorItemId,
+                                body: {
+                                    token: settings!.editModeToken,
+                                    imageId,
+                                },
+                            })
+                        }
+                        hasError={hasItemDataError || hasAllItemDataError}
+                    />
+                    {settings?.editMode ? (
+                        <CollapsibleDetails summary="Edit log for item">
+                            <EditLogPanel
+                                logs={itemLogs}
+                                isLoading={isLoadingItemLogs}
+                                isFetching={isFetchingItemLogs}
+                                hasError={hasItemLogsError}
+                                useCorrectTimeFormat={
+                                    settings?.useCorrectTimeFormat ?? true
+                                }
+                            />
+                            {itemLogs && itemLogs.pageCount > 1 ? (
+                                <div className="flex justify-center">
+                                    <Pagination
+                                        page={currentLogPage}
+                                        count={itemLogs.pageCount}
+                                        isFetching={isFetchingItemLogs}
+                                        onGoToPage={(page) =>
+                                            setCurrentLogPage(page)
+                                        }
+                                        boundaryCount={2}
+                                        siblingCount={2}
+                                    />
+                                </div>
+                            ) : (
+                                <></>
+                            )}
+                        </CollapsibleDetails>
+                    ) : (
+                        <></>
+                    )}
+                </>
             }
             footer={
                 <>

@@ -226,3 +226,14 @@ export function formatDate(date: Date, useCorrectTimeFormat: boolean) {
     )
     return `${dateString} ${timeString}`
 }
+
+// https://dev.to/namirsab/comment/2050
+export function range(start: number, end: number) {
+    const length = end - start + 1
+    return Array.from({ length }, (_, i) => start + i)
+}
+
+export function dbg<T>(d: string, v: T) {
+    console.log(d, v)
+    return v
+}

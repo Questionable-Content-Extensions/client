@@ -22,7 +22,7 @@ export type GetDataQueryArgs = {
 
 export const itemApiSlice = apiSlice.injectEndpoints({
     endpoints: (builder) => ({
-        all: builder.query<ItemList[], void>({
+        allItems: builder.query<ItemList[], void>({
             query: () => {
                 return {
                     url: `${constants.itemDataEndpoint}`,
@@ -149,6 +149,14 @@ export const itemApiSlice = apiSlice.injectEndpoints({
                           { type: 'Comic' },
                           { type: 'Item', id: args.item },
                           { type: 'Item', id: 'LIST-ALL' },
+                          {
+                              type: 'Log',
+                              id: 'FULL',
+                          },
+                          {
+                              type: 'Log',
+                              id: `item-${args.item}`,
+                          },
                       ]
                     : [],
         }),
@@ -178,6 +186,14 @@ export const itemApiSlice = apiSlice.injectEndpoints({
                               type: 'Item',
                               id: `${args.itemId}-images`,
                           },
+                          {
+                              type: 'Log',
+                              id: 'FULL',
+                          },
+                          {
+                              type: 'Log',
+                              id: `item-${args.itemId}`,
+                          },
                       ]
                     : [],
         }),
@@ -206,6 +222,14 @@ export const itemApiSlice = apiSlice.injectEndpoints({
                               type: 'Item',
                               id: args.itemId,
                           },
+                          {
+                              type: 'Log',
+                              id: 'FULL',
+                          },
+                          {
+                              type: 'Log',
+                              id: `item-${args.itemId}`,
+                          },
                       ]
                     : [],
         }),
@@ -213,7 +237,7 @@ export const itemApiSlice = apiSlice.injectEndpoints({
 })
 
 export const {
-    useAllQuery: useAllItemsQuery,
+    useAllItemsQuery,
     useGetItemDataQuery,
     useImageDataQuery,
     useFriendDataQuery,

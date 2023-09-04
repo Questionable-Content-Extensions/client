@@ -2,7 +2,10 @@ import { useState } from 'react'
 import { ConnectedProps, connect } from 'react-redux'
 
 import { ComicId } from '@models/ComicId'
-import { setShowCopyItemsDialog } from '@store/dialogSlice'
+import {
+    setShowCopyItemsDialog,
+    setShowEditLogDialog,
+} from '@store/dialogSlice'
 import { AppDispatch, RootState } from '@store/store'
 
 import Popup from '../Popup'
@@ -18,17 +21,21 @@ const mapDispatch = (dispatch: AppDispatch) => {
         setShowCopyItemsDialog: (comic: ComicId | null) => {
             dispatch(setShowCopyItemsDialog(comic))
         },
+        setShowEditLogDialog: (value: true | number) => {
+            dispatch(setShowEditLogDialog(value))
+        },
     }
 }
 
 const connector = connect(mapState, mapDispatch)
 type PropsFromRedux = ConnectedProps<typeof connector>
-type OperationsProps = PropsFromRedux & {}
+export type OperationsMenuProps = PropsFromRedux & {}
 
 export function OperationsMenu({
     currentComic,
     setShowCopyItemsDialog,
-}: OperationsProps) {
+    setShowEditLogDialog,
+}: OperationsMenuProps) {
     const [showPopup, setShowPopup] = useState(false)
     const [popupPosition, setPopupPosition] = useState<[number, number]>([0, 0])
     return (
@@ -40,7 +47,10 @@ export function OperationsMenu({
                     e.preventDefault()
                     setShowPopup(true)
                     const target = e.target as HTMLElement
-                    setPopupPosition([target.offsetLeft, target.offsetTop])
+                    setPopupPosition([
+                        target.offsetLeft + target.clientWidth / 2,
+                        target.offsetTop + target.clientHeight / 2,
+                    ])
                 }}
             >
                 <i
@@ -53,16 +63,32 @@ export function OperationsMenu({
                 onClose={() => setShowPopup(false)}
                 position={popupPosition}
             >
-                <div className="p-2 bg-stone-100 border border-solid border-stone-300 w-72">
-                    <button
-                        onClick={(e) => {
-                            e.preventDefault()
+                <div className="px-2 py-1 bg-stone-100 border border-solid border-stone-300 w-72 flex flex-col content-start gap-2 relative">
+                    <MenuItem
+                        onClick={() => {
                             setShowPopup(false)
                             setShowCopyItemsDialog(currentComic)
                         }}
                     >
                         Copy items from another comic...
-                    </button>
+                    </MenuItem>
+                    <hr className="-mx-2 my-0 border-solid border-b max-w-none" />
+                    <MenuItem
+                        onClick={() => {
+                            setShowPopup(false)
+                            setShowEditLogDialog(currentComic)
+                        }}
+                    >
+                        Show edit log for comic {currentComic}...
+                    </MenuItem>
+                    <MenuItem
+                        onClick={() => {
+                            setShowPopup(false)
+                            setShowEditLogDialog(true)
+                        }}
+                    >
+                        Show edit log...
+                    </MenuItem>
                 </div>
             </Popup>
         </>
@@ -70,3 +96,23 @@ export function OperationsMenu({
 }
 
 export default connector(OperationsMenu)
+
+function MenuItem({
+    children,
+    onClick,
+}: {
+    children: React.ReactNode
+    onClick: () => void
+}) {
+    return (
+        <button
+            className="text-left hover:bg-blue-600 hover:text-white -mx-2 -my-1 p-2"
+            onClick={(e) => {
+                e.preventDefault()
+                onClick()
+            }}
+        >
+            {children}
+        </button>
+    )
+}
