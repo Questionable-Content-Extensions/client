@@ -5,7 +5,7 @@ import useDebouncedFilter from '@hooks/useDebouncedFilter'
 import { ComicId } from '@models/ComicId'
 import { ComicList as ComicListModel } from '@models/ComicList'
 
-import CollapsibleComicRange from '../CollapsibleComicRange/CollapsibleComicRange'
+import CollapsibleDetails from '../CollapsibleDetails/CollapsibleDetails'
 import GoToComicButton from './GoToComicButton/GoToComicButton'
 
 export default function ComicList({
@@ -75,13 +75,14 @@ export default function ComicList({
                         endRange = `${lastComic}`
                     }
                     hundredDividers.push(
-                        <CollapsibleComicRange
+                        <CollapsibleDetails
+                            indentChildren
                             initiallyOpen={count < 100}
                             summary={`${Number(hundredRange) + 1}..${endRange}`}
                             key={hundredRange}
                         >
                             <>{comicEntries[thousandRange][hundredRange]}</>
-                        </CollapsibleComicRange>
+                        </CollapsibleDetails>
                     )
                 }
 
@@ -90,13 +91,14 @@ export default function ComicList({
                     endRange = `${lastComic}`
                 }
                 thousandDividers.push(
-                    <CollapsibleComicRange
+                    <CollapsibleDetails
+                        indentChildren
                         initiallyOpen={count < 100}
                         summary={`${Number(thousandRange) + 1}..${endRange}`}
                         key={thousandRange}
                     >
                         <>{hundredDividers}</>
-                    </CollapsibleComicRange>
+                    </CollapsibleDetails>
                 )
             }
 

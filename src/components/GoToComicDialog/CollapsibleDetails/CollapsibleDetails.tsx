@@ -1,23 +1,19 @@
-import styles from './CollapsibleComicRange.module.css'
+import styles from './CollapsibleDetails.module.css'
 
-export default function CollapsibleComicRange({
+export default function CollapsibleDetails({
     summary,
     children,
     initiallyOpen,
+    indentChildren,
 }: {
     summary: string
-    children: React.ReactChild
-    initiallyOpen: boolean
+    children: React.ReactNode
+    initiallyOpen?: boolean
+    indentChildren?: boolean
 }) {
     return (
-        <details
-            className={
-                'mx-1 py-4 border-0 border-b border-solid border-gray-200 ' +
-                styles.details
-            }
-            open={initiallyOpen}
-        >
-            <summary className="flex items-center font-bold">
+        <details className={styles.details} open={initiallyOpen}>
+            <summary className="py-4 mb-2 flex items-center font-bold border-0 border-b border-solid border-gray-200">
                 {summary}
                 <button className="ml-auto">
                     <svg
@@ -30,7 +26,7 @@ export default function CollapsibleComicRange({
                 </button>
             </summary>
 
-            <div className="mx-5">{children}</div>
+            <div className={indentChildren ? 'mx-5' : ''}>{children}</div>
         </details>
     )
 }

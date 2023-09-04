@@ -16,7 +16,7 @@ export default {
                 category: 'Data-autogeneration',
             },
         },
-        onGoToComic: { action: 'goto-comic' },
+        onGoToComic: { action: 'onGoToComic' },
     },
 } as ComponentMeta<typeof ComicList>
 
