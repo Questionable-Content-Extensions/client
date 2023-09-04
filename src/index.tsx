@@ -27,6 +27,7 @@ import ComicDetailsPanel from '@components/ComicDetailsPanel/ComicDetailsPanel'
 import ComicNavigation from '@components/ComicNavigation'
 import ComicTitle from '@components/ComicTitle'
 import DateComponent from '@components/Date/Date'
+import DebugLoadErrorPanel from '@components/DebugLoadErrorPanel'
 import EditorModePanel from '@components/EditorModePanel/EditorModePanel'
 import News from '@components/News'
 import Portals from '@components/Portals'
@@ -115,6 +116,7 @@ async function developmentMain() {
         .catch((response) => {
             if (response.status === 0) {
                 error('Could not fetch script. Are you running `npm start`?')
+                initializeDebugError()
             } else {
                 error(
                     'Could not fetch script. See response error object for potential clues.',
@@ -367,6 +369,31 @@ function initializeExtraNavigation() {
                 <ComicDetailsPanel />
                 <EditorModePanel />
                 <ToastContainer />
+            </Provider>
+        </QcStrictMode>,
+        extraContainer
+    )
+}
+
+function initializeDebugError() {
+    const container = document.querySelector<HTMLDivElement>('#container')
+    if (!container) {
+        qcBug('Could not find container element')
+        return
+    }
+
+    const extraContainer = document.createElement('div')
+    extraContainer.classList.add(
+        'qc-ext',
+        'qc-ext-extra-navigation-container',
+        'top-0',
+        'z-10'
+    )
+    container.insertAdjacentElement('beforebegin', extraContainer)
+    ReactDOM.render(
+        <QcStrictMode>
+            <Provider store={store}>
+                <DebugLoadErrorPanel />
             </Provider>
         </QcStrictMode>,
         extraContainer

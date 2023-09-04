@@ -4,12 +4,34 @@ import { GreasemonkeyError, isGreasemonkeyResponse } from '@store/apiSlice'
 import constants from '~/constants'
 import { error as logError } from '~/utils'
 
+type DebugError = {
+    isDebugError: true
+}
+
 export default function ErrorPresenter({
     error,
 }: {
-    error: GreasemonkeyError | SerializedError
+    error: GreasemonkeyError | SerializedError | DebugError
 }) {
-    if ('type' in error) {
+    if ('isDebugError' in error) {
+        return (
+            <ErrorMessage>
+                <p>
+                    You are running a development version of the Questionable
+                    Content Extensions, and the way it works is by fetching an
+                    up-to-date build of the script when the page gets
+                    loaded/refreshed. In order to accomplish this,{' '}
+                    <code>npm run start</code> must be running in the{' '}
+                    <code>qcext-client</code> project, since it validates,
+                    builds and serves said up-to-date script.
+                </p>
+                <p>
+                    Make sure <code>npm run start</code> is running and has no
+                    build errors, and then refresh this page.
+                </p>
+            </ErrorMessage>
+        )
+    } else if ('type' in error) {
         switch (error.type) {
             case 'MAINTENANCE':
                 return (
@@ -75,7 +97,7 @@ function ErrorMessage({
     children,
 }: {
     forkAwesomeIcon?: string
-    children: React.ReactChild
+    children: React.ReactNode
 }) {
     return (
         <div className="text-center pt-4">
