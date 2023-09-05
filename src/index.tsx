@@ -55,6 +55,13 @@ const QC_EXT_CLASSNAME = 'qc-ext'
 const NAVIGATION_CONTAINER_CLASSNAME = 'qc-ext-navigation-container'
 
 async function main() {
+    // HACK: Webpack CSS hack. See ./global.d.ts and ../build.js for more details.
+    if (window.qcExtBuiltCss) {
+        var style = document.createElement('style')
+        style.innerHTML = window.qcExtBuiltCss
+        document.head.appendChild(style)
+    }
+
     await Settings.loadSettings()
     setup()
     store.dispatch(loadSettings())

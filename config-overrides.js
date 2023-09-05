@@ -1,4 +1,3 @@
-const path = require('path')
 const TsconfigPathsPlugin = require('tsconfig-paths-webpack-plugin')
 
 module.exports = function override(config, env) {
@@ -14,6 +13,21 @@ module.exports = function override(config, env) {
 
     // prevent hashes for the JS files
     Object.assign(config.output, { filename: 'static/js/[name].js' })
+
+    // prevent hashes for the CSS files
+    // search for the "MiniCssExtractPlugin" so we can remove the hashing in the filename
+    for (const plugin of config.plugins) {
+        if (!plugin || !plugin.constructor) {
+            // do nothing if the plugin is null
+            continue
+        }
+        if (plugin.constructor.name === 'MiniCssExtractPlugin') {
+            Object.assign(plugin.options, {
+                filename: 'static/css/[name].css',
+            })
+            delete plugin.options.chunkFilename
+        }
+    }
 
     // Inline the source map during development for nice stack traces and
     // correct logging filename:line values
@@ -42,17 +56,21 @@ module.exports = function override(config, env) {
     }
 
     // Disable hot module reloading because Greasemonkey cannot handle it
-    // We'll instead refresh the whole page when the script changes.
+    // In Chromium-based browsers, the whole page will refresh on changes.
+    // In Firefox, nothing seems to happen.
     config.plugins = config.plugins.filter(
         (x) => !x || x.constructor.name !== 'HotModuleReplacementPlugin'
     )
 
-    // Even in production mode, we want the CSS inlined instead of put in a different file
-    // Remove the CSS extract plugin because we want CSS injected directly in
-    // the greasemonkey script
-    config.plugins = config.plugins.filter(
-        (x) => !x || x.constructor.name !== 'MiniCssExtractPlugin'
-    )
+    // Remove the CSS extract plugin in development because we want CSS
+    // injected directly in the greasemonkey script.
+    // In production, we have to use it to avoid a gnarly webpack bug.
+    // See ./src/global.d.ts and ./build.js for more details.
+    if (env.toLowerCase() === 'development') {
+        config.plugins = config.plugins.filter(
+            (x) => !x || x.constructor.name !== 'MiniCssExtractPlugin'
+        )
+    }
     ;(config.module.rules.find((x) => !!x.oneOf).oneOf || []).forEach((x) => {
         if (
             x.test &&
@@ -67,16 +85,20 @@ module.exports = function override(config, env) {
                 // This will happen if, for example, it has already been replaced
             }
         }
-        if (x.use) {
-            x.use = x.use.filter(
-                (y) =>
-                    !y.loader || !y.loader.includes('mini-css-extract-plugin')
-            )
+
+        // Same justification as above.
+        if (env.toLowerCase() === 'development') {
+            if (x.use) {
+                x.use = x.use.filter(
+                    (y) =>
+                        !y.loader ||
+                        !y.loader.includes('mini-css-extract-plugin')
+                )
+            }
         }
     })
 
-    // Make a global
-    // This shim to prevent webpack code from erroring when run in dev mode
+    // Make a globalThis shim to prevent webpack code from erroring when run in dev mode
     config.output.globalObject = `(function() {
         if (typeof globalThis === 'object') return globalThis;
         Object.defineProperty(Object.prototype, '__magic__', {

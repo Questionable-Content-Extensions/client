@@ -32,7 +32,7 @@
             }
         ]
     },
-    "include": ["src", ".storybook"],
+    "include": ["src", ".storybook", "src/global.d.ts"],
     // This is needed for Storybook
     "ts-node": {
         "compilerOptions": {

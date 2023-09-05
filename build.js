@@ -48,6 +48,13 @@ s.push(licenseBanner)
 s.push('\n')
 s.push(productionUserscriptHeader)
 s.push('\n')
+// HACK: To avoid a bug with inline CSS in webpack, we externalize it, and then
+// load it in ourselves:
+s.push('window.qcExtBuiltCss = ')
+s.push(
+    JSON.stringify(fs.readFileSync('./build/static/css/main.css').toString())
+)
+s.push(';\n')
 s.push(null)
 
 s.pipe(w, { end: false })
