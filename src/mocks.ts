@@ -1,3 +1,5 @@
+import { useEffect, useState } from 'react'
+
 import { Comic } from '@models/Comic'
 import { ComicList } from '@models/ComicList'
 import { HydratedItemNavigationData } from '@models/HydratedItemData'
@@ -875,4 +877,16 @@ export function getComicListMocks(count: number) {
     }
 
     return comicList
+}
+
+export function useMswReady() {
+    const [ready, setReady] = useState(false)
+    useEffect(() => {
+        async function waitForMswReady() {
+            await window.mswStart
+            setReady(true)
+        }
+        waitForMswReady()
+    })
+    return ready
 }

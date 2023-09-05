@@ -1,11 +1,13 @@
 import { useState } from 'react'
 
 import { Item } from '@models/Item'
-import { useAppDispatch } from '@store/hooks'
+import { apiSlice } from '@store/apiSlice'
 import { setFromItem } from '@store/itemEditorSlice'
+import store from '@store/store'
 import { ComponentMeta, ComponentStory } from '@storybook/react'
 
 import {
+    ALL_ITEMS,
     COFFEE_OF_DOOM,
     COFFEE_OF_DOOM_FRIENDS,
     COFFEE_OF_DOOM_LOCATIONS,
@@ -15,6 +17,7 @@ import {
     FAYE_LOCATIONS,
     MANY_IMAGES,
     QCEXT_SERVER_DEVELOPMENT_URL,
+    useMswReady,
 } from '~/mocks'
 
 import ItemDataPanel from './ItemDataPanel'
@@ -29,14 +32,57 @@ export default {
     },
 } as ComponentMeta<typeof ItemDataPanel>
 
+const fayeImage: any = require('../4.png')
+
 const Template: ComponentStory<typeof ItemDataPanel> = (args) => {
-    const dispatch = useAppDispatch()
+    const mswReady = useMswReady()
+
     const [previousItem, setPreviousItem] = useState<Item | null>(null)
+
+    // Let's set up the Redux store to be the way we need
+    store.dispatch(apiSlice.util.resetApiState())
     if (previousItem !== args.itemData && args.itemData) {
         setPreviousItem(args.itemData)
-        dispatch(setFromItem(args.itemData))
+        store.dispatch(setFromItem(args.itemData))
     }
-    return <ItemDataPanel {...args} />
+
+    // Then, let's fake the necessary REST calls
+    const { worker, rest } = window.msw
+    worker.use(
+        rest.get('http://localhost:3000/api/v2/itemdata/', (req, res, ctx) => {
+            const all = [...ALL_ITEMS]
+            const name =
+                'This is a mocked API response and will only be accurate for comic 666'
+            all.push({
+                id: -1,
+                name,
+                shortName: name,
+                count: 0,
+                type: 'storyline',
+                color: 'ffaabb',
+            })
+            return res(ctx.json(all))
+        }),
+        rest.get(
+            'http://localhost:3000/api/v2/itemdata/image/:imageId',
+            async (req, res, ctx) => {
+                const imageBuffer = await fetch(fayeImage).then((res) =>
+                    res.arrayBuffer()
+                )
+                return res(
+                    ctx.delay(1000 + Math.random() * 1000),
+                    ctx.set(
+                        'Content-Length',
+                        imageBuffer.byteLength.toString()
+                    ),
+                    ctx.set('Content-Type', 'image/png'),
+                    ctx.body(imageBuffer)
+                )
+            }
+        )
+    )
+
+    return mswReady ? <ItemDataPanel {...args} /> : <></>
 }
 
 export const Default = Template.bind({})
@@ -46,13 +92,13 @@ Default.args = {
     itemImageData: FAYE_IMAGES,
     itemFriendData: FAYE_FRIENDS,
     itemLocationData: FAYE_LOCATIONS,
-    editMode: false,
+    editModeToken: null,
 }
 
 export const Editor = Template.bind({})
 Editor.args = {
     ...Default.args,
-    editMode: true,
+    editModeToken: '00000000-0000-0000-0000-000000000000',
 }
 
 export const Loading = Template.bind({})

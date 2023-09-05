@@ -18,6 +18,7 @@ import {
     useAllDataQuery,
     useDeleteImageMutation,
     useSetPrimaryImageMutation,
+    useUploadImageMutation,
 } from '@store/api/itemApiSlice'
 import { useGetLogsForItemQuery } from '@store/api/logApiSlice'
 import { setCurrentComic } from '@store/comicSlice'
@@ -131,6 +132,8 @@ function ItemDetailsDialog({
 
     const [addItem] = useAddItemMutation()
     const [removeItem] = useRemoveItemMutation()
+    const [uploadImage, { isLoading: isUploadingImage }] =
+        useUploadImageMutation()
 
     const dialogTitle = useMemo(() => {
         if (hasItemDataError || hasAllItemDataError) {
@@ -177,7 +180,9 @@ function ItemDetailsDialog({
                         itemImageData={imageData ?? null}
                         itemFriendData={friendData ?? null}
                         itemLocationData={locationData ?? null}
-                        editMode={settings?.editMode ?? false}
+                        editModeToken={
+                            settings?.editMode ? settings?.editModeToken : null
+                        }
                         onGoToComic={(comicId) => {
                             setCurrentComic(comicId)
                             onClose()
@@ -202,6 +207,8 @@ function ItemDetailsDialog({
                             })
                         }
                         hasError={hasItemDataError || hasAllItemDataError}
+                        onUploadImage={uploadImage}
+                        isUploadingImage={isUploadingImage}
                     />
                     {settings?.editMode ? (
                         <CollapsibleDetails summary="Edit log for item">

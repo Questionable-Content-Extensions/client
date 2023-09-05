@@ -1,3 +1,4 @@
+import { HAS_GREASEMONKEY } from './constants'
 import Settings from './settings'
 
 const qcDebug = Function.prototype.bind.call(
@@ -7,7 +8,11 @@ const qcDebug = Function.prototype.bind.call(
     'color: purple; font-weight: bold'
 )
 let debug = function (...args: any[]) {
-    if (Settings.get().values.showDebugLogs) {
+    if (HAS_GREASEMONKEY) {
+        if (Settings.get().values.showDebugLogs) {
+            qcDebug(...args)
+        }
+    } else {
         qcDebug(...args)
     }
 }
@@ -236,4 +241,15 @@ export function range(start: number, end: number) {
 export function dbg<T>(d: string, v: T) {
     console.log(d, v)
     return v
+}
+
+export function readFileToDataURL(file: File): Promise<string> {
+    return new Promise((resolve, reject) => {
+        var fr = new FileReader()
+        fr.onload = () => {
+            resolve(fr.result as string)
+        }
+        fr.onerror = reject
+        fr.readAsDataURL(file)
+    })
 }

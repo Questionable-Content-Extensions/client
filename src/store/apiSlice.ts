@@ -119,7 +119,7 @@ const fakeGreasemonkeyBaseQuery = ({
             return {
                 error: {
                     type: 'TRY_CATCH',
-                    error: e,
+                    error: JSON.parse(JSON.stringify(e)),
                 },
             }
         }

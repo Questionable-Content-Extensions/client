@@ -7,6 +7,7 @@ import { ItemList } from '@models/ItemList'
 import { PatchItemBody } from '@models/PatchItemBody'
 import { RelatedItem } from '@models/RelatedItem'
 import { SetPrimaryImageBody } from '@models/SetPrimaryImageBody'
+import { Token } from '@models/Token'
 import { skipToken } from '@reduxjs/toolkit/dist/query'
 import {
     apiSlice,
@@ -18,6 +19,13 @@ import constants from '~/constants'
 
 export type GetDataQueryArgs = {
     itemId: number
+}
+
+export type UploadImageArgs = {
+    itemId: ItemId
+    token: Token
+    image: Blob
+    imageFileName: string
 }
 
 export const itemApiSlice = apiSlice.injectEndpoints({
@@ -233,6 +241,43 @@ export const itemApiSlice = apiSlice.injectEndpoints({
                       ]
                     : [],
         }),
+        uploadImage: builder.mutation<string, UploadImageArgs>({
+            query: ({ itemId, token, image, imageFileName }) => {
+                const formData = new FormData()
+                formData.append('image', image, imageFileName)
+                formData.append('token', token)
+                return {
+                    url: `${constants.itemDataEndpoint}${itemId}/images`,
+                    configuration: {
+                        // HACK: GM supports `FormData`, but the
+                        // @types/greasemonkey TS types don't seem to be aware
+                        // of this, so for the sake of typechecking,
+                        // we use `any` to get TS off our backs.
+                        data: formData as any,
+                        method: 'POST',
+                    },
+                }
+            },
+            onQueryStarted: toastSuccess,
+            transformResponse: (response) => response.responseText,
+            invalidatesTags: (result, _error, args) =>
+                result
+                    ? [
+                          {
+                              type: 'Item',
+                              id: `${args.itemId}-images`,
+                          },
+                          {
+                              type: 'Log',
+                              id: 'FULL',
+                          },
+                          {
+                              type: 'Log',
+                              id: `item-${args.itemId}`,
+                          },
+                      ]
+                    : [],
+        }),
     }),
 })
 
@@ -245,6 +290,7 @@ export const {
     usePatchItemMutation,
     useDeleteImageMutation,
     useSetPrimaryImageMutation,
+    useUploadImageMutation,
 } = itemApiSlice
 
 export function useAllDataQuery(args: typeof skipToken | GetDataQueryArgs) {

@@ -81,20 +81,21 @@ export default function NavElement({
 
     return (
         <>
-            <style>
-                {`
-                    #qc-ext-navelement-${item.id}.with-color {
-                        --qc-ext-navelement-bg-color: ${backgroundColor};
-                        --qc-ext-navelement-color: ${foregroundColor};
-                        --qc-ext-navelement-accent-color: ${hoverFocusColor};
-                    }
-                `}
-            </style>
             <div
                 id={`qc-ext-navelement-${item.id}`}
                 className={
                     `qc-ext-navelement flex items-center rounded` +
                     (useColors ? ' with-color' : '')
+                }
+                style={
+                    useColors
+                        ? {
+                              '--qc-ext-navelement-bg-color': backgroundColor,
+                              '--qc-ext-navelement-color': foregroundColor,
+                              '--qc-ext-navelement-accent-color':
+                                  hoverFocusColor,
+                          }
+                        : undefined
                 }
             >
                 <NavButton

@@ -34,7 +34,7 @@ export const rtkQueryErrorLogger: Middleware =
 
                     case 'STATUS_ERROR':
                         toast.error(
-                            'The QC Extensions server responded with an unexpected HTTP' +
+                            'The QC Extensions server responded with an unexpected HTTP ' +
                                 `status code ${payload.response.status} (` +
                                 `${payload.response.statusText}) and the response was ` +
                                 `"${payload.response.responseText}"`,
@@ -57,7 +57,7 @@ export const rtkQueryErrorLogger: Middleware =
                                 )
                             } else {
                                 toast.error(
-                                    'The QC Extensions server responded with an unexpected HTTP' +
+                                    'The QC Extensions server responded with an unexpected HTTP ' +
                                         `status code ${response.status} (` +
                                         `${response.statusText}) and the response was ` +
                                         `"${response.responseText}"`,

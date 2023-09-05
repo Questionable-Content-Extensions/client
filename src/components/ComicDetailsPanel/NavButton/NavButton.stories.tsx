@@ -6,7 +6,7 @@ import NavButton from './NavButton'
 export default {
     component: NavButton,
     argTypes: {
-        faClass: { control: { type: 'select', options: forkAwesomeIcons } },
+        faClass: { control: { type: 'select' }, options: forkAwesomeIcons },
     },
 } as ComponentMeta<typeof NavButton>
 

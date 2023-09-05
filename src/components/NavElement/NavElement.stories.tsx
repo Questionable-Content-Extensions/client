@@ -58,9 +58,9 @@ Default.play = ({ canvasElement, args }) => {
     userEvent.click(canvas.getByTitle('Last strip with Marten'))
     expect(args.onSetCurrentComic).toBeCalledWith(MARTEN.last)
 
-    expect(args.onShowInfoFor).not.toBeCalledWith(MARTEN)
+    expect(args.onShowInfoFor).not.toBeCalledWith(MARTEN.id)
     userEvent.click(canvas.getByTitle(MARTEN_ITEM.name))
-    expect(args.onShowInfoFor).toBeCalledWith(MARTEN)
+    expect(args.onShowInfoFor).toBeCalledWith(MARTEN.id)
 }
 
 export const WithoutColor = Template.bind({})
@@ -77,9 +77,9 @@ EditModePresent.args = {
 EditModePresent.play = ({ canvasElement, args }) => {
     const canvas = within(canvasElement)
 
-    expect(args.onRemoveItem).not.toBeCalledWith(MARTEN)
+    expect(args.onRemoveItem).not.toBeCalledWith(MARTEN.id)
     userEvent.click(canvas.getByTitle('Remove Marten from comic'))
-    expect(args.onRemoveItem).toBeCalledWith(MARTEN)
+    expect(args.onRemoveItem).toBeCalledWith(MARTEN.id)
 }
 
 export const EditModeMissing = Template.bind({})
@@ -91,7 +91,7 @@ EditModeMissing.args = {
 EditModeMissing.play = ({ canvasElement, args }) => {
     const canvas = within(canvasElement)
 
-    expect(args.onAddItem).not.toBeCalledWith(MARTEN)
+    expect(args.onAddItem).not.toBeCalledWith(MARTEN.id)
     userEvent.click(canvas.getByTitle('Add Marten to comic'))
-    expect(args.onAddItem).toBeCalledWith(MARTEN)
+    expect(args.onAddItem).toBeCalledWith(MARTEN.id)
 }

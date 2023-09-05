@@ -3,11 +3,13 @@ export default function Popup({
     onClose,
     children,
     position,
+    preventClose,
 }: {
     show: boolean
     onClose: () => void
     children: React.ReactNode
     position?: [number, number]
+    preventClose?: boolean
 }) {
     return show ? (
         <span
@@ -21,7 +23,9 @@ export default function Popup({
                 className="fixed inset-0"
                 onClick={(e) => {
                     e.preventDefault()
-                    onClose()
+                    if (!preventClose) {
+                        onClose()
+                    }
                 }}
             ></span>
             {children}

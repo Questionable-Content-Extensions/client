@@ -6,6 +6,7 @@ import { ItemId } from '@models/ItemId'
 import { ItemImageList as ItemImageData } from '@models/ItemImageList'
 import { ItemType } from '@models/ItemType'
 import { RelatedItem as ItemRelationData } from '@models/RelatedItem'
+import { UploadImageArgs } from '@store/api/itemApiSlice'
 
 import { createTintOrShade } from '~/color'
 
@@ -19,25 +20,29 @@ export default function ItemDataPanel({
     itemImageData,
     itemFriendData,
     itemLocationData,
-    editMode,
+    editModeToken,
     onGoToComic,
     itemDataUrl,
     onShowItemData,
     onDeleteImage,
     onSetPrimaryImage,
     hasError,
+    onUploadImage,
+    isUploadingImage,
 }: {
     itemData: ItemData | null
     itemImageData: ItemImageData[] | null
     itemFriendData: ItemRelationData[] | null
     itemLocationData: ItemRelationData[] | null
-    editMode: boolean
+    editModeToken: string | null
     onGoToComic: (comicId: ComicId) => void
     itemDataUrl: string
     onShowItemData: (itemId: ItemId) => void
     onDeleteImage: (imageId: ImageId) => void
     onSetPrimaryImage: (imageId: ImageId) => void
     hasError: boolean
+    onUploadImage: (args: UploadImageArgs) => Promise<unknown>
+    isUploadingImage: boolean
 }) {
     if (hasError) {
         return (
@@ -79,13 +84,16 @@ export default function ItemDataPanel({
         <>
             <div className="grid grid-cols-2 gap-4">
                 <ItemImageViewer
+                    itemId={itemData.id}
                     itemShortName={itemData.shortName}
+                    primaryImage={itemData.primaryImage}
                     itemImageData={itemImageData}
                     itemDataUrl={itemDataUrl}
-                    primaryImage={itemData.primaryImage}
-                    editMode={editMode}
+                    editModeToken={editModeToken}
                     onDeleteImage={onDeleteImage}
                     onSetPrimaryImage={onSetPrimaryImage}
+                    onUploadImage={onUploadImage}
+                    isUploadingImage={isUploadingImage}
                 />
                 <DonutGraph
                     amount={itemData.appearances}
@@ -98,7 +106,7 @@ export default function ItemDataPanel({
             <ItemDetails
                 item={itemData}
                 onGoToComic={onGoToComic}
-                editMode={editMode}
+                editMode={editModeToken !== null}
             />
 
             <div
@@ -111,7 +119,7 @@ export default function ItemDataPanel({
                     <p>Most often {involvesLocationText(itemData.type)}:</p>
                     <ListRelations
                         itemRelationData={itemLocationData}
-                        editMode={editMode}
+                        editMode={editModeToken !== null}
                         totalComics={itemData.appearances}
                         onShowInfoFor={onShowItemData}
                     />
@@ -120,7 +128,7 @@ export default function ItemDataPanel({
                     <p>Most often {involvesCastText(itemData.type)}:</p>
                     <ListRelations
                         itemRelationData={itemFriendData}
-                        editMode={editMode}
+                        editMode={editModeToken !== null}
                         totalComics={itemData.appearances}
                         onShowInfoFor={onShowItemData}
                     />

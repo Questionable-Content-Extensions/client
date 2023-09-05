@@ -8,7 +8,7 @@ import ExtraNavButton from './ExtraNavButton'
 export default {
     component: ExtraNavButton,
     argTypes: {
-        faClass: { control: { type: 'select', options: forkAwesomeIcons } },
+        faClass: { control: { type: 'select' }, options: forkAwesomeIcons },
     },
 } as ComponentMeta<typeof ExtraNavButton>
 

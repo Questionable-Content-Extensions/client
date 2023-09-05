@@ -4,7 +4,7 @@ import { setSettings } from '@store/settingsSlice'
 import store from '@store/store'
 import { ComponentMeta, ComponentStory } from '@storybook/react'
 
-import { EDIT_LOG_COMIC_4269, LATEST_EDIT_LOG } from '~/mocks'
+import { EDIT_LOG_COMIC_4269, LATEST_EDIT_LOG, useMswReady } from '~/mocks'
 import Settings from '~/settings'
 
 import EditLogDialog from './EditLogDialog'
@@ -27,6 +27,8 @@ const Template: ComponentStory<typeof EditLogDialog> = function (
     this: ItemDetailsDialogStoryThis,
     args
 ) {
+    const mswReady = useMswReady()
+
     // Let's set up the Redux store to be the way we need
     const state = store.getState()
     store.dispatch(apiSlice.util.resetApiState())
@@ -82,7 +84,7 @@ const Template: ComponentStory<typeof EditLogDialog> = function (
         alert('In the userscript, this window would close now.')
     }
 
-    return <EditLogDialog {...args} onClose={onClose} />
+    return mswReady ? <EditLogDialog {...args} onClose={onClose} /> : <></>
 }
 
 export const All = Template.bind({ kind: 'All' })
