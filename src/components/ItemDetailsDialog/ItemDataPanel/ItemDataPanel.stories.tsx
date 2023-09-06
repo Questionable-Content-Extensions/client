@@ -113,10 +113,22 @@ NoImages.args = {
     itemImageData: [],
 }
 
+export const NoImagesEditor = Template.bind({})
+NoImagesEditor.args = {
+    ...NoImages.args,
+    editModeToken: '00000000-0000-0000-0000-000000000000',
+}
+
 export const MultipleImages = Template.bind({})
 MultipleImages.args = {
     ...Default.args,
     itemImageData: MANY_IMAGES,
+}
+
+export const MultipleImagesEditor = Template.bind({})
+MultipleImagesEditor.args = {
+    ...MultipleImages.args,
+    editModeToken: '00000000-0000-0000-0000-000000000000',
 }
 
 export const NoRelations = Template.bind({})

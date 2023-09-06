@@ -64,8 +64,37 @@ export default function ItemImageViewer({
     if (!currentImages.length) {
         return (
             <div className="flex flex-col items-center justify-center p-4">
-                <i className="fa fa-camera text-5xl text-gray-500"></i>
-                <div className="no-image-text text-gray-500">No image</div>
+                {previewImage === null ? (
+                    <>
+                        <i className="fa fa-camera text-5xl text-gray-500"></i>
+                        <div className="no-image-text text-gray-500">
+                            No image
+                        </div>
+                    </>
+                ) : (
+                    <>
+                        <img
+                            src={previewImage}
+                            alt={'preview of upload'}
+                            className="max-h-36 max-w-xs"
+                        />
+                        (Preview)
+                    </>
+                )}
+                <ImageControls
+                    itemId={itemId}
+                    currentImage={currentImage}
+                    setCurrentImage={setCurrentImage}
+                    currentImages={currentImages}
+                    editModeToken={editModeToken}
+                    primaryImage={primaryImage}
+                    primaryImageIndex={primaryImageIndex}
+                    onSetPrimaryImage={onSetPrimaryImage}
+                    onDeleteImage={onDeleteImage}
+                    setPreviewImage={setPreviewImage}
+                    uploadImage={onUploadImage}
+                    isUploadingImage={isUploadingImage}
+                />
             </div>
         )
     } else {
@@ -83,7 +112,7 @@ export default function ItemImageViewer({
                             ? `#${currentImage + 1} of ${itemShortName}`
                             : 'preview of upload'
                     }
-                    className="max-h-24 max-w-24"
+                    className="max-h-36 max-w-xs"
                 />
                 {previewImage ? '(Preview)' : null}
                 <ImageControls

@@ -49,17 +49,16 @@ export default function ImageControls({
 
     return (
         <div className="flex flex-col mt-1">
-            <div className="flex">
+            <div
+                className={'flex' + (currentImages.length < 2 ? ' hidden' : '')}
+            >
                 <button
                     title={`Go to previous image`}
-                    className={
-                        `flex-none px-3 py-0.5 block text-xs text-black hover:text-gray-500 focus:text-black visited:text-black ` +
-                        (!(currentImage !== 0) ? ' invisible' : '')
-                    }
+                    className="flex-none px-3 py-0.5 block text-xs text-black hover:text-gray-500 focus:text-black visited:text-black disabled:opacity-50"
                     onClick={() => {
                         setCurrentImage((currentImage) => currentImage - 1)
                     }}
-                    tabIndex={!(currentImage !== 0) ? -1 : undefined}
+                    disabled={!(currentImage !== 0)}
                 >
                     <span className="sr-only">Go to previous image</span>
                     <i className="fa fa-step-backward" aria-hidden></i>
@@ -75,20 +74,11 @@ export default function ImageControls({
                 </div>
                 <button
                     title={`Go to next image`}
-                    className={
-                        `flex-none px-3 py-0.5 block text-xs text-black hover:text-gray-500 focus:text-black visited:text-black ` +
-                        (!(currentImage !== currentImages.length - 1)
-                            ? ' invisible'
-                            : '')
-                    }
+                    className="flex-none px-3 py-0.5 block text-xs text-black hover:text-gray-500 focus:text-black visited:text-black disabled:opacity-50"
                     onClick={() => {
                         setCurrentImage((currentImage) => currentImage + 1)
                     }}
-                    tabIndex={
-                        !(currentImage !== currentImages.length - 1)
-                            ? -1
-                            : undefined
-                    }
+                    disabled={!(currentImage !== currentImages.length - 1)}
                 >
                     <span className="sr-only">Go to next image</span>
                     <i className="fa fa-step-forward" aria-hidden></i>
@@ -96,8 +86,9 @@ export default function ImageControls({
             </div>
             {editModeToken !== null ? (
                 <div className="flex justify-center">
-                    {primaryImage === null ||
-                    primaryImageIndex(primaryImage) !== currentImage ? (
+                    {currentImages.length !== 0 &&
+                    (primaryImage === null ||
+                        primaryImageIndex(primaryImage) !== currentImage) ? (
                         <>
                             {' '}
                             <button
@@ -116,21 +107,25 @@ export default function ImageControls({
                     ) : (
                         <></>
                     )}
-                    <button
-                        className="ml-1"
-                        title="Delete image"
-                        onClick={() => {
-                            if (
-                                window.confirm(
-                                    'Are you sure you want to delete this image?'
-                                )
-                            ) {
-                                onDeleteImage(currentImageData.id)
-                            }
-                        }}
-                    >
-                        <i className="fa fa-trash" aria-hidden="true"></i>
-                    </button>
+                    {currentImages.length !== 0 ? (
+                        <button
+                            className="ml-1"
+                            title="Delete image"
+                            onClick={() => {
+                                if (
+                                    window.confirm(
+                                        'Are you sure you want to delete this image?'
+                                    )
+                                ) {
+                                    onDeleteImage(currentImageData.id)
+                                }
+                            }}
+                        >
+                            <i className="fa fa-trash" aria-hidden="true"></i>
+                        </button>
+                    ) : (
+                        <></>
+                    )}
                     <button
                         className="ml-1"
                         title="Upload image..."
