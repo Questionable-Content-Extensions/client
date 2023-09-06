@@ -21,9 +21,6 @@ export interface SettingValues {
     scrollToTop: boolean
 
     showAllMembers: boolean
-    showCast: boolean
-    showStorylines: boolean
-    showLocations: boolean
     useColors: boolean
 
     skipNonCanon: boolean
@@ -33,14 +30,21 @@ export interface SettingValues {
     editModeToken: string
 
     showIndicatorRibbon: boolean
-    /** deprecated; no longer in use */
-    showSmallRibbonByDefault: boolean
     useCorrectTimeFormat: boolean
     comicLoadingIndicatorDelay: number
 
     subDivideGotoComics: boolean
 
     version: string | null
+
+    /** deprecated; no longer in use */
+    showCast: boolean
+    /** deprecated; no longer in use */
+    showStorylines: boolean
+    /** deprecated; no longer in use */
+    showLocations: boolean
+    /** deprecated; no longer in use */
+    showSmallRibbonByDefault: boolean
 }
 
 // This is a bit of a hack to make TypeScript happy when we do direct property

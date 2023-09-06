@@ -29,9 +29,8 @@ export default function SettingsPanel({
                 description={
                     'Show every cast member, storyline and location, even if they are not part of the current comic. ' +
                     'Makes no sense to enable for normal use, but can be useful if you always want to be able to find the ' +
-                    'next/previous comic of any character/storyline/location. When editor mode is enabled, this setting only ' +
-                    'changes where the all-member list is shown; when off, it shows in the editor widget, when on, it shows ' +
-                    'in the navigation widget.'
+                    'next/previous comic of any character/storyline/location. When editor mode is enabled, this setting gets ' +
+                    "treated like it's enabled, as an editor needs a list of all the cast to do their job effectively."
                 }
             />
             <ToggleSetting
@@ -94,6 +93,19 @@ export default function SettingsPanel({
                     'How long to wait in milliseconds for the next comic to load before showing a loading indicator over the previous comic.'
                 }
                 positiveOnly
+            />
+            <ToggleSetting
+                settings={settings}
+                setting="subDivideGotoComics"
+                updateSettings={updateSettings}
+                label="Sub-divide comic listing"
+                description={
+                    "In the 'Go to comic' dialog and other locations where " +
+                    'comics are listed, when this setting is enabled, comics ' +
+                    'get grouped by which set of 1000 and which set of 100 ' +
+                    'they belong to. If the setting is disabled, the comics ' +
+                    'are listed in one long list.'
+                }
             />
 
             <h3 className="text-lg mt-6">Advanced settings</h3>
