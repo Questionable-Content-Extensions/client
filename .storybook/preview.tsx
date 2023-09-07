@@ -3,7 +3,7 @@
 // I can't figure out why, though, so for now, this file will appear
 // to have errors, even though it doesn't really.
 //
-import { rest, setupWorker } from 'msw'
+import { StartOptions, rest, setupWorker } from 'msw'
 import React from 'react'
 import { Provider } from 'react-redux'
 import { ToastContainer } from 'react-toastify'
@@ -48,7 +48,7 @@ if (typeof global.process === 'undefined') {
     // Create the mockServiceWorker (msw).
     const worker = setupWorker()
     // Start the service worker.
-    window.mswStart = worker.start({
+    const options: StartOptions = {
         onUnhandledRequest(req, print) {
             if (!req.url.href.startsWith('http://localhost:3000/api/')) {
                 return
@@ -56,7 +56,13 @@ if (typeof global.process === 'undefined') {
 
             print.warning()
         },
-    })
+    }
+    if (process.env.NODE_ENV === 'production') {
+        options.serviceWorker = {
+            url: `${window.location.pathname}mockServiceWorker.js`,
+        }
+    }
+    window.mswStart = worker.start(options)
     // Make the `worker` and `rest` references available globally,
     // so they can be accessed in stories.
     window.msw = { worker, rest }
