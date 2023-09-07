@@ -1,5 +1,6 @@
 import { PayloadAction, createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 
+import { HAS_GREASEMONKEY } from '~/constants'
 import Settings, { SettingValues } from '~/settings'
 
 interface SettingsState {
@@ -21,11 +22,16 @@ export const loadSettings = createAsyncThunk<SettingValues, void>(
 
 export const updateSettings = createAsyncThunk<SettingValues, SettingValues>(
     'settings/save',
-    async (values) => {
-        const settings = Settings.get()
-        settings.values = values
-        await settings.saveSettings()
-        return settings.values
+    async (values, { dispatch }) => {
+        if (HAS_GREASEMONKEY) {
+            const settings = Settings.get()
+            settings.values = values
+            await settings.saveSettings()
+            return settings.values
+        } else {
+            dispatch(setSettings(values))
+            return values
+        }
     }
 )
 

@@ -163,7 +163,7 @@ export function ItemDetails({
             <p>
                 <strong>First appearance:</strong>{' '}
                 <button
-                    className="text-qc-link hover:underline"
+                    className="qc-ext-qc-link hover:underline"
                     title={`Go to comic ${item.first}`}
                     onClick={() => onGoToComic(item.first)}
                 >
@@ -173,7 +173,7 @@ export function ItemDetails({
             <p>
                 <strong>Latest appearance:</strong>{' '}
                 <button
-                    className="text-qc-link hover:underline"
+                    className="qc-ext-qc-link hover:underline"
                     title={`Go to comic ${item.last}`}
                     onClick={() => onGoToComic(item.last)}
                 >

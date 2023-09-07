@@ -97,6 +97,13 @@ module.exports = function override(config, env) {
             }
         }
     })
+    config.module.rules = [
+        ...config.module.rules,
+        {
+            test: /\.md$/i,
+            type: 'asset/source',
+        },
+    ]
 
     // Make a globalThis shim to prevent webpack code from erroring when run in dev mode
     config.output.globalObject = `(function() {

@@ -26,10 +26,10 @@ try {
     if (HAS_GREASEMONKEY) {
         scriptVersion = GM.info.script.version
     } else {
-        scriptVersion = 'Unknown+development'
+        scriptVersion = 'Unknown+development' as const
     }
 } catch {
-    scriptVersion = 'Unknown+development'
+    scriptVersion = 'Unknown+development' as const
 }
 
 // Set this to true when testing a production build of a script
@@ -59,6 +59,8 @@ const editLogEndpoint = `log/` as const
 
 const constants = {
     settingsKey: 'settings' as const,
+
+    scriptVersion,
 
     siteUrl,
     developmentBaseUrl,

@@ -8,6 +8,7 @@ interface DialogState {
     showItemDetailsDialogFor: number | null
     showCopyItemsDialogFor: number | null
     showEditLogDialogFor: ComicId | boolean
+    showChangeLogDialog: boolean
 }
 
 const initialState: DialogState = {
@@ -16,6 +17,7 @@ const initialState: DialogState = {
     showItemDetailsDialogFor: null,
     showCopyItemsDialogFor: null,
     showEditLogDialogFor: false,
+    showChangeLogDialog: false,
 }
 
 export const dialogSlice = createSlice({
@@ -52,6 +54,12 @@ export const dialogSlice = createSlice({
         ) => {
             state.showEditLogDialogFor = showEditLogDialog
         },
+        setShowChangeLogDialog: (
+            state,
+            { payload: showChangeLogDialog }: PayloadAction<boolean>
+        ) => {
+            state.showChangeLogDialog = showChangeLogDialog
+        },
     },
 })
 
@@ -63,4 +71,5 @@ export const {
     setShowItemDetailsDialogFor,
     setShowCopyItemsDialog,
     setShowEditLogDialog,
+    setShowChangeLogDialog,
 } = dialogSlice.actions

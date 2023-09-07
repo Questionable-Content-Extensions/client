@@ -118,7 +118,7 @@ function GoToPageButton({
             }
             disabled={disabled}
             className={
-                'w-8 disabled:opacity-50 text-qc-link hover:underline' +
+                'w-8 disabled:opacity-50 qc-ext-qc-link hover:underline' +
                 (isFetching ? ' !cursor-wait' : '')
             }
         >

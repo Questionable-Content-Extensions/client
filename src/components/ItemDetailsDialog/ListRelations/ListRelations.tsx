@@ -29,7 +29,7 @@ export default function ListRelations({
             output.push(
                 <li key={relation.id}>
                     <button
-                        className="text-qc-link hover:underline"
+                        className="qc-ext-qc-link hover:underline"
                         onClick={() => onShowInfoFor(relation.id)}
                     >
                         {item.shortName}

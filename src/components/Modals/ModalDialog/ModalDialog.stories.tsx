@@ -76,7 +76,7 @@ Default.args = {
         <>
             <PaddedButton>Button 1</PaddedButton>
 
-            <PaddedButton className="ml-2">Button 2</PaddedButton>
+            <PaddedButton>Button 2</PaddedButton>
         </>
     ),
 }

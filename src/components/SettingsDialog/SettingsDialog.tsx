@@ -1,7 +1,9 @@
 import { ConnectedProps, connect } from 'react-redux'
 
 import { PaddedButton } from '@components/Button'
+import useOnNextOverlayClosed from '@hooks/useOnNextOverlayClosed'
 import ModalDialog from '@modals/ModalDialog/ModalDialog'
+import { setShowChangeLogDialog } from '@store/dialogSlice'
 import { updateSettings } from '@store/settingsSlice'
 import { AppDispatch, RootState } from '@store/store'
 
@@ -20,6 +22,9 @@ const mapDispatch = (dispatch: AppDispatch) => {
         updateSettings: (values: SettingValues) => {
             dispatch(updateSettings(values))
         },
+        setShowChangeLogDialog: (value: boolean) => {
+            dispatch(setShowChangeLogDialog(value))
+        },
     }
 }
 
@@ -31,11 +36,16 @@ type SettingsDialogProps = PropsFromRedux & {
 }
 
 function SettingsDialog({
-    show: _show,
-    onClose,
     settings,
     updateSettings,
+    setShowChangeLogDialog,
+    show: _show,
+    onClose,
 }: SettingsDialogProps) {
+    const setShowChangeLogOnClose = useOnNextOverlayClosed(() => {
+        setShowChangeLogDialog(true)
+    })
+
     if (!settings) {
         return <></>
     }
@@ -61,7 +71,18 @@ function SettingsDialog({
                 />
             }
             footer={
-                <PaddedButton onClick={() => onClose()}>Close</PaddedButton>
+                <>
+                    <PaddedButton
+                        className="mr-2"
+                        onClick={() => {
+                            onClose()
+                            setShowChangeLogOnClose(true)
+                        }}
+                    >
+                        Show change log
+                    </PaddedButton>
+                    <PaddedButton onClick={() => onClose()}>Close</PaddedButton>
+                </>
             }
         />
     )

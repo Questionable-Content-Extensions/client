@@ -136,9 +136,7 @@ export function CopyItemsDialog({
                     <PaddedButton onClick={onCopy}>
                         Copy selected into current comic
                     </PaddedButton>
-                    <PaddedButton className="ml-2" onClick={onClose}>
-                        Close
-                    </PaddedButton>
+                    <PaddedButton onClick={onClose}>Close</PaddedButton>
                 </>
             }
         />

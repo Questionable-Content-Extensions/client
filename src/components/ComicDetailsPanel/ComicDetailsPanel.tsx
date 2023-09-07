@@ -20,6 +20,7 @@ import {
 } from '@store/api/comicApiSlice'
 import { setCurrentComic, setRandom as setRandomComic } from '@store/comicSlice'
 import {
+    setShowChangeLogDialog,
     setShowGoToComicDialog,
     setShowItemDetailsDialogFor,
     setShowSettingsDialog,
@@ -56,6 +57,9 @@ const mapDispatch = (dispatch: AppDispatch) => {
         setShowItemDetailsDialogFor: (value: number | null) => {
             dispatch(setShowItemDetailsDialogFor(value))
         },
+        setShowChangeLogDialog: (value: boolean) => {
+            dispatch(setShowChangeLogDialog(value))
+        },
     }
 }
 
@@ -74,6 +78,7 @@ function ComicDetailsPanel({
     setShowGoToComicDialog,
     setShowSettingsDialog,
     setShowItemDetailsDialogFor,
+    setShowChangeLogDialog,
 }: QcExtMainWidgetProps) {
     const dispatch = useAppDispatch()
 
@@ -162,6 +167,42 @@ function ComicDetailsPanel({
         []
     )
 
+    const installUpdate = useMemo(() => {
+        const isNew = !!settings && !settings.version
+        const isUpdated =
+            !!settings &&
+            !!settings.version &&
+            settings.version !== constants.scriptVersion
+
+        if (isNew) {
+            return (
+                <>
+                    <h1 className="text-xs">Welcome!</h1>
+                    <button
+                        className="inline-block qc-ext-qc-link hover:underline"
+                        onClick={() => setShowChangeLogDialog(true)}
+                    >
+                        See our change log to remove this welcome message!
+                    </button>
+                </>
+            )
+        } else if (isUpdated) {
+            return (
+                <>
+                    <h1 className="text-xs">Updated!</h1>
+                    <button
+                        className="inline-block qc-ext-qc-link hover:underline"
+                        onClick={() => setShowChangeLogDialog(true)}
+                    >
+                        See what's new!
+                    </button>
+                </>
+            )
+        }
+
+        return <></>
+    }, [settings, setShowChangeLogDialog])
+
     // TODO: Add a setting for placing the widget on the left or right side of the comic.
 
     function goToSelectorComic() {
@@ -186,6 +227,7 @@ function ComicDetailsPanel({
         >
             <h1 className="-mx-2 -mt-2 mb-0 text-center small-caps text-sm font-thin border-b border-solid border-b-stone-300 border-l-0 border-t-0 border-r-0">
                 Questionable Content Extensions {developmentMode}
+                {installUpdate}
             </h1>
             <ExtraNavigation
                 currentComic={currentComic}

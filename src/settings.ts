@@ -35,6 +35,10 @@ export interface SettingValues {
 
     subDivideGotoComics: boolean
 
+    /**
+     * The last version seen by the change log dialog.
+     * Used to know when we need to urge users to open it
+     * when the script updates. */
     version: string | null
 
     /** deprecated; no longer in use */

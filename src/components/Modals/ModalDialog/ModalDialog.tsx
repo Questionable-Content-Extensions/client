@@ -4,9 +4,9 @@ export default function ModalDialog({
     footer,
     onCloseClicked,
 }: {
-    header: React.ReactChild
-    body: React.ReactChild
-    footer: React.ReactChild
+    header: React.ReactNode
+    body: React.ReactNode
+    footer: React.ReactNode
     onCloseClicked?: () => void
 }) {
     return (
@@ -34,7 +34,7 @@ export default function ModalDialog({
                 </button>
             </div>
             <div className="relative p-4 overflow-y-auto">{body}</div>
-            <div className="modal-footer flex flex-shrink-0 flex-wrap items-center justify-end p-4 border-0 border-t border-solid border-gray-200 rounded-b-md">
+            <div className="modal-footer flex gap-2 flex-shrink-0 flex-wrap items-center justify-end p-4 border-0 border-t border-solid border-gray-200 rounded-b-md">
                 {footer}
             </div>
         </dialog>

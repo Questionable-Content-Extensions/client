@@ -285,9 +285,7 @@ function ItemDetailsDialog({
                         <></>
                     )}
 
-                    <PaddedButton className="ml-2" onClick={onClose}>
-                        Close
-                    </PaddedButton>
+                    <PaddedButton onClick={onClose}>Close</PaddedButton>
                 </>
             }
         />

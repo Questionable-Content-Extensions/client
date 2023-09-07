@@ -1,8 +1,10 @@
-import { ReactChild } from 'react'
+import { ReactChild, useState } from 'react'
 
 import ModalPortal from '@components/Modals/ModalPortal/ModalPortal'
 import ModalDialogSeat from '@modals/ModalDialogSeat/ModalDialogSeat'
-import ModalPageOverlay from '@modals/ModalPageOverlay/ModalPageOverlay'
+import ModalPageOverlay, {
+    OverlayContext,
+} from '@modals/ModalPageOverlay/ModalPageOverlay'
 
 type DialogPortalProps = {
     show: boolean
@@ -15,14 +17,15 @@ export default function DialogPortal({
     children,
     onClose,
 }: DialogPortalProps) {
+    const [active, setActive] = useState(false)
     return (
         <ModalPortal>
-            <>
+            <OverlayContext.Provider value={[active, setActive]}>
                 <ModalPageOverlay show={show} />
                 <ModalDialogSeat show={show} onClick={() => onClose()}>
                     {children}
                 </ModalDialogSeat>
-            </>
+            </OverlayContext.Provider>
         </ModalPortal>
     )
 }

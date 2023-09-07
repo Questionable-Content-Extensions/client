@@ -54,3 +54,16 @@ body {
 .qc-ext-navelement.with-color button:focus > * {
     border-color: transparent;
 }
+
+.qc-ext-qc-link {
+    @apply text-qc-link;
+}
+.qc-ext-qc-link:hover,
+.qc-ext-qc-link:focus,
+.qc-ext-qc-link:visited {
+    @apply text-qc-link-hover;
+}
+.qc-ext-qc-link:active,
+.qc-ext-qc-link:hover {
+    @apply outline-0;
+}
