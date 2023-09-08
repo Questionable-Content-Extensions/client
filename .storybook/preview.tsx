@@ -58,8 +58,13 @@ if (typeof global.process === 'undefined') {
         },
     }
     if (process.env.NODE_ENV === 'production') {
+        const pathname = window.location.pathname
+        const pathbasename = pathname.substring(
+            0,
+            pathname.lastIndexOf('/') + 1
+        )
         options.serviceWorker = {
-            url: `${window.location.pathname}mockServiceWorker.js`,
+            url: `${pathbasename}mockServiceWorker.js`,
         }
     }
     window.mswStart = worker.start(options)
