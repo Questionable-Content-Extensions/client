@@ -7,6 +7,29 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased][unreleased]
 
+> Hello! It has once again been a while, but this time, it's a big one! I've been meaning to do it for a long time, but I finally got around to rewrite the extension from scratch using React as the framework rather than AngularJS v1. While I was at it, I also updated/upgraded everything else about the script that I could, and it's much more modern and user friendly now.
+>
+> Since this is a rewrite, the change log below will be mostly _added_ features rather than changed or fixed ones. Old features that have been migrated into the new version won't be mentioned unless changed significantly in the rewrite.
+
+### Added ✨
+
+-   Add Storybookjs
+-   Added `GoToComicDialog` for choosing a specific comic from a list
+-   Added ko-fi donation link in bottom of `SettingsDialog`
+
+### Changed 🔧
+
+-   In coordination with the server, the API has been optimized to transfer a lot less data in each request.
+-   Make `debug` logging dynamic rather than chosen at startup
+
+### Fixed 🐛
+
+-   Make `shortcut` take-over code work properly everywhere
+
+### Removed 🗑
+
+-   Removed small/large ribbon setting; ribbon is always small now.
+
 ## [0.6.2][] - 2022-08-31
 
 > It's been a while! And this release isn't really one of improvement, but rather necessity. For the longest time, the Questionable Content Extensions has used Heroku's free plan as its backend, because this is a hobby project, and I don't really have the means to pay for dedicated hosting and bandwidth for it, as I make no money off this project, and I don't want it to be a financial burden. [Heroku/Salesforce has finally decided to remove their free tier](https://blog.heroku.com/next-chapter), which is neither surprising nor unexpected, but that naturally means that I have to use a different solution.
