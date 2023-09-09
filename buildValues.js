@@ -53,9 +53,7 @@ const userscriptHeader = `\
 // @require      <%=react-redux-js%>
 // @require      <%=redux-logger-js%>
 // @require      <%=redux-toolkit-js%>
-// @connect      questionablextensions.net
-// @connect      questionablecontent.herokuapp.com
-// @connect      localhost
+// @connect      <%=connect%>
 // @grant        GM.openInTab
 // @grant        GM.setValue
 // @grant        GM.getValue
@@ -74,6 +72,7 @@ const userscriptHeaderVariables = {
         description:
             'Development mode for Questionable Content Extensions Script. ' +
             'Loads the script directly from the last output of `npm start` on page refresh.',
+        connect: 'localhost',
         'react-js': 'https://unpkg.com/react@17/umd/react.development.js',
         'react-dom-js':
             'https://unpkg.com/react-dom@17/umd/react-dom.development.js',
@@ -88,6 +87,7 @@ const userscriptHeaderVariables = {
         description:
             'Converts questionablecontent.net into a single-page application and adds ' +
             'extra features, such as character, location and storyline navigation.',
+        connect: 'questionablextensions.net',
         'react-js': 'https://unpkg.com/react@17/umd/react.production.min.js',
         'react-dom-js':
             'https://unpkg.com/react-dom@17/umd/react-dom.production.min.js',

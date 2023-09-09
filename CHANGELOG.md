@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased][unreleased]
+## [Unreleased]
 
 > Hello! It has once again been a while, but this time, it's a big one! I've been meaning to do it for a long time, but I finally got around to rewrite the extension from scratch using React as the framework rather than AngularJS v1. While I was at it, I also updated/upgraded everything else about the script that I could, and it's much more modern and user friendly now.
 >
