@@ -33,6 +33,7 @@ const Template: StoryFn<typeof ItemNavigation> = (args) => {
 
 export const Default = Template.bind({})
 Default.args = {
+    currentComic: 666,
     itemNavigationData: COMIC_DATA_666_HYDRATED_ITEMS,
     useColors: true,
     isLoading: false,

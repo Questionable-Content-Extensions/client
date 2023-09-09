@@ -272,6 +272,7 @@ function EditorModePanel({
                 <>
                     <MissingNavElement
                         navigationData={editorData.missing.cast}
+                        currentComic={currentComic}
                         title="Missing cast"
                         description="Navigate to comics without cast members"
                         onSetCurrentComic={setCurrentComic}
@@ -280,6 +281,7 @@ function EditorModePanel({
                     />
                     <MissingNavElement
                         navigationData={editorData.missing.location}
+                        currentComic={currentComic}
                         title="Missing location"
                         description="Navigate to comics without locations"
                         onSetCurrentComic={setCurrentComic}
@@ -288,6 +290,7 @@ function EditorModePanel({
                     />
                     <MissingNavElement
                         navigationData={editorData.missing.storyline}
+                        currentComic={currentComic}
                         title="Missing storyline"
                         description="Navigate to comics without storylines"
                         onSetCurrentComic={setCurrentComic}
@@ -296,6 +299,7 @@ function EditorModePanel({
                     />
                     <MissingNavElement
                         navigationData={editorData.missing.title}
+                        currentComic={currentComic}
                         title="Missing title"
                         description="Navigate to comics without a title"
                         onSetCurrentComic={setCurrentComic}
@@ -304,6 +308,7 @@ function EditorModePanel({
                     />
                     <MissingNavElement
                         navigationData={editorData.missing.tagline}
+                        currentComic={currentComic}
                         title="Missing tagline"
                         description="Navigate to comics without a tagline"
                         onSetCurrentComic={setCurrentComic}

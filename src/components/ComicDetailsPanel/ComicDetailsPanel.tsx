@@ -248,6 +248,7 @@ function ComicDetailsPanel({
                 <></>
             )}
             <ItemNavigation
+                currentComic={currentComic}
                 itemNavigationData={comicItems ?? []}
                 isLoading={isLoadingInitial}
                 isFetching={isFetching}
@@ -329,6 +330,7 @@ function ComicDetailsPanel({
                     <hr className="my-4 mx-0 border-solid border-b max-w-none" />
                     {/* TODO: show recent items before all items when in edit mode */}
                     <FilteredNavigationData
+                        currentComic={currentComic}
                         isLoading={isLoadingInitial}
                         isFetching={isFetching}
                         isSaving={isSaving}

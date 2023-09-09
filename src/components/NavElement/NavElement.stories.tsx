@@ -34,6 +34,7 @@ const Template: StoryFn<typeof NavElement> = (args) => {
 
 export const Default = Template.bind({})
 Default.args = {
+    currentComic: 666,
     item: MARTEN_HYDRATED,
     useColors: true,
     mode: NavElementMode[NavElementMode.Present] as unknown as NavElementMode,

@@ -14,6 +14,7 @@ const Template: StoryFn<typeof FilteredNavigationData> = (args) => {
 
 export const Default = Template.bind({})
 Default.args = {
+    currentComic: 666,
     editMode: false,
     isFetching: false,
     isLoading: false,

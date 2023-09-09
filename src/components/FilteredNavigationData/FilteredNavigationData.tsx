@@ -11,6 +11,7 @@ import { ItemId } from '@models/ItemId'
 import { ItemType } from '@models/ItemType'
 
 export default function FilteredNavigationData({
+    currentComic,
     isLoading,
     isFetching,
     isSaving,
@@ -22,6 +23,7 @@ export default function FilteredNavigationData({
     editMode,
     onAddItem,
 }: {
+    currentComic: ComicId
     isLoading: boolean
     isFetching: boolean
     isSaving: boolean
@@ -71,6 +73,7 @@ export default function FilteredNavigationData({
             {(filteredItemData.length > 0 || isLoading) && !hasError ? (
                 <div className="overflow-y-auto overflow-x-hidden max-h-52">
                     <ItemNavigation
+                        currentComic={currentComic}
                         itemNavigationData={filteredItemData}
                         isLoading={isLoading}
                         isFetching={isFetching}

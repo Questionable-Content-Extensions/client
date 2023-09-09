@@ -1,4 +1,5 @@
 import NavButton from '@components/ComicDetailsPanel/NavButton/NavButton'
+import { ComicId } from '@models/ComicId'
 import { HydratedItemNavigationData } from '@models/HydratedItemData'
 import { ItemId } from '@models/ItemId'
 
@@ -14,6 +15,7 @@ export enum NavElementMode {
 export default function NavElement({
     item,
     useColors,
+    currentComic,
     onSetCurrentComic,
     onShowInfoFor,
     mode,
@@ -22,6 +24,7 @@ export default function NavElement({
     onAddItem,
 }: {
     item: HydratedItemNavigationData
+    currentComic: ComicId
     onSetCurrentComic: (_: number) => void
     useColors: boolean
     onShowInfoFor: (_: ItemId) => void
@@ -99,7 +102,7 @@ export default function NavElement({
                 }
             >
                 <NavButton
-                    comicNo={item.first}
+                    comicNo={item.first !== currentComic ? item.first : null}
                     title={`First strip with ${item.shortName}`}
                     faClass="fast-backward"
                     onSetCurrentComic={onSetCurrentComic}
@@ -129,7 +132,7 @@ export default function NavElement({
                     onSetCurrentComic={onSetCurrentComic}
                 />
                 <NavButton
-                    comicNo={item.last}
+                    comicNo={item.last !== currentComic ? item.last : null}
                     title={`Last strip with ${item.shortName}`}
                     faClass="fast-forward"
                     onSetCurrentComic={onSetCurrentComic}
