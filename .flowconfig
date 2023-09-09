@@ -1,4 +1,0 @@
-[include]
-
-[ignore]
-.*/node_modules/flow-bin

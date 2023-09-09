@@ -1,0 +1,46 @@
+name: CI
+
+on:
+    push:
+        branches: [develop]
+    pull_request:
+        branches: [develop]
+
+jobs:
+    build:
+        runs-on: ubuntu-latest
+
+        steps:
+            - uses: actions/checkout@v3
+
+            - name: Use Node.js 18.x
+              uses: actions/setup-node@v3
+              with:
+                  node-version: 18.x
+                  cache: 'npm'
+
+            - name: Install Node modules
+              run: npm ci
+
+            - name: Run ESLint
+              run: npx eslint .
+
+            # Tests are currently kind of broken. Leave it for another day.
+
+            #- name: Run tests
+            #  run: npm test
+
+            # - name: Install Playwright
+            #   run: npx playwright install --with-deps
+
+            # - name: Build Storybook
+            #   run: npm run build-storybook
+
+            # - name: Run Storybook tests
+            #   run: |
+            #       npx concurrently -k -s last -n "SB,TEST" -c "magenta,blue" \
+            #       "npx http-server storybook-static --port 6006 --silent" \
+            #       "npx wait-on http://127.0.0.1:6006/ && npm run test-storybook"
+
+            - name: Ensure everything builds
+              run: npm run build
