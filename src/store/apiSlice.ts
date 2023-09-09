@@ -65,6 +65,23 @@ const greasemonkeyBaseQuery = ({
 }): GreasemonkeyBaseQuery => {
     return async ({ url, configuration }, _api, _extraOptions) => {
         const requestUrl = `${baseUrl}${url}`
+
+        if (!configuration) {
+            configuration = {
+                headers: {
+                    'X-QCExt-Version': GM.info.script.version,
+                },
+            }
+        } else {
+            configuration = {
+                ...configuration,
+                headers: {
+                    ...(configuration.headers ?? {}),
+                    'X-QCExt-Version': GM.info.script.version,
+                },
+            }
+        }
+
         let response
         try {
             response = await gmFetch(requestUrl, configuration)
