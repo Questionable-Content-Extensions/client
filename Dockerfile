@@ -1,50 +1,31 @@
-FROM ubuntu:focal
+FROM debian:bookworm AS nodejs
 
-# Set a directory for the app
 WORKDIR /app
 
-# Update APT
-RUN apt-get update
+# Download and import the Nodesource GPG key
+RUN apt-get update && \
+    apt-get install -y ca-certificates curl gnupg && \
+    apt-get clean
+RUN mkdir -p /etc/apt/keyrings && \
+    curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key | \
+    gpg --dearmor -o /etc/apt/keyrings/nodesource.gpg
 
-# Install curl
-RUN apt-get install -y curl
+# Make sure we have npm and nodejs
+ENV NODE_MAJOR=18
+RUN echo "deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_$NODE_MAJOR.x nodistro main" | tee /etc/apt/sources.list.d/nodesource.list
+RUN DEBIAN_FRONTEND=noninteractive \
+    apt-get update && \
+    apt-get install nodejs -y && \
+    apt-get clean
 
-# Install node.js v16
-RUN curl -fsSL https://deb.nodesource.com/setup_16.x | bash -
-RUN apt-get install -y nodejs
+# Next, let's run npm install
+COPY package.json package-lock.json ./
+RUN npm install
+# Update browserslist
+#RUN npx browserslist@latest --update-db
 
-# Install build-essentials (required for certain npm packages)
-RUN apt-get install -y build-essential
+# Finally, let's copy over the rest of the stuff
+COPY . ./
 
-# Install grunt, jsonlint and jshint
-RUN npm install -g grunt
-
-# Install latest stable Ruby
-RUN curl -sSL https://rvm.io/mpapis.asc | gpg --import
-RUN curl -sSL https://rvm.io/pkuczynski.asc | gpg --import
-RUN curl -sSL https://get.rvm.io | bash -s stable --ruby
-
-# Update Gem
-RUN bash -c "source /etc/profile.d/rvm.sh && gem update --system"
-
-# Install compass
-RUN bash -c "source /etc/profile.d/rvm.sh && gem install compass"
-
-# Copy over package*.json files
-COPY package*.json ./
-
-# Install our NPM dependencies
-RUN npm install --legacy-peer-deps
-
-# Preserve package-lock.json
-RUN cp package-lock.json package-lock.json.new
-
-# Copy all the files to the container
-COPY . .
-
-# Restore package-lock.json
-RUN cp package-lock.json.new package-lock.json
-
-# Finally, run the build script on run
-ENV grunt_command default
-CMD ["bash", "-c", "source /etc/profile.d/rvm.sh && grunt ${grunt_command}"]
+# Run npm run
+ENTRYPOINT ["/usr/bin/npm", "run"]

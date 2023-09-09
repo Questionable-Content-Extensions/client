@@ -1,0 +1,49 @@
+/* Firefox renders this just fine, but Chromium doesn't smoothly animate without these @propery declarations */
+@property --tw-bg-opacity {
+    syntax: '<number>';
+    inherits: false;
+    initial-value: 0;
+}
+
+/* Unfortunately this one doesn't work; it's technically not a "length" value, but a `backdrop-filter` value and
+ * as far as I can tell, that kind of value is not supported by the @property syntax. */
+@property --tw-backdrop-blur {
+    syntax: '<length>';
+    inherits: false;
+    initial-value: ;
+}
+
+@keyframes fade-in {
+    from {
+        @apply bg-black bg-opacity-0 backdrop-blur-0;
+    }
+    to {
+        @apply bg-black bg-opacity-50 backdrop-blur-sm;
+    }
+}
+
+@keyframes fade-out {
+    from {
+        @apply bg-black bg-opacity-50 backdrop-blur-sm;
+    }
+    to {
+        @apply bg-black bg-opacity-0 backdrop-blur-0;
+    }
+}
+
+.modalPageOverlay {
+    @apply hidden;
+}
+.modalPageOverlay.show,
+.modalPageOverlay.fadedIn {
+    @apply block z-[1000];
+    @apply bg-black bg-opacity-50 backdrop-blur-sm;
+}
+
+.modalPageOverlay.show {
+    animation: fade-in 1s;
+}
+
+.modalPageOverlay:not(.show).fadedIn {
+    animation: fade-out 1s;
+}

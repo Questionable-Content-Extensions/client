@@ -1,0 +1,28 @@
+.changeLog h2 {
+    @apply text-2xl font-bold;
+    @apply my-2;
+}
+
+.changeLog h3 {
+    @apply text-lg font-bold;
+    @apply my-1;
+}
+
+.changeLog p {
+    @apply mb-4 leading-6;
+}
+
+.changeLog ul {
+}
+
+.changeLog blockquote {
+    @apply text-black bg-slate-100;
+    @apply my-2 p-4;
+    @apply border-0 border-l-4 border-slate-300;
+}
+.changeLog blockquote p {
+    @apply text-black;
+}
+.changeLog blockquote p:last-child {
+    @apply mb-0;
+}

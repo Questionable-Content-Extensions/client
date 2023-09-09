@@ -1,0 +1,16 @@
+.details > summary > button > svg {
+    transform: rotate(90deg);
+}
+.details[open] > summary > button > svg {
+    transform: rotate(-90deg);
+}
+
+.details > summary {
+    cursor: pointer;
+}
+.details > summary > button {
+    pointer-events: none;
+}
+.details > summary > button > svg {
+    transition: all 0.3s;
+}
