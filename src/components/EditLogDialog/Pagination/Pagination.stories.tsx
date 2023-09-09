@@ -1,13 +1,13 @@
-import { useArgs } from '@storybook/client-api'
-import { ComponentMeta, ComponentStory } from '@storybook/react'
+import { useArgs } from '@storybook/preview-api'
+import { Meta, StoryFn } from '@storybook/react'
 
 import Pagination from './Pagination'
 
 export default {
     component: Pagination,
-} as ComponentMeta<typeof Pagination>
+} as Meta<typeof Pagination>
 
-const Template: ComponentStory<typeof Pagination> = (args) => {
+const Template: StoryFn<typeof Pagination> = (args) => {
     let [_args, setArgs] = useArgs()
     const onGoToPage = (page: number) => {
         setArgs({ page })

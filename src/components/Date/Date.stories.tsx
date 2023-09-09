@@ -1,4 +1,4 @@
-import { ComponentMeta, ComponentStory } from '@storybook/react'
+import { Meta, StoryFn } from '@storybook/react'
 
 import { COMIC_DATA_666 } from '~/mocks'
 import Settings from '~/settings'
@@ -7,9 +7,9 @@ import { DateComponent as Date } from './Date'
 
 export default {
     component: Date,
-} as ComponentMeta<typeof Date>
+} as Meta<typeof Date>
 
-const Template: ComponentStory<typeof Date> = (args) => {
+const Template: StoryFn<typeof Date> = (args) => {
     // Then, let's fake the necessary REST calls
     const { worker, rest } = window.msw
     worker.use(
@@ -39,7 +39,7 @@ Default.args = {
     settings: Settings.DEFAULTS,
 }
 
-const ErrorTemplate: ComponentStory<typeof Date> = (args) => {
+const ErrorTemplate: StoryFn<typeof Date> = (args) => {
     // Then, let's fake the necessary REST calls
     const { worker, rest } = window.msw
     worker.use(

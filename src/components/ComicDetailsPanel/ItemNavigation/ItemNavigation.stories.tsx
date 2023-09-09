@@ -1,5 +1,5 @@
 import { NavElementMode } from '@components/NavElement/NavElement'
-import { ComponentMeta, ComponentStory } from '@storybook/react'
+import { Meta, StoryFn } from '@storybook/react'
 
 import { COMIC_DATA_666_HYDRATED_ITEMS } from '~/mocks'
 
@@ -16,9 +16,9 @@ export default {
             ],
         },
     },
-} as ComponentMeta<typeof ItemNavigation>
+} as Meta<typeof ItemNavigation>
 
-const Template: ComponentStory<typeof ItemNavigation> = (args) => {
+const Template: StoryFn<typeof ItemNavigation> = (args) => {
     // For better Storybook experience, we pretend this field is a string
     // and then turn it into a number here
     const mode = args.mode

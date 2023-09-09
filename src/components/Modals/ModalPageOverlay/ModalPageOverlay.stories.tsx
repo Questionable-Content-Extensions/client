@@ -1,14 +1,14 @@
 import ModalDialogSeat from '@modals/ModalDialogSeat/ModalDialogSeat'
-import { useArgs } from '@storybook/client-api'
-import { ComponentMeta, ComponentStory } from '@storybook/react'
+import { useArgs } from '@storybook/preview-api'
+import { Meta, StoryFn } from '@storybook/react'
 
 import ModalPageOverlay from './ModalPageOverlay'
 
 export default {
     component: ModalPageOverlay,
-} as ComponentMeta<typeof ModalPageOverlay>
+} as Meta<typeof ModalPageOverlay>
 
-const Template: ComponentStory<typeof ModalPageOverlay> = (args) => {
+const Template: StoryFn<typeof ModalPageOverlay> = (args) => {
     const [_args, setArgs] = useArgs()
     return (
         <>

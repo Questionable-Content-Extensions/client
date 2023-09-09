@@ -1,4 +1,4 @@
-import { ComponentMeta, ComponentStory } from '@storybook/react'
+import { Meta, StoryFn } from '@storybook/react'
 
 import { COMIC_DATA_666_HYDRATED_ITEMS } from '~/mocks'
 
@@ -6,9 +6,9 @@ import FilteredNavigationData from './FilteredNavigationData'
 
 export default {
     component: FilteredNavigationData,
-} as ComponentMeta<typeof FilteredNavigationData>
+} as Meta<typeof FilteredNavigationData>
 
-const Template: ComponentStory<typeof FilteredNavigationData> = (args) => {
+const Template: StoryFn<typeof FilteredNavigationData> = (args) => {
     return <FilteredNavigationData {...args} />
 }
 

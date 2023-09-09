@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 import React from 'react'
-import ReactDOM from 'react-dom'
+import { createRoot } from 'react-dom/client'
 import { Provider } from 'react-redux'
 import { ToastContainer } from 'react-toastify'
 
@@ -191,13 +191,13 @@ async function initializeComic() {
         comicImgParent.replaceChild(comicContainer, comicImg)
     }
 
-    ReactDOM.render(
+    const root = createRoot(comicContainer)
+    root.render(
         <QcStrictMode>
             <Provider store={store}>
                 <Comic initialComic={comic} initialComicSrc={comicLinkUrl} />
             </Provider>
-        </QcStrictMode>,
-        comicContainer
+        </QcStrictMode>
     )
 
     return comic
@@ -269,13 +269,14 @@ function initializeComicNavigation() {
         NAVIGATION_CONTAINER_CLASSNAME
     )
     comicNavParent.replaceChild(comicNavContainer, comicNav)
-    ReactDOM.render(
+
+    const root = createRoot(comicNavContainer)
+    root.render(
         <QcStrictMode>
             <Provider store={store}>
                 <ComicNavigation />
             </Provider>
-        </QcStrictMode>,
-        comicNavContainer
+        </QcStrictMode>
     )
 
     let comicNav2Parent = comicNav2.parentNode as HTMLElement
@@ -304,13 +305,13 @@ function initializeComicNavigation() {
         comicNav2Parent.replaceChild(comicNavContainer, comicNav2)
     }
 
-    ReactDOM.render(
+    const root2 = createRoot(comicNavContainer)
+    root2.render(
         <QcStrictMode>
             <Provider store={store}>
                 <ComicNavigation />
             </Provider>
-        </QcStrictMode>,
-        comicNavContainer
+        </QcStrictMode>
     )
 }
 
@@ -331,25 +332,27 @@ function initializeDateAndNews() {
     const dateContainer = document.createElement('div')
     dateContainer.classList.add(QC_EXT_CLASSNAME, 'qc-ext-date-container')
     newsParent.insertBefore(dateContainer, news)
-    ReactDOM.render(
+
+    const root = createRoot(dateContainer)
+    root.render(
         <QcStrictMode>
             <Provider store={store}>
                 <DateComponent />
             </Provider>
-        </QcStrictMode>,
-        dateContainer
+        </QcStrictMode>
     )
 
     const newsContainer = document.createElement('div')
     newsContainer.classList.add(QC_EXT_CLASSNAME, 'qc-ext-news-container')
     newsParent.replaceChild(newsContainer, news)
-    ReactDOM.render(
+
+    const root2 = createRoot(newsContainer)
+    root2.render(
         <QcStrictMode>
             <Provider store={store}>
                 <News initialNews={newsData} />
             </Provider>
-        </QcStrictMode>,
-        newsContainer
+        </QcStrictMode>
     )
 }
 
@@ -368,7 +371,9 @@ function initializeExtraNavigation() {
         'z-10'
     )
     container.insertAdjacentElement('beforebegin', extraContainer)
-    ReactDOM.render(
+
+    const root = createRoot(extraContainer)
+    root.render(
         <QcStrictMode>
             <Provider store={store}>
                 <ComicTitle />
@@ -377,8 +382,7 @@ function initializeExtraNavigation() {
                 <EditorModePanel />
                 <ToastContainer />
             </Provider>
-        </QcStrictMode>,
-        extraContainer
+        </QcStrictMode>
     )
 }
 
@@ -397,13 +401,14 @@ function initializeDebugError() {
         'z-10'
     )
     container.insertAdjacentElement('beforebegin', extraContainer)
-    ReactDOM.render(
+
+    const root = createRoot(extraContainer)
+    root.render(
         <QcStrictMode>
             <Provider store={store}>
                 <DebugLoadErrorPanel />
             </Provider>
-        </QcStrictMode>,
-        extraContainer
+        </QcStrictMode>
     )
 }
 

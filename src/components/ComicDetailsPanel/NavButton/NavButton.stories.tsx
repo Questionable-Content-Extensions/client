@@ -1,5 +1,5 @@
 import { forkAwesomeIcons } from '@models/ForkAwesomeIcon'
-import { ComponentMeta, ComponentStory } from '@storybook/react'
+import { Meta, StoryFn } from '@storybook/react'
 
 import NavButton from './NavButton'
 
@@ -8,11 +8,9 @@ export default {
     argTypes: {
         faClass: { control: { type: 'select' }, options: forkAwesomeIcons },
     },
-} as ComponentMeta<typeof NavButton>
+} as Meta<typeof NavButton>
 
-const Template: ComponentStory<typeof NavButton> = (args) => (
-    <NavButton {...args} />
-)
+const Template: StoryFn<typeof NavButton> = (args) => <NavButton {...args} />
 
 export const Default = Template.bind({})
 Default.args = {

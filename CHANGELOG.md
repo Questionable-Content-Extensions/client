@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased][unreleased]
 
+### Changed 🔧
+
+-   Upgraded all dependencies to their latest versions and made the necessary changes to make things work the same as before
+
 ## [1.0.0][] - 2023-09-09
 
 > Hello! It has once again been a while, but this time, it's a big one! I've been meaning to do it for a long time, but I finally got around to rewrite the extension from scratch using React as the framework rather than AngularJS v1. While I was at it, I also updated/upgraded everything else about the script that I could, and it's much more modern and user friendly now.

@@ -2,7 +2,7 @@ import { apiSlice } from '@store/apiSlice'
 import { setShowEditLogDialog } from '@store/dialogSlice'
 import { setSettings } from '@store/settingsSlice'
 import store from '@store/store'
-import { ComponentMeta, ComponentStory } from '@storybook/react'
+import { Meta, StoryFn } from '@storybook/react'
 
 import { EDIT_LOG_COMIC_4269, LATEST_EDIT_LOG, useMswReady } from '~/mocks'
 import Settings from '~/settings'
@@ -18,12 +18,12 @@ export default {
             },
         },
     },
-} as ComponentMeta<typeof EditLogDialog>
+} as Meta<typeof EditLogDialog>
 
 type ItemDetailsDialogStoryThis = {
     kind: 'All' | 'Error' | 'Comic'
 }
-const Template: ComponentStory<typeof EditLogDialog> = function (
+const Template: StoryFn<typeof EditLogDialog> = function (
     this: ItemDetailsDialogStoryThis,
     args
 ) {

@@ -1,5 +1,5 @@
 import { expect } from '@storybook/jest'
-import { ComponentMeta, ComponentStory } from '@storybook/react'
+import { Meta, StoryFn } from '@storybook/react'
 import { userEvent, within } from '@storybook/testing-library'
 
 import { MARTEN, MARTEN_HYDRATED, MARTEN_ITEM } from '~/mocks'
@@ -19,9 +19,9 @@ export default {
             ],
         },
     },
-} as ComponentMeta<typeof NavElement>
+} as Meta<typeof NavElement>
 
-const Template: ComponentStory<typeof NavElement> = (args) => {
+const Template: StoryFn<typeof NavElement> = (args) => {
     // For better Storybook experience, we pretend this field is a string
     // and then turn it into a number here
     const mode = args.mode

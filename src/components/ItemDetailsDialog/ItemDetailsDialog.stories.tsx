@@ -5,7 +5,7 @@ import { setCurrentComic } from '@store/comicSlice'
 import { setShowItemDetailsDialogFor } from '@store/dialogSlice'
 import { setSettings } from '@store/settingsSlice'
 import store from '@store/store'
-import { ComponentMeta, ComponentStory } from '@storybook/react'
+import { Meta, StoryFn } from '@storybook/react'
 
 import {
     ALL_ITEMS,
@@ -31,12 +31,12 @@ export default {
             },
         },
     },
-} as ComponentMeta<typeof ItemDetailsDialog>
+} as Meta<typeof ItemDetailsDialog>
 
 type ItemDetailsDialogStoryThis = {
     kind: 'Default' | 'Editor' | 'Error'
 }
-const Template: ComponentStory<typeof ItemDetailsDialog> = function (
+const Template: StoryFn<typeof ItemDetailsDialog> = function (
     this: ItemDetailsDialogStoryThis,
     args
 ) {

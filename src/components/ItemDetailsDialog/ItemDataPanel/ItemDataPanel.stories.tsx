@@ -4,7 +4,7 @@ import { Item } from '@models/Item'
 import { apiSlice } from '@store/apiSlice'
 import { setFromItem } from '@store/itemEditorSlice'
 import store from '@store/store'
-import { ComponentMeta, ComponentStory } from '@storybook/react'
+import { Meta, StoryFn } from '@storybook/react'
 
 import {
     ALL_ITEMS,
@@ -30,11 +30,11 @@ export default {
         onDeleteImage: { action: 'onDeleteImage' },
         onSetPrimaryImage: { action: 'onSetPrimaryImage' },
     },
-} as ComponentMeta<typeof ItemDataPanel>
+} as Meta<typeof ItemDataPanel>
 
 const fayeImage: any = require('../4.png')
 
-const Template: ComponentStory<typeof ItemDataPanel> = (args) => {
+const Template: StoryFn<typeof ItemDataPanel> = (args) => {
     const mswReady = useMswReady()
 
     const [previousItem, setPreviousItem] = useState<Item | null>(null)

@@ -1,5 +1,5 @@
 import { ComicList as ComicDataListing } from '@models/ComicList'
-import { ComponentMeta, ComponentStory } from '@storybook/react'
+import { Meta, StoryFn } from '@storybook/react'
 
 import { generateRandomName } from '~/mocks'
 
@@ -18,9 +18,9 @@ export default {
         },
         onGoToComic: { action: 'onGoToComic' },
     },
-} as ComponentMeta<typeof ComicList>
+} as Meta<typeof ComicList>
 
-const Template: ComponentStory<typeof ComicList> = (args) => {
+const Template: StoryFn<typeof ComicList> = (args) => {
     let allComicData: ComicDataListing[]
     if (!args.allComicData.length) {
         allComicData = []

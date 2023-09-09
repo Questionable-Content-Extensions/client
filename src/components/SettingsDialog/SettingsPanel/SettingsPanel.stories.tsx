@@ -1,5 +1,5 @@
-import { useArgs } from '@storybook/client-api'
-import { ComponentMeta, ComponentStory } from '@storybook/react'
+import { useArgs } from '@storybook/preview-api'
+import { Meta, StoryFn } from '@storybook/react'
 
 import Settings, { SettingsUpdaterFunction } from '~/settings'
 
@@ -10,9 +10,9 @@ export default {
     argTypes: {
         updateSettings: { action: 'updateSettings' },
     },
-} as ComponentMeta<typeof SettingsPanel>
+} as Meta<typeof SettingsPanel>
 
-const Template: ComponentStory<typeof SettingsPanel> = (args) => {
+const Template: StoryFn<typeof SettingsPanel> = (args) => {
     const [_, setArgs] = useArgs()
     const updateSettings = (s: SettingsUpdaterFunction) => {
         if (args.updateSettings) {

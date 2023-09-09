@@ -1,6 +1,6 @@
 import { ComicId } from '@models/ComicId'
-import { useArgs, useEffect, useMemo, useState } from '@storybook/client-api'
-import { ComponentMeta, ComponentStory } from '@storybook/react'
+import { useArgs, useEffect, useMemo, useState } from '@storybook/preview-api'
+import { Meta, StoryFn } from '@storybook/react'
 
 import { COMIC_DATA_666_HYDRATED_ITEMS, getComicListMocks } from '~/mocks'
 
@@ -20,9 +20,9 @@ export default {
             },
         },
     },
-} as ComponentMeta<typeof CopyItemsDialogPanel>
+} as Meta<typeof CopyItemsDialogPanel>
 
-const Template: ComponentStory<typeof CopyItemsDialogPanel> = (args) => {
+const Template: StoryFn<typeof CopyItemsDialogPanel> = (args) => {
     let [_args, setArgs] = useArgs()
     const onChangeSelectedComic = (selectedComic: ComicId) => {
         setArgs({ selectedComic })

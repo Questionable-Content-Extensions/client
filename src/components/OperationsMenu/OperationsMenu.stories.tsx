@@ -1,5 +1,5 @@
 import { expect } from '@storybook/jest'
-import { ComponentMeta, ComponentStory } from '@storybook/react'
+import { Meta, StoryFn } from '@storybook/react'
 import { userEvent, waitFor, within } from '@storybook/testing-library'
 
 import { OperationsMenu, OperationsMenuProps } from './OperationsMenu'
@@ -11,9 +11,9 @@ export default {
 
         setShowEditLogDialog: { action: 'setShowEditLogDialog' },
     },
-} as ComponentMeta<typeof OperationsMenu>
+} as Meta<typeof OperationsMenu>
 
-const Template: ComponentStory<typeof OperationsMenu> = (args) => {
+const Template: StoryFn<typeof OperationsMenu> = (args) => {
     return <OperationsMenu {...args} />
 }
 

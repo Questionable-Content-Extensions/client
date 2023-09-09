@@ -1,4 +1,4 @@
-import { ComponentMeta, ComponentStory } from '@storybook/react'
+import { Meta, StoryFn } from '@storybook/react'
 
 import {
     FAYE,
@@ -23,9 +23,9 @@ export default {
             },
         },
     },
-} as ComponentMeta<typeof ItemImageViewer>
+} as Meta<typeof ItemImageViewer>
 
-const Template: ComponentStory<typeof ItemImageViewer> = (args) => {
+const Template: StoryFn<typeof ItemImageViewer> = (args) => {
     const mswReady = useMswReady()
 
     // Then, let's fake the necessary REST calls

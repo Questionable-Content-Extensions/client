@@ -4,7 +4,7 @@ import { apiSlice } from '@store/apiSlice'
 import { setCurrentComic } from '@store/comicSlice'
 import { setShowCopyItemsDialog } from '@store/dialogSlice'
 import store from '@store/store'
-import { ComponentMeta, ComponentStory } from '@storybook/react'
+import { Meta, StoryFn } from '@storybook/react'
 
 import {
     ALL_ITEMS,
@@ -24,9 +24,9 @@ export default {
             },
         },
     },
-} as ComponentMeta<typeof CopyItemsDialog>
+} as Meta<typeof CopyItemsDialog>
 
-const Template: ComponentStory<typeof CopyItemsDialog> = (args) => {
+const Template: StoryFn<typeof CopyItemsDialog> = (args) => {
     const mswReady = useMswReady()
 
     store.dispatch(apiSlice.util.resetApiState())

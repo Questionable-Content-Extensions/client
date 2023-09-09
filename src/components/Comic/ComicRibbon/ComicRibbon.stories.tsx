@@ -1,5 +1,5 @@
 import FakeComic from '@storybook/FakeComic'
-import { ComponentMeta, ComponentStory } from '@storybook/react'
+import { Meta, StoryFn } from '@storybook/react'
 
 import ComicRibbon, { RibbonType } from './ComicRibbon'
 
@@ -15,9 +15,9 @@ export default {
             ],
         },
     },
-} as ComponentMeta<typeof ComicRibbon>
+} as Meta<typeof ComicRibbon>
 
-const Template: ComponentStory<typeof ComicRibbon> = (args) => {
+const Template: StoryFn<typeof ComicRibbon> = (args) => {
     // For better Storybook experience, we pretend this field is a string
     // and then turn it into a number here
     const ribbonType = args.ribbonType
