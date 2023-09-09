@@ -5,7 +5,9 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [Unreleased][unreleased]
+
+## [1.0.0][] - 2023-09-09
 
 > Hello! It has once again been a while, but this time, it's a big one! I've been meaning to do it for a long time, but I finally got around to rewrite the extension from scratch using React as the framework rather than AngularJS v1. While I was at it, I also updated/upgraded everything else about the script that I could, and it's much more modern and user friendly now.
 >
@@ -329,7 +331,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 -   Attempt to fix Travis build
 
-[unreleased]: https://github.com/Questionable-Content-Extensions/client/compare/0.6.2...HEAD
 [0.6.2]: https://github.com/Questionable-Content-Extensions/client/compare/0.6.1...0.6.2
 [0.6.1]: https://github.com/Questionable-Content-Extensions/client/compare/0.6.0...0.6.1
 [0.6.0]: https://github.com/Questionable-Content-Extensions/client/compare/0.5.3...0.6.0
@@ -348,3 +349,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [0.1.2]: https://github.com/Questionable-Content-Extensions/client/compare/0.1.0...0.1.2
 [0.1.0]: https://github.com/Questionable-Content-Extensions/client/releases/tag/0.1.0
 [issues]: https://github.com/Questionable-Content-Extensions/client/issues
+[unreleased]: https://github.com/Questionable-Content-Extensions/client/compare/1.0.0...HEAD
+[1.0.0]: https://github.com/Questionable-Content-Extensions/client/compare/0.6.2...1.0.0
