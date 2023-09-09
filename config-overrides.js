@@ -134,5 +134,14 @@ module.exports = function override(config, env) {
         plugins: [...config.resolve.plugins, new TsconfigPathsPlugin()],
     }
 
+    // In windows, native file watching does not seem to work when using
+    // Docker. Uncomment the below to enable polling-based file watching
+    // instead.
+    // config.watchOptions = {
+    //     ...config.watchOptions,
+    //     poll: true,
+    //     ignored: /node_modules/,
+    // }
+
     return config
 }
