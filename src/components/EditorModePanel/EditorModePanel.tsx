@@ -83,10 +83,6 @@ const connector = connect(mapState, mapDispatch)
 type PropsFromRedux = ConnectedProps<typeof connector>
 type EditorModePanelProps = PropsFromRedux & {}
 
-// TODO: Show editor log function
-// Make it so it's possible to both show all logs and only logs for the
-// current comic / item
-
 function EditorModePanel({
     settings,
     currentComic,

@@ -203,8 +203,6 @@ function ComicDetailsPanel({
         return <></>
     }, [settings, setShowChangeLogDialog])
 
-    // TODO: Add a setting for placing the widget on the left or right side of the comic.
-
     function goToSelectorComic() {
         if (comicSelectorNo && /^\d+$/.test(comicSelectorNo)) {
             const comicNo = Number(comicSelectorNo)
@@ -328,7 +326,6 @@ function ComicDetailsPanel({
             {settings.showAllMembers || settings.editMode ? (
                 <>
                     <hr className="my-4 mx-0 border-solid border-b max-w-none" />
-                    {/* TODO: show recent items before all items when in edit mode */}
                     <FilteredNavigationData
                         currentComic={currentComic}
                         isLoading={isLoadingInitial}

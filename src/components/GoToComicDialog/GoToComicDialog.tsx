@@ -32,8 +32,6 @@ type GoToComicDialogProps = PropsFromRedux & {
     onClose: () => void
 }
 
-// TODO: Show Guest Comic/Non Canon status as pill
-
 export function GoToComicDialog({
     show,
     onClose,

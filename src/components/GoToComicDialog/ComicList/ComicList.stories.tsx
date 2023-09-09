@@ -32,8 +32,8 @@ const Template: StoryFn<typeof ComicList> = (args) => {
                     c % 3 === 0
                         ? generateRandomName(Math.floor(Math.random() * 10) + 5)
                         : undefined,
-                isGuestComic: false,
-                isNonCanon: false,
+                isGuestComic: c % 5 === 0,
+                isNonCanon: c % 7 === 0,
             })
         }
     } else {

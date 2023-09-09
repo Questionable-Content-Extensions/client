@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased][unreleased]
 
+### Added ✨
+
+-   Add guest comic/non-canon pills to `ComicList`
+
 ### Changed 🔧
 
 -   Upgraded all dependencies to their latest versions and made the necessary changes to make things work the same as before
