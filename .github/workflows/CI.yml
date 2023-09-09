@@ -45,7 +45,7 @@ jobs:
             - name: Ensure everything builds
               run: npm run build
 
-            - name: Deploy
+            - name: Deploy Storybook
               uses: JamesIves/github-pages-deploy-action@v4
               with:
                   folder: storybook-static
