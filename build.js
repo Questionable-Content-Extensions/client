@@ -77,7 +77,24 @@ s.on('end', () => {
 
         s.pipe(w, { end: false })
         s.on('end', () => {
-            fs.createReadStream('./build/static/js/main.js').pipe(w)
+            let mr = fs.createReadStream('./build/static/js/main.js')
+            mr.pipe(w)
+            mr.on('end', () => {
+                // Open the meta file for writing
+                let w = fs.createWriteStream('./dist/qc-ext.meta.js', {
+                    flags: 'w',
+                })
+
+                let s = new Readable()
+                s._read = () => {}
+                s.push(licenseBanner)
+                s.push('\n')
+                s.push(productionUserscriptHeader)
+                s.push('\n')
+                s.push(null)
+
+                s.pipe(w, { end: false })
+            })
         })
     })
 })
