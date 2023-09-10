@@ -1,4 +1,6 @@
 import { NavElementMode } from '@components/NavElement/NavElement'
+import { setCurrentComic } from '@store/comicSlice'
+import store from '@store/store'
 import { Meta, StoryFn } from '@storybook/react'
 
 import { COMIC_DATA_666_HYDRATED_ITEMS } from '~/mocks'
@@ -28,12 +30,17 @@ const Template: StoryFn<typeof ItemNavigation> = (args) => {
             | NavElementMode.Missing
     }
 
+    const state = store.getState()
+
+    if (state.comic.current !== 666) {
+        store.dispatch(setCurrentComic(666))
+    }
+
     return <ItemNavigation {...args} />
 }
 
 export const Default = Template.bind({})
 Default.args = {
-    currentComic: 666,
     itemNavigationData: COMIC_DATA_666_HYDRATED_ITEMS,
     useColors: true,
     isLoading: false,

@@ -1,3 +1,5 @@
+import { setCurrentComic } from '@store/comicSlice'
+import store from '@store/store'
 import { Meta, StoryFn } from '@storybook/react'
 
 import { COMIC_DATA_666_HYDRATED_ITEMS } from '~/mocks'
@@ -9,12 +11,17 @@ export default {
 } as Meta<typeof FilteredNavigationData>
 
 const Template: StoryFn<typeof FilteredNavigationData> = (args) => {
+    const state = store.getState()
+
+    if (state.comic.current !== 666) {
+        store.dispatch(setCurrentComic(666))
+    }
+
     return <FilteredNavigationData {...args} />
 }
 
 export const Default = Template.bind({})
 Default.args = {
-    currentComic: 666,
     editMode: false,
     isFetching: false,
     isLoading: false,

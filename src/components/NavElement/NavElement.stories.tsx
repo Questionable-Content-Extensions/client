@@ -1,8 +1,12 @@
+import { setCurrentComic } from '@store/comicSlice'
+import { setSettings } from '@store/settingsSlice'
+import store from '@store/store'
 import { expect } from '@storybook/jest'
 import { Meta, StoryFn } from '@storybook/react'
 import { userEvent, within } from '@storybook/testing-library'
 
-import { MARTEN, MARTEN_HYDRATED, MARTEN_ITEM } from '~/mocks'
+import { MARTEN, MARTEN_HYDRATED, MARTEN_ITEM, useMswReady } from '~/mocks'
+import Settings from '~/settings'
 
 import NavElement, { NavElementMode } from './NavElement'
 
@@ -18,10 +22,53 @@ export default {
                 NavElementMode[NavElementMode.Preview],
             ],
         },
+        onSetCurrentComic: { action: 'onSetCurrentComic' },
+        onShowInfoFor: { action: 'onShowInfoFor' },
+        onAddItem: { action: 'onAddItem' },
+        onRemoveItem: { action: 'onRemoveItem' },
     },
 } as Meta<typeof NavElement>
 
-const Template: StoryFn<typeof NavElement> = (args) => {
+const Template: StoryFn<typeof NavElement> = function (
+    this: { withRandom?: boolean },
+    args
+) {
+    const mswReady = useMswReady()
+
+    const state = store.getState()
+
+    if (state.comic.current !== 666) {
+        store.dispatch(setCurrentComic(666))
+    }
+    if (this.withRandom && !state.settings.values?.showItemRandomButton) {
+        store.dispatch(
+            setSettings({
+                ...Settings.DEFAULTS,
+                showItemRandomButton: true,
+            })
+        )
+    } else if (
+        !this.withRandom &&
+        state.settings.values?.showItemRandomButton
+    ) {
+        store.dispatch(
+            setSettings({
+                ...Settings.DEFAULTS,
+                showItemRandomButton: false,
+            })
+        )
+    }
+
+    const { worker, rest } = window.msw
+    worker.use(
+        rest.get(
+            'http://localhost:3000/api/v2/itemdata/1/comics/random',
+            (req, res, ctx) => {
+                return res(ctx.json(4269))
+            }
+        )
+    )
+
     // For better Storybook experience, we pretend this field is a string
     // and then turn it into a number here
     const mode = args.mode
@@ -29,12 +76,11 @@ const Template: StoryFn<typeof NavElement> = (args) => {
         args.mode = NavElementMode[mode] as unknown as NavElementMode
     }
 
-    return <NavElement {...args} />
+    return mswReady ? <NavElement {...args} /> : <></>
 }
 
 export const Default = Template.bind({})
 Default.args = {
-    currentComic: 666,
     item: MARTEN_HYDRATED,
     useColors: true,
     mode: NavElementMode[NavElementMode.Present] as unknown as NavElementMode,
@@ -95,4 +141,9 @@ EditModeMissing.play = ({ canvasElement, args }) => {
     expect(args.onAddItem).not.toBeCalledWith(MARTEN.id)
     userEvent.click(canvas.getByTitle('Add Marten to comic'))
     expect(args.onAddItem).toBeCalledWith(MARTEN.id)
+}
+
+export const WithRandomButton = Template.bind({ withRandom: true })
+WithRandomButton.args = {
+    ...Default.args,
 }

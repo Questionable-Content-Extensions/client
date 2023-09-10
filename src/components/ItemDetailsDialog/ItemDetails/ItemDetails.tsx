@@ -24,7 +24,6 @@ import ValueEditor from './ValueEditor/ValueEditor'
 
 const mapState = (state: RootState) => {
     return {
-        currentComic: state.comic.current,
         name: state.itemEditor.name,
         isNameDirty: isNameDirtySelector(state),
         shortName: state.itemEditor.shortName,
@@ -63,7 +62,6 @@ type ItemDetailsProps = PropsFromRedux & {
 }
 
 export function ItemDetails({
-    currentComic,
     name,
     isNameDirty,
     shortName,
@@ -228,7 +226,6 @@ export function ItemDetails({
                 <strong>Navigation bar preview:</strong>
             </p>
             <NavElement
-                currentComic={currentComic}
                 item={{
                     id: item.id,
                     shortName: item.shortName,

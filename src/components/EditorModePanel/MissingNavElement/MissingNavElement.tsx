@@ -1,11 +1,9 @@
 import NavElement, { NavElementMode } from '@components/NavElement/NavElement'
-import { ComicId } from '@models/ComicId'
 import { NavigationData } from '@models/NavigationData'
 
 // TODO: Set up stories for `MissingNavElement`
 export default function MissingNavElement({
     navigationData,
-    currentComic,
     id,
     title,
     description,
@@ -13,7 +11,6 @@ export default function MissingNavElement({
     useColors,
 }: {
     navigationData: NavigationData | null
-    currentComic: ComicId
     id: number
     title: string
     description: string
@@ -38,7 +35,6 @@ export default function MissingNavElement({
                         type: 'cast',
                         count: 0,
                     }}
-                    currentComic={currentComic}
                     onSetCurrentComic={onSetCurrentComic}
                     useColors={useColors}
                     onShowInfoFor={() => {}}
