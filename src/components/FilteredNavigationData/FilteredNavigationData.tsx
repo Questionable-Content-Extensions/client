@@ -94,7 +94,7 @@ export default function FilteredNavigationData({
                     No {filterType} found matching '{filterName}'
                 </p>
             )}
-            {editMode ? (
+            {editMode && (
                 <PaddedButton
                     className="mt-2 w-full"
                     onClick={async () => {
@@ -121,8 +121,6 @@ export default function FilteredNavigationData({
                     {filterName !== '' ? <>named '{filterName}'</> : <></>} to
                     comic
                 </PaddedButton>
-            ) : (
-                <></>
             )}
         </>
     )

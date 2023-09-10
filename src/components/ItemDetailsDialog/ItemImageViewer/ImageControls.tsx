@@ -64,12 +64,10 @@ export default function ImageControls({
                     <i className="fa fa-step-backward" aria-hidden></i>
                 </button>
                 <div>
-                    {currentImages.length > 1 ? (
+                    {currentImages.length > 1 && (
                         <>
                             {currentImage + 1} / {currentImages.length}{' '}
                         </>
-                    ) : (
-                        <></>
                     )}
                 </div>
                 <button
@@ -84,30 +82,29 @@ export default function ImageControls({
                     <i className="fa fa-step-forward" aria-hidden></i>
                 </button>
             </div>
-            {editModeToken !== null ? (
+            {editModeToken !== null && (
                 <div className="flex justify-center">
                     {currentImages.length !== 0 &&
-                    (primaryImage === null ||
-                        primaryImageIndex(primaryImage) !== currentImage) ? (
-                        <>
-                            {' '}
-                            <button
-                                className="mr-1"
-                                title="Make primary image"
-                                onClick={() => {
-                                    onSetPrimaryImage(currentImageData.id)
-                                }}
-                            >
-                                <i
-                                    className="fa fa-bookmark"
-                                    aria-hidden="true"
-                                ></i>
-                            </button>
-                        </>
-                    ) : (
-                        <></>
-                    )}
-                    {currentImages.length !== 0 ? (
+                        (primaryImage === null ||
+                            primaryImageIndex(primaryImage) !==
+                                currentImage) && (
+                            <>
+                                {' '}
+                                <button
+                                    className="mr-1"
+                                    title="Make primary image"
+                                    onClick={() => {
+                                        onSetPrimaryImage(currentImageData.id)
+                                    }}
+                                >
+                                    <i
+                                        className="fa fa-bookmark"
+                                        aria-hidden="true"
+                                    ></i>
+                                </button>
+                            </>
+                        )}
+                    {currentImages.length !== 0 && (
                         <button
                             className="ml-1"
                             title="Delete image"
@@ -123,8 +120,6 @@ export default function ImageControls({
                         >
                             <i className="fa fa-trash" aria-hidden="true"></i>
                         </button>
-                    ) : (
-                        <></>
                     )}
                     <button
                         className="ml-1"
@@ -211,8 +206,6 @@ export default function ImageControls({
                         </div>
                     </Popup>
                 </div>
-            ) : (
-                <></>
             )}
         </div>
     )

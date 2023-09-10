@@ -11,26 +11,26 @@ export default function Popup({
     position?: [number, number]
     preventClose?: boolean
 }) {
-    return show ? (
-        <span
-            className="absolute z-[2] pt-2"
-            style={{
-                left: position && position[0],
-                top: position && position[1],
-            }}
-        >
+    return (
+        show && (
             <span
-                className="fixed inset-0"
-                onClick={(e) => {
-                    e.preventDefault()
-                    if (!preventClose) {
-                        onClose()
-                    }
+                className="absolute z-[2] pt-2"
+                style={{
+                    left: position && position[0],
+                    top: position && position[1],
                 }}
-            ></span>
-            {children}
-        </span>
-    ) : (
-        <></>
+            >
+                <span
+                    className="fixed inset-0"
+                    onClick={(e) => {
+                        e.preventDefault()
+                        if (!preventClose) {
+                            onClose()
+                        }
+                    }}
+                ></span>
+                {children}
+            </span>
+        )
     )
 }

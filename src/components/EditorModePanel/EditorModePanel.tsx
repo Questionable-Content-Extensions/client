@@ -264,7 +264,7 @@ function EditorModePanel({
 
                 <OperationsMenu />
             </div>
-            {editorData && editorData.present ? (
+            {editorData && editorData.present && (
                 <>
                     <MissingNavElement
                         navigationData={editorData.missing.cast}
@@ -312,8 +312,6 @@ function EditorModePanel({
                         useColors={settings.useColors}
                     />
                 </>
-            ) : (
-                <></>
             )}
             {missingDataText}
             <hr className="my-4 mx-0 border-solid border-b max-w-none" />
@@ -369,7 +367,7 @@ function EditorModePanel({
                 />
             </ExpandingEditor>
             <hr className="my-4 mx-0 border-solid border-b max-w-none" />
-            {comicData ? (
+            {comicData && (
                 <ComicFlags
                     isLoading={isLoadingInitial || isFetching || isEditorSaving}
                     hasError={hasErrorLoadingComicData}
@@ -389,8 +387,6 @@ function EditorModePanel({
                             hasItemsOfType(comicItems, 'storyline'))
                     }
                 />
-            ) : (
-                <></>
             )}
             <hr className="my-4 mx-0 border-solid border-b max-w-none" />
             <div className="flex">

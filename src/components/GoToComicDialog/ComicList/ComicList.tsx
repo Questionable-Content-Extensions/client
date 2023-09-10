@@ -156,12 +156,10 @@ export default function ComicList({
                     }
                 }}
             />
-            {activeFilter !== '' ? (
+            {activeFilter !== '' && (
                 <p>
                     {comicCount} comic titles or taglines match '{activeFilter}'
                 </p>
-            ) : (
-                <></>
             )}
             {comicList}
         </>
