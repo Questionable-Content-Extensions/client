@@ -77,6 +77,16 @@ export default function SettingsPanel({
             />
             <ToggleSetting
                 settings={settings}
+                setting="showTaglineAsTooltip"
+                updateSettings={updateSettings}
+                label="Show tagline as comic tooltip"
+                description={
+                    'When this setting is enabled and the currently shown comic strip has a tagline, its tagline will ' +
+                    "become the comic strip's tooltip."
+                }
+            />
+            <ToggleSetting
+                settings={settings}
                 setting="useCorrectTimeFormat"
                 updateSettings={updateSettings}
                 label="Use 24h clock format"

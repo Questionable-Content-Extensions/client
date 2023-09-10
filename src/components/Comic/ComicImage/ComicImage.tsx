@@ -12,13 +12,14 @@ export default function ComicImage({
     imageData,
     initialComicSrc,
     initialComic,
-
     imageReady,
+    tagline,
 }: {
     imageData: { comicNo: number | null; imageType: ImageType | null }
     initialComicSrc: string
     initialComic: number
     imageReady: () => void
+    tagline: string | null
 }) {
     const [comicSrc, setComicSrc] = useState(initialComicSrc)
     const [previousImageData, setPreviousImageData] = useState(imageData)
@@ -111,6 +112,7 @@ export default function ComicImage({
             className="qc-ext qc-ext-comic"
             src={comicSrc}
             alt={`Comic #${previousImageData.comicNo || initialComic}`}
+            title={tagline ?? undefined}
         />
     )
 }

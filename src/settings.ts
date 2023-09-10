@@ -35,6 +35,8 @@ export interface SettingValues {
 
     subDivideGotoComics: boolean
 
+    showTaglineAsTooltip: boolean
+
     /**
      * The last version seen by the change log dialog.
      * Used to know when we need to urge users to open it
@@ -88,9 +90,6 @@ export class Settings {
         scrollToTop: true,
 
         showAllMembers: false,
-        showCast: true,
-        showStorylines: true,
-        showLocations: true,
         useColors: true,
 
         skipNonCanon: false,
@@ -100,13 +99,21 @@ export class Settings {
         editModeToken: '',
 
         showIndicatorRibbon: true,
-        showSmallRibbonByDefault: false,
         useCorrectTimeFormat: true,
         comicLoadingIndicatorDelay: 2000,
 
         subDivideGotoComics: true,
 
+        showTaglineAsTooltip: true,
+
         version: null,
+
+        // DEPRECATED:
+
+        showCast: true,
+        showStorylines: true,
+        showLocations: true,
+        showSmallRibbonByDefault: false,
     }
 
     values: SettingValues
