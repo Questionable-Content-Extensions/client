@@ -49,8 +49,6 @@ const QcStrictMode = React.StrictMode
 // type instead when debugging in Chrome:
 //const QcStrictMode = React.Fragment
 
-// TODO: Project-wide issue: Handle errors on network, non-200 HTTP statuses, etc.
-
 const QC_EXT_CLASSNAME = 'qc-ext'
 const NAVIGATION_CONTAINER_CLASSNAME = 'qc-ext-navigation-container'
 
@@ -97,8 +95,6 @@ async function main() {
     initializeComicNavigation()
     initializeDateAndNews()
     initializeExtraNavigation()
-
-    // TODO: Initialize "message seat"
 }
 
 async function developmentMain() {
