@@ -10,7 +10,7 @@
 @property --tw-backdrop-blur {
     syntax: '<length>';
     inherits: false;
-    initial-value: ;
+    initial-value:;
 }
 
 @keyframes fade-in {

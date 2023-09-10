@@ -4,11 +4,11 @@ import InlineSpinner from '@components/InlineSpinner'
 import NavElement, { NavElementMode } from '@components/NavElement/NavElement'
 import Spinner from '@components/Spinner'
 import useItemNavigationDataByType from '@hooks/useItemNavigationDataByType'
+import { ComicId } from '@models/ComicId'
 import { HydratedItemNavigationData } from '@models/HydratedItemData'
 import { ItemId } from '@models/ItemId'
 
 import { PickEnum } from '~/tsUtils'
-import { ComicId } from '@models/ComicId'
 
 export default function ItemNavigation({
     itemNavigationData,

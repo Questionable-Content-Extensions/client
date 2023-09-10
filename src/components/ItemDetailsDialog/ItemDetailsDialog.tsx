@@ -5,6 +5,7 @@ import { PaddedButton } from '@components/Button'
 import EditLogPanel from '@components/EditLogDialog/EditLogPanel/EditLogPanel'
 import Pagination from '@components/EditLogDialog/Pagination/Pagination'
 import CollapsibleDetails from '@components/GoToComicDialog/CollapsibleDetails/CollapsibleDetails'
+import ComicList from '@components/GoToComicDialog/ComicList/ComicList'
 import useHydratedItemData from '@hooks/useHydratedItemData'
 import ModalDialog from '@modals/ModalDialog/ModalDialog'
 import { Item } from '@models/Item'
@@ -33,7 +34,6 @@ import { AppDispatch, RootState } from '@store/store'
 import constants from '~/constants'
 
 import ItemDataPanel from './ItemDataPanel/ItemDataPanel'
-import ComicList from '@components/GoToComicDialog/ComicList/ComicList'
 
 const mapState = (state: RootState) => {
     return {

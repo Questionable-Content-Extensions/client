@@ -18,8 +18,8 @@ import {
 } from '~/mocks'
 import Settings from '~/settings'
 
-import ItemDetailsDialog from './ItemDetailsDialog'
 import { FAYE_COMICS } from '../../mocks'
+import ItemDetailsDialog from './ItemDetailsDialog'
 
 const fayeImage: any = require('./4.png')
 
