@@ -125,7 +125,7 @@ export default function ImageControls({
                         className="ml-1"
                         title="Upload image..."
                         onClick={(e) => {
-                            const target = e.target as HTMLElement
+                            const target = e.currentTarget
                             setImageUploadPopupPosition([
                                 target.offsetLeft + target.clientWidth / 2,
                                 target.offsetTop + target.clientHeight / 2,

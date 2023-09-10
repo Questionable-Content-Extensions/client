@@ -46,7 +46,7 @@ export function OperationsMenu({
                 onClick={(e) => {
                     e.preventDefault()
                     setShowPopup(true)
-                    const target = e.target as HTMLElement
+                    const target = e.currentTarget
                     setPopupPosition([
                         target.offsetLeft + target.clientWidth / 2,
                         target.offsetTop + target.clientHeight / 2,
