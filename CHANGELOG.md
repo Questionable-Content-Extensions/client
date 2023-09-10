@@ -74,7 +74,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed 🐛
 
--   Better fix for missing sidebar. More idiomatic fix for Issue #37. It uses jQuery within the proper file, just before adding the sidebar base. It also directly tests the DOM to see if the "small-2" column is missing, rather than just guessing using the URL. Fixes #37
+-   Better fix for missing sidebar. More idiomatic fix for Issue [#37](https://github.com/Questionable-Content-Extensions/client/issues/37). It uses jQuery within the proper file, just before adding the sidebar base. It also directly tests the DOM to see if the "small-2" column is missing, rather than just guessing using the URL. Fixes [#37](https://github.com/Questionable-Content-Extensions/client/issues/37)
 
 ## [0.6.0][] - 2019-03-08
 
@@ -85,25 +85,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 -   Add support for the new item image system and for image uploading
 -   Add edit log view for editors
 -   Add flags for indicating whether a comic is lacking certain features
--   Add loading indicators for the comic image. Implements the comic image of #14.
+-   Add loading indicators for the comic image. Implements the comic image of [#14](https://github.com/Questionable-Content-Extensions/client/issues/14).
 -   Add updating indicators for the item details dialog
 -   Add updating indicators and/or disable controls for editor actions
--   Add loading indicators for edit log. Closes #14
+-   Add loading indicators for edit log. Closes [#14](https://github.com/Questionable-Content-Extensions/client/issues/14)
 -   Add ItemService to avoid loading data multiple times
--   Report version to server. Closes #29
+-   Report version to server. Closes [#29](https://github.com/Questionable-Content-Extensions/client/issues/29)
 -   Create LICENSE
 
 ### Changed 🔧
 
 -   Use async where possible
 -   Do events for loading item data
--   Supports using the correct image format data from the server, which closes #17
+-   Supports using the correct image format data from the server, which closes [#17](https://github.com/Questionable-Content-Extensions/client/issues/17)
 -   Update copyright year
 -   Rename ComicDataControllerBase to EventHandlingControllerBase
 -   Separate out code checking from building. To speed up building simple fixes and amendments (Flow and ESLint are slow)
--   Move more code to ItemService, where it belongs. Closes #31
+-   Move more code to ItemService, where it belongs. Closes [#31](https://github.com/Questionable-Content-Extensions/client/issues/31)
 -   Organize the existing CSS
--   Extract inline styles to proper style classes. Closes #32
+-   Extract inline styles to proper style classes. Closes [#32](https://github.com/Questionable-Content-Extensions/client/issues/32)
 -   Update copyright year also for HTML templates
 -   Update build packages
 -   Fully transition to using events for maintenance mode
@@ -111,10 +111,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed 🐛
 
 -   Fix various minor bugs
--   Ensure maintenance mode is handled correctly everywhere. Closes #27
+-   Ensure maintenance mode is handled correctly everywhere. Closes [#27](https://github.com/Questionable-Content-Extensions/client/issues/27)
 -   Handle errors at all in the edit log dialog
 -   Set $inject on SettingsController so the code keeps working uglified/minified
--   Ensure that random comic navigation respects exclusion settings. Closes #18
+-   Ensure that random comic navigation respects exclusion settings. Closes [#18](https://github.com/Questionable-Content-Extensions/client/issues/18)
 -   Fix indentation in constants.js
 -   Undo checkboxes and turn off update indicator when updates fail
 -   Fix server/client API mismatch
@@ -150,7 +150,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added ✨
 
--   Add shim to support GM 4.0 (PR #23)
+-   Add shim to support GM 4.0 (PR [#23](https://github.com/Questionable-Content-Extensions/client/pull/23))
 
 ### Changed 🔧
 
@@ -163,7 +163,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed 🐛
 
 -   Fix build errors
--   Fix #25
+-   Fix [#25](https://github.com/Questionable-Content-Extensions/client/issues/25)
 
 ## [0.5.1][] - 2017-04-08
 
@@ -172,7 +172,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 -   Add support for showing the comic strip publish date
 -   Add support for setting the comic strip publish date
 -   Add support for approximate publish dates
--   Add a ribbon indicating comic status for non-canon and guest strips. Closes #4
+-   Add a ribbon indicating comic status for non-canon and guest strips. Closes [#4](https://github.com/Questionable-Content-Extensions/client/issues/4)
 -   Show an indicator when the script is set to development mode
 
 ### Changed 🔧
@@ -184,7 +184,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed 🐛
 
--   Reduce scope of overzealous border removal style. Fixes #16
+-   Reduce scope of overzealous border removal style. Fixes [#16](https://github.com/Questionable-Content-Extensions/client/issues/16)
 
 ### Removed 🗑
 
@@ -203,11 +203,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 -   Update Grunt version and Grunt plugin versions
 -   Make Travis use Ruby v2.4.1
 -   Have VersionEye watch 'develop' branch instead of 'master'
--   Make "Show all members" behave much nicer than before. It now shows the cast/locations/storylines in the comic strip separate from the non-present cast/locations/storylines, and out of the way. (Also, fixes #8 for real this time.)
+-   Make "Show all members" behave much nicer than before. It now shows the cast/locations/storylines in the comic strip separate from the non-present cast/locations/storylines, and out of the way. (Also, fixes [#8](https://github.com/Questionable-Content-Extensions/client/issues/8) for real this time.)
 
 ### Fixed 🐛
 
--   Show all members should always work, even when a comic has no data. Fixes #8
+-   Show all members should always work, even when a comic has no data. Fixes [#8](https://github.com/Questionable-Content-Extensions/client/issues/8)
 -   Make the button the correct size
 
 ## [0.4.1][] - 2016-12-26
@@ -221,7 +221,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added ✨
 
 -   Add in missing notifications for locations, storylines, titles and taglines
--   Put comic number in site title for better browser navigation experience. Resolves #11
+-   Put comic number in site title for better browser navigation experience. Resolves [#11](https://github.com/Questionable-Content-Extensions/client/issues/11)
 
 ### Changed 🔧
 
@@ -238,8 +238,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 -   Fix for dynamic news on QC frontpage
 -   Fix indentation issues
 -   Fix bug introduced regarding editorData from the web service
--   Save settings regardless of how the setting dialog is closed. Fixes #3
--   Fixed #13 and hopefully also fixed #12
+-   Save settings regardless of how the setting dialog is closed. Fixes [#3](https://github.com/Questionable-Content-Extensions/client/issues/3)
+-   Fixed [#13](https://github.com/Questionable-Content-Extensions/client/issues/13) and hopefully also fixed [#12](https://github.com/Questionable-Content-Extensions/client/issues/12)
 
 ### Removed 🗑
 
@@ -281,7 +281,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed 🐛
 
--   Don't interfere with Firefox' Alt+Left/Alt+Right navigation. Fixes #2.
+-   Don't interfere with Firefox' Alt+Left/Alt+Right navigation. Fixes [#2](https://github.com/Questionable-Content-Extensions/client/issues/2).
 -   Deal with the two special cases of no next or no previous comic from the web service.
 -   Editor mode: Show taglines missing only for comics >= 3133 and missing location
 
