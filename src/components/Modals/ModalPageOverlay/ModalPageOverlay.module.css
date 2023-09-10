@@ -46,4 +46,5 @@
 
 .modalPageOverlay:not(.show).fadedIn {
     animation: fade-out 1s;
+    animation-fill-mode: forwards;
 }
