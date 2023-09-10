@@ -49,7 +49,8 @@ export default function NavElement({
                         <button
                             className="px-1 text-sm"
                             title={`Remove ${item.shortName} from comic`}
-                            onClick={() => {
+                            onClick={(e) => {
+                                e.preventDefault()
                                 if (onRemoveItem) {
                                     onRemoveItem(item.id)
                                 }
@@ -67,7 +68,8 @@ export default function NavElement({
                         <button
                             className="px-1 text-sm"
                             title={`Add ${item.shortName} to comic`}
-                            onClick={() => {
+                            onClick={(e) => {
+                                e.preventDefault()
                                 if (onAddItem) {
                                     onAddItem(item.id)
                                 }
@@ -115,7 +117,10 @@ export default function NavElement({
                 />
                 <button
                     className="font-bold flex-auto py-1"
-                    onClick={() => onShowInfoFor(item.id)}
+                    onClick={(e) => {
+                        e.preventDefault()
+                        onShowInfoFor(item.id)
+                    }}
                 >
                     <span
                         className="inline-block text-center"
