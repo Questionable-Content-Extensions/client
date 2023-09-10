@@ -1,6 +1,6 @@
 import { forkAwesomeIcons } from '@models/ForkAwesomeIcon'
 import { expect } from '@storybook/jest'
-import { ComponentMeta, ComponentStory } from '@storybook/react'
+import { Meta, StoryFn } from '@storybook/react'
 import { userEvent, within } from '@storybook/testing-library'
 
 import ExtraNavButton from './ExtraNavButton'
@@ -10,9 +10,9 @@ export default {
     argTypes: {
         faClass: { control: { type: 'select' }, options: forkAwesomeIcons },
     },
-} as ComponentMeta<typeof ExtraNavButton>
+} as Meta<typeof ExtraNavButton>
 
-const Template: ComponentStory<typeof ExtraNavButton> = (args) => (
+const Template: StoryFn<typeof ExtraNavButton> = (args) => (
     <div
         className={
             'inline-block shadow m-auto' + (args.visible ? '' : ' hidden')

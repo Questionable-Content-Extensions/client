@@ -1,4 +1,4 @@
-import { ComponentMeta, ComponentStory } from '@storybook/react'
+import { Meta, StoryFn } from '@storybook/react'
 
 import { LATEST_EDIT_LOG } from '~/mocks'
 
@@ -6,9 +6,9 @@ import EditLogPanel from './EditLogPanel'
 
 export default {
     component: EditLogPanel,
-} as ComponentMeta<typeof EditLogPanel>
+} as Meta<typeof EditLogPanel>
 
-const Template: ComponentStory<typeof EditLogPanel> = (args) => {
+const Template: StoryFn<typeof EditLogPanel> = (args) => {
     return <EditLogPanel {...args} />
 }
 

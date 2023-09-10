@@ -123,7 +123,7 @@ export function ChangeLogDialog({
             }
             footer={
                 <>
-                    {constants.developmentMode ? (
+                    {constants.developmentMode && (
                         <>
                             <PaddedButton
                                 onClick={() => {
@@ -153,8 +153,6 @@ export function ChangeLogDialog({
                                 DEV: Close without updating version
                             </PaddedButton>
                         </>
-                    ) : (
-                        <></>
                     )}
                     <PaddedButton
                         onClick={() => {

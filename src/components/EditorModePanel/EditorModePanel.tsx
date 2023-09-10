@@ -83,10 +83,6 @@ const connector = connect(mapState, mapDispatch)
 type PropsFromRedux = ConnectedProps<typeof connector>
 type EditorModePanelProps = PropsFromRedux & {}
 
-// TODO: Show editor log function
-// Make it so it's possible to both show all logs and only logs for the
-// current comic / item
-
 function EditorModePanel({
     settings,
     currentComic,
@@ -268,7 +264,7 @@ function EditorModePanel({
 
                 <OperationsMenu />
             </div>
-            {editorData && editorData.present ? (
+            {editorData && editorData.present && (
                 <>
                     <MissingNavElement
                         navigationData={editorData.missing.cast}
@@ -311,8 +307,6 @@ function EditorModePanel({
                         useColors={settings.useColors}
                     />
                 </>
-            ) : (
-                <></>
             )}
             {missingDataText}
             <hr className="my-4 mx-0 border-solid border-b max-w-none" />
@@ -368,7 +362,7 @@ function EditorModePanel({
                 />
             </ExpandingEditor>
             <hr className="my-4 mx-0 border-solid border-b max-w-none" />
-            {comicData ? (
+            {comicData && (
                 <ComicFlags
                     isLoading={isLoadingInitial || isFetching || isEditorSaving}
                     hasError={hasErrorLoadingComicData}
@@ -388,8 +382,6 @@ function EditorModePanel({
                             hasItemsOfType(comicItems, 'storyline'))
                     }
                 />
-            ) : (
-                <></>
             )}
             <hr className="my-4 mx-0 border-solid border-b max-w-none" />
             <div className="flex">

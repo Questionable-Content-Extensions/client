@@ -20,7 +20,7 @@ export default function GoToComicButton({
         >
             Comic {comic.comic}:{' '}
             <HighlightedText text={comic.title} highlight={highlight} />{' '}
-            {comic.tagline ? (
+            {comic.tagline && (
                 <>
                     (
                     <HighlightedText
@@ -29,8 +29,17 @@ export default function GoToComicButton({
                     />
                     )
                 </>
+            )}
+            {comic.isGuestComic ? (
+                <span className="bg-qc-header text-white font-bold text-sm rounded-full px-2 py-0.5 ml-2">
+                    Guest Comic
+                </span>
+            ) : comic.isNonCanon ? (
+                <span className="bg-qc-non-canon text-white font-bold text-sm rounded-full px-2 py-0.5 ml-2">
+                    Non-canon
+                </span>
             ) : (
-                <></>
+                ''
             )}
         </button>
     )

@@ -1,5 +1,5 @@
 import { ComicList as ComicDataListing } from '@models/ComicList'
-import { ComponentMeta, ComponentStory } from '@storybook/react'
+import { Meta, StoryFn } from '@storybook/react'
 
 import { generateRandomName } from '~/mocks'
 
@@ -18,9 +18,9 @@ export default {
         },
         onGoToComic: { action: 'onGoToComic' },
     },
-} as ComponentMeta<typeof ComicList>
+} as Meta<typeof ComicList>
 
-const Template: ComponentStory<typeof ComicList> = (args) => {
+const Template: StoryFn<typeof ComicList> = (args) => {
     let allComicData: ComicDataListing[]
     if (!args.allComicData.length) {
         allComicData = []
@@ -32,8 +32,8 @@ const Template: ComponentStory<typeof ComicList> = (args) => {
                     c % 3 === 0
                         ? generateRandomName(Math.floor(Math.random() * 10) + 5)
                         : undefined,
-                isGuestComic: false,
-                isNonCanon: false,
+                isGuestComic: c % 5 === 0,
+                isNonCanon: c % 7 === 0,
             })
         }
     } else {

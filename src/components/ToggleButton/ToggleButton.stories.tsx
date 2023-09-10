@@ -1,6 +1,6 @@
 import ToggleButton, { Kind } from '@components/ToggleButton/ToggleButton'
-import { useArgs } from '@storybook/client-api'
-import { ComponentMeta, ComponentStory } from '@storybook/react'
+import { useArgs } from '@storybook/preview-api'
+import { Meta, StoryFn } from '@storybook/react'
 
 export default {
     component: ToggleButton,
@@ -11,9 +11,9 @@ export default {
             options: [Kind[Kind.Skinny], Kind[Kind.Thick]],
         },
     },
-} as ComponentMeta<typeof ToggleButton>
+} as Meta<typeof ToggleButton>
 
-const Template: ComponentStory<typeof ToggleButton> = (args) => {
+const Template: StoryFn<typeof ToggleButton> = (args) => {
     const [_, setArgs] = useArgs()
 
     // For better Storybook experience, we pretend this field is a string

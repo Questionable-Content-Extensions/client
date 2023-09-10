@@ -1,13 +1,13 @@
-import { useArgs } from '@storybook/client-api'
-import { ComponentMeta, ComponentStory } from '@storybook/react'
+import { useArgs } from '@storybook/preview-api'
+import { Meta, StoryFn } from '@storybook/react'
 
 import DateEditor from './DateEditor'
 
 export default {
     component: DateEditor,
-} as ComponentMeta<typeof DateEditor>
+} as Meta<typeof DateEditor>
 
-const Template: ComponentStory<typeof DateEditor> = (args) => {
+const Template: StoryFn<typeof DateEditor> = (args) => {
     const [_args, setArgs] = useArgs()
     const onDateValueChange = (newValue: string) => {
         console.log(newValue)

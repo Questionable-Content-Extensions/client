@@ -47,7 +47,7 @@ export default function useHydratedItemData(
     const [hydratedComicItemData, hydratedAllItemData] = useMemo<
         [
             HydratedItemNavigationData[] | undefined,
-            HydratedItemNavigationData[] | undefined
+            HydratedItemNavigationData[] | undefined,
         ]
     >(() => {
         if (itemData && comicData) {

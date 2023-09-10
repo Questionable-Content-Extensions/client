@@ -1,6 +1,6 @@
 # Questionable Content Extensions Userscript
 
-[![CI](https://github.com/Questionable-Content-Extensions/client/actions/workflows/CI.yml/badge.svg)](https://github.com/Questionable-Content-Extensions/client/actions/workflows/CI.yml)
+[![CI](https://github.com/Questionable-Content-Extensions/client/actions/workflows/CI.yml/badge.svg)](https://github.com/Questionable-Content-Extensions/client/actions/workflows/CI.yml) [![Storybook](https://raw.githubusercontent.com/storybooks/brand/master/badge/badge-storybook.svg)](https://questionable-content-extensions.github.io/client/storybook/)
 
 Questionable Content Extensions Userscript is the client-half of the Questionable Content Extensions stack. You can find the server-half [in this sibling repository](https://github.com/Questionable-Content-Extensions/client). The project also has [its own website](https://questionablextensions.net/).
 

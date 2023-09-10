@@ -83,8 +83,8 @@
 }
 
 .ribbon.nonCanon {
-    --ribbon-color: #bb3629;
-    --ribbon-highlight-color: #e43;
+    --ribbon-color: theme('colors.qc-non-canon');
+    --ribbon-highlight-color: theme('colors.qc-non-canon-second');
 }
 
 /*

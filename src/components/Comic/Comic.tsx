@@ -144,6 +144,11 @@ function Comic({
                     initialComicSrc={initialComicSrc}
                     initialComic={initialComic}
                     imageReady={imageReady}
+                    tagline={
+                        settings?.showTaglineAsTooltip && comicData?.hasData
+                            ? comicData.tagline
+                            : null
+                    }
                 />
             </a>
             <FullPageLoader

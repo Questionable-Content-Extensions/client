@@ -1,26 +1,30 @@
+import { ConnectedProps, connect } from 'react-redux'
+
 import NavButton from '@components/ComicDetailsPanel/NavButton/NavButton'
 import { HydratedItemNavigationData } from '@models/HydratedItemData'
 import { ItemId } from '@models/ItemId'
+import { skipToken } from '@reduxjs/toolkit/dist/query'
+import { useRandomComicQuery } from '@store/api/itemApiSlice'
+import { AppDispatch, RootState } from '@store/store'
 
 import { createTintOrShade } from '~/color'
 
-export enum NavElementMode {
-    Present,
-    Missing,
-    Preview,
-    Editor,
+import { useAlternateLayout } from './useAlternateLayout'
+
+const mapState = (state: RootState) => {
+    return {
+        settings: state.settings.values,
+        currentComic: state.comic.current,
+    }
 }
 
-export default function NavElement({
-    item,
-    useColors,
-    onSetCurrentComic,
-    onShowInfoFor,
-    mode,
-    editMode,
-    onRemoveItem,
-    onAddItem,
-}: {
+const mapDispatch = (_dispatch: AppDispatch) => {
+    return {}
+}
+
+const connector = connect(mapState, mapDispatch)
+type PropsFromRedux = ConnectedProps<typeof connector>
+type NavElementProps = PropsFromRedux & {
     item: HydratedItemNavigationData
     onSetCurrentComic: (_: number) => void
     useColors: boolean
@@ -29,13 +33,45 @@ export default function NavElement({
     editMode?: boolean
     onRemoveItem?: (_: ItemId) => void
     onAddItem?: (_: ItemId) => void
-}) {
+}
+
+export enum NavElementMode {
+    Present,
+    Missing,
+    Preview,
+    Editor,
+}
+
+export function NavElement({
+    settings,
+    currentComic,
+    item,
+    useColors,
+    onSetCurrentComic,
+    onShowInfoFor,
+    mode,
+    editMode,
+    onRemoveItem,
+    onAddItem,
+}: NavElementProps) {
     let backgroundColor = item.color
     if (!backgroundColor.startsWith('#')) {
         backgroundColor = `#${backgroundColor}`
     }
     const foregroundColor = createTintOrShade(item.color)
     const hoverFocusColor = createTintOrShade(item.color, 2)
+
+    const { data: randomComic, refetch: refreshRandomComic } =
+        useRandomComicQuery(
+            mode === NavElementMode.Present && settings?.showItemRandomButton
+                ? {
+                      currentComic,
+                      itemId: item.id,
+                      skipGuest: settings.skipGuest,
+                      skipNonCanon: settings.skipNonCanon,
+                  }
+                : skipToken
+        )
 
     let extraStuff = <></>
     if (editMode) {
@@ -46,7 +82,8 @@ export default function NavElement({
                         <button
                             className="px-1 text-sm"
                             title={`Remove ${item.shortName} from comic`}
-                            onClick={() => {
+                            onClick={(e) => {
+                                e.preventDefault()
                                 if (onRemoveItem) {
                                     onRemoveItem(item.id)
                                 }
@@ -64,7 +101,8 @@ export default function NavElement({
                         <button
                             className="px-1 text-sm"
                             title={`Add ${item.shortName} to comic`}
-                            onClick={() => {
+                            onClick={(e) => {
+                                e.preventDefault()
                                 if (onAddItem) {
                                     onAddItem(item.id)
                                 }
@@ -79,13 +117,17 @@ export default function NavElement({
         }
     }
 
+    const [alternateLayout, selfRef] = useAlternateLayout()
+
     return (
         <>
             <div
+                ref={selfRef}
                 id={`qc-ext-navelement-${item.id}`}
                 className={
                     `qc-ext-navelement flex items-center rounded` +
-                    (useColors ? ' with-color' : '')
+                    (useColors ? ' with-color' : '') +
+                    (alternateLayout ? ' flex-wrap justify-between' : '')
                 }
                 style={
                     useColors
@@ -99,7 +141,7 @@ export default function NavElement({
                 }
             >
                 <NavButton
-                    comicNo={item.first}
+                    comicNo={item.first !== currentComic ? item.first : null}
                     title={`First strip with ${item.shortName}`}
                     faClass="fast-backward"
                     onSetCurrentComic={onSetCurrentComic}
@@ -111,8 +153,14 @@ export default function NavElement({
                     onSetCurrentComic={onSetCurrentComic}
                 />
                 <button
-                    className="font-bold flex-auto py-1"
-                    onClick={() => onShowInfoFor(item.id)}
+                    className={
+                        'font-bold flex-auto py-1' +
+                        (alternateLayout ? ' -order-1 basis-full' : '')
+                    }
+                    onClick={(e) => {
+                        e.preventDefault()
+                        onShowInfoFor(item.id)
+                    }}
                 >
                     <span
                         className="inline-block text-center"
@@ -129,12 +177,26 @@ export default function NavElement({
                     onSetCurrentComic={onSetCurrentComic}
                 />
                 <NavButton
-                    comicNo={item.last}
+                    comicNo={item.last !== currentComic ? item.last : null}
                     title={`Last strip with ${item.shortName}`}
                     faClass="fast-forward"
                     onSetCurrentComic={onSetCurrentComic}
                 />
+                {mode === NavElementMode.Present &&
+                    settings?.showItemRandomButton && (
+                        <NavButton
+                            comicNo={randomComic ?? 0}
+                            title={`Random strip with ${item.shortName}`}
+                            faClass="question"
+                            onSetCurrentComic={(c) => {
+                                onSetCurrentComic(c)
+                                refreshRandomComic()
+                            }}
+                        />
+                    )}
             </div>
         </>
     )
 }
+
+export default connector(NavElement)

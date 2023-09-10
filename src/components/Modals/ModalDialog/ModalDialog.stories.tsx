@@ -1,5 +1,5 @@
 import { PaddedButton } from '@components/Button'
-import { ComponentMeta, ComponentStory } from '@storybook/react'
+import { Meta, StoryFn } from '@storybook/react'
 
 import ModalDialog from './ModalDialog'
 
@@ -23,9 +23,9 @@ export default {
             },
         },
     },
-} as ComponentMeta<typeof ModalDialog>
+} as Meta<typeof ModalDialog>
 
-const Template: ComponentStory<typeof ModalDialog> = (args) => (
+const Template: StoryFn<typeof ModalDialog> = (args) => (
     <ModalDialog {...args} />
 )
 

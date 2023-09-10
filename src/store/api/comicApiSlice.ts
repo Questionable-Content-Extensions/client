@@ -78,10 +78,10 @@ export const comicApiSlice = apiSlice.injectEndpoints({
                 if (editModeToken) {
                     urlParameters.token = editModeToken
                 }
-                if (skipGuest) {
-                    urlParameters.exclude = 'guest'
-                } else if (skipNonCanon) {
+                if (skipNonCanon) {
                     urlParameters.exclude = 'non-canon'
+                } else if (skipGuest) {
+                    urlParameters.exclude = 'guest'
                 }
                 if (showAllMembers || editModeToken) {
                     urlParameters.include = 'all'

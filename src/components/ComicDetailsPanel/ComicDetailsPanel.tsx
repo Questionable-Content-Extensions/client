@@ -151,7 +151,7 @@ function ComicDetailsPanel({
 
     const developmentMode = useMemo(
         () =>
-            constants.developmentMode ? (
+            constants.developmentMode && (
                 <>
                     <br />
                     <span
@@ -161,8 +161,6 @@ function ComicDetailsPanel({
                         (Development Mode)
                     </span>
                 </>
-            ) : (
-                <></>
             ),
         []
     )
@@ -203,8 +201,6 @@ function ComicDetailsPanel({
         return <></>
     }, [settings, setShowChangeLogDialog])
 
-    // TODO: Add a setting for placing the widget on the left or right side of the comic.
-
     function goToSelectorComic() {
         if (comicSelectorNo && /^\d+$/.test(comicSelectorNo)) {
             const comicNo = Number(comicSelectorNo)
@@ -242,10 +238,8 @@ function ComicDetailsPanel({
                 onSetRandomComic={() => setCurrentComic(randomComic)}
                 onShowGoToComicDialog={() => setShowGoToComicDialog(true)}
             />
-            {!settings.editMode && hasErrorLoadingComicData ? (
+            {!settings.editMode && hasErrorLoadingComicData && (
                 <ErrorPresenter error={comicDataError} />
-            ) : (
-                <></>
             )}
             <ItemNavigation
                 itemNavigationData={comicItems ?? []}
@@ -324,32 +318,30 @@ function ComicDetailsPanel({
                     </Button>
                 </form>
             </div>
-            {settings.showAllMembers || settings.editMode ? (
-                <>
-                    <hr className="my-4 mx-0 border-solid border-b max-w-none" />
-                    {/* TODO: show recent items before all items when in edit mode */}
-                    <FilteredNavigationData
-                        isLoading={isLoadingInitial}
-                        isFetching={isFetching}
-                        isSaving={isSaving}
-                        itemData={allItems ?? []}
-                        onSetCurrentComic={setCurrentComic}
-                        onShowInfoFor={setShowItemDetailsDialogFor}
-                        useColors={settings.useColors}
-                        editMode={settings.editMode}
-                        onAddItem={(itemBody) => {
-                            addItem({
-                                token: settings.editModeToken,
-                                comicId: currentComic,
-                                ...itemBody,
-                            })
-                        }}
-                        hasError={hasErrorLoadingComicData}
-                    />
-                </>
-            ) : (
-                <></>
-            )}
+            {settings.showAllMembers ||
+                (settings.editMode && (
+                    <>
+                        <hr className="my-4 mx-0 border-solid border-b max-w-none" />
+                        <FilteredNavigationData
+                            isLoading={isLoadingInitial}
+                            isFetching={isFetching}
+                            isSaving={isSaving}
+                            itemData={allItems ?? []}
+                            onSetCurrentComic={setCurrentComic}
+                            onShowInfoFor={setShowItemDetailsDialogFor}
+                            useColors={settings.useColors}
+                            editMode={settings.editMode}
+                            onAddItem={(itemBody) => {
+                                addItem({
+                                    token: settings.editModeToken,
+                                    comicId: currentComic,
+                                    ...itemBody,
+                                })
+                            }}
+                            hasError={hasErrorLoadingComicData}
+                        />
+                    </>
+                ))}
         </div>
     )
 }

@@ -1,13 +1,13 @@
-import { useArgs } from '@storybook/client-api'
-import { ComponentMeta, ComponentStory } from '@storybook/react'
+import { useArgs } from '@storybook/preview-api'
+import { Meta, StoryFn } from '@storybook/react'
 
 import TextEditor from './TextEditor'
 
 export default {
     component: TextEditor,
-} as ComponentMeta<typeof TextEditor>
+} as Meta<typeof TextEditor>
 
-const Template: ComponentStory<typeof TextEditor> = (args) => {
+const Template: StoryFn<typeof TextEditor> = (args) => {
     const [_args, setArgs] = useArgs()
     const onValueChange = (newValue: string) => {
         setArgs({ value: newValue, dirty: true })

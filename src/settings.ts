@@ -22,6 +22,7 @@ export interface SettingValues {
 
     showAllMembers: boolean
     useColors: boolean
+    showItemRandomButton: boolean
 
     skipNonCanon: boolean
     skipGuest: boolean
@@ -34,6 +35,8 @@ export interface SettingValues {
     comicLoadingIndicatorDelay: number
 
     subDivideGotoComics: boolean
+
+    showTaglineAsTooltip: boolean
 
     /**
      * The last version seen by the change log dialog.
@@ -88,10 +91,8 @@ export class Settings {
         scrollToTop: true,
 
         showAllMembers: false,
-        showCast: true,
-        showStorylines: true,
-        showLocations: true,
         useColors: true,
+        showItemRandomButton: false,
 
         skipNonCanon: false,
         skipGuest: false,
@@ -100,13 +101,21 @@ export class Settings {
         editModeToken: '',
 
         showIndicatorRibbon: true,
-        showSmallRibbonByDefault: false,
         useCorrectTimeFormat: true,
         comicLoadingIndicatorDelay: 2000,
 
         subDivideGotoComics: true,
 
+        showTaglineAsTooltip: true,
+
         version: null,
+
+        // DEPRECATED:
+
+        showCast: true,
+        showStorylines: true,
+        showLocations: true,
+        showSmallRibbonByDefault: false,
     }
 
     values: SettingValues

@@ -1,13 +1,13 @@
-import { useArgs } from '@storybook/client-api'
-import { ComponentMeta, ComponentStory } from '@storybook/react'
+import { useArgs } from '@storybook/preview-api'
+import { Meta, StoryFn } from '@storybook/react'
 
 import ValueEditor from './ValueEditor'
 
 export default {
     component: ValueEditor,
-} as ComponentMeta<typeof ValueEditor>
+} as Meta<typeof ValueEditor>
 
-const Template: ComponentStory<typeof ValueEditor> = (args) => {
+const Template: StoryFn<typeof ValueEditor> = (args) => {
     const [_args, setArgs] = useArgs()
     return (
         <ValueEditor

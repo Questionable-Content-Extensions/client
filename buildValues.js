@@ -62,24 +62,41 @@ const userscriptHeader = `\
 // ==/UserScript==`
 
 const pjson = require('./package.json')
+const dependencies = pjson.dependencies
+const devDependencies = pjson.devDependencies
+function pjsonDependency(dependency) {
+    if (dependency in dependencies) {
+        return `${dependency}@${dependencies[dependency]}`
+    } else if (dependency in devDependencies) {
+        return `${dependency}@${devDependencies[dependency]}`
+    } else {
+        return null
+    }
+}
 
 const userscriptHeaderVariables = {
     version: pjson.version,
-    'redux-logger-js':
-        'https://unpkg.com/redux-logger@3.0.6/dist/redux-logger.js',
+    'redux-logger-js': `https://unpkg.com/${pjsonDependency(
+        'redux-logger'
+    )}/dist/redux-logger.js`,
     development: {
         name: 'Questionable Content Extensions Development Script',
         description:
             'Development mode for Questionable Content Extensions Script. ' +
             'Loads the script directly from the last output of `npm start` on page refresh.',
         connect: 'localhost',
-        'react-js': 'https://unpkg.com/react@17/umd/react.development.js',
-        'react-dom-js':
-            'https://unpkg.com/react-dom@17/umd/react-dom.development.js',
-        'react-redux-js':
-            'https://unpkg.com/react-redux@7.1.3/dist/react-redux.js',
-        'redux-toolkit-js':
-            'https://unpkg.com/@reduxjs/toolkit@1.9.5/dist/redux-toolkit.umd.js',
+        'react-js': `https://unpkg.com/${pjsonDependency(
+            'react'
+        )}/umd/react.development.js`,
+        'react-dom-js': `https://unpkg.com/${pjsonDependency(
+            'react-dom'
+        )}/umd/react-dom.development.js`,
+        'react-redux-js': `https://unpkg.com/${pjsonDependency(
+            'react-redux'
+        )}/dist/react-redux.js`,
+        'redux-toolkit-js': `https://unpkg.com/${pjsonDependency(
+            '@reduxjs/toolkit'
+        )}/dist/redux-toolkit.umd.js`,
         version: pjson.version + '+development',
     },
     production: {
@@ -88,13 +105,18 @@ const userscriptHeaderVariables = {
             'Converts questionablecontent.net into a single-page application and adds ' +
             'extra features, such as character, location and storyline navigation.',
         connect: 'questionablextensions.net',
-        'react-js': 'https://unpkg.com/react@17/umd/react.production.min.js',
-        'react-dom-js':
-            'https://unpkg.com/react-dom@17/umd/react-dom.production.min.js',
-        'react-redux-js':
-            'https://unpkg.com/react-redux@7.1.3/dist/react-redux.min.js',
-        'redux-toolkit-js':
-            'https://unpkg.com/@reduxjs/toolkit@1.9.5/dist/redux-toolkit.umd.min.js',
+        'react-js': `https://unpkg.com/${pjsonDependency(
+            'react'
+        )}/umd/react.production.min.js`,
+        'react-dom-js': `https://unpkg.com/${pjsonDependency(
+            'react-dom'
+        )}/umd/react-dom.production.min.js`,
+        'react-redux-js': `https://unpkg.com/${pjsonDependency(
+            'react-redux'
+        )}/dist/react-redux.min.js`,
+        'redux-toolkit-js': `https://unpkg.com/${pjsonDependency(
+            '@reduxjs/toolkit'
+        )}/dist/redux-toolkit.umd.min.js`,
     },
 }
 

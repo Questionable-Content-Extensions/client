@@ -1,6 +1,6 @@
 import { setSettings } from '@store/settingsSlice'
 import store from '@store/store'
-import { ComponentMeta, ComponentStory } from '@storybook/react'
+import { Meta, StoryFn } from '@storybook/react'
 
 import constants from '~/constants'
 import Settings from '~/settings'
@@ -16,12 +16,12 @@ export default {
             },
         },
     },
-} as ComponentMeta<typeof ChangeLogDialog>
+} as Meta<typeof ChangeLogDialog>
 
 type ChangeLogDialogStoryThis = {
     kind: 'FirstInstall' | 'LaterInstalled' | 'Updated'
 }
-const Template: ComponentStory<typeof ChangeLogDialog> = function (
+const Template: StoryFn<typeof ChangeLogDialog> = function (
     this: ChangeLogDialogStoryThis,
     args
 ) {

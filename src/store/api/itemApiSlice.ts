@@ -1,3 +1,5 @@
+import { ComicId } from '@models/ComicId'
+import { ComicList } from '@models/ComicList'
 import { DeleteImageBody } from '@models/DeleteImageBody'
 import { ImageId } from '@models/ImageId'
 import { Item } from '@models/Item'
@@ -5,6 +7,7 @@ import { ItemId } from '@models/ItemId'
 import { ItemImageList } from '@models/ItemImageList'
 import { ItemList } from '@models/ItemList'
 import { PatchItemBody } from '@models/PatchItemBody'
+import { RandomItemComicQuery } from '@models/RandomItemComicQuery'
 import { RelatedItem } from '@models/RelatedItem'
 import { SetPrimaryImageBody } from '@models/SetPrimaryImageBody'
 import { Token } from '@models/Token'
@@ -26,6 +29,13 @@ export type UploadImageArgs = {
     token: Token
     image: Blob
     imageFileName: string
+}
+
+export type GetRandomComicQueryArgs = {
+    currentComic: ComicId
+    itemId: ItemId
+    skipGuest: boolean
+    skipNonCanon: boolean
 }
 
 export const itemApiSlice = apiSlice.injectEndpoints({
@@ -65,6 +75,56 @@ export const itemApiSlice = apiSlice.injectEndpoints({
                           {
                               type: 'Item',
                               id: `${result.id}-data`,
+                          },
+                      ]
+                    : [],
+        }),
+        comics: builder.query<ComicList[], GetDataQueryArgs>({
+            query: ({ itemId }) => {
+                return {
+                    url: `${constants.itemDataEndpoint}${itemId}/comics`,
+                }
+            },
+            transformResponse: transformResponseByJsonParseResultText,
+            providesTags: (result, _error, args) =>
+                result
+                    ? [
+                          {
+                              type: 'Item',
+                              id: `${args.itemId}-comics`,
+                          },
+                          {
+                              type: 'Item',
+                              id: `${args.itemId}-data`,
+                          },
+                      ]
+                    : [],
+        }),
+        randomComic: builder.query<ComicId | null, GetRandomComicQueryArgs>({
+            query: ({ currentComic, itemId, skipGuest, skipNonCanon }) => {
+                const urlParameters: RandomItemComicQuery = {
+                    'current-comic': currentComic.toString(),
+                }
+                if (skipNonCanon) {
+                    urlParameters.exclude = 'non-canon'
+                } else if (skipGuest) {
+                    urlParameters.exclude = 'guest'
+                }
+                const urlQuery = new URLSearchParams(
+                    urlParameters as unknown as Record<string, string>
+                ).toString()
+
+                return {
+                    url: `${constants.itemDataEndpoint}${itemId}/comics/random?${urlQuery}`,
+                }
+            },
+            transformResponse: transformResponseByJsonParseResultText,
+            providesTags: (result, _error, args) =>
+                result !== undefined
+                    ? [
+                          {
+                              type: 'Item',
+                              id: `${args.itemId}-random-comic`,
                           },
                       ]
                     : [],
@@ -284,6 +344,8 @@ export const itemApiSlice = apiSlice.injectEndpoints({
 export const {
     useAllItemsQuery,
     useGetItemDataQuery,
+    useComicsQuery,
+    useRandomComicQuery,
     useImageDataQuery,
     useFriendDataQuery,
     useLocationDataQuery,

@@ -24,7 +24,6 @@ import ValueEditor from './ValueEditor/ValueEditor'
 
 const mapState = (state: RootState) => {
     return {
-        isEditorSaving: state.itemEditor.isSaving,
         name: state.itemEditor.name,
         isNameDirty: isNameDirtySelector(state),
         shortName: state.itemEditor.shortName,

@@ -1,7 +1,7 @@
 import { useState } from 'react'
 
-import { useArgs } from '@storybook/client-api'
-import { ComponentMeta, ComponentStory } from '@storybook/react'
+import { useArgs } from '@storybook/preview-api'
+import { Meta, StoryFn } from '@storybook/react'
 
 import ColorPicker from './ColorPicker'
 
@@ -11,9 +11,9 @@ export default {
         setColor: { action: 'setColor' },
         resetColor: { action: 'resetColor' },
     },
-} as ComponentMeta<typeof ColorPicker>
+} as Meta<typeof ColorPicker>
 
-const Template: ComponentStory<typeof ColorPicker> = (args) => {
+const Template: StoryFn<typeof ColorPicker> = (args) => {
     const [initialColor, setInitialColor] = useState(args.color)
     if (initialColor !== args.color) {
         setInitialColor(args.color)

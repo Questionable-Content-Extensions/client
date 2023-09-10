@@ -5,7 +5,7 @@ import { setCurrentComic } from '@store/comicSlice'
 import { setShowItemDetailsDialogFor } from '@store/dialogSlice'
 import { setSettings } from '@store/settingsSlice'
 import store from '@store/store'
-import { ComponentMeta, ComponentStory } from '@storybook/react'
+import { Meta, StoryFn } from '@storybook/react'
 
 import {
     ALL_ITEMS,
@@ -18,6 +18,7 @@ import {
 } from '~/mocks'
 import Settings from '~/settings'
 
+import { FAYE_COMICS } from '../../mocks'
 import ItemDetailsDialog from './ItemDetailsDialog'
 
 const fayeImage: any = require('./4.png')
@@ -31,12 +32,12 @@ export default {
             },
         },
     },
-} as ComponentMeta<typeof ItemDetailsDialog>
+} as Meta<typeof ItemDetailsDialog>
 
 type ItemDetailsDialogStoryThis = {
     kind: 'Default' | 'Editor' | 'Error'
 }
-const Template: ComponentStory<typeof ItemDetailsDialog> = function (
+const Template: StoryFn<typeof ItemDetailsDialog> = function (
     this: ItemDetailsDialogStoryThis,
     args
 ) {
@@ -136,6 +137,16 @@ const Template: ComponentStory<typeof ItemDetailsDialog> = function (
                     return res(
                         ctx.delay(1000 + Math.random() * 1000),
                         ctx.text('Fake success!')
+                    )
+                }
+            ),
+            rest.get(
+                'http://localhost:3000/api/v2/itemdata/:itemId/comics',
+                (req, res, ctx) => {
+                    //const { itemId } = req.params
+                    return res(
+                        ctx.delay(1000 + Math.random() * 1000),
+                        ctx.json(FAYE_COMICS)
                     )
                 }
             ),

@@ -5,14 +5,20 @@ export default function CollapsibleDetails({
     children,
     initiallyOpen,
     indentChildren,
+    onToggle,
 }: {
     summary: string
     children: React.ReactNode
     initiallyOpen?: boolean
     indentChildren?: boolean
+    onToggle?: React.ReactEventHandler<HTMLDetailsElement>
 }) {
     return (
-        <details className={styles.details} open={initiallyOpen}>
+        <details
+            className={styles.details}
+            open={initiallyOpen}
+            onToggle={onToggle}
+        >
             <summary className="py-4 mb-2 flex items-center font-bold border-0 border-b border-solid border-gray-200">
                 {summary}
                 <button className="ml-auto">

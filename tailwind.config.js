@@ -12,6 +12,8 @@ module.exports = {
                 'qc-background': '#7297ac',
                 'qc-link': '#2ba6cb',
                 'qc-link-hover': '#258faf',
+                'qc-non-canon': '#bb3629',
+                'qc-non-canon-second': '#ee4433',
             },
             transitionProperty: {
                 filter: 'filter',

@@ -1,14 +1,14 @@
 import { expect } from '@storybook/jest'
-import { ComponentMeta, ComponentStory } from '@storybook/react'
+import { Meta, StoryFn } from '@storybook/react'
 import { userEvent, within } from '@storybook/testing-library'
 
 import ExtraNavigation from './ExtraNavigation'
 
 export default {
     component: ExtraNavigation,
-} as ComponentMeta<typeof ExtraNavigation>
+} as Meta<typeof ExtraNavigation>
 
-const Template: ComponentStory<typeof ExtraNavigation> = (args) => (
+const Template: StoryFn<typeof ExtraNavigation> = (args) => (
     <ExtraNavigation {...args} />
 )
 

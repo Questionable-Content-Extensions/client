@@ -114,7 +114,7 @@ export function EditLogDialog({
             footer={
                 <div className="flex w-full justify-end">
                     <div className="flex flex-col justify-center flex-grow">
-                        {logs && logs.pageCount > 1 ? (
+                        {logs && logs.pageCount > 1 && (
                             <div className="flex justify-center">
                                 <Pagination
                                     page={currentPage}
@@ -125,20 +125,16 @@ export function EditLogDialog({
                                     siblingCount={2}
                                 />
                             </div>
-                        ) : (
-                            <></>
                         )}
                     </div>
                     <div className="ml-2">
-                        {hasLogsError ? (
+                        {hasLogsError && (
                             <PaddedButton
                                 onClick={() => reloadEditLog()}
                                 className="mr-2"
                             >
                                 Retry loading logs...
                             </PaddedButton>
-                        ) : (
-                            <></>
                         )}
                         <PaddedButton onClick={() => onClose()}>
                             Close
