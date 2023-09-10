@@ -1,3 +1,4 @@
+import { ComicList } from '@models/ComicList'
 import { DeleteImageBody } from '@models/DeleteImageBody'
 import { ImageId } from '@models/ImageId'
 import { Item } from '@models/Item'
@@ -65,6 +66,27 @@ export const itemApiSlice = apiSlice.injectEndpoints({
                           {
                               type: 'Item',
                               id: `${result.id}-data`,
+                          },
+                      ]
+                    : [],
+        }),
+        comics: builder.query<ComicList[], GetDataQueryArgs>({
+            query: ({ itemId }) => {
+                return {
+                    url: `${constants.itemDataEndpoint}${itemId}/comics`,
+                }
+            },
+            transformResponse: transformResponseByJsonParseResultText,
+            providesTags: (result, _error, args) =>
+                result
+                    ? [
+                          {
+                              type: 'Item',
+                              id: `${args.itemId}-comics`,
+                          },
+                          {
+                              type: 'Item',
+                              id: `${args.itemId}-data`,
                           },
                       ]
                     : [],
@@ -284,6 +306,7 @@ export const itemApiSlice = apiSlice.injectEndpoints({
 export const {
     useAllItemsQuery,
     useGetItemDataQuery,
+    useComicsQuery,
     useImageDataQuery,
     useFriendDataQuery,
     useLocationDataQuery,

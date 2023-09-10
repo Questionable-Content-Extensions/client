@@ -19,6 +19,7 @@ import {
 import Settings from '~/settings'
 
 import ItemDetailsDialog from './ItemDetailsDialog'
+import { FAYE_COMICS } from '../../mocks'
 
 const fayeImage: any = require('./4.png')
 
@@ -136,6 +137,16 @@ const Template: StoryFn<typeof ItemDetailsDialog> = function (
                     return res(
                         ctx.delay(1000 + Math.random() * 1000),
                         ctx.text('Fake success!')
+                    )
+                }
+            ),
+            rest.get(
+                'http://localhost:3000/api/v2/itemdata/:itemId/comics',
+                (req, res, ctx) => {
+                    //const { itemId } = req.params
+                    return res(
+                        ctx.delay(1000 + Math.random() * 1000),
+                        ctx.json(FAYE_COMICS)
                     )
                 }
             ),

@@ -16,6 +16,7 @@ import {
 } from '@store/api/comicApiSlice'
 import {
     useAllDataQuery,
+    useComicsQuery,
     useDeleteImageMutation,
     useSetPrimaryImageMutation,
     useUploadImageMutation,
@@ -32,6 +33,7 @@ import { AppDispatch, RootState } from '@store/store'
 import constants from '~/constants'
 
 import ItemDataPanel from './ItemDataPanel/ItemDataPanel'
+import ComicList from '@components/GoToComicDialog/ComicList/ComicList'
 
 const mapState = (state: RootState) => {
     return {
@@ -62,8 +64,6 @@ type ItemDetailsDialogProps = PropsFromRedux & {
     onClose: () => void
     initialItemId: number | null
 }
-
-// TODO: Find a way to list all comics this item is in
 
 function ItemDetailsDialog({
     settings,
@@ -161,6 +161,11 @@ function ItemDetailsDialog({
             : skipToken
     )
 
+    const [loadComics, setLoadComics] = useState(false)
+    const { data: itemComics, isLoading: itemComicsIsLoading } = useComicsQuery(
+        loadComics && currentItemId ? { itemId: currentItemId } : skipToken
+    )
+
     return (
         <ModalDialog
             onCloseClicked={onClose}
@@ -188,6 +193,7 @@ function ItemDetailsDialog({
                             onClose()
                         }}
                         onShowItemData={(itemId: ItemId) => {
+                            setLoadComics(false)
                             setCurrentItemId(itemId)
                         }}
                         onDeleteImage={(imageId: number) => {
@@ -210,6 +216,26 @@ function ItemDetailsDialog({
                         onUploadImage={uploadImage}
                         isUploadingImage={isUploadingImage}
                     />
+                    <CollapsibleDetails
+                        summary="Comics item is featured in"
+                        onToggle={(e) => {
+                            setLoadComics(e.currentTarget.open)
+                        }}
+                        initiallyOpen={loadComics}
+                    >
+                        <ComicList
+                            allComicData={itemComics ?? []}
+                            isLoading={itemComicsIsLoading}
+                            subDivideGotoComics={
+                                settings?.subDivideGotoComics ?? true
+                            }
+                            onGoToComic={(comic) => {
+                                setLoadComics(false)
+                                setCurrentComic(comic)
+                                onClose()
+                            }}
+                        />
+                    </CollapsibleDetails>
                     {settings?.editMode ? (
                         <CollapsibleDetails summary="Edit log for item">
                             <EditLogPanel

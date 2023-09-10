@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 -   Add guest comic/non-canon pills to `ComicList`
 -   Add Storybook link to README
+-   Added list of comics an item is featured in. Closes [#19](https://github.com/Questionable-Content-Extensions/client/issues/19)
 
 ### Changed 🔧
 
