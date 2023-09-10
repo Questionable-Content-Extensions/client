@@ -19,7 +19,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed 🐛
 
--   Don't show "last strip" button when said strip is the current strip
+-   Don't show "last strip" button in item navigation bar when said strip is the current strip
+-   The logic for which exclusion setting takes precedence was backwards, so if you had set both "skip non-canon comics" and "skip guest comics," it would only skip guest comics, but not non-canon comics. Fixes [#36](https://github.com/Questionable-Content-Extensions/client/issues/36)
 
 ## [1.0.0][] - 2023-09-09
 
