@@ -30,7 +30,7 @@ export default {
 } as Meta<typeof NavElement>
 
 const Template: StoryFn<typeof NavElement> = function (
-    this: { withRandom?: boolean },
+    this: { mode?: 'Random' | 'Chain' },
     args
 ) {
     const mswReady = useMswReady()
@@ -40,23 +40,37 @@ const Template: StoryFn<typeof NavElement> = function (
     if (state.comic.current !== 666) {
         store.dispatch(setCurrentComic(666))
     }
-    if (this.withRandom && !state.settings.values?.showItemRandomButton) {
-        store.dispatch(
-            setSettings({
-                ...Settings.DEFAULTS,
-                showItemRandomButton: true,
-            })
-        )
-    } else if (
-        !this.withRandom &&
-        state.settings.values?.showItemRandomButton
-    ) {
-        store.dispatch(
-            setSettings({
-                ...Settings.DEFAULTS,
-                showItemRandomButton: false,
-            })
-        )
+
+    switch (this.mode) {
+        case 'Random':
+            if (!state.settings.values?.showItemRandomButton) {
+                store.dispatch(
+                    setSettings({
+                        ...Settings.DEFAULTS,
+                        showItemRandomButton: true,
+                    })
+                )
+            }
+            break
+
+        case 'Chain':
+            if (!state.settings.values?.showItemChainButton) {
+                store.dispatch(
+                    setSettings({
+                        ...Settings.DEFAULTS,
+                        showItemChainButton: true,
+                    })
+                )
+            }
+            break
+
+        default:
+            store.dispatch(
+                setSettings({
+                    ...Settings.DEFAULTS,
+                })
+            )
+            break
     }
 
     const { worker, rest } = window.msw
@@ -143,7 +157,12 @@ EditModeMissing.play = ({ canvasElement, args }) => {
     expect(args.onAddItem).toBeCalledWith(MARTEN.id)
 }
 
-export const WithRandomButton = Template.bind({ withRandom: true })
+export const WithRandomButton = Template.bind({ mode: 'Random' })
 WithRandomButton.args = {
+    ...Default.args,
+}
+
+export const WithChainButton = Template.bind({ mode: 'Chain' })
+WithChainButton.args = {
     ...Default.args,
 }

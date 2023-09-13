@@ -23,6 +23,7 @@ export interface SettingValues {
     showAllMembers: boolean
     useColors: boolean
     showItemRandomButton: boolean
+    showItemChainButton: boolean
 
     skipNonCanon: boolean
     skipGuest: boolean
@@ -93,6 +94,7 @@ export class Settings {
         showAllMembers: false,
         useColors: true,
         showItemRandomButton: false,
+        showItemChainButton: false,
 
         skipNonCanon: false,
         skipGuest: false,

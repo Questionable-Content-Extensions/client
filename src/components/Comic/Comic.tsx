@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { ConnectedProps, connect } from 'react-redux'
 
+import useLockedItem from '@hooks/useLockedItem'
 import { skipToken } from '@reduxjs/toolkit/dist/query'
 import {
     nextComicSelector,
@@ -21,13 +22,14 @@ const mapState = (state: RootState) => {
         settings: state.settings.values,
         currentComic: state.comic.current,
         nextComic: nextComicSelector(state),
+        lockedToItem: state.comic.lockedToItem,
     }
 }
 
 const mapDispatch = (dispatch: AppDispatch) => {
     return {
-        setCurrentComic: (comic: number) => {
-            dispatch(setCurrentComic(comic))
+        setCurrentComic: (comic: number, locked?: boolean) => {
+            dispatch(setCurrentComic(comic, { locked }))
         },
     }
 }
@@ -45,6 +47,7 @@ function Comic({
     settings,
     currentComic,
     nextComic,
+    lockedToItem,
     setCurrentComic,
 }: ComicProps) {
     const [isInitializing, setIsInitializing] = useState(true)
@@ -55,6 +58,12 @@ function Comic({
                 ? skipToken
                 : toGetDataQueryArgs(currentComic, settings)
         )
+
+    const { hasLockedItem, lockedItem } = useLockedItem(
+        currentComic,
+        settings,
+        lockedToItem
+    )
 
     useEffect(() => {
         if (settings?.scrollToTop ?? true) {
@@ -131,11 +140,21 @@ function Comic({
         <div className="relative inline-block">
             <a
                 className="qc-ext qc-ext-comic-anchor"
-                href={`view.php?comic=${currentComic}`}
+                href={`view.php?comic=${
+                    hasLockedItem
+                        ? lockedItem.next
+                            ? lockedItem.next
+                            : currentComic
+                        : nextComic
+                }`}
                 onClick={(e) => {
                     e.preventDefault()
-                    if (nextComic) {
-                        setCurrentComic(nextComic)
+                    if (hasLockedItem && lockedItem.next) {
+                        setCurrentComic(lockedItem.next, true)
+                    } else {
+                        if (nextComic) {
+                            setCurrentComic(nextComic)
+                        }
                     }
                 }}
             >

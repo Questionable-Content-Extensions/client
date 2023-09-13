@@ -1,5 +1,5 @@
 import { NavElementMode } from '@components/NavElement/NavElement'
-import { setCurrentComic } from '@store/comicSlice'
+import { setCurrentComic, setLockedToItem } from '@store/comicSlice'
 import store from '@store/store'
 import { Meta, StoryFn } from '@storybook/react'
 
@@ -34,6 +34,11 @@ const Template: StoryFn<typeof ItemNavigation> = (args) => {
 
     if (state.comic.current !== 666) {
         store.dispatch(setCurrentComic(666))
+    }
+    if (args.lockedToItemId) {
+        store.dispatch(setLockedToItem(args.lockedToItemId))
+    } else {
+        store.dispatch(setLockedToItem(null))
     }
 
     return <ItemNavigation {...args} />
@@ -105,4 +110,10 @@ AllItemsEditMode.args = {
     mode: NavElementMode[NavElementMode.Missing] as unknown as
         | NavElementMode.Present
         | NavElementMode.Missing,
+}
+
+export const LockedToItem = Template.bind({})
+LockedToItem.args = {
+    ...Default.args,
+    lockedToItemId: 4,
 }

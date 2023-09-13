@@ -16,7 +16,9 @@ export function useAlternateLayout(): [
                     .map((e) => e.clientWidth)
                     .reduce((acc, cur) => acc + cur, 0)
 
-                if (childrenWidth > selfWidth) {
+                // The +2 here is to allow minor pixel perfect inaccuracies
+                // in browsers not to trigger the alternate layout by accident
+                if (childrenWidth > selfWidth + 2) {
                     setUseAlternateLayout(true)
                 }
                 clearTimeout(timeout!)

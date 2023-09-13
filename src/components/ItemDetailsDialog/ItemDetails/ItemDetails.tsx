@@ -3,6 +3,7 @@ import { ConnectedProps, connect } from 'react-redux'
 import styles from './ItemDetails.module.css'
 
 import NavElement, { NavElementMode } from '@components/NavElement/NavElement'
+import useLockedItem from '@hooks/useLockedItem'
 import { Item } from '@models/Item'
 import { ItemType } from '@models/ItemType'
 import {
@@ -33,6 +34,9 @@ const mapState = (state: RootState) => {
         type: state.itemEditor.type,
         isTypeDirty: isTypeDirtySelector(state),
         isSaving: state.itemEditor.isSaving,
+        settings: state.settings.values,
+        currentComic: state.comic.current,
+        lockedToItem: state.comic.lockedToItem,
     }
 }
 
@@ -58,7 +62,7 @@ type PropsFromRedux = ConnectedProps<typeof connector>
 type ItemDetailsProps = PropsFromRedux & {
     editMode: boolean
     item: Item
-    onGoToComic: (comicId: number) => void
+    onGoToComic: (comicId: number, locked: boolean) => void
 }
 
 export function ItemDetails({
@@ -78,6 +82,9 @@ export function ItemDetails({
     editMode,
     item,
     onGoToComic,
+    settings,
+    currentComic,
+    lockedToItem,
 }: ItemDetailsProps) {
     let backgroundColor = color
     if (!backgroundColor.startsWith('#')) {
@@ -85,6 +92,14 @@ export function ItemDetails({
     }
     const foregroundColor = createTintOrShade(color)
     const hoverFocusColor = createTintOrShade(color, 2)
+
+    const { hasLockedItem, lockedItem } = useLockedItem(
+        currentComic,
+        settings,
+        lockedToItem
+    )
+
+    const isLockedItem = hasLockedItem && lockedItem.id === item.id
 
     return (
         <div className={styles.smallGapped}>
@@ -164,7 +179,7 @@ export function ItemDetails({
                 <button
                     className="qc-ext-qc-link hover:underline"
                     title={`Go to comic ${item.first}`}
-                    onClick={() => onGoToComic(item.first)}
+                    onClick={() => onGoToComic(item.first, isLockedItem)}
                 >
                     Comic {item.first}
                 </button>
@@ -174,7 +189,7 @@ export function ItemDetails({
                 <button
                     className="qc-ext-qc-link hover:underline"
                     title={`Go to comic ${item.last}`}
-                    onClick={() => onGoToComic(item.last)}
+                    onClick={() => onGoToComic(item.last, isLockedItem)}
                 >
                     Comic {item.last}
                 </button>

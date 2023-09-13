@@ -41,13 +41,14 @@ const mapState = (state: RootState) => {
         editorItemId: state.itemEditor.id,
         isItemDirty: isStateDirtySelector(state),
         currentComic: state.comic.current,
+        lockedToItem: state.comic.lockedToItem,
     }
 }
 
 const mapDispatch = (dispatch: AppDispatch) => {
     return {
-        setCurrentComic: (comic: number) => {
-            dispatch(setCurrentComic(comic))
+        setCurrentComic: (comic: number, locked: boolean) => {
+            dispatch(setCurrentComic(comic, { locked }))
         },
         setFromItem: (item: Item) => {
             dispatch(setFromItem(item))
@@ -70,11 +71,12 @@ function ItemDetailsDialog({
     editorItemId,
     isItemDirty,
     currentComic,
-    onClose,
-    initialItemId,
+    lockedToItem,
     setCurrentComic,
     setFromItem,
     saveChanges,
+    onClose,
+    initialItemId,
 }: ItemDetailsDialogProps) {
     const [previousInitialItemId, setPreviousInitialItemId] = useState<
         number | null
@@ -188,8 +190,8 @@ function ItemDetailsDialog({
                         editModeToken={
                             settings?.editMode ? settings?.editModeToken : null
                         }
-                        onGoToComic={(comicId) => {
-                            setCurrentComic(comicId)
+                        onGoToComic={(comicId, locked) => {
+                            setCurrentComic(comicId, locked)
                             onClose()
                         }}
                         onShowItemData={(itemId: ItemId) => {
@@ -231,7 +233,12 @@ function ItemDetailsDialog({
                             }
                             onGoToComic={(comic) => {
                                 setLoadComics(false)
-                                setCurrentComic(comic)
+                                setCurrentComic(
+                                    comic,
+                                    lockedToItem && itemData
+                                        ? lockedToItem === itemData.id
+                                        : false
+                                )
                                 onClose()
                             }}
                         />
