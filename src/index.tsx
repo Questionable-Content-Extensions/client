@@ -523,7 +523,6 @@ function hijackShortcut() {
             const disable_in_input = createObjectIn<any>(unsafeWindow)
             disable_in_input.disable_in_input = true
 
-            console.debug('Adding Left')
             shortcut.add(
                 'Left',
                 exportFunction(() => setPrevious(), unsafeWindow),
@@ -534,7 +533,6 @@ function hijackShortcut() {
                 exportFunction(() => setPrevious(), unsafeWindow)
             )
 
-            console.debug('Adding Right')
             shortcut.add(
                 'Right',
                 exportFunction(() => setNext(), unsafeWindow),
@@ -545,7 +543,6 @@ function hijackShortcut() {
                 exportFunction(() => setNext(), unsafeWindow)
             )
 
-            console.debug('Adding Q')
             shortcut.add(
                 'Q',
                 exportFunction(() => focusFilter(), unsafeWindow),

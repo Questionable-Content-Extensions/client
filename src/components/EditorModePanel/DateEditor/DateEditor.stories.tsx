@@ -10,7 +10,6 @@ export default {
 const Template: StoryFn<typeof DateEditor> = (args) => {
     const [_args, setArgs] = useArgs()
     const onDateValueChange = (newValue: string) => {
-        console.log(newValue)
         setArgs({ dateValue: newValue, isDateValueDirty: true })
         args.onDateValueChange(newValue)
     }
