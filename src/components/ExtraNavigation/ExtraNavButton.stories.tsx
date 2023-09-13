@@ -30,11 +30,11 @@ Default.args = {
     faClass: 'backward',
     smallXPadding: false,
 }
-Default.play = ({ canvasElement, args }) => {
+Default.play = async ({ canvasElement, args }) => {
     const canvas = within(canvasElement)
 
     const navButton = canvas.getByRole('link')
-    userEvent.click(navButton)
+    await userEvent.click(navButton)
 
     expect(args.onClick).toBeCalled()
 }

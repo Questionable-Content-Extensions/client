@@ -58,13 +58,13 @@ async function testMenuItem<T>(
     })
 
     const menuButton = canvas.getByRole('button')
-    userEvent.click(menuButton)
+    await userEvent.click(menuButton)
 
     await waitFor(async () => {
         expect(canvas.getByText(menuText)).toBeInTheDocument()
     })
 
-    userEvent.click(canvas.getByText(menuText))
+    await userEvent.click(canvas.getByText(menuText))
 
     expect(argsFieldSelector(args)).toBeCalledWith(argsFieldExpectedValue)
 
