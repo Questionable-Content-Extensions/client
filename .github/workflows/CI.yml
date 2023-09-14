@@ -25,25 +25,23 @@ jobs:
             - name: Run ESLint
               run: npx eslint .
 
-            # Tests are currently kind of broken. Leave it for another day.
+            - name: Ensure everything builds
+              run: npm run build
 
+            # Having no tests makes this command exit with an error
+            # status. You can uncomment it once there's at least
+            # one test.
             #- name: Run tests
             #  run: npm test
 
-            # - name: Install Playwright
-            #   run: npx playwright install --with-deps
+            - name: Install Playwright
+              run: npx playwright install --with-deps
 
-            # - name: Build Storybook
-            #   run: npm run build-storybook
-
-            # - name: Run Storybook tests
-            #   run: |
-            #       npx concurrently -k -s last -n "SB,TEST" -c "magenta,blue" \
-            #       "npx http-server storybook-static --port 6006 --silent" \
-            #       "npx wait-on http://127.0.0.1:6006/ && npm run test-storybook"
-
-            - name: Ensure everything builds
-              run: npm run build
+            - name: Run Storybook tests
+              run: |
+                  npx concurrently -k -s first -n "SB,TEST" -c "magenta,blue" \
+                  "npx http-server storybook-static --port 6006 --silent" \
+                  "npx wait-on http://127.0.0.1:6006/ && npm run test-storybook"
 
             - name: Deploy Storybook
               uses: JamesIves/github-pages-deploy-action@v4
