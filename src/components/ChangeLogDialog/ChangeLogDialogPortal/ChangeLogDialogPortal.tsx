@@ -1,44 +1,25 @@
-import { ConnectedProps, connect } from 'react-redux'
-
 import DialogPortal from '@components/DialogPortal'
 import { setShowChangeLogDialog } from '@store/dialogSlice'
-import { AppDispatch, RootState } from '@store/store'
+import { useAppDispatch, useAppSelector } from '@store/hooks'
 
 import ChangeLogDialog from '../ChangeLogDialog'
 
-const mapState = (state: RootState) => {
-    return {
-        showChangeLogDialog: state.dialog.showChangeLogDialog,
-    }
-}
+export default function ChangeLogDialogPortal() {
+    const dispatch = useAppDispatch()
 
-const mapDispatch = (dispatch: AppDispatch) => {
-    return {
-        setShowChangeLogDialog: (value: boolean) => {
-            dispatch(setShowChangeLogDialog(value))
-        },
-    }
-}
+    const showChangeLogDialog = useAppSelector(
+        (state) => state.dialog.showChangeLogDialog
+    )
 
-const connector = connect(mapState, mapDispatch)
-type PropsFromRedux = ConnectedProps<typeof connector>
-type ChangeLogDialogPortalProps = PropsFromRedux & {}
-
-export function ChangeLogDialogPortal({
-    showChangeLogDialog,
-    setShowChangeLogDialog,
-}: ChangeLogDialogPortalProps) {
     return (
         <DialogPortal
             show={showChangeLogDialog}
-            onClose={() => setShowChangeLogDialog(false)}
+            onClose={() => dispatch(setShowChangeLogDialog(false))}
         >
             <ChangeLogDialog
                 show={showChangeLogDialog}
-                onClose={() => setShowChangeLogDialog(false)}
+                onClose={() => dispatch(setShowChangeLogDialog(false))}
             />
         </DialogPortal>
     )
 }
-
-export default connector(ChangeLogDialogPortal)

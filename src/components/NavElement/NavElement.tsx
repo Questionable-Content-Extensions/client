@@ -1,5 +1,3 @@
-import { ConnectedProps, connect } from 'react-redux'
-
 import NavButton from '@components/ComicDetailsPanel/NavButton/NavButton'
 import { ComicId } from '@models/ComicId'
 import { HydratedItemNavigationData } from '@models/HydratedItemData'
@@ -7,40 +5,11 @@ import { ItemId } from '@models/ItemId'
 import { skipToken } from '@reduxjs/toolkit/dist/query'
 import { useRandomComicQuery } from '@store/api/itemApiSlice'
 import { setLockedToItem } from '@store/comicSlice'
-import { AppDispatch, RootState } from '@store/store'
+import { useAppDispatch, useAppSelector } from '@store/hooks'
 
 import { createTintOrShade } from '~/color'
 
 import { useAlternateLayout } from './useAlternateLayout'
-
-const mapState = (state: RootState) => {
-    return {
-        settings: state.settings.values,
-        currentComic: state.comic.current,
-        lockedToItem: state.comic.lockedToItem,
-    }
-}
-
-const mapDispatch = (dispatch: AppDispatch) => {
-    return {
-        setLockedToItem: (item: ItemId | null) => {
-            dispatch(setLockedToItem(item))
-        },
-    }
-}
-
-const connector = connect(mapState, mapDispatch)
-type PropsFromRedux = ConnectedProps<typeof connector>
-type NavElementProps = PropsFromRedux & {
-    item: HydratedItemNavigationData
-    onSetCurrentComic: (comic: ComicId, locked: boolean) => void
-    useColors: boolean
-    onShowInfoFor: (_: ItemId) => void
-    mode: NavElementMode
-    editMode?: boolean
-    onRemoveItem?: (_: ItemId) => void
-    onAddItem?: (_: ItemId) => void
-}
 
 export enum NavElementMode {
     Present,
@@ -49,11 +18,7 @@ export enum NavElementMode {
     Editor,
 }
 
-export function NavElement({
-    settings,
-    currentComic,
-    lockedToItem,
-    setLockedToItem,
+export default function NavElement({
     item,
     useColors,
     onSetCurrentComic,
@@ -62,7 +27,22 @@ export function NavElement({
     editMode,
     onRemoveItem,
     onAddItem,
-}: NavElementProps) {
+}: {
+    item: HydratedItemNavigationData
+    onSetCurrentComic: (comic: ComicId, locked: boolean) => void
+    useColors: boolean
+    onShowInfoFor: (_: ItemId) => void
+    mode: NavElementMode
+    editMode?: boolean
+    onRemoveItem?: (_: ItemId) => void
+    onAddItem?: (_: ItemId) => void
+}) {
+    const dispatch = useAppDispatch()
+
+    const settings = useAppSelector((state) => state.settings.values)
+    const currentComic = useAppSelector((state) => state.comic.current)
+    const lockedToItem = useAppSelector((state) => state.comic.lockedToItem)
+
     let backgroundColor = item.color
     if (!backgroundColor.startsWith('#')) {
         backgroundColor = `#${backgroundColor}`
@@ -170,7 +150,7 @@ export function NavElement({
                             className={'flex-none px-2 block'}
                             onClick={(e) => {
                                 e.preventDefault()
-                                setLockedToItem(null)
+                                dispatch(setLockedToItem(null))
                             }}
                         >
                             <i className={`fa fa-chain`}></i>
@@ -182,7 +162,7 @@ export function NavElement({
                                 className={'flex-none px-2 block'}
                                 onClick={(e) => {
                                     e.preventDefault()
-                                    setLockedToItem(item.id)
+                                    dispatch(setLockedToItem(item.id))
                                 }}
                             >
                                 <i className={`fa fa-chain-broken`}></i>
@@ -235,5 +215,3 @@ export function NavElement({
         </>
     )
 }
-
-export default connector(NavElement)

@@ -91,7 +91,7 @@ export const comicSlice = createSlice({
                 }
             },
         },
-        setRandom: (state, action: PayloadAction<ComicId>) => {
+        setRandomComic: (state, action: PayloadAction<ComicId>) => {
             state.random = action.payload
         },
         setLockedToItem: (state, action: PayloadAction<ItemId | null>) => {
@@ -100,7 +100,11 @@ export const comicSlice = createSlice({
     },
 })
 
-export const { setCurrentComic, setLatestComic, setRandom, setLockedToItem } =
-    comicSlice.actions
+export const {
+    setCurrentComic,
+    setLatestComic,
+    setRandomComic,
+    setLockedToItem,
+} = comicSlice.actions
 
 export default comicSlice.reducer

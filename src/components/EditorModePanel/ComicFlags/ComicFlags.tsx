@@ -1,7 +1,4 @@
-import { ConnectedProps, connect } from 'react-redux'
-
 import ToggleButton from '@components/ToggleButton/ToggleButton'
-import { FlagType } from '@models/FlagType'
 import {
     isHasNoCastDirtySelector,
     isHasNoLocationDirtySelector,
@@ -12,75 +9,67 @@ import {
     isIsNonCanonDirtySelector,
     setFlag,
 } from '@store/comicEditorSlice'
-import { AppDispatch, RootState } from '@store/store'
+import { useAppDispatch, useAppSelector } from '@store/hooks'
 
-const mapState = (state: RootState) => {
-    return {
-        isGuestComic: state.comicEditor.isGuestComic,
-        isGuestComicDirty: isIsGuestComicDirtySelector(state),
-        isNonCanon: state.comicEditor.isNonCanon,
-        isNonCanonDirty: isIsNonCanonDirtySelector(state),
-        hasNoCast: state.comicEditor.hasNoCast,
-        hasNoCastDirty: isHasNoCastDirtySelector(state),
-        hasNoLocation: state.comicEditor.hasNoLocation,
-        hasNoLocationDirty: isHasNoLocationDirtySelector(state),
-        hasNoStoryline: state.comicEditor.hasNoStoryline,
-        hasNoStorylineDirty: isHasNoStorylineDirtySelector(state),
-        hasNoTitle: state.comicEditor.hasNoTitle,
-        hasNoTitleDirty: isHasNoTitleDirtySelector(state),
-        hasNoTagline: state.comicEditor.hasNoTagline,
-        hasNoTaglineDirty: isHasNoTaglineDirtySelector(state),
-    }
-}
-
-const mapDispatch = (dispatch: AppDispatch) => {
-    return {
-        setFlag: (flag: FlagType, value: boolean) => {
-            dispatch(setFlag(flag, value))
-        },
-    }
-}
-
-const connector = connect(mapState, mapDispatch)
-type PropsFromRedux = ConnectedProps<typeof connector>
-type ComicFlagsWidgetProps = PropsFromRedux & {
-    isLoading: boolean
-    hasError: boolean
-    hasCastItems: boolean
-    hasLocationItems: boolean
-    hasStorylineItems: boolean
-}
-
-function ComicFlags({
-    isGuestComic,
-    isGuestComicDirty,
-    isNonCanon,
-    isNonCanonDirty,
-    hasNoCast,
-    hasNoCastDirty,
-    hasNoLocation,
-    hasNoLocationDirty,
-    hasNoStoryline,
-    hasNoStorylineDirty,
-    hasNoTitle,
-    hasNoTitleDirty,
-    hasNoTagline,
-    hasNoTaglineDirty,
-    setFlag,
-
+export default function ComicFlags({
     isLoading,
     hasError,
     hasCastItems,
     hasLocationItems,
     hasStorylineItems,
-}: ComicFlagsWidgetProps) {
+}: {
+    isLoading: boolean
+    hasError: boolean
+    hasCastItems: boolean
+    hasLocationItems: boolean
+    hasStorylineItems: boolean
+}) {
+    const dispatch = useAppDispatch()
+
+    const isGuestComic = useAppSelector(
+        (state) => state.comicEditor.isGuestComic
+    )
+    const isGuestComicDirty = useAppSelector((state) =>
+        isIsGuestComicDirtySelector(state)
+    )
+    const isNonCanon = useAppSelector((state) => state.comicEditor.isNonCanon)
+    const isNonCanonDirty = useAppSelector((state) =>
+        isIsNonCanonDirtySelector(state)
+    )
+    const hasNoCast = useAppSelector((state) => state.comicEditor.hasNoCast)
+    const hasNoCastDirty = useAppSelector((state) =>
+        isHasNoCastDirtySelector(state)
+    )
+    const hasNoLocation = useAppSelector(
+        (state) => state.comicEditor.hasNoLocation
+    )
+    const hasNoLocationDirty = useAppSelector((state) =>
+        isHasNoLocationDirtySelector(state)
+    )
+    const hasNoStoryline = useAppSelector(
+        (state) => state.comicEditor.hasNoStoryline
+    )
+    const hasNoStorylineDirty = useAppSelector((state) =>
+        isHasNoStorylineDirtySelector(state)
+    )
+    const hasNoTitle = useAppSelector((state) => state.comicEditor.hasNoTitle)
+    const hasNoTitleDirty = useAppSelector((state) =>
+        isHasNoTitleDirtySelector(state)
+    )
+    const hasNoTagline = useAppSelector(
+        (state) => state.comicEditor.hasNoTagline
+    )
+    const hasNoTaglineDirty = useAppSelector((state) =>
+        isHasNoTaglineDirtySelector(state)
+    )
+
     return (
         <div className="flex flex-col gap-1">
             <ToggleButton
                 label="Guest comic"
                 checked={isGuestComic}
                 onChange={(e) => {
-                    setFlag('isGuestComic', e.target.checked)
+                    dispatch(setFlag('isGuestComic', e.target.checked))
                 }}
                 disabled={isLoading || hasError}
                 dirty={isGuestComicDirty}
@@ -89,7 +78,7 @@ function ComicFlags({
                 label="Non-canon"
                 checked={isNonCanon}
                 onChange={(e) => {
-                    setFlag('isNonCanon', e.target.checked)
+                    dispatch(setFlag('isNonCanon', e.target.checked))
                 }}
                 disabled={isLoading || hasError}
                 dirty={isNonCanonDirty}
@@ -100,7 +89,7 @@ function ComicFlags({
                 checked={hasNoCast}
                 disabled={hasCastItems || isLoading || hasError}
                 onChange={(e) => {
-                    setFlag('hasNoCast', e.target.checked)
+                    dispatch(setFlag('hasNoCast', e.target.checked))
                 }}
                 dirty={hasNoCastDirty}
             />
@@ -110,7 +99,7 @@ function ComicFlags({
                 checked={hasNoLocation}
                 disabled={hasLocationItems || isLoading || hasError}
                 onChange={(e) => {
-                    setFlag('hasNoLocation', e.target.checked)
+                    dispatch(setFlag('hasNoLocation', e.target.checked))
                 }}
                 dirty={hasNoLocationDirty}
             />
@@ -120,7 +109,7 @@ function ComicFlags({
                 checked={hasNoStoryline}
                 disabled={hasStorylineItems || isLoading || hasError}
                 onChange={(e) => {
-                    setFlag('hasNoStoryline', e.target.checked)
+                    dispatch(setFlag('hasNoStoryline', e.target.checked))
                 }}
                 dirty={hasNoStorylineDirty}
             />
@@ -130,7 +119,7 @@ function ComicFlags({
                 checked={hasNoTitle}
                 disabled={isLoading || hasError}
                 onChange={(e) => {
-                    setFlag('hasNoTitle', e.target.checked)
+                    dispatch(setFlag('hasNoTitle', e.target.checked))
                 }}
                 dirty={hasNoTitleDirty}
             />
@@ -140,12 +129,10 @@ function ComicFlags({
                 checked={hasNoTagline}
                 disabled={isLoading || hasError}
                 onChange={(e) => {
-                    setFlag('hasNoTagline', e.target.checked)
+                    dispatch(setFlag('hasNoTagline', e.target.checked))
                 }}
                 dirty={hasNoTaglineDirty}
             />
         </div>
     )
 }
-
-export default connector(ComicFlags)

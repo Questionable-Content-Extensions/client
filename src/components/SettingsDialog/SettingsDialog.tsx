@@ -1,49 +1,27 @@
-import { ConnectedProps, connect } from 'react-redux'
-
 import { PaddedButton } from '@components/Button'
 import useOnNextOverlayClosed from '@hooks/useOnNextOverlayClosed'
 import ModalDialog from '@modals/ModalDialog/ModalDialog'
 import { setShowChangeLogDialog } from '@store/dialogSlice'
+import { useAppDispatch, useAppSelector } from '@store/hooks'
 import { updateSettings } from '@store/settingsSlice'
-import { AppDispatch, RootState } from '@store/store'
 
-import { SettingValues, SettingsUpdaterFunction } from '~/settings'
+import { SettingsUpdaterFunction } from '~/settings'
 
 import SettingsPanel from './SettingsPanel/SettingsPanel'
 
-const mapState = (state: RootState) => {
-    return {
-        settings: state.settings.values,
-    }
-}
-
-const mapDispatch = (dispatch: AppDispatch) => {
-    return {
-        updateSettings: (values: SettingValues) => {
-            dispatch(updateSettings(values))
-        },
-        setShowChangeLogDialog: (value: boolean) => {
-            dispatch(setShowChangeLogDialog(value))
-        },
-    }
-}
-
-const connector = connect(mapState, mapDispatch)
-type PropsFromRedux = ConnectedProps<typeof connector>
-type SettingsDialogProps = PropsFromRedux & {
-    show: boolean
-    onClose: () => void
-}
-
-function SettingsDialog({
-    settings,
-    updateSettings,
-    setShowChangeLogDialog,
+export default function SettingsDialog({
     show: _show,
     onClose,
-}: SettingsDialogProps) {
+}: {
+    show: boolean
+    onClose: () => void
+}) {
+    const dispatch = useAppDispatch()
+
+    const settings = useAppSelector((state) => state.settings.values)
+
     const setShowChangeLogOnClose = useOnNextOverlayClosed(() => {
-        setShowChangeLogDialog(true)
+        dispatch(setShowChangeLogDialog(true))
     })
 
     if (!settings) {
@@ -53,7 +31,7 @@ function SettingsDialog({
     const settingsUpdater = (u: SettingsUpdaterFunction) => {
         const updatedSettings = { ...settings }
         u(updatedSettings)
-        updateSettings(updatedSettings)
+        dispatch(updateSettings(updatedSettings))
     }
 
     return (
@@ -87,5 +65,3 @@ function SettingsDialog({
         />
     )
 }
-
-export default connector(SettingsDialog)

@@ -1,5 +1,4 @@
 import { useState } from 'react'
-import { ConnectedProps, connect } from 'react-redux'
 
 import { PaddedButton } from '@components/Button'
 import ModalDialog from '@modals/ModalDialog/ModalDialog'
@@ -7,37 +6,21 @@ import { ComicList as ComicListModel } from '@models/ComicList'
 import { skipToken } from '@reduxjs/toolkit/dist/query'
 import { useListAllQuery } from '@store/api/comicApiSlice'
 import { setCurrentComic } from '@store/comicSlice'
-import { AppDispatch, RootState } from '@store/store'
+import { useAppDispatch, useAppSelector } from '@store/hooks'
 
 import ComicList from './ComicList/ComicList'
 
-const mapState = (state: RootState) => {
-    return {
-        settings: state.settings.values,
-    }
-}
-
-const mapDispatch = (dispatch: AppDispatch) => {
-    return {
-        setCurrentComic: (comic: number) => {
-            dispatch(setCurrentComic(comic))
-        },
-    }
-}
-
-const connector = connect(mapState, mapDispatch)
-type PropsFromRedux = ConnectedProps<typeof connector>
-type GoToComicDialogProps = PropsFromRedux & {
-    show: boolean
-    onClose: () => void
-}
-
-export function GoToComicDialog({
+export default function GoToComicDialog({
     show,
     onClose,
-    settings,
-    setCurrentComic,
-}: GoToComicDialogProps) {
+}: {
+    show: boolean
+    onClose: () => void
+}) {
+    const dispatch = useAppDispatch()
+
+    const settings = useAppSelector((state) => state.settings.values)
+
     const [currentData, setCurrentData] = useState<ComicListModel[] | null>(
         null
     )
@@ -60,7 +43,7 @@ export function GoToComicDialog({
                     allComicData={currentData ?? []}
                     subDivideGotoComics={settings?.subDivideGotoComics ?? true}
                     onGoToComic={(comic) => {
-                        setCurrentComic(comic)
+                        dispatch(setCurrentComic(comic))
                         onClose()
                     }}
                     isLoading={isLoading}
@@ -72,5 +55,3 @@ export function GoToComicDialog({
         />
     )
 }
-
-export default connector(GoToComicDialog)

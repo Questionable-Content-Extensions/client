@@ -1,41 +1,19 @@
 import { useState } from 'react'
-import { ConnectedProps, connect } from 'react-redux'
 
-import { ComicId } from '@models/ComicId'
 import {
     setShowCopyItemsDialog,
     setShowEditLogDialog,
 } from '@store/dialogSlice'
-import { AppDispatch, RootState } from '@store/store'
+import { useAppDispatch, useAppSelector } from '@store/hooks'
 
 import Popup from '../Popup'
 
-const mapState = (state: RootState) => {
-    return {
-        currentComic: state.comic.current,
-    }
-}
+// eslint-disable-next-line no-empty-pattern
+export default function OperationsMenu({}: {}) {
+    const dispatch = useAppDispatch()
 
-const mapDispatch = (dispatch: AppDispatch) => {
-    return {
-        setShowCopyItemsDialog: (comic: ComicId | null) => {
-            dispatch(setShowCopyItemsDialog(comic))
-        },
-        setShowEditLogDialog: (value: true | number) => {
-            dispatch(setShowEditLogDialog(value))
-        },
-    }
-}
+    const currentComic = useAppSelector((state) => state.comic.current)
 
-const connector = connect(mapState, mapDispatch)
-type PropsFromRedux = ConnectedProps<typeof connector>
-export type OperationsMenuProps = PropsFromRedux & {}
-
-export function OperationsMenu({
-    currentComic,
-    setShowCopyItemsDialog,
-    setShowEditLogDialog,
-}: OperationsMenuProps) {
     const [showPopup, setShowPopup] = useState(false)
     const [popupPosition, setPopupPosition] = useState<[number, number]>([0, 0])
     return (
@@ -67,7 +45,7 @@ export function OperationsMenu({
                     <MenuItem
                         onClick={() => {
                             setShowPopup(false)
-                            setShowCopyItemsDialog(currentComic)
+                            dispatch(setShowCopyItemsDialog(currentComic))
                         }}
                     >
                         Copy items from another comic...
@@ -76,7 +54,7 @@ export function OperationsMenu({
                     <MenuItem
                         onClick={() => {
                             setShowPopup(false)
-                            setShowEditLogDialog(currentComic)
+                            dispatch(setShowEditLogDialog(currentComic))
                         }}
                     >
                         Show edit log for comic {currentComic}...
@@ -84,7 +62,7 @@ export function OperationsMenu({
                     <MenuItem
                         onClick={() => {
                             setShowPopup(false)
-                            setShowEditLogDialog(true)
+                            dispatch(setShowEditLogDialog(true))
                         }}
                     >
                         Show edit log...
@@ -94,8 +72,6 @@ export function OperationsMenu({
         </>
     )
 }
-
-export default connector(OperationsMenu)
 
 function MenuItem({
     children,

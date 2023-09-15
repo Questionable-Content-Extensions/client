@@ -10,6 +10,7 @@ import useHydratedItemData from './useHydratedItemData'
 
 export type LockedItem = {
     randomLockedItemComic: ItemId | null
+    isFetchingRandomLockedItemComic: boolean
     refreshRandomLockedItemComic: () => void
 } & (
     | {
@@ -37,6 +38,7 @@ export default function useLockedItem(
 
     const {
         data: randomLockedItemComic,
+        isFetching: isFetchingRandomLockedItemComic,
         refetch: refreshRandomLockedItemComic,
     } = useRandomComicQuery(
         hasLockedItem
@@ -54,6 +56,7 @@ export default function useLockedItem(
             hasLockedItem,
             lockedItem,
             randomLockedItemComic: randomLockedItemComic ?? null,
+            isFetchingRandomLockedItemComic,
             refreshRandomLockedItemComic,
         }
     } else {
@@ -61,6 +64,7 @@ export default function useLockedItem(
             hasLockedItem,
             lockedItem,
             randomLockedItemComic: randomLockedItemComic ?? null,
+            isFetchingRandomLockedItemComic,
             refreshRandomLockedItemComic,
         }
     }

@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 -   Add the ability to lock comic navigation to an item. Closes [#33](https://github.com/Questionable-Content-Extensions/client/issues/33)
 
+### Changed 🔧
+
+-   Move to using Redux hooks instead of `connect()`. Resolves [#77](https://github.com/Questionable-Content-Extensions/client/issues/77)
+
 ### Fixed 🐛
 
 -   Fix Storybook tests after upgrading from 6.5 to 7.4. Fixes [#78](https://github.com/Questionable-Content-Extensions/client/issues/78)

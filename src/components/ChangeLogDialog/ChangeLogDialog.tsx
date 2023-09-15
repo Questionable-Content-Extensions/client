@@ -1,15 +1,13 @@
 import { marked } from 'marked'
-import { ConnectedProps, connect } from 'react-redux'
 
 import styles from './ChangeLogDialog.module.css'
 
 import { PaddedButton } from '@components/Button'
 import ModalDialog from '@modals/ModalDialog/ModalDialog'
+import { useAppDispatch, useAppSelector } from '@store/hooks'
 import { updateSettings } from '@store/settingsSlice'
-import { AppDispatch, RootState } from '@store/store'
 
 import constants from '~/constants'
-import { SettingValues } from '~/settings'
 import { formatDate } from '~/utils'
 
 import CHANGE_LOG from './CHANGELOG.md'
@@ -48,32 +46,16 @@ const CHANGE_LOG_MARKDOWN = marked(CHANGE_LOG).replace(
     'documented in this change log'
 )
 
-const mapState = (state: RootState) => {
-    return {
-        settings: state.settings.values,
-    }
-}
-
-const mapDispatch = (dispatch: AppDispatch) => {
-    return {
-        updateSettings: (values: SettingValues) => {
-            dispatch(updateSettings(values))
-        },
-    }
-}
-
-const connector = connect(mapState, mapDispatch)
-type PropsFromRedux = ConnectedProps<typeof connector>
-type ChangeLogDialogProps = PropsFromRedux & {
+export default function ChangeLogDialog({
+    onClose,
+}: {
     show: boolean
     onClose: () => void
-}
+}) {
+    const dispatch = useAppDispatch()
 
-export function ChangeLogDialog({
-    settings,
-    updateSettings,
-    onClose,
-}: ChangeLogDialogProps) {
+    const settings = useAppSelector((state) => state.settings.values)
+
     return (
         <ModalDialog
             onCloseClicked={onClose}
@@ -127,20 +109,24 @@ export function ChangeLogDialog({
                         <>
                             <PaddedButton
                                 onClick={() => {
-                                    updateSettings({
-                                        ...settings!,
-                                        version: '0.1.0',
-                                    })
+                                    dispatch(
+                                        updateSettings({
+                                            ...settings!,
+                                            version: '0.1.0',
+                                        })
+                                    )
                                 }}
                             >
                                 DEV: Set version to 0.1.0
                             </PaddedButton>
                             <PaddedButton
                                 onClick={() => {
-                                    updateSettings({
-                                        ...settings!,
-                                        version: null,
-                                    })
+                                    dispatch(
+                                        updateSettings({
+                                            ...settings!,
+                                            version: null,
+                                        })
+                                    )
                                 }}
                             >
                                 DEV: Unset version
@@ -156,10 +142,12 @@ export function ChangeLogDialog({
                     )}
                     <PaddedButton
                         onClick={() => {
-                            updateSettings({
-                                ...settings!,
-                                version: constants.scriptVersion,
-                            })
+                            dispatch(
+                                updateSettings({
+                                    ...settings!,
+                                    version: constants.scriptVersion,
+                                })
+                            )
                             onClose()
                         }}
                     >
@@ -170,5 +158,3 @@ export function ChangeLogDialog({
         />
     )
 }
-
-export default connector(ChangeLogDialog)

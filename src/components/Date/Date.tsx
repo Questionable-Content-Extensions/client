@@ -1,5 +1,4 @@
 import { useMemo } from 'react'
-import { ConnectedProps, connect } from 'react-redux'
 
 import InlineSpinner from '@components/InlineSpinner'
 import { skipToken } from '@reduxjs/toolkit/dist/query'
@@ -7,24 +6,16 @@ import {
     toGetDataQueryArgs,
     useGetComicDataQuery,
 } from '@store/api/comicApiSlice'
-import { RootState } from '@store/store'
+import { useAppSelector } from '@store/hooks'
 
 import { formatDate } from '~/utils'
 
-const mapState = (state: RootState) => {
-    return {
-        settings: state.settings.values,
-        currentComic: state.comic.current,
-    }
-}
+// eslint-disable-next-line no-empty-pattern
+export default function DateComponent({}: {}) {
+    const settings = useAppSelector((state) => state.settings.values)
 
-const mapDispatch = () => ({})
+    const currentComic = useAppSelector((state) => state.comic.current)
 
-const connector = connect(mapState, mapDispatch)
-type PropsFromRedux = ConnectedProps<typeof connector>
-type DateComponentProps = PropsFromRedux & {}
-
-export function DateComponent({ settings, currentComic }: DateComponentProps) {
     const {
         data: comicData,
         isLoading: comicDataLoading,
@@ -96,5 +87,3 @@ export function DateComponent({ settings, currentComic }: DateComponentProps) {
         )
     }
 }
-
-export default connector(DateComponent)

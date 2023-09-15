@@ -1,5 +1,4 @@
 import { useEffect, useMemo, useState } from 'react'
-import { ConnectedProps, connect } from 'react-redux'
 
 import { PaddedButton } from '@components/Button'
 import EditLogPanel from '@components/EditLogDialog/EditLogPanel/EditLogPanel'
@@ -8,7 +7,6 @@ import CollapsibleDetails from '@components/GoToComicDialog/CollapsibleDetails/C
 import ComicList from '@components/GoToComicDialog/ComicList/ComicList'
 import useHydratedItemData from '@hooks/useHydratedItemData'
 import ModalDialog from '@modals/ModalDialog/ModalDialog'
-import { Item } from '@models/Item'
 import { ItemId } from '@models/ItemId'
 import { skipToken } from '@reduxjs/toolkit/dist/query'
 import {
@@ -24,60 +22,32 @@ import {
 } from '@store/api/itemApiSlice'
 import { useGetLogsForItemQuery } from '@store/api/logApiSlice'
 import { setCurrentComic } from '@store/comicSlice'
+import { useAppDispatch, useAppSelector } from '@store/hooks'
 import {
     isStateDirtySelector,
     saveChanges,
     setFromItem,
 } from '@store/itemEditorSlice'
-import { AppDispatch, RootState } from '@store/store'
 
 import constants from '~/constants'
 
 import ItemDataPanel from './ItemDataPanel/ItemDataPanel'
 
-const mapState = (state: RootState) => {
-    return {
-        settings: state.settings.values,
-        editorItemId: state.itemEditor.id,
-        isItemDirty: isStateDirtySelector(state),
-        currentComic: state.comic.current,
-        lockedToItem: state.comic.lockedToItem,
-    }
-}
-
-const mapDispatch = (dispatch: AppDispatch) => {
-    return {
-        setCurrentComic: (comic: number, locked: boolean) => {
-            dispatch(setCurrentComic(comic, { locked }))
-        },
-        setFromItem: (item: Item) => {
-            dispatch(setFromItem(item))
-        },
-        saveChanges: () => {
-            dispatch(saveChanges())
-        },
-    }
-}
-
-const connector = connect(mapState, mapDispatch)
-type PropsFromRedux = ConnectedProps<typeof connector>
-type ItemDetailsDialogProps = PropsFromRedux & {
-    onClose: () => void
-    initialItemId: number | null
-}
-
-function ItemDetailsDialog({
-    settings,
-    editorItemId,
-    isItemDirty,
-    currentComic,
-    lockedToItem,
-    setCurrentComic,
-    setFromItem,
-    saveChanges,
+export default function ItemDetailsDialog({
     onClose,
     initialItemId,
-}: ItemDetailsDialogProps) {
+}: {
+    onClose: () => void
+    initialItemId: number | null
+}) {
+    const dispatch = useAppDispatch()
+
+    const settings = useAppSelector((state) => state.settings.values)
+    const editorItemId = useAppSelector((state) => state.itemEditor.id)
+    const isItemDirty = useAppSelector((state) => isStateDirtySelector(state))
+    const currentComic = useAppSelector((state) => state.comic.current)
+    const lockedToItem = useAppSelector((state) => state.comic.lockedToItem)
+
     const [previousInitialItemId, setPreviousInitialItemId] = useState<
         number | null
     >(null)
@@ -106,9 +76,9 @@ function ItemDetailsDialog({
 
     useEffect(() => {
         if (itemData && itemData.id !== editorItemId) {
-            setFromItem(itemData)
+            dispatch(setFromItem(itemData))
         }
-    }, [itemData, editorItemId, setFromItem])
+    }, [itemData, editorItemId, dispatch])
 
     const [deleteImage, { isLoading: _isDeletingImage }] =
         useDeleteImageMutation()
@@ -191,7 +161,7 @@ function ItemDetailsDialog({
                             settings?.editMode ? settings?.editModeToken : null
                         }
                         onGoToComic={(comicId, locked) => {
-                            setCurrentComic(comicId, locked)
+                            dispatch(setCurrentComic(comicId, { locked }))
                             onClose()
                         }}
                         onShowItemData={(itemId: ItemId) => {
@@ -233,12 +203,12 @@ function ItemDetailsDialog({
                             }
                             onGoToComic={(comic) => {
                                 setLoadComics(false)
-                                setCurrentComic(
-                                    comic,
-                                    lockedToItem && itemData
-                                        ? lockedToItem === itemData.id
-                                        : false
-                                )
+                                setCurrentComic(comic, {
+                                    locked:
+                                        lockedToItem && itemData
+                                            ? lockedToItem === itemData.id
+                                            : false,
+                                })
                                 onClose()
                             }}
                         />
@@ -309,7 +279,7 @@ function ItemDetailsDialog({
                             <PaddedButton
                                 className="ml-2"
                                 disabled={!isItemDirty}
-                                onClick={() => saveChanges()}
+                                onClick={() => dispatch(saveChanges())}
                             >
                                 {isItemDirty ? 'Save changes' : 'No changes'}
                             </PaddedButton>
@@ -324,5 +294,3 @@ function ItemDetailsDialog({
         />
     )
 }
-
-export default connector(ItemDetailsDialog)

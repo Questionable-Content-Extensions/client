@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { ConnectedProps, connect } from 'react-redux'
 
 import useLockedItem from '@hooks/useLockedItem'
 import { skipToken } from '@reduxjs/toolkit/dist/query'
@@ -9,7 +8,7 @@ import {
     useGetComicDataQuery,
 } from '@store/api/comicApiSlice'
 import { setCurrentComic } from '@store/comicSlice'
-import { AppDispatch, RootState } from '@store/store'
+import { useAppDispatch, useAppSelector } from '@store/hooks'
 
 import { debug, info } from '~/utils'
 
@@ -17,39 +16,21 @@ import FullPageLoader from '../FullPageLoader'
 import ComicImage from './ComicImage/ComicImage'
 import ComicRibbon, { RibbonType } from './ComicRibbon/ComicRibbon'
 
-const mapState = (state: RootState) => {
-    return {
-        settings: state.settings.values,
-        currentComic: state.comic.current,
-        nextComic: nextComicSelector(state),
-        lockedToItem: state.comic.lockedToItem,
-    }
-}
-
-const mapDispatch = (dispatch: AppDispatch) => {
-    return {
-        setCurrentComic: (comic: number, locked?: boolean) => {
-            dispatch(setCurrentComic(comic, { locked }))
-        },
-    }
-}
-
-const connector = connect(mapState, mapDispatch)
-type PropsFromRedux = ConnectedProps<typeof connector>
-type ComicProps = PropsFromRedux & {
-    initialComic: number
-    initialComicSrc: string
-}
-
-function Comic({
+export default function Comic({
     initialComic,
     initialComicSrc,
-    settings,
-    currentComic,
-    nextComic,
-    lockedToItem,
-    setCurrentComic,
-}: ComicProps) {
+}: {
+    initialComic: number
+    initialComicSrc: string
+}) {
+    const dispatch = useAppDispatch()
+
+    const settings = useAppSelector((state) => state.settings.values)
+
+    const currentComic = useAppSelector((state) => state.comic.current)
+    const nextComic = useAppSelector((s) => nextComicSelector(s))
+    const lockedToItem = useAppSelector((state) => state.comic.lockedToItem)
+
     const [isInitializing, setIsInitializing] = useState(true)
 
     const { data: comicData, isError: hasComicDataError } =
@@ -150,10 +131,12 @@ function Comic({
                 onClick={(e) => {
                     e.preventDefault()
                     if (hasLockedItem && lockedItem.next) {
-                        setCurrentComic(lockedItem.next, true)
+                        dispatch(
+                            setCurrentComic(lockedItem.next, { locked: true })
+                        )
                     } else {
                         if (nextComic) {
-                            setCurrentComic(nextComic)
+                            dispatch(setCurrentComic(nextComic))
                         }
                     }
                 }}
@@ -183,8 +166,6 @@ function Comic({
         </div>
     )
 }
-
-export default connector(Comic)
 
 function useComicLoaderTimeout(
     nextComic: number | null,

@@ -24,7 +24,7 @@ import 'react-toastify/dist/ReactToastify.min.css'
 
 import Comic from '@components/Comic/Comic'
 import ComicDetailsPanel from '@components/ComicDetailsPanel/ComicDetailsPanel'
-import ComicNavigation from '@components/ComicNavigation'
+import ComicNavigation from '@components/ComicNavigation/ComicNavigation'
 import ComicTitle from '@components/ComicTitle'
 import DateComponent from '@components/Date/Date'
 import DebugLoadErrorPanel from '@components/DebugLoadErrorPanel'
@@ -50,6 +50,10 @@ import store, { AppDispatch, RootState } from '~/store/store'
 import { awaitElement, debug, error, fetch, info, qcBug, setup } from '~/utils'
 
 import { BODY_CONTAINER_ID, PORTAL_CONTAINER_ID } from './shared'
+
+// TODO: Add unit tests for components.
+// See <https://blog.krawaller.se/posts/unit-testing-react-redux-components/>
+// for how to properly test Redux powered components
 
 const QcStrictMode = React.StrictMode
 // React.StrictMode causes errors in Chromium; set to some innocent element
