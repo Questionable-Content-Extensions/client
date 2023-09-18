@@ -8,7 +8,12 @@ import { ComicId } from '@models/ComicId'
 import { HydratedItemNavigationData } from '@models/HydratedItemData'
 import { ItemBody } from '@models/ItemBody'
 import { ItemId } from '@models/ItemId'
-import { ItemType } from '@models/ItemType'
+
+import {
+    filterItems,
+    getFilterWithoutType,
+    getTypeFromFilter,
+} from '~/itemFilters'
 
 export default function FilteredNavigationData({
     isLoading,
@@ -121,49 +126,4 @@ export default function FilteredNavigationData({
             )}
         </>
     )
-}
-
-function filterItems(
-    allNavigationItems: HydratedItemNavigationData[],
-    filter: string
-) {
-    const type = getTypeFromFilter(filter)
-
-    let filteredByType
-    if (type !== 'item') {
-        filteredByType = allNavigationItems.filter((i) => i.type === type)
-    } else {
-        filteredByType = allNavigationItems
-    }
-
-    filter = getFilterWithoutType(filter)
-    return filteredByType.filter(
-        (i) =>
-            i.shortName.toUpperCase().indexOf(filter.toUpperCase()) !== -1 ||
-            i.name.toUpperCase().indexOf(filter.toUpperCase()) !== -1
-    )
-}
-
-function getTypeFromFilter(filter: string) {
-    const typeFilter = filter.charAt(0)
-    let type: ItemType | 'item' = 'item'
-    switch (typeFilter) {
-        case '!':
-            type = 'cast'
-            break
-        case '@':
-            type = 'location'
-            break
-        case '#':
-            type = 'storyline'
-            break
-    }
-    return type
-}
-
-function getFilterWithoutType(filter: string) {
-    if (getTypeFromFilter(filter) !== 'item') {
-        filter = filter.substring(1)
-    }
-    return filter
 }
