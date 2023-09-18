@@ -79,6 +79,7 @@ const constants = {
     webserviceBaseUrl,
 
     excludedComicsEndpoint: `${comicDataEndpoint}excluded` as const,
+    containingItemsEndpoint: `${comicDataEndpoint}containing-items` as const,
     addItemToComicEndpoint: `${comicDataEndpoint}additem` as const,
     addItemsToComicEndpoint: `${comicDataEndpoint}additems` as const,
     removeItemFromComicEndpoint: `${comicDataEndpoint}removeitem` as const,

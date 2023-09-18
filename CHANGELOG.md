@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added ✨
 
 -   Add the ability to lock comic navigation to an item. Closes [#33](https://github.com/Questionable-Content-Extensions/client/issues/33)
+-   Expand the search functionality in the `GoToComicDialog` to allow for searching for comics not only by the text in their title/tagline, but also by which items are present in the comic and whether or not the comic is a guest comic or non-canon. Closes [#15](https://github.com/Questionable-Content-Extensions/client/issues/15)
 
 ### Changed 🔧
 
