@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed 🐛
+
+-   Use the current edit values to render the item details so they update live when they're changed
+
 ## [1.2.0] - 2023-09-20
 
 ### Added ✨

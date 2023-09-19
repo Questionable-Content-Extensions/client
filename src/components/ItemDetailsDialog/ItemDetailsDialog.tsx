@@ -47,6 +47,7 @@ export default function ItemDetailsDialog({
     const isItemDirty = useAppSelector((state) => isStateDirtySelector(state))
     const currentComic = useAppSelector((state) => state.comic.current)
     const lockedToItem = useAppSelector((state) => state.comic.lockedToItem)
+    const itemName = useAppSelector((state) => state.itemEditor.name)
 
     const [previousInitialItemId, setPreviousInitialItemId] = useState<
         number | null
@@ -114,8 +115,8 @@ export default function ItemDetailsDialog({
         if (isItemDataFetching) {
             return 'Loading...'
         }
-        return itemData?.name ?? 'Loading...'
-    }, [hasAllItemDataError, hasItemDataError, isItemDataFetching, itemData])
+        return itemName ?? 'Loading...'
+    }, [hasAllItemDataError, hasItemDataError, isItemDataFetching, itemName])
 
     const {
         data: itemLogs,
