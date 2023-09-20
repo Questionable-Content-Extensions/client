@@ -1,41 +1,28 @@
 import { useEffect, useMemo, useState } from 'react'
-import { ConnectedProps, connect } from 'react-redux'
 
 import { PaddedButton } from '@components/Button'
 import useHydratedItemData from '@hooks/useHydratedItemData'
 import ModalDialog from '@modals/ModalDialog/ModalDialog'
 import { skipToken } from '@reduxjs/toolkit/dist/query'
 import { useAddItemsMutation, useListAllQuery } from '@store/api/comicApiSlice'
-import { AppDispatch, RootState } from '@store/store'
+import { useAppSelector } from '@store/hooks'
 
 import CopyItemsDialogPanel from './CopyItemsDialogPanel/CopyItemsDialogPanel'
 
-const mapState = (state: RootState) => {
-    return {
-        settings: state.settings.values,
-        initialComic: state.dialog.showCopyItemsDialogFor,
-        currentComic: state.comic.current,
-    }
-}
-
-const mapDispatch = (_dispatch: AppDispatch) => {
-    return {}
-}
-
-const connector = connect(mapState, mapDispatch)
-type PropsFromRedux = ConnectedProps<typeof connector>
-type CopyItemsDialogProps = PropsFromRedux & {
-    show: boolean
-    onClose: () => void
-}
-
-export function CopyItemsDialog({
-    initialComic,
-    settings,
-    currentComic,
+export default function CopyItemsDialog({
     show,
     onClose,
-}: CopyItemsDialogProps) {
+}: {
+    show: boolean
+    onClose: () => void
+}) {
+    const settings = useAppSelector((state) => state.settings.values)
+
+    const currentComic = useAppSelector((state) => state.comic.current)
+    const initialComic = useAppSelector(
+        (state) => state.dialog.showCopyItemsDialogFor
+    )
+
     const {
         data: allComicData,
         isFetching: isFetchingAllComicData,
@@ -142,5 +129,3 @@ export function CopyItemsDialog({
         />
     )
 }
-
-export default connector(CopyItemsDialog)

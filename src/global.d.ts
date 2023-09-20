@@ -10,4 +10,6 @@ declare global {
     // the CSS out and then we just stuff it right back into the JS and load it
     // ourselves.
     var qcExtBuiltCss: string | undefined
+
+    var __QC_EXT_DEVELOPMENT_LOADED: boolean | undefined
 }

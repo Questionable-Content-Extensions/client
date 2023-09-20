@@ -26,7 +26,7 @@ export default function ExtraNavButton({
     return (
         <a
             href={`view.php?comic=${comicNo}`}
-            title={`Go to ${title.toLowerCase()}`}
+            title={`Go to ${title}`}
             className={
                 `flex-none ${size} py-0.5 block text-xs ${textColor}  ${border} ` +
                 (!visible ? ' pointer-events-none' : '')
@@ -39,7 +39,7 @@ export default function ExtraNavButton({
             }}
             tabIndex={!visible ? -1 : undefined}
         >
-            <span className="sr-only">Go to {title.toLowerCase()}</span>
+            <span className="sr-only">Go to {title}</span>
             <i
                 className={`fa fa-${faClass}` + (!visible ? ' invisible' : '')}
                 aria-hidden

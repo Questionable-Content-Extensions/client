@@ -1,28 +1,17 @@
-import { ConnectedProps, connect } from 'react-redux'
-
 import { skipToken } from '@reduxjs/toolkit/dist/query'
 import {
     toGetDataQueryArgs,
     useGetComicDataQuery,
 } from '@store/api/comicApiSlice'
-import { RootState } from '@store/store'
+import { useAppSelector } from '@store/hooks'
 
 import { debug, nl2br } from '~/utils'
 
-const mapState = (state: RootState) => {
-    return {
-        settings: state.settings.values,
-        currentComic: state.comic.current,
-    }
-}
+export default function News({ initialNews }: { initialNews: string }) {
+    const settings = useAppSelector((state) => state.settings.values)
 
-const mapDispatch = () => ({})
+    const currentComic = useAppSelector((state) => state.comic.current)
 
-const connector = connect(mapState, mapDispatch)
-type PropsFromRedux = ConnectedProps<typeof connector>
-type NewsProps = PropsFromRedux & { initialNews: string }
-
-function News({ initialNews, settings, currentComic }: NewsProps) {
     const { data: comicData, isFetching: comicDataLoading } =
         useGetComicDataQuery(
             currentComic === 0 || !settings
@@ -54,5 +43,3 @@ function News({ initialNews, settings, currentComic }: NewsProps) {
         ></div>
     )
 }
-
-export default connector(News)

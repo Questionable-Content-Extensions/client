@@ -4,6 +4,7 @@ import InlineSpinner from '@components/InlineSpinner'
 import NavElement, { NavElementMode } from '@components/NavElement/NavElement'
 import Spinner from '@components/Spinner'
 import useItemNavigationDataByType from '@hooks/useItemNavigationDataByType'
+import { ComicId } from '@models/ComicId'
 import { HydratedItemNavigationData } from '@models/HydratedItemData'
 import { ItemId } from '@models/ItemId'
 
@@ -20,12 +21,13 @@ export default function ItemNavigation({
     editMode,
     onRemoveItem,
     onAddItem,
+    lockedToItemId,
 }: {
     itemNavigationData: HydratedItemNavigationData[]
     isLoading: boolean
     isFetching: boolean
     useColors: boolean
-    onSetCurrentComic: (comicNo: number) => void
+    onSetCurrentComic: (comicNo: ComicId, locked: boolean) => void
     onShowInfoFor: (item: ItemId) => void
     mode: PickEnum<
         NavElementMode,
@@ -34,9 +36,12 @@ export default function ItemNavigation({
     editMode?: boolean
     onRemoveItem?: (_: ItemId) => void
     onAddItem?: (_: ItemId) => void
+    lockedToItemId?: ItemId
 }) {
-    const { cast, location, storyline } =
-        useItemNavigationDataByType(itemNavigationData)
+    const { cast, location, storyline, locked } = useItemNavigationDataByType(
+        itemNavigationData,
+        lockedToItemId
+    )
 
     const itemNavigationToNavElement = useCallback(
         (item: HydratedItemNavigationData) => {
@@ -70,8 +75,9 @@ export default function ItemNavigation({
             cast: cast.map(itemNavigationToNavElement),
             location: location.map(itemNavigationToNavElement),
             storyline: storyline.map(itemNavigationToNavElement),
+            locked: locked.map(itemNavigationToNavElement),
         }
-    }, [cast, location, storyline, itemNavigationToNavElement])
+    }, [cast, location, storyline, locked, itemNavigationToNavElement])
 
     if (isLoading) {
         return (
@@ -94,35 +100,37 @@ export default function ItemNavigation({
 
     return (
         <div className="text-center">
-            {itemNavElements.cast.length ? (
+            {!!itemNavElements.locked.length && (
+                <ItemTypeSection
+                    header="Navigation Locked"
+                    isFetching={isFetching}
+                    mode={mode}
+                    elements={itemNavElements.locked}
+                />
+            )}
+            {!!itemNavElements.cast.length && (
                 <ItemTypeSection
                     header="Cast Members"
                     isFetching={isFetching}
                     mode={mode}
                     elements={itemNavElements.cast}
                 />
-            ) : (
-                <></>
             )}
-            {itemNavElements.location.length ? (
+            {!!itemNavElements.location.length && (
                 <ItemTypeSection
                     header="Locations"
                     isFetching={isFetching}
                     mode={mode}
                     elements={itemNavElements.location}
                 />
-            ) : (
-                <></>
             )}
-            {itemNavElements.storyline.length ? (
+            {!!itemNavElements.storyline.length && (
                 <ItemTypeSection
                     header="Storylines"
                     isFetching={isFetching}
                     mode={mode}
                     elements={itemNavElements.storyline}
                 />
-            ) : (
-                <></>
             )}
         </div>
     )

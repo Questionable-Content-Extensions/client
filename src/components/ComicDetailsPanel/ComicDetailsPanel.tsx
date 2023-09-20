@@ -1,5 +1,4 @@
 import { useEffect, useMemo, useState } from 'react'
-import { ConnectedProps, connect } from 'react-redux'
 
 import Button from '@components/Button'
 import ErrorPresenter from '@components/ErrorPresenter'
@@ -7,6 +6,7 @@ import ExtraNavigation from '@components/ExtraNavigation/ExtraNavigation'
 import FilteredNavigationData from '@components/FilteredNavigationData/FilteredNavigationData'
 import { NavElementMode } from '@components/NavElement/NavElement'
 import useHydratedItemData from '@hooks/useHydratedItemData'
+import useLockedItem from '@hooks/useLockedItem'
 import { skipToken } from '@reduxjs/toolkit/dist/query'
 import {
     nextComicSelector,
@@ -18,69 +18,30 @@ import {
     useGetExcludedQuery,
     useRemoveItemMutation,
 } from '@store/api/comicApiSlice'
-import { setCurrentComic, setRandom as setRandomComic } from '@store/comicSlice'
+import { setCurrentComic, setRandomComic } from '@store/comicSlice'
 import {
     setShowChangeLogDialog,
     setShowGoToComicDialog,
     setShowItemDetailsDialogFor,
     setShowSettingsDialog,
 } from '@store/dialogSlice'
-import { useAppDispatch } from '@store/hooks'
-import { AppDispatch, RootState } from '@store/store'
+import { useAppDispatch, useAppSelector } from '@store/hooks'
 
 import constants from '~/constants'
 
 import ItemNavigation from './ItemNavigation/ItemNavigation'
 
-const mapState = (state: RootState) => {
-    return {
-        settings: state.settings.values,
-        currentComic: state.comic.current,
-        latestComic: state.comic.latest,
-        randomComic: state.comic.random,
-        previousComic: previousComicSelector(state),
-        nextComic: nextComicSelector(state),
-    }
-}
-
-const mapDispatch = (dispatch: AppDispatch) => {
-    return {
-        setCurrentComic: (comic: number) => {
-            dispatch(setCurrentComic(comic))
-        },
-        setShowGoToComicDialog: (value: boolean) => {
-            dispatch(setShowGoToComicDialog(value))
-        },
-        setShowSettingsDialog: (value: boolean) => {
-            dispatch(setShowSettingsDialog(value))
-        },
-        setShowItemDetailsDialogFor: (value: number | null) => {
-            dispatch(setShowItemDetailsDialogFor(value))
-        },
-        setShowChangeLogDialog: (value: boolean) => {
-            dispatch(setShowChangeLogDialog(value))
-        },
-    }
-}
-
-const connector = connect(mapState, mapDispatch)
-type PropsFromRedux = ConnectedProps<typeof connector>
-type QcExtMainWidgetProps = PropsFromRedux & {}
-
-function ComicDetailsPanel({
-    settings,
-    currentComic,
-    latestComic,
-    randomComic,
-    previousComic,
-    nextComic,
-    setCurrentComic,
-    setShowGoToComicDialog,
-    setShowSettingsDialog,
-    setShowItemDetailsDialogFor,
-    setShowChangeLogDialog,
-}: QcExtMainWidgetProps) {
+export default function ComicDetailsPanel() {
     const dispatch = useAppDispatch()
+
+    const settings = useAppSelector((state) => state.settings.values)
+
+    const currentComic = useAppSelector((state) => state.comic.current)
+    const latestComic = useAppSelector((state) => state.comic.latest)
+    const randomComic = useAppSelector((state) => state.comic.random)
+    const previousComic = useAppSelector((s) => previousComicSelector(s))
+    const nextComic = useAppSelector((s) => nextComicSelector(s))
+    const lockedToItem = useAppSelector((state) => state.comic.lockedToItem)
 
     const {
         data: comicData,
@@ -103,6 +64,13 @@ function ComicDetailsPanel({
         isError: hasErrorLoadingItemData,
         refetch: refreshItemData,
     } = useHydratedItemData(currentComic, settings)
+
+    const {
+        hasLockedItem,
+        lockedItem,
+        randomLockedItemComic,
+        refreshRandomLockedItemComic,
+    } = useLockedItem(currentComic, settings, lockedToItem)
 
     const isLoadingInitial =
         isLoadingInitialComicData || isLoadingInitialItemData
@@ -178,7 +146,7 @@ function ComicDetailsPanel({
                     <h1 className="text-xs">Welcome!</h1>
                     <button
                         className="inline-block qc-ext-qc-link hover:underline"
-                        onClick={() => setShowChangeLogDialog(true)}
+                        onClick={() => dispatch(setShowChangeLogDialog(true))}
                     >
                         See our change log to remove this welcome message!
                     </button>
@@ -190,7 +158,7 @@ function ComicDetailsPanel({
                     <h1 className="text-xs">Updated!</h1>
                     <button
                         className="inline-block qc-ext-qc-link hover:underline"
-                        onClick={() => setShowChangeLogDialog(true)}
+                        onClick={() => dispatch(setShowChangeLogDialog(true))}
                     >
                         See what's new!
                     </button>
@@ -199,19 +167,44 @@ function ComicDetailsPanel({
         }
 
         return <></>
-    }, [settings, setShowChangeLogDialog])
+    }, [settings, dispatch])
 
     function goToSelectorComic() {
         if (comicSelectorNo && /^\d+$/.test(comicSelectorNo)) {
             const comicNo = Number(comicSelectorNo)
             if (comicNo >= 1 && comicNo <= (latestComic as number)) {
-                setCurrentComic(comicNo)
+                dispatch(setCurrentComic(comicNo, { locked: false }))
             }
         }
     }
 
     if (!settings) {
         return <></>
+    }
+
+    let navigationData: {
+        first: number
+        previous: number
+        next: number
+        last: number
+        random: number
+    }
+    if (hasLockedItem) {
+        navigationData = {
+            first: lockedItem.first ?? currentComic,
+            previous: lockedItem.previous ?? currentComic,
+            next: lockedItem.next ?? currentComic,
+            last: lockedItem.last ?? currentComic,
+            random: randomLockedItemComic ?? 0,
+        }
+    } else {
+        navigationData = {
+            first: 1,
+            previous: previousComic,
+            next: nextComic,
+            last: latestComic,
+            random: randomComic,
+        }
     }
 
     return (
@@ -226,17 +219,54 @@ function ComicDetailsPanel({
                 {installUpdate}
             </h1>
             <ExtraNavigation
+                withItem={lockedItem?.shortName ?? null}
                 currentComic={currentComic}
-                onSetFirstComic={() => setCurrentComic(1)}
-                previousComic={previousComic}
-                onSetPreviousComic={() => setCurrentComic(previousComic)}
-                nextComic={nextComic}
-                onSetNextComic={() => setCurrentComic(nextComic)}
-                latestComic={latestComic}
-                onSetLatestComic={() => setCurrentComic(latestComic)}
-                randomComic={randomComic}
-                onSetRandomComic={() => setCurrentComic(randomComic)}
-                onShowGoToComicDialog={() => setShowGoToComicDialog(true)}
+                firstComic={navigationData.first}
+                onSetFirstComic={() =>
+                    dispatch(
+                        setCurrentComic(navigationData.first, {
+                            locked: hasLockedItem,
+                        })
+                    )
+                }
+                previousComic={navigationData.previous}
+                onSetPreviousComic={() =>
+                    dispatch(
+                        setCurrentComic(navigationData.previous, {
+                            locked: hasLockedItem,
+                        })
+                    )
+                }
+                nextComic={navigationData.next}
+                onSetNextComic={() =>
+                    dispatch(
+                        setCurrentComic(navigationData.next, {
+                            locked: hasLockedItem,
+                        })
+                    )
+                }
+                latestComic={navigationData.last}
+                onSetLatestComic={() =>
+                    dispatch(
+                        setCurrentComic(navigationData.last, {
+                            locked: hasLockedItem,
+                        })
+                    )
+                }
+                randomComic={navigationData.random}
+                onSetRandomComic={() => {
+                    dispatch(
+                        setCurrentComic(navigationData.random, {
+                            locked: hasLockedItem,
+                        })
+                    )
+                    if (hasLockedItem) {
+                        refreshRandomLockedItemComic()
+                    }
+                }}
+                onShowGoToComicDialog={() =>
+                    dispatch(setShowGoToComicDialog(true))
+                }
             />
             {!settings.editMode && hasErrorLoadingComicData && (
                 <ErrorPresenter error={comicDataError} />
@@ -246,8 +276,10 @@ function ComicDetailsPanel({
                 isLoading={isLoadingInitial}
                 isFetching={isFetching}
                 useColors={settings.useColors}
-                onSetCurrentComic={setCurrentComic}
-                onShowInfoFor={setShowItemDetailsDialogFor}
+                onSetCurrentComic={(c, locked) =>
+                    dispatch(setCurrentComic(c, { locked }))
+                }
+                onShowInfoFor={(i) => dispatch(setShowItemDetailsDialogFor(i))}
                 mode={NavElementMode.Present}
                 editMode={settings.editMode}
                 onRemoveItem={(itemId) => {
@@ -257,6 +289,7 @@ function ComicDetailsPanel({
                         itemId,
                     })
                 }}
+                lockedToItemId={lockedItem?.id}
             />
             <hr className="my-4 mx-0 border-solid border-b max-w-none" />
             <div className="grid grid-rows-2 space-y-1">
@@ -275,7 +308,7 @@ function ComicDetailsPanel({
                     </Button>
                     <Button
                         className="py-2"
-                        onClick={() => setShowSettingsDialog(true)}
+                        onClick={() => dispatch(setShowSettingsDialog(true))}
                     >
                         Settings
                     </Button>
@@ -327,8 +360,12 @@ function ComicDetailsPanel({
                             isFetching={isFetching}
                             isSaving={isSaving}
                             itemData={allItems ?? []}
-                            onSetCurrentComic={setCurrentComic}
-                            onShowInfoFor={setShowItemDetailsDialogFor}
+                            onSetCurrentComic={(c) =>
+                                dispatch(setCurrentComic(c))
+                            }
+                            onShowInfoFor={(i) =>
+                                dispatch(setShowItemDetailsDialogFor(i))
+                            }
                             useColors={settings.useColors}
                             editMode={settings.editMode}
                             onAddItem={(itemBody) => {
@@ -345,5 +382,3 @@ function ComicDetailsPanel({
         </div>
     )
 }
-
-export default connector(ComicDetailsPanel)

@@ -1,39 +1,15 @@
-import { ConnectedProps, connect } from 'react-redux'
-
 import NavButton from '@components/ComicDetailsPanel/NavButton/NavButton'
+import { ComicId } from '@models/ComicId'
 import { HydratedItemNavigationData } from '@models/HydratedItemData'
 import { ItemId } from '@models/ItemId'
 import { skipToken } from '@reduxjs/toolkit/dist/query'
 import { useRandomComicQuery } from '@store/api/itemApiSlice'
-import { AppDispatch, RootState } from '@store/store'
+import { setLockedToItem } from '@store/comicSlice'
+import { useAppDispatch, useAppSelector } from '@store/hooks'
 
 import { createTintOrShade } from '~/color'
 
 import { useAlternateLayout } from './useAlternateLayout'
-
-const mapState = (state: RootState) => {
-    return {
-        settings: state.settings.values,
-        currentComic: state.comic.current,
-    }
-}
-
-const mapDispatch = (_dispatch: AppDispatch) => {
-    return {}
-}
-
-const connector = connect(mapState, mapDispatch)
-type PropsFromRedux = ConnectedProps<typeof connector>
-type NavElementProps = PropsFromRedux & {
-    item: HydratedItemNavigationData
-    onSetCurrentComic: (_: number) => void
-    useColors: boolean
-    onShowInfoFor: (_: ItemId) => void
-    mode: NavElementMode
-    editMode?: boolean
-    onRemoveItem?: (_: ItemId) => void
-    onAddItem?: (_: ItemId) => void
-}
 
 export enum NavElementMode {
     Present,
@@ -42,9 +18,7 @@ export enum NavElementMode {
     Editor,
 }
 
-export function NavElement({
-    settings,
-    currentComic,
+export default function NavElement({
     item,
     useColors,
     onSetCurrentComic,
@@ -53,7 +27,22 @@ export function NavElement({
     editMode,
     onRemoveItem,
     onAddItem,
-}: NavElementProps) {
+}: {
+    item: HydratedItemNavigationData
+    onSetCurrentComic: (comic: ComicId, locked: boolean) => void
+    useColors: boolean
+    onShowInfoFor: (_: ItemId) => void
+    mode: NavElementMode
+    editMode?: boolean
+    onRemoveItem?: (_: ItemId) => void
+    onAddItem?: (_: ItemId) => void
+}) {
+    const dispatch = useAppDispatch()
+
+    const settings = useAppSelector((state) => state.settings.values)
+    const currentComic = useAppSelector((state) => state.comic.current)
+    const lockedToItem = useAppSelector((state) => state.comic.lockedToItem)
+
     let backgroundColor = item.color
     if (!backgroundColor.startsWith('#')) {
         backgroundColor = `#${backgroundColor}`
@@ -119,6 +108,8 @@ export function NavElement({
 
     const [alternateLayout, selfRef] = useAlternateLayout()
 
+    const locked = lockedToItem !== null && lockedToItem === item.id
+
     return (
         <>
             <div
@@ -144,14 +135,40 @@ export function NavElement({
                     comicNo={item.first !== currentComic ? item.first : null}
                     title={`First strip with ${item.shortName}`}
                     faClass="fast-backward"
-                    onSetCurrentComic={onSetCurrentComic}
+                    onSetCurrentComic={(c) => onSetCurrentComic(c, locked)}
                 />
                 <NavButton
                     comicNo={item.previous}
                     title={`Previous strip with ${item.shortName}`}
                     faClass="backward"
-                    onSetCurrentComic={onSetCurrentComic}
+                    onSetCurrentComic={(c) => onSetCurrentComic(c, locked)}
                 />
+                {settings?.showItemChainButton &&
+                    (locked ? (
+                        <button
+                            title={`Unlock page navigation from ${item.shortName}`}
+                            className={'flex-none px-2 block'}
+                            onClick={(e) => {
+                                e.preventDefault()
+                                dispatch(setLockedToItem(null))
+                            }}
+                        >
+                            <i className={`fa fa-chain`}></i>
+                        </button>
+                    ) : (
+                        mode === NavElementMode.Present && (
+                            <button
+                                title={`Lock page navigation to ${item.shortName}`}
+                                className={'flex-none px-2 block'}
+                                onClick={(e) => {
+                                    e.preventDefault()
+                                    dispatch(setLockedToItem(item.id))
+                                }}
+                            >
+                                <i className={`fa fa-chain-broken`}></i>
+                            </button>
+                        )
+                    ))}
                 <button
                     className={
                         'font-bold flex-auto py-1' +
@@ -174,13 +191,13 @@ export function NavElement({
                     comicNo={item.next}
                     title={`Next strip with ${item.shortName}`}
                     faClass="forward"
-                    onSetCurrentComic={onSetCurrentComic}
+                    onSetCurrentComic={(c) => onSetCurrentComic(c, locked)}
                 />
                 <NavButton
                     comicNo={item.last !== currentComic ? item.last : null}
                     title={`Last strip with ${item.shortName}`}
                     faClass="fast-forward"
-                    onSetCurrentComic={onSetCurrentComic}
+                    onSetCurrentComic={(c) => onSetCurrentComic(c, locked)}
                 />
                 {mode === NavElementMode.Present &&
                     settings?.showItemRandomButton && (
@@ -189,7 +206,7 @@ export function NavElement({
                             title={`Random strip with ${item.shortName}`}
                             faClass="question"
                             onSetCurrentComic={(c) => {
-                                onSetCurrentComic(c)
+                                onSetCurrentComic(c, locked)
                                 refreshRandomComic()
                             }}
                         />
@@ -198,5 +215,3 @@ export function NavElement({
         </>
     )
 }
-
-export default connector(NavElement)

@@ -145,6 +145,24 @@ export const comicApiSlice = apiSlice.injectEndpoints({
                       ]
                     : [],
         }),
+        getConainingItems: builder.query<ComicId[], ItemId[]>({
+            query: (args) => {
+                const query = args.map((c) => `item-id=${c}`).join('&')
+                return {
+                    url: `${constants.containingItemsEndpoint}?${query}`,
+                }
+            },
+            transformResponse: transformResponseByJsonParseResultText,
+            providesTags: (result, _error, _args) =>
+                result
+                    ? [
+                          {
+                              type: 'Comic',
+                              id: 'ITEMS',
+                          },
+                      ]
+                    : [],
+        }),
         patchComic: builder.mutation<
             string,
             { comic: ComicId; body: PatchComicBody }
@@ -219,6 +237,7 @@ export const comicApiSlice = apiSlice.injectEndpoints({
                 >[] = []
                 if (result) {
                     tags.push({ type: 'Comic', id: args.comicId })
+                    tags.push({ type: 'Comic', id: 'ITEMS' })
                     if (!args.new) {
                         tags.push(
                             {
@@ -278,6 +297,7 @@ export const comicApiSlice = apiSlice.injectEndpoints({
                 return result
                     ? [
                           { type: 'Comic', id: args.comicId },
+                          { type: 'Comic', id: 'ITEMS' },
 
                           {
                               type: 'Log',
@@ -328,6 +348,7 @@ export const comicApiSlice = apiSlice.injectEndpoints({
                 >[] = []
                 if (result) {
                     tags.push({ type: 'Comic', id: args.comicId })
+                    tags.push({ type: 'Comic', id: 'ITEMS' })
 
                     tags.push(
                         {
@@ -356,6 +377,7 @@ export const {
     useGetComicDataQuery,
     useGetExcludedQuery,
     useListAllQuery,
+    useGetConainingItemsQuery,
     usePatchComicMutation,
     useAddItemMutation,
     useRemoveItemMutation,

@@ -87,6 +87,16 @@ export default function SettingsPanel({
             />
             <ToggleSetting
                 settings={settings}
+                setting="showItemChainButton"
+                updateSettings={updateSettings}
+                label="Show button for locking the navigation to a specific item"
+                description={
+                    'Enabling this setting will add a button for locking the page navigation to a specific item. I.e. ' +
+                    "the main navigation buttons will take on the role of the item's navigation buttons."
+                }
+            />
+            <ToggleSetting
+                settings={settings}
                 setting="showTaglineAsTooltip"
                 updateSettings={updateSettings}
                 label="Show tagline as comic tooltip"

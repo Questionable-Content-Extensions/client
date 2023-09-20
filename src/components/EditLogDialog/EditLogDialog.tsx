@@ -1,5 +1,4 @@
 import { useState } from 'react'
-import { ConnectedProps, connect } from 'react-redux'
 
 import { PaddedButton } from '@components/Button'
 import ModalDialog from '@modals/ModalDialog/ModalDialog'
@@ -8,33 +7,20 @@ import {
     useGetLogsForComicQuery,
     useGetLogsQuery,
 } from '@store/api/logApiSlice'
-import { AppDispatch, RootState } from '@store/store'
+import { useAppSelector } from '@store/hooks'
 
 import EditLogPanel from './EditLogPanel/EditLogPanel'
 import Pagination from './Pagination/Pagination'
 
-const mapState = (state: RootState) => {
-    return {
-        settings: state.settings.values,
-    }
-}
-
-const mapDispatch = (_dispatch: AppDispatch) => {
-    return {}
-}
-
-const connector = connect(mapState, mapDispatch)
-type PropsFromRedux = ConnectedProps<typeof connector>
-type GoToComicDialogProps = PropsFromRedux & {
-    showFor: number | boolean
-    onClose: () => void
-}
-
-export function EditLogDialog({
+export default function EditLogDialog({
     showFor,
     onClose,
-    settings,
-}: GoToComicDialogProps) {
+}: {
+    showFor: number | boolean
+    onClose: () => void
+}) {
+    const settings = useAppSelector((state) => state.settings.values)
+
     const [currentShowFor, setCurrentShowFor] = useState<number | boolean>(
         false
     )
@@ -145,5 +131,3 @@ export function EditLogDialog({
         />
     )
 }
-
-export default connector(EditLogDialog)

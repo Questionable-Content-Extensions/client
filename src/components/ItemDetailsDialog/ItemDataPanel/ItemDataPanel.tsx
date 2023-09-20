@@ -35,7 +35,7 @@ export default function ItemDataPanel({
     itemFriendData: ItemRelationData[] | null
     itemLocationData: ItemRelationData[] | null
     editModeToken: string | null
-    onGoToComic: (comicId: ComicId) => void
+    onGoToComic: (comicId: ComicId, locked: boolean) => void
     itemDataUrl: string
     onShowItemData: (itemId: ItemId) => void
     onDeleteImage: (imageId: ImageId) => void

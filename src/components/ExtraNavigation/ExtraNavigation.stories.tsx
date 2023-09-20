@@ -20,30 +20,30 @@ Default.args = {
     latestComic: 234,
     randomComic: 69,
 }
-Default.play = ({ canvasElement, args }) => {
+Default.play = async ({ canvasElement, args }) => {
     const canvas = within(canvasElement)
 
     expect(args.onSetFirstComic).not.toBeCalled()
-    userEvent.click(canvas.getByTitle('Go to first strip'))
+    await userEvent.click(canvas.getByTitle('Go to first strip'))
     expect(args.onSetFirstComic).toBeCalled()
 
     expect(args.onSetPreviousComic).not.toBeCalled()
-    userEvent.click(canvas.getByTitle('Go to previous strip'))
+    await userEvent.click(canvas.getByTitle('Go to previous strip'))
     expect(args.onSetPreviousComic).toBeCalled()
 
     expect(args.onSetNextComic).not.toBeCalled()
-    userEvent.click(canvas.getByTitle('Go to next strip'))
+    await userEvent.click(canvas.getByTitle('Go to next strip'))
     expect(args.onSetNextComic).toBeCalled()
 
     expect(args.onSetLatestComic).not.toBeCalled()
-    userEvent.click(canvas.getByTitle('Go to latest strip'))
+    await userEvent.click(canvas.getByTitle('Go to latest strip'))
     expect(args.onSetLatestComic).toBeCalled()
 
     expect(args.onSetRandomComic).not.toBeCalled()
-    userEvent.click(canvas.getByTitle('Go to random strip'))
+    await userEvent.click(canvas.getByTitle('Go to random strip'))
     expect(args.onSetRandomComic).toBeCalled()
 
     expect(args.onShowGoToComicDialog).not.toBeCalled()
-    userEvent.click(canvas.getByTitle('Go to comic...'))
+    await userEvent.click(canvas.getByTitle('Go to comic...'))
     expect(args.onShowGoToComicDialog).toBeCalled()
 }

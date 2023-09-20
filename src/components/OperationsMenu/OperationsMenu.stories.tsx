@@ -1,55 +1,62 @@
-import { expect } from '@storybook/jest'
+import { Provider } from 'react-redux'
+
+import { setCurrentComic } from '@store/comicSlice'
+import {
+    setShowCopyItemsDialog,
+    setShowEditLogDialog,
+} from '@store/dialogSlice'
+import { makeStore } from '@store/store'
+import { expect, jest } from '@storybook/jest'
 import { Meta, StoryFn } from '@storybook/react'
 import { userEvent, waitFor, within } from '@storybook/testing-library'
 
-import { OperationsMenu, OperationsMenuProps } from './OperationsMenu'
+import OperationsMenu from './OperationsMenu'
 
 export default {
     component: OperationsMenu,
-    argTypes: {
-        setShowCopyItemsDialog: { action: 'setShowCopyItemsDialog' },
-
-        setShowEditLogDialog: { action: 'setShowEditLogDialog' },
-    },
 } as Meta<typeof OperationsMenu>
 
+const store = makeStore()
+
 const Template: StoryFn<typeof OperationsMenu> = (args) => {
-    return <OperationsMenu {...args} />
+    const origDispatch = store.dispatch
+    store.dispatch = jest.fn(origDispatch) as any
+    // Let's set up the Redux store to be the way we need
+    const state = store.getState()
+
+    if (state.comic.current === 0) {
+        store.dispatch(setCurrentComic(666))
+    }
+
+    return (
+        <Provider store={store}>
+            <OperationsMenu {...args} />
+        </Provider>
+    )
 }
 
 export const Default = Template.bind({})
-Default.args = {
-    currentComic: 42,
-}
-Default.play = async ({ canvasElement, args }) => {
+Default.play = async ({ canvasElement, args: _args }) => {
     await testMenuItem(
         canvasElement,
-        args,
         'Copy items from another comic...',
-        (a) => a.setShowCopyItemsDialog,
-        args.currentComic
+        setShowCopyItemsDialog(666)
     )
     await testMenuItem(
         canvasElement,
-        args,
-        'Show edit log for comic 42...',
-        (a) => a.setShowEditLogDialog,
-        args.currentComic
+        'Show edit log for comic 666...',
+        setShowEditLogDialog(666)
     )
     await testMenuItem(
         canvasElement,
-        args,
         'Show edit log...',
-        (a) => a.setShowEditLogDialog,
-        true
+        setShowEditLogDialog(true)
     )
 }
 async function testMenuItem<T>(
     canvasElement: HTMLElement,
-    args: OperationsMenuProps,
     menuText: string,
-    argsFieldSelector: (args: OperationsMenuProps) => (_: T) => void,
-    argsFieldExpectedValue: T
+    expectedDispatchedAction: T
 ) {
     const canvas = within(canvasElement)
 
@@ -58,15 +65,15 @@ async function testMenuItem<T>(
     })
 
     const menuButton = canvas.getByRole('button')
-    userEvent.click(menuButton)
+    await userEvent.click(menuButton)
 
     await waitFor(async () => {
         expect(canvas.getByText(menuText)).toBeInTheDocument()
     })
 
-    userEvent.click(canvas.getByText(menuText))
+    await userEvent.click(canvas.getByText(menuText))
 
-    expect(argsFieldSelector(args)).toBeCalledWith(argsFieldExpectedValue)
+    expect(store.dispatch).toHaveBeenCalledWith(expectedDispatchedAction)
 
     await waitFor(async () => {
         expect(canvas.queryByText(menuText)).not.toBeInTheDocument()

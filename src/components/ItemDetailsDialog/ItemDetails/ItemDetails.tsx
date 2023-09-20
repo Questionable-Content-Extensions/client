@@ -1,10 +1,10 @@
-import { ConnectedProps, connect } from 'react-redux'
-
 import styles from './ItemDetails.module.css'
 
 import NavElement, { NavElementMode } from '@components/NavElement/NavElement'
+import useLockedItem from '@hooks/useLockedItem'
 import { Item } from '@models/Item'
 import { ItemType } from '@models/ItemType'
+import { useAppDispatch, useAppSelector } from '@store/hooks'
 import {
     isColorDirtySelector,
     isNameDirtySelector,
@@ -15,76 +15,52 @@ import {
     setShortName,
     setType,
 } from '@store/itemEditorSlice'
-import { AppDispatch, RootState } from '@store/store'
 
 import { createTintOrShade } from '~/color'
 
 import ColorPicker from './ColorPicker/ColorPicker'
 import ValueEditor from './ValueEditor/ValueEditor'
 
-const mapState = (state: RootState) => {
-    return {
-        name: state.itemEditor.name,
-        isNameDirty: isNameDirtySelector(state),
-        shortName: state.itemEditor.shortName,
-        isShortNameDirty: isShortNameDirtySelector(state),
-        color: state.itemEditor.color,
-        isColorDirty: isColorDirtySelector(state),
-        type: state.itemEditor.type,
-        isTypeDirty: isTypeDirtySelector(state),
-        isSaving: state.itemEditor.isSaving,
-    }
-}
-
-const mapDispatch = (dispatch: AppDispatch) => {
-    return {
-        setName: (name: string) => {
-            dispatch(setName(name))
-        },
-        setShortName: (shortName: string) => {
-            dispatch(setShortName(shortName))
-        },
-        setColor: (color: string) => {
-            dispatch(setColor(color))
-        },
-        setType: (type: ItemType) => {
-            dispatch(setType(type))
-        },
-    }
-}
-
-const connector = connect(mapState, mapDispatch)
-type PropsFromRedux = ConnectedProps<typeof connector>
-type ItemDetailsProps = PropsFromRedux & {
-    editMode: boolean
-    item: Item
-    onGoToComic: (comicId: number) => void
-}
-
-export function ItemDetails({
-    name,
-    isNameDirty,
-    shortName,
-    isShortNameDirty,
-    color,
-    isColorDirty,
-    type,
-    isTypeDirty,
-    isSaving,
-    setName,
-    setShortName,
-    setColor,
-    setType,
+export default function ItemDetails({
     editMode,
     item,
     onGoToComic,
-}: ItemDetailsProps) {
+}: {
+    editMode: boolean
+    item: Item
+    onGoToComic: (comicId: number, locked: boolean) => void
+}) {
+    const dispatch = useAppDispatch()
+
+    const name = useAppSelector((state) => state.itemEditor.name)
+    const isNameDirty = useAppSelector((state) => isNameDirtySelector(state))
+    const shortName = useAppSelector((state) => state.itemEditor.shortName)
+    const isShortNameDirty = useAppSelector((state) =>
+        isShortNameDirtySelector(state)
+    )
+    const color = useAppSelector((state) => state.itemEditor.color)
+    const isColorDirty = useAppSelector((state) => isColorDirtySelector(state))
+    const type = useAppSelector((state) => state.itemEditor.type)
+    const isTypeDirty = useAppSelector((state) => isTypeDirtySelector(state))
+    const isSaving = useAppSelector((state) => state.itemEditor.isSaving)
+    const settings = useAppSelector((state) => state.settings.values)
+    const currentComic = useAppSelector((state) => state.comic.current)
+    const lockedToItem = useAppSelector((state) => state.comic.lockedToItem)
+
     let backgroundColor = color
     if (!backgroundColor.startsWith('#')) {
         backgroundColor = `#${backgroundColor}`
     }
     const foregroundColor = createTintOrShade(color)
     const hoverFocusColor = createTintOrShade(color, 2)
+
+    const { hasLockedItem, lockedItem } = useLockedItem(
+        currentComic,
+        settings,
+        lockedToItem
+    )
+
+    const isLockedItem = hasLockedItem && lockedItem.id === item.id
 
     return (
         <div className={styles.smallGapped}>
@@ -115,7 +91,7 @@ export function ItemDetails({
                             className="font-normal not-italic disabled:opacity-50 w-52"
                             value={type}
                             onChange={(e) =>
-                                setType(e.target.value as ItemType)
+                                dispatch(setType(e.target.value as ItemType))
                             }
                             disabled={isSaving}
                         >
@@ -134,7 +110,7 @@ export function ItemDetails({
                         label="Full name"
                         dirty={isNameDirty}
                         value={name}
-                        setValue={setName}
+                        setValue={(v) => dispatch(setName(v))}
                         isSaving={isSaving}
                     />
                 </p>
@@ -150,7 +126,7 @@ export function ItemDetails({
                         label="Abbreviated name"
                         dirty={isShortNameDirty}
                         value={shortName}
-                        setValue={setShortName}
+                        setValue={(v) => dispatch(setShortName(v))}
                         isSaving={isSaving}
                     />
                 </p>
@@ -164,7 +140,7 @@ export function ItemDetails({
                 <button
                     className="qc-ext-qc-link hover:underline"
                     title={`Go to comic ${item.first}`}
-                    onClick={() => onGoToComic(item.first)}
+                    onClick={() => onGoToComic(item.first, isLockedItem)}
                 >
                     Comic {item.first}
                 </button>
@@ -174,7 +150,7 @@ export function ItemDetails({
                 <button
                     className="qc-ext-qc-link hover:underline"
                     title={`Go to comic ${item.last}`}
-                    onClick={() => onGoToComic(item.last)}
+                    onClick={() => onGoToComic(item.last, isLockedItem)}
                 >
                     Comic {item.last}
                 </button>
@@ -212,8 +188,8 @@ export function ItemDetails({
                     <>
                         <ColorPicker
                             color={backgroundColor}
-                            setColor={setColor}
-                            resetColor={() => setColor(item.color)}
+                            setColor={(c) => dispatch(setColor(c))}
+                            resetColor={() => dispatch(setColor(item.color))}
                             isColorDirty={isColorDirty}
                             isSaving={isSaving}
                         />
@@ -246,5 +222,3 @@ export function ItemDetails({
         </div>
     )
 }
-
-export default connector(ItemDetails)

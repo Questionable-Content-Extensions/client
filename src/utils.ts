@@ -238,8 +238,8 @@ export function range(start: number, end: number) {
     return Array.from({ length }, (_, i) => start + i)
 }
 
-export function dbg<T>(d: string, v: T) {
-    console.log(d, v)
+export function dbg<T>(v: T, d?: string) {
+    console.log(v, d)
     return v
 }
 

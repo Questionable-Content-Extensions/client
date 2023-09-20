@@ -1,40 +1,18 @@
-import { ConnectedProps, connect } from 'react-redux'
-
 import DialogPortal from '@components/DialogPortal'
 import { setShowItemDetailsDialogFor } from '@store/dialogSlice'
+import { useAppDispatch, useAppSelector } from '@store/hooks'
 import { isStateDirtySelector, reset } from '@store/itemEditorSlice'
-import { AppDispatch, RootState } from '@store/store'
 
 import ItemDetailsDialog from '../ItemDetailsDialog'
 
-const mapState = (state: RootState) => {
-    return {
-        showItemDetailsDialogFor: state.dialog.showItemDetailsDialogFor,
-        isItemDirty: isStateDirtySelector(state),
-    }
-}
+export default function ItemDetailsDialogPortal() {
+    const dispatch = useAppDispatch()
 
-const mapDispatch = (dispatch: AppDispatch) => {
-    return {
-        setShowItemDetailsDialogFor: (value: number | null) => {
-            dispatch(setShowItemDetailsDialogFor(value))
-        },
-        reset: () => {
-            dispatch(reset())
-        },
-    }
-}
+    const showItemDetailsDialogFor = useAppSelector(
+        (state) => state.dialog.showItemDetailsDialogFor
+    )
+    const isItemDirty = useAppSelector((state) => isStateDirtySelector(state))
 
-const connector = connect(mapState, mapDispatch)
-type PropsFromRedux = ConnectedProps<typeof connector>
-type SettingsDialogPortalProps = PropsFromRedux & {}
-
-export function ItemDetailsDialogPortal({
-    showItemDetailsDialogFor,
-    isItemDirty,
-    setShowItemDetailsDialogFor,
-    reset,
-}: SettingsDialogPortalProps) {
     const onClose = () => {
         if (isItemDirty) {
             if (
@@ -42,11 +20,11 @@ export function ItemDetailsDialogPortal({
                     'This item has unsaved changes. Are you sure you want to close?'
                 )
             ) {
-                reset()
-                setShowItemDetailsDialogFor(null)
+                dispatch(reset())
+                dispatch(setShowItemDetailsDialogFor(null))
             }
         } else {
-            setShowItemDetailsDialogFor(null)
+            dispatch(setShowItemDetailsDialogFor(null))
         }
     }
     return (
@@ -61,5 +39,3 @@ export function ItemDetailsDialogPortal({
         </DialogPortal>
     )
 }
-
-export default connector(ItemDetailsDialogPortal)

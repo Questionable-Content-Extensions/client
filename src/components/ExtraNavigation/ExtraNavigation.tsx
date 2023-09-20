@@ -2,6 +2,7 @@ import ExtraNavButton from './ExtraNavButton'
 
 export default function ExtraNavigation({
     currentComic,
+    firstComic,
     onSetFirstComic,
     previousComic,
     onSetPreviousComic,
@@ -12,8 +13,10 @@ export default function ExtraNavigation({
     randomComic,
     onSetRandomComic,
     onShowGoToComicDialog,
+    withItem,
 }: {
     currentComic: number | null
+    firstComic: number | null
     onSetFirstComic: () => void
     previousComic: number | null
     onSetPreviousComic: () => void
@@ -24,21 +27,22 @@ export default function ExtraNavigation({
     randomComic: number | null
     onSetRandomComic: () => void
     onShowGoToComicDialog: () => void
+    withItem: string | null
 }) {
     return (
         <div className="flex shadow -mx-2 border-0 border-b border-stone-300">
             <ExtraNavButton
-                comicNo={1}
-                title="First strip"
-                visible={(currentComic || 0) !== 1}
+                comicNo={firstComic}
+                title={'first strip' + (withItem ? ` with ${withItem}` : '')}
+                visible={(currentComic || 0) !== firstComic}
                 faClass="fast-backward"
                 onClick={onSetFirstComic}
                 noLeftBorder
             />
             <ExtraNavButton
                 comicNo={previousComic}
-                title="Previous strip"
-                visible={(currentComic || 0) !== 1}
+                title={'previous strip' + (withItem ? ` with ${withItem}` : '')}
+                visible={(currentComic || 0) !== firstComic}
                 faClass="backward"
                 onClick={onSetPreviousComic}
             />
@@ -59,21 +63,21 @@ export default function ExtraNavigation({
             </div>
             <ExtraNavButton
                 comicNo={nextComic}
-                title="Next strip"
+                title={'next strip' + (withItem ? ` with ${withItem}` : '')}
                 visible={(currentComic || 0) !== latestComic}
                 faClass="forward"
                 onClick={onSetNextComic}
             />
             <ExtraNavButton
                 comicNo={latestComic}
-                title="Latest strip"
+                title={'latest strip' + (withItem ? ` with ${withItem}` : '')}
                 visible={(currentComic || 0) !== latestComic}
                 faClass="fast-forward"
                 onClick={onSetLatestComic}
             />
             <ExtraNavButton
                 comicNo={randomComic}
-                title="Random strip"
+                title={'random strip' + (withItem ? ` with ${withItem}` : '')}
                 visible={true}
                 faClass="question"
                 onClick={onSetRandomComic}

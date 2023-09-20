@@ -1,5 +1,4 @@
 import { useEffect, useMemo, useState } from 'react'
-import { ConnectedProps, connect } from 'react-redux'
 
 import useHydratedItemData from '@hooks/useHydratedItemData'
 import { HydratedItemNavigationData } from '@models/HydratedItemData'
@@ -24,8 +23,7 @@ import {
     setTitle,
 } from '@store/comicEditorSlice'
 import { setCurrentComic } from '@store/comicSlice'
-import { useAppDispatch } from '@store/hooks'
-import { AppDispatch, RootState } from '@store/store'
+import { useAppDispatch, useAppSelector } from '@store/hooks'
 
 import constants from '~/constants'
 
@@ -38,72 +36,33 @@ import ExpandingEditor from './ExpandingEditor/ExpandingEditor'
 import MissingNavElement from './MissingNavElement/MissingNavElement'
 import TextEditor from './TextEditor/TextEditor'
 
-const mapState = (state: RootState) => {
-    return {
-        settings: state.settings.values,
-        currentComic: state.comic.current,
-        isEditorSaving: state.comicEditor.isSaving,
-        title: state.comicEditor.title,
-        isTitleDirty: isTitleDirtySelector(state),
-        tagline: state.comicEditor.tagline,
-        isTaglineDirty: isTaglineDirtySelector(state),
-        publishDate: state.comicEditor.publishDate,
-        isPublishDateDirty: isPublishDateDirtySelector(state),
-        isAccuratePublishDate: state.comicEditor.isAccuratePublishDate,
-        isIsAccuratePublishDateDirty:
-            isIsAccuratePublishDateDirtySelector(state),
-        editorStateDirty: isStateDirtySelector(state),
-    }
-}
-
-const mapDispatch = (dispatch: AppDispatch) => {
-    return {
-        setCurrentComic: (comic: number) => {
-            dispatch(setCurrentComic(comic))
-        },
-        setTitle: (title: string) => {
-            dispatch(setTitle(title))
-        },
-        setTagline: (tagline: string) => {
-            dispatch(setTagline(tagline))
-        },
-        setPublishDate: (publishDate: string) => {
-            dispatch(setPublishDate(publishDate))
-        },
-        setIsAccuratePublishDate: (isAccuratePublishDate: boolean) => {
-            dispatch(setIsAccuratePublishDate(isAccuratePublishDate))
-        },
-        saveChanges: () => {
-            dispatch(saveChanges())
-        },
-    }
-}
-
-const connector = connect(mapState, mapDispatch)
-type PropsFromRedux = ConnectedProps<typeof connector>
-type EditorModePanelProps = PropsFromRedux & {}
-
-function EditorModePanel({
-    settings,
-    currentComic,
-    isEditorSaving,
-    title,
-    isTitleDirty,
-    tagline,
-    isTaglineDirty,
-    publishDate,
-    isPublishDateDirty,
-    isAccuratePublishDate,
-    isIsAccuratePublishDateDirty,
-    editorStateDirty,
-    setCurrentComic,
-    setTitle,
-    setTagline,
-    setPublishDate,
-    setIsAccuratePublishDate,
-    saveChanges,
-}: EditorModePanelProps) {
+export default function EditorModePanel() {
     const dispatch = useAppDispatch()
+
+    const settings = useAppSelector((state) => state.settings.values)
+
+    const currentComic = useAppSelector((state) => state.comic.current)
+
+    const isEditorSaving = useAppSelector((state) => state.comicEditor.isSaving)
+    const title = useAppSelector((state) => state.comicEditor.title)
+    const isTitleDirty = useAppSelector((state) => isTitleDirtySelector(state))
+    const tagline = useAppSelector((state) => state.comicEditor.tagline)
+    const isTaglineDirty = useAppSelector((state) =>
+        isTaglineDirtySelector(state)
+    )
+    const publishDate = useAppSelector((state) => state.comicEditor.publishDate)
+    const isPublishDateDirty = useAppSelector((state) =>
+        isPublishDateDirtySelector(state)
+    )
+    const isAccuratePublishDate = useAppSelector(
+        (state) => state.comicEditor.isAccuratePublishDate
+    )
+    const isIsAccuratePublishDateDirty = useAppSelector((state) =>
+        isIsAccuratePublishDateDirtySelector(state)
+    )
+    const editorStateDirty = useAppSelector((state) =>
+        isStateDirtySelector(state)
+    )
 
     const {
         data: comicData,
@@ -407,8 +366,6 @@ function EditorModePanel({
         </form>
     )
 }
-
-export default connector(EditorModePanel)
 
 function hasItemsOfType(items: HydratedItemNavigationData[], type: ItemType) {
     return items.filter((i) => i.type === type).length !== 0

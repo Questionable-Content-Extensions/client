@@ -17,32 +17,43 @@
 import React from 'react'
 import { createRoot } from 'react-dom/client'
 import { Provider } from 'react-redux'
-import { ToastContainer } from 'react-toastify'
+import { ToastContainer, toast } from 'react-toastify'
 
 import './index.css'
 import 'react-toastify/dist/ReactToastify.min.css'
 
 import Comic from '@components/Comic/Comic'
 import ComicDetailsPanel from '@components/ComicDetailsPanel/ComicDetailsPanel'
-import ComicNavigation from '@components/ComicNavigation'
+import ComicNavigation from '@components/ComicNavigation/ComicNavigation'
 import ComicTitle from '@components/ComicTitle'
 import DateComponent from '@components/Date/Date'
 import DebugLoadErrorPanel from '@components/DebugLoadErrorPanel'
 import EditorModePanel from '@components/EditorModePanel/EditorModePanel'
 import News from '@components/News'
 import Portals from '@components/Portals'
+import { hydrateItemData } from '@hooks/useHydratedItemData'
+import { ComicId } from '@models/ComicId'
+import { HydratedItemNavigationData } from '@models/HydratedItemData'
+import { ItemId } from '@models/ItemId'
 import {
+    comicApiSlice,
     nextComicSelector,
     previousComicSelector,
+    toGetDataQueryArgs,
 } from '@store/api/comicApiSlice'
+import { itemApiSlice } from '@store/api/itemApiSlice'
 import { setCurrentComic, setLatestComic } from '@store/comicSlice'
 import { loadSettings } from '@store/settingsSlice'
 
 import Settings from '~/settings'
-import store from '~/store/store'
+import store, { AppDispatch, RootState } from '~/store/store'
 import { awaitElement, debug, error, fetch, info, qcBug, setup } from '~/utils'
 
 import { BODY_CONTAINER_ID, PORTAL_CONTAINER_ID } from './shared'
+
+// TODO: Add unit tests for components.
+// See <https://blog.krawaller.se/posts/unit-testing-react-redux-components/>
+// for how to properly test Redux powered components
 
 const QcStrictMode = React.StrictMode
 // React.StrictMode causes errors in Chromium; set to some innocent element
@@ -82,9 +93,28 @@ async function main() {
     // Handle popstate events to go back to previous comics that were
     // added using pushState/replaceState above
     window.addEventListener('popstate', (event) => {
-        let state = event.state as { comic: number } | undefined
+        let state = event.state as
+            | { comic: number; lockedToItem: ItemId | null }
+            | undefined
         if (state && state.comic) {
-            store.dispatch(setCurrentComic(state.comic, false))
+            if (state.lockedToItem) {
+                const storeState = store.getState()
+                if (storeState.comic.lockedToItem === state.lockedToItem) {
+                    store.dispatch(
+                        setCurrentComic(state.comic, {
+                            locked: true,
+                            poppedState: true,
+                        })
+                    )
+                    return
+                }
+            }
+            store.dispatch(
+                setCurrentComic(state.comic, {
+                    locked: false,
+                    poppedState: true,
+                })
+            )
         }
     })
 
@@ -112,7 +142,7 @@ async function developmentMain() {
             info('Script is fetched. Handing control over.')
 
             // Ensure that when the fetched script runs, it doesn't keep trying to fetch and run itself.
-            ;(window as any).__QC_EXT_DEVELOPMENT_LOADED = true
+            window.__QC_EXT_DEVELOPMENT_LOADED = true
             // eslint-disable-next-line no-eval
             eval(response.responseText)
         })
@@ -132,7 +162,7 @@ async function developmentMain() {
 const scriptVersion = GM.info.script.version
 if (
     scriptVersion.indexOf('+development') !== -1 &&
-    !(window as any).__QC_EXT_DEVELOPMENT_LOADED
+    !window.__QC_EXT_DEVELOPMENT_LOADED
 ) {
     developmentMain()
 } else {
@@ -409,17 +439,74 @@ function initializeDebugError() {
 }
 
 function hijackShortcut() {
+    async function goToLocked(
+        dispatch: AppDispatch,
+        state: RootState,
+        itemSelector: (i: HydratedItemNavigationData) => ComicId | null
+    ) {
+        const itemQuery = dispatch(itemApiSlice.endpoints.allItems.initiate())
+        const comicQuery = dispatch(
+            comicApiSlice.endpoints.getComicData.initiate(
+                toGetDataQueryArgs(state.comic.current, state.settings.values!)
+            )
+        )
+
+        const [items, comic] = await Promise.all([itemQuery, comicQuery])
+
+        itemQuery.unsubscribe()
+        comicQuery.unsubscribe()
+
+        if (!comic.data || !items.data) {
+            error(
+                "Can't navigate because either item query or comic query failed"
+            )
+            toast.error(
+                "Can't navigate because either item query or comic query failed"
+            )
+            return
+        }
+
+        const [hydratedComicItemData] = hydrateItemData(comic.data, items.data)
+        if (!hydratedComicItemData) {
+            error(
+                "Can't navigate because there was an error hydrating item data. " +
+                    "This should be resolved by clicking the 'Refresh' button."
+            )
+            toast.error(
+                "Can't navigate because there was an error hydrating item data. " +
+                    "This should be resolved by clicking the 'Refresh' button."
+            )
+            return
+        }
+
+        const lockedItem = hydratedComicItemData.find(
+            (i) => i.id === state.comic.lockedToItem
+        )!
+        const destination = itemSelector(lockedItem)
+        if (destination) {
+            dispatch(setCurrentComic(destination, { locked: true }))
+        }
+    }
+
     const setPrevious = () =>
         store.dispatch((dispatch, getState) => {
             const state = getState()
-            let previous = previousComicSelector(state)
-            dispatch(setCurrentComic(previous))
+            if (state.comic.lockedToItem !== null) {
+                goToLocked(dispatch, state, (i) => i.previous)
+            } else {
+                let previous = previousComicSelector(state)
+                dispatch(setCurrentComic(previous))
+            }
         })
     const setNext = () =>
         store.dispatch((dispatch, getState) => {
             const state = getState()
-            let previous = nextComicSelector(state)
-            dispatch(setCurrentComic(previous))
+            if (state.comic.lockedToItem !== null) {
+                goToLocked(dispatch, state, (i) => i.next)
+            } else {
+                let next = nextComicSelector(state)
+                dispatch(setCurrentComic(next))
+            }
         })
 
     const focusFilter = () =>
@@ -440,7 +527,6 @@ function hijackShortcut() {
             const disable_in_input = createObjectIn<any>(unsafeWindow)
             disable_in_input.disable_in_input = true
 
-            console.debug('Adding Left')
             shortcut.add(
                 'Left',
                 exportFunction(() => setPrevious(), unsafeWindow),
@@ -451,7 +537,6 @@ function hijackShortcut() {
                 exportFunction(() => setPrevious(), unsafeWindow)
             )
 
-            console.debug('Adding Right')
             shortcut.add(
                 'Right',
                 exportFunction(() => setNext(), unsafeWindow),
@@ -462,7 +547,6 @@ function hijackShortcut() {
                 exportFunction(() => setNext(), unsafeWindow)
             )
 
-            console.debug('Adding Q')
             shortcut.add(
                 'Q',
                 exportFunction(() => focusFilter(), unsafeWindow),

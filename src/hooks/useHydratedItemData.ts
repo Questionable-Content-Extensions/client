@@ -1,7 +1,9 @@
 import { useMemo } from 'react'
 
+import { Comic } from '@models/Comic'
 import { ComicId } from '@models/ComicId'
 import { HydratedItemNavigationData } from '@models/HydratedItemData'
+import { ItemList } from '@models/ItemList'
 import { skipToken } from '@reduxjs/toolkit/dist/query'
 import {
     toGetDataQueryArgs,
@@ -51,32 +53,7 @@ export default function useHydratedItemData(
         ]
     >(() => {
         if (itemData && comicData) {
-            let hydratedComicItemData: HydratedItemNavigationData[] | undefined
-            if (comicData.hasData) {
-                hydratedComicItemData = []
-                for (const comicItem of comicData.items) {
-                    const item = itemData.find((i) => i.id === comicItem.id)
-                    if (!item) {
-                        error('Item present in comic data but not item data!')
-                        continue
-                    }
-                    hydratedComicItemData.push({ ...comicItem, ...item })
-                }
-            }
-            let hydratedAllItemData: HydratedItemNavigationData[] | undefined
-            if (comicData.allItems) {
-                hydratedAllItemData = []
-                for (const comicItem of comicData.allItems) {
-                    const item = itemData.find((i) => i.id === comicItem.id)
-                    if (!item) {
-                        error('Item present in comic data but not item data!')
-                        continue
-                    }
-                    hydratedAllItemData.push({ ...comicItem, ...item })
-                }
-            }
-
-            return [hydratedComicItemData, hydratedAllItemData]
+            return hydrateItemData(comicData, itemData)
         }
         return [undefined, undefined]
     }, [itemData, comicData])
@@ -92,4 +69,39 @@ export default function useHydratedItemData(
             refetchComicData()
         },
     }
+}
+
+export function hydrateItemData(
+    comicData: Comic,
+    itemData: ItemList[]
+): [
+    HydratedItemNavigationData[] | undefined,
+    HydratedItemNavigationData[] | undefined,
+] {
+    let hydratedComicItemData: HydratedItemNavigationData[] | undefined
+    if (comicData.hasData) {
+        hydratedComicItemData = []
+        for (const comicItem of comicData.items) {
+            const item = itemData.find((i) => i.id === comicItem.id)
+            if (!item) {
+                error('Item present in comic data but not item data!')
+                continue
+            }
+            hydratedComicItemData.push({ ...comicItem, ...item })
+        }
+    }
+    let hydratedAllItemData: HydratedItemNavigationData[] | undefined
+    if (comicData.allItems) {
+        hydratedAllItemData = []
+        for (const comicItem of comicData.allItems) {
+            const item = itemData.find((i) => i.id === comicItem.id)
+            if (!item) {
+                error('Item present in comic data but not item data!')
+                continue
+            }
+            hydratedAllItemData.push({ ...comicItem, ...item })
+        }
+    }
+
+    return [hydratedComicItemData, hydratedAllItemData]
 }

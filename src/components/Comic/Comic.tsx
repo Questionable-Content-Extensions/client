@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { ConnectedProps, connect } from 'react-redux'
 
+import useLockedItem from '@hooks/useLockedItem'
 import { skipToken } from '@reduxjs/toolkit/dist/query'
 import {
     nextComicSelector,
@@ -8,7 +8,7 @@ import {
     useGetComicDataQuery,
 } from '@store/api/comicApiSlice'
 import { setCurrentComic } from '@store/comicSlice'
-import { AppDispatch, RootState } from '@store/store'
+import { useAppDispatch, useAppSelector } from '@store/hooks'
 
 import { debug, info } from '~/utils'
 
@@ -16,37 +16,21 @@ import FullPageLoader from '../FullPageLoader'
 import ComicImage from './ComicImage/ComicImage'
 import ComicRibbon, { RibbonType } from './ComicRibbon/ComicRibbon'
 
-const mapState = (state: RootState) => {
-    return {
-        settings: state.settings.values,
-        currentComic: state.comic.current,
-        nextComic: nextComicSelector(state),
-    }
-}
-
-const mapDispatch = (dispatch: AppDispatch) => {
-    return {
-        setCurrentComic: (comic: number) => {
-            dispatch(setCurrentComic(comic))
-        },
-    }
-}
-
-const connector = connect(mapState, mapDispatch)
-type PropsFromRedux = ConnectedProps<typeof connector>
-type ComicProps = PropsFromRedux & {
-    initialComic: number
-    initialComicSrc: string
-}
-
-function Comic({
+export default function Comic({
     initialComic,
     initialComicSrc,
-    settings,
-    currentComic,
-    nextComic,
-    setCurrentComic,
-}: ComicProps) {
+}: {
+    initialComic: number
+    initialComicSrc: string
+}) {
+    const dispatch = useAppDispatch()
+
+    const settings = useAppSelector((state) => state.settings.values)
+
+    const currentComic = useAppSelector((state) => state.comic.current)
+    const nextComic = useAppSelector((s) => nextComicSelector(s))
+    const lockedToItem = useAppSelector((state) => state.comic.lockedToItem)
+
     const [isInitializing, setIsInitializing] = useState(true)
 
     const { data: comicData, isError: hasComicDataError } =
@@ -55,6 +39,12 @@ function Comic({
                 ? skipToken
                 : toGetDataQueryArgs(currentComic, settings)
         )
+
+    const { hasLockedItem, lockedItem } = useLockedItem(
+        currentComic,
+        settings,
+        lockedToItem
+    )
 
     useEffect(() => {
         if (settings?.scrollToTop ?? true) {
@@ -131,11 +121,23 @@ function Comic({
         <div className="relative inline-block">
             <a
                 className="qc-ext qc-ext-comic-anchor"
-                href={`view.php?comic=${currentComic}`}
+                href={`view.php?comic=${
+                    hasLockedItem
+                        ? lockedItem.next
+                            ? lockedItem.next
+                            : currentComic
+                        : nextComic
+                }`}
                 onClick={(e) => {
                     e.preventDefault()
-                    if (nextComic) {
-                        setCurrentComic(nextComic)
+                    if (hasLockedItem && lockedItem.next) {
+                        dispatch(
+                            setCurrentComic(lockedItem.next, { locked: true })
+                        )
+                    } else {
+                        if (nextComic) {
+                            dispatch(setCurrentComic(nextComic))
+                        }
                     }
                 }}
             >
@@ -164,8 +166,6 @@ function Comic({
         </div>
     )
 }
-
-export default connector(Comic)
 
 function useComicLoaderTimeout(
     nextComic: number | null,

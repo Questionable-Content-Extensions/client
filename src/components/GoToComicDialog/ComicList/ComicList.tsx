@@ -1,9 +1,15 @@
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
 
+import ComicFilter, {
+    Filter,
+    FilterType,
+} from '@components/GoToComicDialog/ComicList/ComicFilter/ComicFilter'
 import Spinner from '@components/Spinner'
-import useDebouncedFilter from '@hooks/useDebouncedFilter'
 import { ComicId } from '@models/ComicId'
 import { ComicList as ComicListModel } from '@models/ComicList'
+import { ItemList } from '@models/ItemList'
+import { skipToken } from '@reduxjs/toolkit/dist/query'
+import { useGetConainingItemsQuery } from '@store/api/comicApiSlice'
 
 import CollapsibleDetails from '../CollapsibleDetails/CollapsibleDetails'
 import GoToComicButton from './GoToComicButton/GoToComicButton'
@@ -19,14 +25,23 @@ export default function ComicList({
     onGoToComic: (comic: number) => void
     isLoading: boolean
 }) {
-    const { activeFilter, filter, setFilter } = useDebouncedFilter()
+    const [filters, setFilters] = useState<Filter[]>([])
+    const requiresServer = useMemo(() => {
+        return !!filters.find((f) => f.type === FilterType.Item)
+    }, [filters])
+
+    const { data: comicsWithItems } = useGetConainingItemsQuery(
+        requiresServer
+            ? filters.filter(isItemFilter).map((f) => f.value.id)
+            : skipToken
+    )
 
     const filteredComicData = useMemo(
         () =>
             allComicData
-                ? filterComics(allComicData, activeFilter)
+                ? filterComics(allComicData, filters, comicsWithItems)
                 : allComicData,
-        [allComicData, activeFilter]
+        [allComicData, filters, comicsWithItems]
     )
 
     const [comicList, comicCount] = useMemo(() => {
@@ -56,7 +71,9 @@ export default function ComicList({
                             <GoToComicButton
                                 comic={comic}
                                 onClick={(comic) => onGoToComic(comic.comic)}
-                                highlight={activeFilter}
+                                highlights={filters
+                                    .filter(isTextFilter)
+                                    .map((f) => f.value)}
                             />
                         </li>
                     )
@@ -112,7 +129,9 @@ export default function ComicList({
                             <GoToComicButton
                                 comic={comic}
                                 onClick={(comic) => onGoToComic(comic.comic)}
-                                highlight={activeFilter}
+                                highlights={filters
+                                    .filter(isTextFilter)
+                                    .map((f) => f.value)}
                             />
                         </li>
                     )
@@ -120,7 +139,7 @@ export default function ComicList({
             }
             return [<ul>{comicEntries}</ul>, comicEntries.length]
         }
-    }, [filteredComicData, onGoToComic, subDivideGotoComics, activeFilter])
+    }, [filteredComicData, onGoToComic, subDivideGotoComics, filters])
 
     if (isLoading) {
         return (
@@ -138,41 +157,62 @@ export default function ComicList({
     }
 
     return (
-        <>
-            <input
-                id="qcext-allitems-filter"
-                type="text"
-                placeholder="Filter comics"
-                title="The value entered here filters the comics by their title"
-                value={filter}
-                onChange={(e) => setFilter(e.target.value)}
-                className="w-full border border-qc-header focus:outline-none flex-auto rounded-none pl-2 disabled:opacity-75 mb-2"
-                disabled={isLoading}
-                onMouseUp={(e) => {
-                    // 1 is middle click, supposedly
-                    if (e.button === 1) {
-                        setFilter('')
-                        e.preventDefault()
-                    }
-                }}
-            />
-            {activeFilter !== '' && (
-                <p>
-                    {comicCount} comic titles or taglines match '{activeFilter}'
-                </p>
+        <div className="min-h-[16rem]">
+            <ComicFilter filters={filters} setFilters={setFilters} />
+            {filters.length !== 0 && (
+                <p>{comicCount} comic titles or taglines match your filters</p>
             )}
             {comicList}
-        </>
+        </div>
     )
 }
 
-function filterComics(allComics: ComicListModel[], filter: string) {
-    return allComics.filter(
-        (c) =>
-            c.title.toUpperCase().indexOf(filter.toUpperCase()) !== -1 ||
-            (c.tagline &&
-                c.tagline.toUpperCase().indexOf(filter.toUpperCase()) !== -1)
-    )
+function filterComics(
+    allComics: ComicListModel[],
+    filters: Filter[],
+    comicsWithItems: ComicId[] | undefined
+) {
+    let filteredComics
+    if (comicsWithItems) {
+        filteredComics = allComics.filter((c) =>
+            comicsWithItems.includes(c.comic)
+        )
+    } else {
+        filteredComics = allComics
+    }
+
+    for (const filter of filters) {
+        if (!isItemFilter(filter)) {
+            switch (filter.type) {
+                case FilterType.Text:
+                    filteredComics = filteredComics.filter(
+                        (c) =>
+                            c.title
+                                .toUpperCase()
+                                .indexOf(filter.value.toUpperCase()) !== -1 ||
+                            (c.tagline &&
+                                c.tagline
+                                    .toUpperCase()
+                                    .indexOf(filter.value.toUpperCase()) !== -1)
+                    )
+                    break
+
+                case FilterType.IsGuestComic:
+                    filteredComics = filteredComics.filter(
+                        (c) => c.isGuestComic === filter.value
+                    )
+                    break
+
+                case FilterType.IsNonCanon:
+                    filteredComics = filteredComics.filter(
+                        (c) => c.isNonCanon === filter.value
+                    )
+                    break
+            }
+        }
+    }
+
+    return filteredComics
 }
 
 function getThousandsRange(comic: ComicId) {
@@ -183,4 +223,18 @@ function getThousandsRange(comic: ComicId) {
 function getHundredsRange(comic: ComicId) {
     const rest = comic % 100
     return comic - rest
+}
+
+function isItemFilter(f: Filter): f is {
+    type: FilterType.Item
+    value: ItemList
+} {
+    return f.type === FilterType.Item
+}
+
+function isTextFilter(f: Filter): f is {
+    type: FilterType.Text
+    value: string
+} {
+    return f.type === FilterType.Text
 }

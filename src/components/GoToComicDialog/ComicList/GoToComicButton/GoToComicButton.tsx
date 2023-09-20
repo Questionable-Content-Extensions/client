@@ -5,11 +5,11 @@ import HighlightedText from '../HighlightedText/HighlightedText'
 export default function GoToComicButton({
     comic,
     onClick,
-    highlight,
+    highlights,
 }: {
     comic: ComicList
     onClick: (comic: ComicList) => void
-    highlight: string
+    highlights: string[]
 }) {
     return (
         <button
@@ -19,13 +19,13 @@ export default function GoToComicButton({
             }}
         >
             Comic {comic.comic}:{' '}
-            <HighlightedText text={comic.title} highlight={highlight} />{' '}
+            <HighlightedText text={comic.title} highlights={highlights} />{' '}
             {comic.tagline && (
                 <>
                     (
                     <HighlightedText
                         text={comic.tagline}
-                        highlight={highlight}
+                        highlights={highlights}
                     />
                     )
                 </>

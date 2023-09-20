@@ -7,6 +7,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.2.0] - 2023-09-20
+
+### Added ✨
+
+-   Add the ability to lock comic navigation to an item. Closes [#33](https://github.com/Questionable-Content-Extensions/client/issues/33)
+-   Expand the search functionality in the `GoToComicDialog` to allow for searching for comics not only by the text in their title/tagline, but also by which items are present in the comic and whether or not the comic is a guest comic or non-canon. Closes [#15](https://github.com/Questionable-Content-Extensions/client/issues/15)
+
+### Changed 🔧
+
+-   Move to using Redux hooks instead of `connect()`. Resolves [#77](https://github.com/Questionable-Content-Extensions/client/issues/77)
+
+### Fixed 🐛
+
+-   Fix Storybook tests after upgrading from 6.5 to 7.4. Fixes [#78](https://github.com/Questionable-Content-Extensions/client/issues/78)
+
 ## [1.1.0] - 2023-09-10
 
 ### Added ✨
@@ -370,5 +385,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [0.1.0]: https://github.com/Questionable-Content-Extensions/client/releases/tag/0.1.0
 [issues]: https://github.com/Questionable-Content-Extensions/client/issues
 [1.0.0]: https://github.com/Questionable-Content-Extensions/client/compare/0.6.2...1.0.0
-[Unreleased]: https://github.com/Questionable-Content-Extensions/client/compare/1.1.0...HEAD
+[Unreleased]: https://github.com/Questionable-Content-Extensions/client/compare/1.2.0...HEAD
+[1.2.0]: https://github.com/Questionable-Content-Extensions/client/compare/1.1.0...1.2.0
 [1.1.0]: https://github.com/Questionable-Content-Extensions/client/compare/1.0.0...1.1.0

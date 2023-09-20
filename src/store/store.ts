@@ -10,27 +10,34 @@ import itemEditorReducer from './itemEditorSlice'
 import { rtkQueryErrorLogger } from './rtkQueryErrorLogger'
 import settingsReducer from './settingsSlice'
 
-const store = configureStore({
-    reducer: {
-        comic: comicReducer,
-        dialog: dialogReducer,
-        itemEditor: itemEditorReducer,
-        comicEditor: comicEditorReducer,
-        settings: settingsReducer,
-        [apiSlice.reducerPath]: apiSlice.reducer,
-    },
-    middleware: (getDefaultMiddleware) =>
-        getDefaultMiddleware()
-            .concat(apiSlice.middleware)
-            .concat(customLogger)
-            .concat(rtkQueryErrorLogger),
-})
+export function makeStore() {
+    const store = configureStore({
+        reducer: {
+            comic: comicReducer,
+            dialog: dialogReducer,
+            itemEditor: itemEditorReducer,
+            comicEditor: comicEditorReducer,
+            settings: settingsReducer,
+            [apiSlice.reducerPath]: apiSlice.reducer,
+        },
+        middleware: (getDefaultMiddleware) =>
+            getDefaultMiddleware()
+                .concat(apiSlice.middleware)
+                .concat(customLogger)
+                .concat(rtkQueryErrorLogger),
+    })
 
-setupListeners(store.dispatch)
+    setupListeners(store.dispatch)
 
+    return store
+}
+
+const store = makeStore()
 export default store
 
+// TODO: Set up a way to reset all state.
+// See <https://stackoverflow.com/a/73864197/161250> for inspiration.
+
 // Infer the `RootState` and `AppDispatch` types from the store itself
-export type RootState = ReturnType<typeof store.getState>
-// Inferred type: {posts: PostsState, comments: CommentsState, users: UsersState}
-export type AppDispatch = typeof store.dispatch
+export type RootState = ReturnType<ReturnType<typeof makeStore>['getState']>
+export type AppDispatch = ReturnType<typeof makeStore>['dispatch']

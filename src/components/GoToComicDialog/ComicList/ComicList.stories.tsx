@@ -1,7 +1,7 @@
 import { ComicList as ComicDataListing } from '@models/ComicList'
 import { Meta, StoryFn } from '@storybook/react'
 
-import { generateRandomName } from '~/mocks'
+import { ALL_ITEMS, generateRandomName, useMswReady } from '~/mocks'
 
 import ComicList from './ComicList'
 
@@ -21,6 +21,8 @@ export default {
 } as Meta<typeof ComicList>
 
 const Template: StoryFn<typeof ComicList> = (args) => {
+    const mswReady = useMswReady()
+
     let allComicData: ComicDataListing[]
     if (!args.allComicData.length) {
         allComicData = []
@@ -39,7 +41,55 @@ const Template: StoryFn<typeof ComicList> = (args) => {
     } else {
         allComicData = args.allComicData
     }
-    return <ComicList {...args} allComicData={allComicData} />
+
+    // Let's fake the necessary REST calls
+    const { worker, rest } = window.msw
+    worker.use(
+        rest.get('http://localhost:3000/api/v2/itemdata/', (req, res, ctx) => {
+            const all = [...ALL_ITEMS]
+            const name =
+                'This is a mocked API response and will only be accurate for comic 666'
+            all.push({
+                id: -1,
+                name,
+                shortName: name,
+                count: 0,
+                type: 'storyline',
+                color: 'ffaabb',
+            })
+            return res(ctx.json(all))
+        }),
+        rest.get(
+            'http://localhost:3000/api/v2/comicdata/containing-items',
+            (req, res, ctx) => {
+                let count =
+                    1 + Math.floor(Math.random() * (allComicData.length - 1))
+                if (allComicData.length > 100 && count < 50) {
+                    count = 50
+                }
+                const comics: number[] = []
+                for (let i = 0; i < count; i++) {
+                    while (true) {
+                        const random =
+                            1 +
+                            Math.floor(
+                                Math.random() * (allComicData.length - 1)
+                            )
+                        if (!comics.includes(random)) {
+                            comics.push(random)
+                            break
+                        }
+                    }
+                }
+                return res(ctx.json(comics))
+            }
+        )
+    )
+    return mswReady ? (
+        <ComicList {...args} allComicData={allComicData} />
+    ) : (
+        <></>
+    )
 }
 
 export const Default = Template.bind({})

@@ -1,27 +1,17 @@
 import { useEffect } from 'react'
-import { ConnectedProps, connect } from 'react-redux'
 
 import { skipToken } from '@reduxjs/toolkit/dist/query'
 import {
     toGetDataQueryArgs,
     useGetComicDataQuery,
 } from '@store/api/comicApiSlice'
-import { RootState } from '@store/store'
+import { useAppSelector } from '@store/hooks'
 
-const mapState = (state: RootState) => {
-    return {
-        settings: state.settings.values,
-        currentComic: state.comic.current,
-    }
-}
+export default function ComicTitle() {
+    const settings = useAppSelector((state) => state.settings.values)
 
-const mapDispatch = () => ({})
+    const currentComic = useAppSelector((state) => state.comic.current)
 
-const connector = connect(mapState, mapDispatch)
-type PropsFromRedux = ConnectedProps<typeof connector>
-type ComicProps = PropsFromRedux & {}
-
-function ComicTitle({ settings, currentComic }: ComicProps) {
     const { data: comicData } = useGetComicDataQuery(
         currentComic === 0 || !settings
             ? skipToken
@@ -38,5 +28,3 @@ function ComicTitle({ settings, currentComic }: ComicProps) {
 
     return <></>
 }
-
-export default connector(ComicTitle)
