@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.2.0] - 2023-09-20
+
 ### Added ✨
 
 -   Add the ability to lock comic navigation to an item. Closes [#33](https://github.com/Questionable-Content-Extensions/client/issues/33)
@@ -383,5 +385,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [0.1.0]: https://github.com/Questionable-Content-Extensions/client/releases/tag/0.1.0
 [issues]: https://github.com/Questionable-Content-Extensions/client/issues
 [1.0.0]: https://github.com/Questionable-Content-Extensions/client/compare/0.6.2...1.0.0
-[Unreleased]: https://github.com/Questionable-Content-Extensions/client/compare/1.1.0...HEAD
+[Unreleased]: https://github.com/Questionable-Content-Extensions/client/compare/1.2.0...HEAD
+[1.2.0]: https://github.com/Questionable-Content-Extensions/client/compare/1.1.0...1.2.0
 [1.1.0]: https://github.com/Questionable-Content-Extensions/client/compare/1.0.0...1.1.0
