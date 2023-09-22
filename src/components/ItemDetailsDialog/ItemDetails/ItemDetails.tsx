@@ -204,10 +204,10 @@ export default function ItemDetails({
             <NavElement
                 item={{
                     id: item.id,
-                    shortName: item.shortName,
-                    name: item.name,
+                    shortName: shortName,
+                    name: name,
                     type: item.type,
-                    color: item.color,
+                    color: color,
                     first: item.first,
                     previous: item.first,
                     next: item.last,

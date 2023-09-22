@@ -7,6 +7,7 @@ import { ItemImageList as ItemImageData } from '@models/ItemImageList'
 import { ItemType } from '@models/ItemType'
 import { RelatedItem as ItemRelationData } from '@models/RelatedItem'
 import { UploadImageArgs } from '@store/api/itemApiSlice'
+import { useAppSelector } from '@store/hooks'
 
 import { createTintOrShade } from '~/color'
 
@@ -44,6 +45,9 @@ export default function ItemDataPanel({
     onUploadImage: (args: UploadImageArgs) => Promise<unknown>
     isUploadingImage: boolean
 }) {
+    const shortName = useAppSelector((state) => state.itemEditor.shortName)
+    const color = useAppSelector((state) => state.itemEditor.color)
+
     if (hasError) {
         return (
             <div className="text-center">
@@ -74,18 +78,18 @@ export default function ItemDataPanel({
         )
     }
 
-    let backgroundColor = itemData.color
+    let backgroundColor = color
     if (!backgroundColor.startsWith('#')) {
         backgroundColor = `#${backgroundColor}`
     }
-    const foregroundColor = createTintOrShade(itemData.color)
+    const foregroundColor = createTintOrShade(color)
 
     return (
         <>
             <div className="grid grid-cols-2 gap-4">
                 <ItemImageViewer
                     itemId={itemData.id}
-                    itemShortName={itemData.shortName}
+                    itemShortName={shortName}
                     primaryImage={itemData.primaryImage}
                     itemImageData={itemImageData}
                     itemDataUrl={itemDataUrl}

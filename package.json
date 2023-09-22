@@ -1,6 +1,6 @@
 {
     "name": "questionable-content-spa",
-    "version": "1.2.0",
+    "version": "1.2.1",
     "description": "Questionable Content Single-Page Application with Extra Features",
     "private": true,
     "scripts": {

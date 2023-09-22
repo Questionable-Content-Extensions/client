@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.2.1] - 2023-09-22
+
+### Fixed 🐛
+
+-   Use the current edit values to render the item details so they update live when they're changed
+-   Fix broken Redux thunks during earlier refactoring that prevented editors from being able to update and save comic values
+
 ## [1.2.0] - 2023-09-20
 
 ### Added ✨
@@ -385,6 +392,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [0.1.0]: https://github.com/Questionable-Content-Extensions/client/releases/tag/0.1.0
 [issues]: https://github.com/Questionable-Content-Extensions/client/issues
 [1.0.0]: https://github.com/Questionable-Content-Extensions/client/compare/0.6.2...1.0.0
-[Unreleased]: https://github.com/Questionable-Content-Extensions/client/compare/1.2.0...HEAD
+[Unreleased]: https://github.com/Questionable-Content-Extensions/client/compare/1.2.1...HEAD
+[1.2.1]: https://github.com/Questionable-Content-Extensions/client/compare/1.2.0...1.2.1
 [1.2.0]: https://github.com/Questionable-Content-Extensions/client/compare/1.1.0...1.2.0
 [1.1.0]: https://github.com/Questionable-Content-Extensions/client/compare/1.0.0...1.1.0

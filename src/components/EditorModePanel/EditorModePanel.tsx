@@ -213,7 +213,7 @@ export default function EditorModePanel() {
             }
             onSubmit={(e) => {
                 e.preventDefault()
-                saveChanges()
+                dispatch(saveChanges())
             }}
         >
             <div className="flex justify-between border-b border-solid border-b-stone-300 border-l-0 border-t-0 border-r-0 -mx-2 -mt-2 mb-2">
@@ -229,7 +229,7 @@ export default function EditorModePanel() {
                         navigationData={editorData.missing.cast}
                         title="Missing cast"
                         description="Navigate to comics without cast members"
-                        onSetCurrentComic={setCurrentComic}
+                        onSetCurrentComic={(c) => dispatch(setCurrentComic(c))}
                         id={-1}
                         useColors={settings.useColors}
                     />
@@ -237,7 +237,7 @@ export default function EditorModePanel() {
                         navigationData={editorData.missing.location}
                         title="Missing location"
                         description="Navigate to comics without locations"
-                        onSetCurrentComic={setCurrentComic}
+                        onSetCurrentComic={(c) => dispatch(setCurrentComic(c))}
                         id={-2}
                         useColors={settings.useColors}
                     />
@@ -245,7 +245,7 @@ export default function EditorModePanel() {
                         navigationData={editorData.missing.storyline}
                         title="Missing storyline"
                         description="Navigate to comics without storylines"
-                        onSetCurrentComic={setCurrentComic}
+                        onSetCurrentComic={(c) => dispatch(setCurrentComic(c))}
                         id={-3}
                         useColors={settings.useColors}
                     />
@@ -253,7 +253,7 @@ export default function EditorModePanel() {
                         navigationData={editorData.missing.title}
                         title="Missing title"
                         description="Navigate to comics without a title"
-                        onSetCurrentComic={setCurrentComic}
+                        onSetCurrentComic={(c) => dispatch(setCurrentComic(c))}
                         id={-4}
                         useColors={settings.useColors}
                     />
@@ -261,7 +261,7 @@ export default function EditorModePanel() {
                         navigationData={editorData.missing.tagline}
                         title="Missing tagline"
                         description="Navigate to comics without a tagline"
-                        onSetCurrentComic={setCurrentComic}
+                        onSetCurrentComic={(c) => dispatch(setCurrentComic(c))}
                         id={-5}
                         useColors={settings.useColors}
                     />
@@ -280,7 +280,7 @@ export default function EditorModePanel() {
                     label="Title"
                     inputId="qcext-comic-title"
                     value={title}
-                    onValueChange={setTitle}
+                    onValueChange={(t) => dispatch(setTitle(t))}
                     dirty={isTitleDirty}
                 />
             </ExpandingEditor>
@@ -295,7 +295,7 @@ export default function EditorModePanel() {
                     label="Tagline"
                     inputId="qcext-comic-tagline"
                     value={tagline}
-                    onValueChange={setTagline}
+                    onValueChange={(t) => dispatch(setTagline(t))}
                     dirty={isTaglineDirty}
                 />
             </ExpandingEditor>
@@ -312,9 +312,11 @@ export default function EditorModePanel() {
                     inputId="qcext-comic-publish-date"
                     dateValue={publishDate}
                     isAccurateValue={isAccuratePublishDate}
-                    onDateValueChange={(date) => setPublishDate(date)}
+                    onDateValueChange={(date) => dispatch(setPublishDate(date))}
                     onIsAccurateValueChange={(isAccuratePublishDate) =>
-                        setIsAccuratePublishDate(isAccuratePublishDate)
+                        dispatch(
+                            setIsAccuratePublishDate(isAccuratePublishDate)
+                        )
                     }
                     isDateValueDirty={isPublishDateDirty}
                     isIsAccurateValueDirty={isIsAccuratePublishDateDirty}
