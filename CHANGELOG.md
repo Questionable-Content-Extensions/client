@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed 🐛
 
 -   Use the current edit values to render the item details so they update live when they're changed
+-   Fix broken Redux thunks during earlier refactoring that prevented editors from being able to update and save comic values
 
 ## [1.2.0] - 2023-09-20
 
