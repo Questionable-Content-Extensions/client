@@ -1,0 +1,111 @@
+/* Firefox renders this just fine, but Chromium doesn't smoothly animate without these @propery declarations */
+@property --tw-bg-opacity {
+    syntax: '<number>';
+    inherits: false;
+    initial-value: 0;
+}
+
+/* Unfortunately this one doesn't work; it's technically not a "length" value, but a `backdrop-filter` value and
+ * as far as I can tell, that kind of value is not supported by the @property syntax. */
+@property --tw-backdrop-blur {
+    syntax: '<length>';
+    inherits: false;
+    initial-value:;
+}
+
+@-webkit-keyframes ModalPageOverlay_fade-in__3WqlY {
+    from {
+        background-color: rgb(0 0 0 / var(--tw-bg-opacity));
+        --tw-bg-opacity: 0;
+        --tw-backdrop-blur: blur(0);
+        -webkit-backdrop-filter: var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia);
+                backdrop-filter: var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia);
+    }
+    to {
+        background-color: rgb(0 0 0 / var(--tw-bg-opacity));
+        --tw-bg-opacity: 0.5;
+        --tw-backdrop-blur: blur(4px);
+        -webkit-backdrop-filter: var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia);
+                backdrop-filter: var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia);
+    }
+}
+
+@keyframes ModalPageOverlay_fade-in__3WqlY {
+    from {
+        background-color: rgb(0 0 0 / var(--tw-bg-opacity));
+        --tw-bg-opacity: 0;
+        --tw-backdrop-blur: blur(0);
+        -webkit-backdrop-filter: var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia);
+                backdrop-filter: var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia);
+    }
+    to {
+        background-color: rgb(0 0 0 / var(--tw-bg-opacity));
+        --tw-bg-opacity: 0.5;
+        --tw-backdrop-blur: blur(4px);
+        -webkit-backdrop-filter: var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia);
+                backdrop-filter: var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia);
+    }
+}
+
+@-webkit-keyframes ModalPageOverlay_fade-out__KIBTJ {
+    from {
+        background-color: rgb(0 0 0 / var(--tw-bg-opacity));
+        --tw-bg-opacity: 0.5;
+        --tw-backdrop-blur: blur(4px);
+        -webkit-backdrop-filter: var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia);
+                backdrop-filter: var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia);
+    }
+    to {
+        background-color: rgb(0 0 0 / var(--tw-bg-opacity));
+        --tw-bg-opacity: 0;
+        --tw-backdrop-blur: blur(0);
+        -webkit-backdrop-filter: var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia);
+                backdrop-filter: var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia);
+    }
+}
+
+@keyframes ModalPageOverlay_fade-out__KIBTJ {
+    from {
+        background-color: rgb(0 0 0 / var(--tw-bg-opacity));
+        --tw-bg-opacity: 0.5;
+        --tw-backdrop-blur: blur(4px);
+        -webkit-backdrop-filter: var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia);
+                backdrop-filter: var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia);
+    }
+    to {
+        background-color: rgb(0 0 0 / var(--tw-bg-opacity));
+        --tw-bg-opacity: 0;
+        --tw-backdrop-blur: blur(0);
+        -webkit-backdrop-filter: var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia);
+                backdrop-filter: var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia);
+    }
+}
+
+.ModalPageOverlay_modalPageOverlay__NObGU {
+    display: none;
+}
+.ModalPageOverlay_modalPageOverlay__NObGU.ModalPageOverlay_show__rB60B,
+.ModalPageOverlay_modalPageOverlay__NObGU.ModalPageOverlay_fadedIn__u54gC {
+    z-index: 1000;
+    display: block;
+    background-color: rgb(0 0 0 / var(--tw-bg-opacity));
+    --tw-bg-opacity: 0.5;
+    --tw-backdrop-blur: blur(4px);
+    -webkit-backdrop-filter: var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia);
+            backdrop-filter: var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia);
+}
+
+.ModalPageOverlay_modalPageOverlay__NObGU.ModalPageOverlay_show__rB60B {
+    -webkit-animation: ModalPageOverlay_fade-in__3WqlY 1s;
+            animation: ModalPageOverlay_fade-in__3WqlY 1s;
+}
+
+.ModalPageOverlay_modalPageOverlay__NObGU:not(.ModalPageOverlay_show__rB60B).ModalPageOverlay_fadedIn__u54gC {
+    -webkit-animation: ModalPageOverlay_fade-out__KIBTJ 1s;
+            animation: ModalPageOverlay_fade-out__KIBTJ 1s;
+    -webkit-animation-fill-mode: forwards;
+            animation-fill-mode: forwards;
+}
+
+
+/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoic3RhdGljL2Nzcy9jb21wb25lbnRzLU1vZGFscy1Nb2RhbFBhZ2VPdmVybGF5LU1vZGFsUGFnZU92ZXJsYXktc3Rvcmllcy5hN2RhODA3YS5jaHVuay5jc3MiLCJtYXBwaW5ncyI6IkFBQUEsOEdBQThHO0FBQzlHO0lBQ0ksa0JBQWtCO0lBQ2xCLGVBQWU7SUFDZixnQkFBZ0I7QUFDcEI7O0FBRUE7dUZBQ3VGO0FBQ3ZGO0lBQ0ksa0JBQWtCO0lBQ2xCLGVBQWU7SUFDZixjQUFjO0FBQ2xCOztBQUVBO0lBRVE7UUFBQSxtREFBNEM7UUFBNUMsa0JBQTRDO1FBQTVDLDJCQUE0QztRQUE1QywrUUFBNEM7Z0JBQTVDO0lBQTRDO0lBRzVDO1FBQUEsbURBQThDO1FBQTlDLG9CQUE4QztRQUE5Qyw2QkFBOEM7UUFBOUMsK1FBQThDO2dCQUE5QztJQUE4QztBQUV0RDs7QUFQQTtJQUVRO1FBQUEsbURBQTRDO1FBQTVDLGtCQUE0QztRQUE1QywyQkFBNEM7UUFBNUMsK1FBQTRDO2dCQUE1QztJQUE0QztJQUc1QztRQUFBLG1EQUE4QztRQUE5QyxvQkFBOEM7UUFBOUMsNkJBQThDO1FBQTlDLCtRQUE4QztnQkFBOUM7SUFBOEM7QUFFdEQ7O0FBRUE7SUFFUTtRQUFBLG1EQUE4QztRQUE5QyxvQkFBOEM7UUFBOUMsNkJBQThDO1FBQTlDLCtRQUE4QztnQkFBOUM7SUFBOEM7SUFHOUM7UUFBQSxtREFBNEM7UUFBNUMsa0JBQTRDO1FBQTVDLDJCQUE0QztRQUE1QywrUUFBNEM7Z0JBQTVDO0lBQTRDO0FBRXBEOztBQVBBO0lBRVE7UUFBQSxtREFBOEM7UUFBOUMsb0JBQThDO1FBQTlDLDZCQUE4QztRQUE5QywrUUFBOEM7Z0JBQTlDO0lBQThDO0lBRzlDO1FBQUEsbURBQTRDO1FBQTVDLGtCQUE0QztRQUE1QywyQkFBNEM7UUFBNUMsK1FBQTRDO2dCQUE1QztJQUE0QztBQUVwRDs7QUFHSTtJQUFBO0FBQWE7QUFJYjs7SUFBQSxhQUFxQjtJQUFyQixjQUFxQjtJQUNyQixtREFBOEM7SUFBOUMsb0JBQThDO0lBQTlDLDZCQUE4QztJQUE5QywrUUFBOEM7WUFBOUM7QUFEcUI7O0FBSXpCO0lBQ0kscURBQXFCO1lBQXJCLDZDQUFxQjtBQUN6Qjs7QUFFQTtJQUNJLHNEQUFzQjtZQUF0Qiw4Q0FBc0I7SUFDdEIscUNBQTZCO1lBQTdCLDZCQUE2QjtBQUNqQyIsInNvdXJjZXMiOlsid2VicGFjazovL3F1ZXN0aW9uYWJsZS1jb250ZW50LXNwYS8uL3NyYy9jb21wb25lbnRzL01vZGFscy9Nb2RhbFBhZ2VPdmVybGF5L01vZGFsUGFnZU92ZXJsYXkubW9kdWxlLmNzcyJdLCJzb3VyY2VzQ29udGVudCI6WyIvKiBGaXJlZm94IHJlbmRlcnMgdGhpcyBqdXN0IGZpbmUsIGJ1dCBDaHJvbWl1bSBkb2Vzbid0IHNtb290aGx5IGFuaW1hdGUgd2l0aG91dCB0aGVzZSBAcHJvcGVyeSBkZWNsYXJhdGlvbnMgKi9cbkBwcm9wZXJ0eSAtLXR3LWJnLW9wYWNpdHkge1xuICAgIHN5bnRheDogJzxudW1iZXI+JztcbiAgICBpbmhlcml0czogZmFsc2U7XG4gICAgaW5pdGlhbC12YWx1ZTogMDtcbn1cblxuLyogVW5mb3J0dW5hdGVseSB0aGlzIG9uZSBkb2Vzbid0IHdvcms7IGl0J3MgdGVjaG5pY2FsbHkgbm90IGEgXCJsZW5ndGhcIiB2YWx1ZSwgYnV0IGEgYGJhY2tkcm9wLWZpbHRlcmAgdmFsdWUgYW5kXG4gKiBhcyBmYXIgYXMgSSBjYW4gdGVsbCwgdGhhdCBraW5kIG9mIHZhbHVlIGlzIG5vdCBzdXBwb3J0ZWQgYnkgdGhlIEBwcm9wZXJ0eSBzeW50YXguICovXG5AcHJvcGVydHkgLS10dy1iYWNrZHJvcC1ibHVyIHtcbiAgICBzeW50YXg6ICc8bGVuZ3RoPic7XG4gICAgaW5oZXJpdHM6IGZhbHNlO1xuICAgIGluaXRpYWwtdmFsdWU6O1xufVxuXG5Aa2V5ZnJhbWVzIGZhZGUtaW4ge1xuICAgIGZyb20ge1xuICAgICAgICBAYXBwbHkgYmctYmxhY2sgYmctb3BhY2l0eS0wIGJhY2tkcm9wLWJsdXItMDtcbiAgICB9XG4gICAgdG8ge1xuICAgICAgICBAYXBwbHkgYmctYmxhY2sgYmctb3BhY2l0eS01MCBiYWNrZHJvcC1ibHVyLXNtO1xuICAgIH1cbn1cblxuQGtleWZyYW1lcyBmYWRlLW91dCB7XG4gICAgZnJvbSB7XG4gICAgICAgIEBhcHBseSBiZy1ibGFjayBiZy1vcGFjaXR5LTUwIGJhY2tkcm9wLWJsdXItc207XG4gICAgfVxuICAgIHRvIHtcbiAgICAgICAgQGFwcGx5IGJnLWJsYWNrIGJnLW9wYWNpdHktMCBiYWNrZHJvcC1ibHVyLTA7XG4gICAgfVxufVxuXG4ubW9kYWxQYWdlT3ZlcmxheSB7XG4gICAgQGFwcGx5IGhpZGRlbjtcbn1cbi5tb2RhbFBhZ2VPdmVybGF5LnNob3csXG4ubW9kYWxQYWdlT3ZlcmxheS5mYWRlZEluIHtcbiAgICBAYXBwbHkgYmxvY2sgei1bMTAwMF07XG4gICAgQGFwcGx5IGJnLWJsYWNrIGJnLW9wYWNpdHktNTAgYmFja2Ryb3AtYmx1ci1zbTtcbn1cblxuLm1vZGFsUGFnZU92ZXJsYXkuc2hvdyB7XG4gICAgYW5pbWF0aW9uOiBmYWRlLWluIDFzO1xufVxuXG4ubW9kYWxQYWdlT3ZlcmxheTpub3QoLnNob3cpLmZhZGVkSW4ge1xuICAgIGFuaW1hdGlvbjogZmFkZS1vdXQgMXM7XG4gICAgYW5pbWF0aW9uLWZpbGwtbW9kZTogZm9yd2FyZHM7XG59XG4iXSwibmFtZXMiOltdLCJzb3VyY2VSb290IjoiIn0=*/

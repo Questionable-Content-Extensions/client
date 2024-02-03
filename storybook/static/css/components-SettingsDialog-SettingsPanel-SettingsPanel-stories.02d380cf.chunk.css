@@ -1,0 +1,68 @@
+input.ToggleButton_toggle__eAiZn:checked ~ .ToggleButton_dot__kygA4 {
+    -webkit-transform: translateX(100%);
+            transform: translateX(100%);
+}
+
+input.ToggleButton_toggle__eAiZn:checked ~ .ToggleButton_background__bj6Cf {
+    --tw-bg-opacity: 1;
+    background-color: rgb(26 101 145 / var(--tw-bg-opacity));
+}
+
+input.ToggleButton_toggle__eAiZn:checked ~ .ToggleButton_background__bj6Cf.ToggleButton_disabled__1hbzd {
+    -webkit-filter: brightness(1.5) grayscale(0.5);
+            filter: brightness(1.5) grayscale(0.5);
+}
+
+/* These need to be here to make the TS type checker happy.
+ * Cause: The commented out code below used to require them.
+ */
+input.ToggleButton_toggle__eAiZn ~ .ToggleButton_skinny__hN-en {
+}
+input.ToggleButton_toggle__eAiZn ~ .ToggleButton_thick__f7yHB {
+}
+/*
+ * Enabling this puts text inside the switch. I decided I didn't care for it,
+ * so I've commented it out, but I didn't want to lose the effort spent,
+ * so here it stays:
+
+input.toggle ~ .background {
+    @apply relative;
+}
+
+input.toggle ~ .background:before,
+input.toggle ~ .background:after {
+    @apply absolute;
+}
+
+input.toggle ~ .background.skinny:before,
+input.toggle ~ .background.skinny:after {
+    @apply top-0.5;
+    @apply text-[0.5em];
+}
+
+input.toggle ~ .background.thick:before,
+input.toggle ~ .background.thick:after {
+    @apply top-[0.5rem];
+    @apply text-xs;
+}
+
+input.toggle ~ .background:before {
+    content: 'ON';
+    @apply text-white;
+    @apply left-1;
+}
+
+input.toggle ~ .background:after {
+    content: 'OFF';
+    @apply text-black;
+    @apply right-0.5;
+}
+
+input.toggle:checked ~ .background.thick:after {
+    @apply hidden;
+}
+
+*/
+
+
+/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoic3RhdGljL2Nzcy9jb21wb25lbnRzLVNldHRpbmdzRGlhbG9nLVNldHRpbmdzUGFuZWwtU2V0dGluZ3NQYW5lbC1zdG9yaWVzLjZmZmIzZTFhLmNodW5rLmNzcyIsIm1hcHBpbmdzIjoiQUFBQTtJQUNJLG1DQUEyQjtZQUEzQiwyQkFBMkI7QUFDL0I7O0FBR0k7SUFBQSxrQkFBMEI7SUFBMUI7QUFBMEI7O0FBRzlCO0lBQ0ksOENBQXNDO1lBQXRDLHNDQUFzQztBQUMxQzs7QUFFQTs7RUFFRTtBQUNGO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7OztDQTBDQyIsInNvdXJjZXMiOlsid2VicGFjazovL3F1ZXN0aW9uYWJsZS1jb250ZW50LXNwYS8uL3NyYy9jb21wb25lbnRzL1RvZ2dsZUJ1dHRvbi9Ub2dnbGVCdXR0b24ubW9kdWxlLmNzcyJdLCJzb3VyY2VzQ29udGVudCI6WyJpbnB1dC50b2dnbGU6Y2hlY2tlZCB+IC5kb3Qge1xuICAgIHRyYW5zZm9ybTogdHJhbnNsYXRlWCgxMDAlKTtcbn1cblxuaW5wdXQudG9nZ2xlOmNoZWNrZWQgfiAuYmFja2dyb3VuZCB7XG4gICAgQGFwcGx5IGJnLXFjLWhlYWRlci1zZWNvbmQ7XG59XG5cbmlucHV0LnRvZ2dsZTpjaGVja2VkIH4gLmJhY2tncm91bmQuZGlzYWJsZWQge1xuICAgIGZpbHRlcjogYnJpZ2h0bmVzcygxLjUpIGdyYXlzY2FsZSgwLjUpO1xufVxuXG4vKiBUaGVzZSBuZWVkIHRvIGJlIGhlcmUgdG8gbWFrZSB0aGUgVFMgdHlwZSBjaGVja2VyIGhhcHB5LlxuICogQ2F1c2U6IFRoZSBjb21tZW50ZWQgb3V0IGNvZGUgYmVsb3cgdXNlZCB0byByZXF1aXJlIHRoZW0uXG4gKi9cbmlucHV0LnRvZ2dsZSB+IC5za2lubnkge1xufVxuaW5wdXQudG9nZ2xlIH4gLnRoaWNrIHtcbn1cbi8qXG4gKiBFbmFibGluZyB0aGlzIHB1dHMgdGV4dCBpbnNpZGUgdGhlIHN3aXRjaC4gSSBkZWNpZGVkIEkgZGlkbid0IGNhcmUgZm9yIGl0LFxuICogc28gSSd2ZSBjb21tZW50ZWQgaXQgb3V0LCBidXQgSSBkaWRuJ3Qgd2FudCB0byBsb3NlIHRoZSBlZmZvcnQgc3BlbnQsXG4gKiBzbyBoZXJlIGl0IHN0YXlzOlxuXG5pbnB1dC50b2dnbGUgfiAuYmFja2dyb3VuZCB7XG4gICAgQGFwcGx5IHJlbGF0aXZlO1xufVxuXG5pbnB1dC50b2dnbGUgfiAuYmFja2dyb3VuZDpiZWZvcmUsXG5pbnB1dC50b2dnbGUgfiAuYmFja2dyb3VuZDphZnRlciB7XG4gICAgQGFwcGx5IGFic29sdXRlO1xufVxuXG5pbnB1dC50b2dnbGUgfiAuYmFja2dyb3VuZC5za2lubnk6YmVmb3JlLFxuaW5wdXQudG9nZ2xlIH4gLmJhY2tncm91bmQuc2tpbm55OmFmdGVyIHtcbiAgICBAYXBwbHkgdG9wLTAuNTtcbiAgICBAYXBwbHkgdGV4dC1bMC41ZW1dO1xufVxuXG5pbnB1dC50b2dnbGUgfiAuYmFja2dyb3VuZC50aGljazpiZWZvcmUsXG5pbnB1dC50b2dnbGUgfiAuYmFja2dyb3VuZC50aGljazphZnRlciB7XG4gICAgQGFwcGx5IHRvcC1bMC41cmVtXTtcbiAgICBAYXBwbHkgdGV4dC14cztcbn1cblxuaW5wdXQudG9nZ2xlIH4gLmJhY2tncm91bmQ6YmVmb3JlIHtcbiAgICBjb250ZW50OiAnT04nO1xuICAgIEBhcHBseSB0ZXh0LXdoaXRlO1xuICAgIEBhcHBseSBsZWZ0LTE7XG59XG5cbmlucHV0LnRvZ2dsZSB+IC5iYWNrZ3JvdW5kOmFmdGVyIHtcbiAgICBjb250ZW50OiAnT0ZGJztcbiAgICBAYXBwbHkgdGV4dC1ibGFjaztcbiAgICBAYXBwbHkgcmlnaHQtMC41O1xufVxuXG5pbnB1dC50b2dnbGU6Y2hlY2tlZCB+IC5iYWNrZ3JvdW5kLnRoaWNrOmFmdGVyIHtcbiAgICBAYXBwbHkgaGlkZGVuO1xufVxuXG4qL1xuIl0sIm5hbWVzIjpbXSwic291cmNlUm9vdCI6IiJ9*/

@@ -1,0 +1,120 @@
+/* Inspired by <https://www.cssportal.com/blog/create-corner-ribbon/> */
+
+.ComicRibbon_ribbon__mgdXB {
+    --ribbon-width: 120px;
+    --ribbon-color: #000000;
+    --ribbon-highlight-color: #ffffff;
+    --ribbon-text-color: #ffffff;
+    position: absolute;
+    right: -26px;
+
+    top: 20px;
+    z-index: 1;
+    overflow: hidden;
+
+    width: var(--ribbon-width);
+    height: 28px;
+    text-align: right;
+
+    /* Unfortunately, Firefox shows an outline on rotated clip-paths for the time being.
+     * I suspect it's <https://bugzilla.mozilla.org/show_bug.cgi?id=1671784>
+     */
+    -webkit-clip-path: polygon(
+        16.7% 0%,
+        83.3% 0%,
+        100% 72.5%,
+        100% 100%,
+        0 100%,
+        0 72.5%
+    );
+            clip-path: polygon(
+        16.7% 0%,
+        83.3% 0%,
+        100% 72.5%,
+        100% 100%,
+        0 100%,
+        0 72.5%
+    );
+
+    opacity: 0.99;
+    transition: opacity 1s;
+    cursor: pointer;
+
+    -webkit-transform: rotate(45deg);
+
+            transform: rotate(45deg);
+}
+.ComicRibbon_ribbon__mgdXB:hover {
+    opacity: 0.2;
+}
+.ComicRibbon_ribbon__mgdXB span {
+    font-size: 10px;
+    color: var(--ribbon-text-color);
+    text-transform: uppercase;
+    text-align: center;
+    font-weight: bold;
+    line-height: 20px;
+    width: var(--ribbon-width);
+    display: block;
+    background: var(--ribbon-color);
+    background: linear-gradient(
+        var(--ribbon-highlight-color) 0%,
+        var(--ribbon-color) 100%
+    );
+    box-shadow: 0 3px 10px -5px rgba(0, 0, 0, 1);
+    position: absolute;
+}
+.ComicRibbon_ribbon__mgdXB span::before {
+    content: '';
+    position: absolute;
+    left: 0px;
+    top: 100%;
+    z-index: -1;
+    border-left: 3px solid var(--ribbon-color);
+    border-right: 3px solid transparent;
+    border-bottom: 3px solid transparent;
+    border-top: 3px solid var(--ribbon-color);
+}
+.ComicRibbon_ribbon__mgdXB span::after {
+    content: '';
+    position: absolute;
+    right: 0%;
+    top: 100%;
+    z-index: -1;
+    border-right: 3px solid var(--ribbon-color);
+    border-left: 3px solid transparent;
+    border-bottom: 3px solid transparent;
+    border-top: 3px solid var(--ribbon-color);
+}
+
+.ComicRibbon_ribbon__mgdXB.ComicRibbon_guestComic__sSgPP {
+    --ribbon-color: #124766;
+    --ribbon-highlight-color: #1A6591;
+}
+
+.ComicRibbon_ribbon__mgdXB.ComicRibbon_nonCanon__tx8Yk {
+    --ribbon-color: #bb3629;
+    --ribbon-highlight-color: #ee4433;
+}
+
+/*
+ * These color combinations are from the original source. Kept around just because.
+
+.ribbon.green {
+    --ribbon-color: #79a70a;
+    --ribbon-highlight-color: #9bc90d;
+}
+
+.ribbon.red {
+    --ribbon-color: #8f0808;
+    --ribbon-highlight-color: #f70505;
+}
+
+.ribbon.blue {
+    --ribbon-color: #1e5799;
+    --ribbon-highlight-color: #2989d8;
+}
+*/
+
+
+/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoic3RhdGljL2Nzcy9jb21wb25lbnRzLUNvbWljLUNvbWljUmliYm9uLUNvbWljUmliYm9uLXN0b3JpZXMuYjFkNDRlODQuY2h1bmsuY3NzIiwibWFwcGluZ3MiOiJBQUFBLHVFQUF1RTs7QUFFdkU7SUFDSSxxQkFBcUI7SUFDckIsdUJBQXVCO0lBQ3ZCLGlDQUFpQztJQUNqQyw0QkFBNEI7SUFDNUIsa0JBQWtCO0lBQ2xCLFlBQVk7O0lBRVosU0FBUztJQUNULFVBQVU7SUFDVixnQkFBZ0I7O0lBRWhCLDBCQUEwQjtJQUMxQixZQUFZO0lBQ1osaUJBQWlCOztJQUVqQjs7TUFFRTtJQUNGOzs7Ozs7O0tBT0M7WUFQRDs7Ozs7OztLQU9DOztJQUVELGFBQWE7SUFDYixzQkFBc0I7SUFDdEIsZUFBZTs7SUFFZixnQ0FBd0I7O1lBQXhCLHdCQUF3QjtBQUM1QjtBQUNBO0lBQ0ksWUFBWTtBQUNoQjtBQUNBO0lBQ0ksZUFBZTtJQUNmLCtCQUErQjtJQUMvQix5QkFBeUI7SUFDekIsa0JBQWtCO0lBQ2xCLGlCQUFpQjtJQUNqQixpQkFBaUI7SUFDakIsMEJBQTBCO0lBQzFCLGNBQWM7SUFDZCwrQkFBK0I7SUFDL0I7OztLQUdDO0lBQ0QsNENBQTRDO0lBQzVDLGtCQUFrQjtBQUN0QjtBQUNBO0lBQ0ksV0FBVztJQUNYLGtCQUFrQjtJQUNsQixTQUFTO0lBQ1QsU0FBUztJQUNULFdBQVc7SUFDWCwwQ0FBMEM7SUFDMUMsbUNBQW1DO0lBQ25DLG9DQUFvQztJQUNwQyx5Q0FBeUM7QUFDN0M7QUFDQTtJQUNJLFdBQVc7SUFDWCxrQkFBa0I7SUFDbEIsU0FBUztJQUNULFNBQVM7SUFDVCxXQUFXO0lBQ1gsMkNBQTJDO0lBQzNDLGtDQUFrQztJQUNsQyxvQ0FBb0M7SUFDcEMseUNBQXlDO0FBQzdDOztBQUVBO0lBQ0ksdUJBQXlDO0lBQ3pDLGlDQUEwRDtBQUM5RDs7QUFFQTtJQUNJLHVCQUE0QztJQUM1QyxpQ0FBNkQ7QUFDakU7O0FBRUE7Ozs7Ozs7Ozs7Ozs7Ozs7O0NBaUJDIiwic291cmNlcyI6WyJ3ZWJwYWNrOi8vcXVlc3Rpb25hYmxlLWNvbnRlbnQtc3BhLy4vc3JjL2NvbXBvbmVudHMvQ29taWMvQ29taWNSaWJib24vQ29taWNSaWJib24ubW9kdWxlLmNzcyJdLCJzb3VyY2VzQ29udGVudCI6WyIvKiBJbnNwaXJlZCBieSA8aHR0cHM6Ly93d3cuY3NzcG9ydGFsLmNvbS9ibG9nL2NyZWF0ZS1jb3JuZXItcmliYm9uLz4gKi9cblxuLnJpYmJvbiB7XG4gICAgLS1yaWJib24td2lkdGg6IDEyMHB4O1xuICAgIC0tcmliYm9uLWNvbG9yOiAjMDAwMDAwO1xuICAgIC0tcmliYm9uLWhpZ2hsaWdodC1jb2xvcjogI2ZmZmZmZjtcbiAgICAtLXJpYmJvbi10ZXh0LWNvbG9yOiAjZmZmZmZmO1xuICAgIHBvc2l0aW9uOiBhYnNvbHV0ZTtcbiAgICByaWdodDogLTI2cHg7XG5cbiAgICB0b3A6IDIwcHg7XG4gICAgei1pbmRleDogMTtcbiAgICBvdmVyZmxvdzogaGlkZGVuO1xuXG4gICAgd2lkdGg6IHZhcigtLXJpYmJvbi13aWR0aCk7XG4gICAgaGVpZ2h0OiAyOHB4O1xuICAgIHRleHQtYWxpZ246IHJpZ2h0O1xuXG4gICAgLyogVW5mb3J0dW5hdGVseSwgRmlyZWZveCBzaG93cyBhbiBvdXRsaW5lIG9uIHJvdGF0ZWQgY2xpcC1wYXRocyBmb3IgdGhlIHRpbWUgYmVpbmcuXG4gICAgICogSSBzdXNwZWN0IGl0J3MgPGh0dHBzOi8vYnVnemlsbGEubW96aWxsYS5vcmcvc2hvd19idWcuY2dpP2lkPTE2NzE3ODQ+XG4gICAgICovXG4gICAgY2xpcC1wYXRoOiBwb2x5Z29uKFxuICAgICAgICAxNi43JSAwJSxcbiAgICAgICAgODMuMyUgMCUsXG4gICAgICAgIDEwMCUgNzIuNSUsXG4gICAgICAgIDEwMCUgMTAwJSxcbiAgICAgICAgMCAxMDAlLFxuICAgICAgICAwIDcyLjUlXG4gICAgKTtcblxuICAgIG9wYWNpdHk6IDAuOTk7XG4gICAgdHJhbnNpdGlvbjogb3BhY2l0eSAxcztcbiAgICBjdXJzb3I6IHBvaW50ZXI7XG5cbiAgICB0cmFuc2Zvcm06IHJvdGF0ZSg0NWRlZyk7XG59XG4ucmliYm9uOmhvdmVyIHtcbiAgICBvcGFjaXR5OiAwLjI7XG59XG4ucmliYm9uIHNwYW4ge1xuICAgIGZvbnQtc2l6ZTogMTBweDtcbiAgICBjb2xvcjogdmFyKC0tcmliYm9uLXRleHQtY29sb3IpO1xuICAgIHRleHQtdHJhbnNmb3JtOiB1cHBlcmNhc2U7XG4gICAgdGV4dC1hbGlnbjogY2VudGVyO1xuICAgIGZvbnQtd2VpZ2h0OiBib2xkO1xuICAgIGxpbmUtaGVpZ2h0OiAyMHB4O1xuICAgIHdpZHRoOiB2YXIoLS1yaWJib24td2lkdGgpO1xuICAgIGRpc3BsYXk6IGJsb2NrO1xuICAgIGJhY2tncm91bmQ6IHZhcigtLXJpYmJvbi1jb2xvcik7XG4gICAgYmFja2dyb3VuZDogbGluZWFyLWdyYWRpZW50KFxuICAgICAgICB2YXIoLS1yaWJib24taGlnaGxpZ2h0LWNvbG9yKSAwJSxcbiAgICAgICAgdmFyKC0tcmliYm9uLWNvbG9yKSAxMDAlXG4gICAgKTtcbiAgICBib3gtc2hhZG93OiAwIDNweCAxMHB4IC01cHggcmdiYSgwLCAwLCAwLCAxKTtcbiAgICBwb3NpdGlvbjogYWJzb2x1dGU7XG59XG4ucmliYm9uIHNwYW46OmJlZm9yZSB7XG4gICAgY29udGVudDogJyc7XG4gICAgcG9zaXRpb246IGFic29sdXRlO1xuICAgIGxlZnQ6IDBweDtcbiAgICB0b3A6IDEwMCU7XG4gICAgei1pbmRleDogLTE7XG4gICAgYm9yZGVyLWxlZnQ6IDNweCBzb2xpZCB2YXIoLS1yaWJib24tY29sb3IpO1xuICAgIGJvcmRlci1yaWdodDogM3B4IHNvbGlkIHRyYW5zcGFyZW50O1xuICAgIGJvcmRlci1ib3R0b206IDNweCBzb2xpZCB0cmFuc3BhcmVudDtcbiAgICBib3JkZXItdG9wOiAzcHggc29saWQgdmFyKC0tcmliYm9uLWNvbG9yKTtcbn1cbi5yaWJib24gc3Bhbjo6YWZ0ZXIge1xuICAgIGNvbnRlbnQ6ICcnO1xuICAgIHBvc2l0aW9uOiBhYnNvbHV0ZTtcbiAgICByaWdodDogMCU7XG4gICAgdG9wOiAxMDAlO1xuICAgIHotaW5kZXg6IC0xO1xuICAgIGJvcmRlci1yaWdodDogM3B4IHNvbGlkIHZhcigtLXJpYmJvbi1jb2xvcik7XG4gICAgYm9yZGVyLWxlZnQ6IDNweCBzb2xpZCB0cmFuc3BhcmVudDtcbiAgICBib3JkZXItYm90dG9tOiAzcHggc29saWQgdHJhbnNwYXJlbnQ7XG4gICAgYm9yZGVyLXRvcDogM3B4IHNvbGlkIHZhcigtLXJpYmJvbi1jb2xvcik7XG59XG5cbi5yaWJib24uZ3Vlc3RDb21pYyB7XG4gICAgLS1yaWJib24tY29sb3I6IHRoZW1lKCdjb2xvcnMucWMtaGVhZGVyJyk7XG4gICAgLS1yaWJib24taGlnaGxpZ2h0LWNvbG9yOiB0aGVtZSgnY29sb3JzLnFjLWhlYWRlci1zZWNvbmQnKTtcbn1cblxuLnJpYmJvbi5ub25DYW5vbiB7XG4gICAgLS1yaWJib24tY29sb3I6IHRoZW1lKCdjb2xvcnMucWMtbm9uLWNhbm9uJyk7XG4gICAgLS1yaWJib24taGlnaGxpZ2h0LWNvbG9yOiB0aGVtZSgnY29sb3JzLnFjLW5vbi1jYW5vbi1zZWNvbmQnKTtcbn1cblxuLypcbiAqIFRoZXNlIGNvbG9yIGNvbWJpbmF0aW9ucyBhcmUgZnJvbSB0aGUgb3JpZ2luYWwgc291cmNlLiBLZXB0IGFyb3VuZCBqdXN0IGJlY2F1c2UuXG5cbi5yaWJib24uZ3JlZW4ge1xuICAgIC0tcmliYm9uLWNvbG9yOiAjNzlhNzBhO1xuICAgIC0tcmliYm9uLWhpZ2hsaWdodC1jb2xvcjogIzliYzkwZDtcbn1cblxuLnJpYmJvbi5yZWQge1xuICAgIC0tcmliYm9uLWNvbG9yOiAjOGYwODA4O1xuICAgIC0tcmliYm9uLWhpZ2hsaWdodC1jb2xvcjogI2Y3MDUwNTtcbn1cblxuLnJpYmJvbi5ibHVlIHtcbiAgICAtLXJpYmJvbi1jb2xvcjogIzFlNTc5OTtcbiAgICAtLXJpYmJvbi1oaWdobGlnaHQtY29sb3I6ICMyOTg5ZDg7XG59XG4qL1xuIl0sIm5hbWVzIjpbXSwic291cmNlUm9vdCI6IiJ9*/
