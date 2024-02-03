@@ -14,6 +14,9 @@ jobs:
         steps:
             - uses: actions/checkout@v3
 
+            - name: Install Node modules
+              run: npm ci
+
             - name: Create hotfix branch
               run: git checkout -b hotfix/${{ github.event.inputs.version }}
 
