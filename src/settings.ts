@@ -21,6 +21,7 @@ export interface SettingValues {
     scrollToTop: boolean
 
     showAllMembers: boolean
+    orderMembersByLastAppearance: boolean
     useColors: boolean
     showItemRandomButton: boolean
     showItemChainButton: boolean
@@ -92,6 +93,7 @@ export class Settings {
         scrollToTop: true,
 
         showAllMembers: false,
+        orderMembersByLastAppearance: false,
         useColors: true,
         showItemRandomButton: false,
         showItemChainButton: false,

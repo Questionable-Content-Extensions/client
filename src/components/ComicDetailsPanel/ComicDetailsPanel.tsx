@@ -276,6 +276,7 @@ export default function ComicDetailsPanel() {
                 isLoading={isLoadingInitial}
                 isFetching={isFetching}
                 useColors={settings.useColors}
+                orderMembersByLastAppearance={false}
                 onSetCurrentComic={(c, locked) =>
                     dispatch(setCurrentComic(c, { locked }))
                 }
@@ -368,6 +369,9 @@ export default function ComicDetailsPanel() {
                             }
                             useColors={settings.useColors}
                             editMode={settings.editMode}
+                            orderMembersByLastAppearance={
+                                settings.orderMembersByLastAppearance
+                            }
                             onAddItem={(itemBody) => {
                                 addItem({
                                     token: settings.editModeToken,

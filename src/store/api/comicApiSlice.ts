@@ -30,6 +30,7 @@ export type GetDataQueryArgs = {
     skipGuest: boolean
     skipNonCanon: boolean
     showAllMembers: boolean
+    orderMembersByLastAppearance: boolean
 }
 
 export type GetExcludedQueryArgs = {
@@ -73,6 +74,7 @@ export const comicApiSlice = apiSlice.injectEndpoints({
                 skipGuest,
                 skipNonCanon,
                 showAllMembers,
+                orderMembersByLastAppearance,
             }) => {
                 const urlParameters: ByIdQuery = {}
                 if (editModeToken) {
@@ -85,6 +87,11 @@ export const comicApiSlice = apiSlice.injectEndpoints({
                 }
                 if (showAllMembers || editModeToken) {
                     urlParameters.include = 'all'
+                }
+                if (orderMembersByLastAppearance) {
+                    urlParameters.sorting = 'by-last-appearance'
+                } else {
+                    urlParameters.sorting = 'by-count'
                 }
                 const urlQuery = new URLSearchParams(
                     urlParameters as Record<string, string>
@@ -392,6 +399,7 @@ export function toGetDataQueryArgs(
         comic,
         editModeToken: settings.editMode ? settings.editModeToken : undefined,
         showAllMembers: settings.showAllMembers,
+        orderMembersByLastAppearance: settings.orderMembersByLastAppearance,
         skipGuest: settings.skipGuest,
         skipNonCanon: settings.skipNonCanon,
     }

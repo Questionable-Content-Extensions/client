@@ -24,6 +24,7 @@ export default function FilteredNavigationData({
     onSetCurrentComic,
     onShowInfoFor,
     useColors,
+    orderMembersByLastAppearance,
     editMode,
     onAddItem,
 }: {
@@ -35,6 +36,7 @@ export default function FilteredNavigationData({
     onSetCurrentComic: (comicId: ComicId) => void
     onShowInfoFor: (item: ItemId) => void
     useColors: boolean
+    orderMembersByLastAppearance: boolean
     editMode: boolean
     onAddItem: (item: ItemBody) => void
 }) {
@@ -80,6 +82,9 @@ export default function FilteredNavigationData({
                         isLoading={isLoading}
                         isFetching={isFetching}
                         useColors={useColors}
+                        orderMembersByLastAppearance={
+                            orderMembersByLastAppearance
+                        }
                         onSetCurrentComic={onSetCurrentComic}
                         onShowInfoFor={onShowInfoFor}
                         mode={NavElementMode.Missing}
