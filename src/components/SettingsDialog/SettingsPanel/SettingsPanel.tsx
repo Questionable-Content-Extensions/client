@@ -35,6 +35,18 @@ export default function SettingsPanel({
             />
             <ToggleSetting
                 settings={settings}
+                setting="orderMembersByLastAppearance"
+                updateSettings={updateSettings}
+                label="Order members by last appearance"
+                description={
+                    "Ordinarily, members are ordered by how frequently they appear in the comic's strips. " +
+                    "By enabling this setting, they will instead be ordered by how recently they've appeared in the comic " +
+                    "relative to the currently viewed comic. This can be useful if you're an editor because the comic tends " +
+                    'to focus on a set of characters and locations in bulk, which makes finding them easier with this setting on.'
+                }
+            />
+            <ToggleSetting
+                settings={settings}
                 setting="skipNonCanon"
                 updateSettings={updateSettings}
                 label="Skip non-canon strips"

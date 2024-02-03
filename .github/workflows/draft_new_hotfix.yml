@@ -14,6 +14,9 @@ jobs:
         steps:
             - uses: actions/checkout@v3
 
+            - name: Install Node modules
+              run: npm ci
+
             - name: Create hotfix branch
               run: git checkout -b hotfix/${{ github.event.inputs.version }}
 
@@ -21,6 +24,9 @@ jobs:
               uses: thomaseizinger/keep-a-changelog-new-release@1.1.0
               with:
                   version: ${{ github.event.inputs.version }}
+
+            - name: Format changelog
+              run: npx prettier -w ./CHANGELOG.md
 
             # In order to make a commit, we need to initialize a user.
             - name: Initialize mandatory git config

@@ -15,6 +15,7 @@ export default function ItemNavigation({
     isLoading,
     isFetching,
     useColors,
+    orderMembersByLastAppearance,
     onSetCurrentComic,
     onShowInfoFor,
     mode,
@@ -27,6 +28,7 @@ export default function ItemNavigation({
     isLoading: boolean
     isFetching: boolean
     useColors: boolean
+    orderMembersByLastAppearance: boolean
     onSetCurrentComic: (comicNo: ComicId, locked: boolean) => void
     onShowInfoFor: (item: ItemId) => void
     mode: PickEnum<
@@ -76,8 +78,16 @@ export default function ItemNavigation({
             location: location.map(itemNavigationToNavElement),
             storyline: storyline.map(itemNavigationToNavElement),
             locked: locked.map(itemNavigationToNavElement),
+            all: itemNavigationData.map(itemNavigationToNavElement),
         }
-    }, [cast, location, storyline, locked, itemNavigationToNavElement])
+    }, [
+        cast,
+        location,
+        storyline,
+        locked,
+        itemNavigationData,
+        itemNavigationToNavElement,
+    ])
 
     if (isLoading) {
         return (
@@ -98,42 +108,55 @@ export default function ItemNavigation({
         return <></>
     }
 
-    return (
-        <div className="text-center">
-            {!!itemNavElements.locked.length && (
+    if (!orderMembersByLastAppearance) {
+        return (
+            <div className="text-center">
+                {!!itemNavElements.locked.length && (
+                    <ItemTypeSection
+                        header="Navigation Locked"
+                        isFetching={isFetching}
+                        mode={mode}
+                        elements={itemNavElements.locked}
+                    />
+                )}
+                {!!itemNavElements.cast.length && (
+                    <ItemTypeSection
+                        header="Cast Members"
+                        isFetching={isFetching}
+                        mode={mode}
+                        elements={itemNavElements.cast}
+                    />
+                )}
+                {!!itemNavElements.location.length && (
+                    <ItemTypeSection
+                        header="Locations"
+                        isFetching={isFetching}
+                        mode={mode}
+                        elements={itemNavElements.location}
+                    />
+                )}
+                {!!itemNavElements.storyline.length && (
+                    <ItemTypeSection
+                        header="Storylines"
+                        isFetching={isFetching}
+                        mode={mode}
+                        elements={itemNavElements.storyline}
+                    />
+                )}
+            </div>
+        )
+    } else {
+        return (
+            <div className="text-center">
                 <ItemTypeSection
-                    header="Navigation Locked"
+                    header="Recent"
                     isFetching={isFetching}
                     mode={mode}
-                    elements={itemNavElements.locked}
+                    elements={itemNavElements.all}
                 />
-            )}
-            {!!itemNavElements.cast.length && (
-                <ItemTypeSection
-                    header="Cast Members"
-                    isFetching={isFetching}
-                    mode={mode}
-                    elements={itemNavElements.cast}
-                />
-            )}
-            {!!itemNavElements.location.length && (
-                <ItemTypeSection
-                    header="Locations"
-                    isFetching={isFetching}
-                    mode={mode}
-                    elements={itemNavElements.location}
-                />
-            )}
-            {!!itemNavElements.storyline.length && (
-                <ItemTypeSection
-                    header="Storylines"
-                    isFetching={isFetching}
-                    mode={mode}
-                    elements={itemNavElements.storyline}
-                />
-            )}
-        </div>
-    )
+            </div>
+        )
+    }
 }
 
 function ItemTypeSection({
