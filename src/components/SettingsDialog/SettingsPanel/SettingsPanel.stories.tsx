@@ -1,7 +1,7 @@
 import { useArgs } from '@storybook/preview-api'
 import { Meta, StoryFn } from '@storybook/react'
 
-import Settings, { SettingsUpdaterFunction } from '~/settings'
+import Settings, { SettingsUpdaterFunction } from '~/Settings'
 
 import SettingsPanel from './SettingsPanel'
 

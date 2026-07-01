@@ -119,7 +119,10 @@ export default function ComicList({
                 )
             }
 
-            return [<div>{thousandDividers}</div>, count]
+            return [
+                <div key="thousand-dividers">{thousandDividers}</div>,
+                count,
+            ]
         } else {
             const comicEntries: JSX.Element[] = []
             if (filteredComicData) {
@@ -137,7 +140,10 @@ export default function ComicList({
                     )
                 }
             }
-            return [<ul>{comicEntries}</ul>, comicEntries.length]
+            return [
+                <ul key="comic-entries">{comicEntries}</ul>,
+                comicEntries.length,
+            ]
         }
     }, [filteredComicData, onGoToComic, subDivideGotoComics, filters])
 

@@ -4,8 +4,8 @@ import { setSettings } from '@store/settingsSlice'
 import store from '@store/store'
 import { Meta, StoryFn } from '@storybook/react'
 
+import Settings from '~/Settings'
 import { EDIT_LOG_COMIC_4269, LATEST_EDIT_LOG, useMswReady } from '~/mocks'
-import Settings from '~/settings'
 
 import EditLogDialog from './EditLogDialog'
 

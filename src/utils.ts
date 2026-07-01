@@ -1,5 +1,5 @@
+import Settings from './Settings'
 import { HAS_GREASEMONKEY } from './constants'
-import Settings from './settings'
 
 const qcDebug = Function.prototype.bind.call(
     console.debug,
@@ -7,7 +7,8 @@ const qcDebug = Function.prototype.bind.call(
     '%c[QC-Ext]:',
     'color: purple; font-weight: bold'
 )
-let debug = function (...args: any[]) {
+/* eslint-disable @typescript-eslint/no-explicit-any */
+const debug = function (...args: any[]) {
     if (HAS_GREASEMONKEY) {
         if (Settings.get().values.showDebugLogs) {
             qcDebug(...args)
@@ -37,6 +38,7 @@ let error = function (...args: any[]) {
 let qcBug = function (...args: any[]) {
     forgotSetup()
 }
+/* eslint-enable @typescript-eslint/no-explicit-any */
 /* eslint-enable @typescript-eslint/no-unused-vars */
 
 function forgotSetup() {
@@ -149,7 +151,7 @@ export function wrapElement(element: HTMLElement, wrapper: HTMLElement | null) {
  * @return {HTMLElement} The element created from the given HTML
  */
 export function htmlToElement(html: string): HTMLElement {
-    var template = document.createElement('template')
+    const template = document.createElement('template')
     html = html.trim()
     template.innerHTML = html
     return template.content.firstChild as HTMLElement
@@ -169,7 +171,7 @@ export async function fetch<TContext = undefined>(
             | 'TRACE'
             | 'OPTIONS'
             | 'CONNECT'
-        data?: string
+        data?: string | FormData
         headers?: {
             [header: string]: string
         }
@@ -183,7 +185,7 @@ export async function fetch<TContext = undefined>(
             url: url,
             method: configuration?.method ? configuration.method : 'GET',
             context: configuration?.context,
-            data: configuration?.data,
+            data: configuration?.data as string,
             headers: configuration?.headers,
             overrideMimeType: configuration?.overrideMimeType,
             user: configuration?.user,
@@ -245,7 +247,7 @@ export function dbg<T>(v: T, d?: string) {
 
 export function readFileToDataURL(file: File): Promise<string> {
     return new Promise((resolve, reject) => {
-        var fr = new FileReader()
+        const fr = new FileReader()
         fr.onload = () => {
             resolve(fr.result as string)
         }

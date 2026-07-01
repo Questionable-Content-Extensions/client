@@ -151,7 +151,7 @@ export default function ComicFilter({
                     ref={activeSuggestion === index ? activeRef : undefined}
                 />
             )
-            index++
+            // index++
         }
         return suggestedFilters
     }, [itemData, filterText, filters, activeSuggestion, addFilter])
@@ -174,6 +174,7 @@ export default function ComicFilter({
 
     return (
         <div className="relative">
+            {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */}
             <span
                 className={'fixed inset-0' + (!dropDownOpen ? ' hidden' : '')}
                 onClick={(e) => {
@@ -304,7 +305,7 @@ const SuggestedFilter = forwardRef<
         filter: Filter
         addFilter: (filter: Filter) => void
     }
->(function ({ highlighted, filter, addFilter }, ref) {
+>(function SuggestedFilter({ highlighted, filter, addFilter }, ref) {
     let filterElement
     switch (filter.type) {
         case FilterType.Text:
@@ -335,7 +336,7 @@ const SuggestedFilter = forwardRef<
             break
 
         case FilterType.IsGuestComic:
-        case FilterType.IsNonCanon:
+        case FilterType.IsNonCanon: {
             let color
             if (filter.type === FilterType.IsGuestComic) {
                 color = 'border-qc-header bg-qc-header-second'
@@ -359,6 +360,7 @@ const SuggestedFilter = forwardRef<
                     filter...
                 </>
             )
+        }
     }
     return (
         <li
@@ -414,7 +416,7 @@ function ActiveFilter({
             break
 
         case FilterType.IsGuestComic:
-        case FilterType.IsNonCanon:
+        case FilterType.IsNonCanon: {
             let contains
             colorClassName = 'text-white '
             if (filter.type === FilterType.IsGuestComic) {
@@ -437,6 +439,7 @@ function ActiveFilter({
                 </>
             )
             break
+        }
     }
     return (
         <li

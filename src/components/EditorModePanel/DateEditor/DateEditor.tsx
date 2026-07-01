@@ -72,7 +72,9 @@ export default function DateEditor({
                             onDateValueChange(
                                 new Date(e.target.value).toISOString()
                             )
-                        } catch {}
+                        } catch {
+                            // Ignore invalid/incomplete date input
+                        }
                     }}
                     className={
                         'min-w-0 border border-qc-header focus:outline-none flex-auto rounded-none pl-2 disabled:opacity-75' +

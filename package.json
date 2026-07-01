@@ -103,7 +103,8 @@
             "prettier --write"
         ],
         "**/*.{js,jsx,ts,tsx}": [
-            "prettier --write"
+            "prettier --write",
+            "eslint --max-warnings 0 --no-warn-ignored"
         ]
     },
     "msw": {

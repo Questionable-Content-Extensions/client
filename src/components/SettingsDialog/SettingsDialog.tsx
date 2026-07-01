@@ -5,7 +5,7 @@ import { setShowChangeLogDialog } from '@store/dialogSlice'
 import { useAppDispatch, useAppSelector } from '@store/hooks'
 import { updateSettings } from '@store/settingsSlice'
 
-import { SettingsUpdaterFunction } from '~/settings'
+import { SettingsUpdaterFunction } from '~/Settings'
 
 import SettingsPanel from './SettingsPanel/SettingsPanel'
 

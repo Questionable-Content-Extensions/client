@@ -21,7 +21,6 @@ export default {
 
 export const Default: StoryObj<typeof ComicNavigation> = {
     render: (args) => {
-        // eslint-disable-next-line react-hooks/rules-of-hooks
         const mswReady = useMswReady()
 
         store.dispatch(apiSlice.util.resetApiState())

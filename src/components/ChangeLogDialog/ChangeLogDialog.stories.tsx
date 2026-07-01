@@ -2,8 +2,8 @@ import { setSettings } from '@store/settingsSlice'
 import store from '@store/store'
 import { Meta, StoryFn } from '@storybook/react'
 
+import Settings from '~/Settings'
 import constants from '~/constants'
-import Settings from '~/settings'
 
 import ChangeLogDialog from './ChangeLogDialog'
 

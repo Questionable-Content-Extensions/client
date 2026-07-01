@@ -313,7 +313,7 @@ export const itemApiSlice = apiSlice.injectEndpoints({
                         // @types/greasemonkey TS types don't seem to be aware
                         // of this, so for the sake of typechecking,
                         // we use `any` to get TS off our backs.
-                        data: formData as any,
+                        data: formData,
                         method: 'POST',
                     },
                 }

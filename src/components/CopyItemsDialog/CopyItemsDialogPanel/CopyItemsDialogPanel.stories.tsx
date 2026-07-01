@@ -23,7 +23,7 @@ export default {
 } as Meta<typeof CopyItemsDialogPanel>
 
 const Template: StoryFn<typeof CopyItemsDialogPanel> = (args) => {
-    let [_args, setArgs] = useArgs()
+    const [_args, setArgs] = useArgs()
     const onChangeSelectedComic = (selectedComic: ComicId) => {
         setArgs({ selectedComic })
         args.onChangeSelectedComic(selectedComic)
@@ -41,7 +41,7 @@ const Template: StoryFn<typeof CopyItemsDialogPanel> = (args) => {
         [id: number]: boolean
     }>({})
     useEffect(() => {
-        let selectedItems: { [id: number]: boolean } = {}
+        const selectedItems: { [id: number]: boolean } = {}
         if (args.comicItems) {
             for (const item of args.comicItems) {
                 selectedItems[item.id] = true

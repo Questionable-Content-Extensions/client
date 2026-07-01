@@ -7,18 +7,18 @@ import { setSettings } from '@store/settingsSlice'
 import store from '@store/store'
 import { Meta, StoryFn } from '@storybook/react'
 
+import Settings from '~/Settings'
 import {
     ALL_ITEMS,
     COMIC_DATA_666,
     FAYE,
+    FAYE_COMICS,
     FAYE_EDIT_LOG,
     FAYE_FRIENDS,
     FAYE_IMAGES,
     useMswReady,
 } from '~/mocks'
-import Settings from '~/settings'
 
-import { FAYE_COMICS } from '../../mocks'
 import ItemDetailsDialog from './ItemDetailsDialog'
 
 const fayeImage: any = require('./4.png')

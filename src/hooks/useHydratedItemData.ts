@@ -11,7 +11,7 @@ import {
 } from '@store/api/comicApiSlice'
 import { useAllItemsQuery } from '@store/api/itemApiSlice'
 
-import { SettingValues } from '~/settings'
+import { SettingValues } from '~/Settings'
 import { error } from '~/utils'
 
 export type HydratedItemData = {

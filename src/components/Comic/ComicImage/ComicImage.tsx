@@ -51,11 +51,11 @@ export default function ComicImage({
                 // TODO: Report image error to user
                 error(event)
             }
-            let imageExtension = imageTypeToExtension(imageType)
+            const imageExtension = imageTypeToExtension(imageType)
             downloadingImage.src = `./comics/${comic}.${imageExtension}`
         }
 
-        let { comicNo, imageType } = previousImageData
+        const { comicNo, imageType } = previousImageData
         if (comicNo && comicNo in comicExtensionCache) {
             debug(
                 `using cached image extension ${comicExtensionCache[comicNo]} for ${comicNo}`
@@ -85,7 +85,7 @@ export default function ComicImage({
                         'fallbackImageLoading -- Trying ' +
                             constants.comicExtensions[currentExtension]
                     )
-                    let imageExtension =
+                    const imageExtension =
                         constants.comicExtensions[currentExtension]
                     downloadingImage.src = `./comics/${comicNo}.${imageExtension}`
                 } else {
@@ -97,7 +97,7 @@ export default function ComicImage({
                 'fallbackImageLoading -- Trying ' +
                     constants.comicExtensions[currentExtension]
             )
-            let imageExtension = constants.comicExtensions[currentExtension]
+            const imageExtension = constants.comicExtensions[currentExtension]
             downloadingImage.src = `./comics/${comicNo}.${imageExtension}`
         } else {
             debug(

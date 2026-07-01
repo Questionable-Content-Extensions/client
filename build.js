@@ -18,7 +18,6 @@ function assembleHeaderFor(type) {
             } else if (p1 in userscriptHeaderVariables) {
                 return userscriptHeaderVariables[p1]
             } else {
-                // eslint-disable-next-line no-throw-literal
                 throw `No variable '${p1}' for '${type}' in userscript header`
             }
         }

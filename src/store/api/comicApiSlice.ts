@@ -20,8 +20,8 @@ import {
 import { RootState } from '@store/store'
 import toastSuccess from '@store/toastSuccess'
 
+import { SettingValues } from '~/Settings'
 import constants from '~/constants'
-import { SettingValues } from '~/settings'
 import { EndpointBuilderTagTypeExtractor } from '~/tsUtils'
 
 export type GetDataQueryArgs = {
@@ -346,7 +346,9 @@ export const comicApiSlice = apiSlice.injectEndpoints({
                     } else {
                         toast.success(result.data)
                     }
-                } catch {}
+                } catch {
+                    // Errors are handled by rtkQueryErrorLogger
+                }
             },
             transformResponse: (response) => response.responseText,
             invalidatesTags: (result, _error, args) => {

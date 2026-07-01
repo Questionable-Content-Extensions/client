@@ -221,7 +221,7 @@ function usePagination({
             ...startPages,
 
             // Start ellipsis
-            // eslint-disable-next-line no-nested-ternary
+
             ...(siblingsStart > boundaryCount + 2
                 ? (['start-ellipsis'] as NavigationType[])
                 : boundaryCount + 1 < count - boundaryCount
@@ -232,7 +232,7 @@ function usePagination({
             ...range(siblingsStart, siblingsEnd),
 
             // End ellipsis
-            // eslint-disable-next-line no-nested-ternary
+
             ...(siblingsEnd < count - boundaryCount - 1
                 ? (['end-ellipsis'] as NavigationType[])
                 : count - boundaryCount > boundaryCount

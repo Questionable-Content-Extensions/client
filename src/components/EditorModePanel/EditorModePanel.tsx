@@ -206,11 +206,9 @@ export default function EditorModePanel() {
                 'shadow-md lg:fixed lg:top-20 xl:top-48 lg:left-[50%] lg:-ml-[750px] lg:w-64 z-10 p-2 ' +
                 'transition-transform translate-x-0 lg:hover:translate-x-[var(--corrected-margin)]'
             }
-            style={
-                {
-                    '--corrected-margin': `${correctionWidth}px`,
-                } as any
-            }
+            style={{
+                '--corrected-margin': `${correctionWidth}px`,
+            }}
             onSubmit={(e) => {
                 e.preventDefault()
                 dispatch(saveChanges())

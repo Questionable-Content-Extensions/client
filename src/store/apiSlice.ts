@@ -13,6 +13,7 @@ export const GREASMONKEY_ERROR_TYPES: GreasemonkeyErrorType[] = [
 export type GreasemonkeyError =
     | {
           type: 'TRY_CATCH'
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           error: GM.Response<undefined> | any
       }
     | {
@@ -24,6 +25,7 @@ export type GreasemonkeyError =
       }
 
 export function isGreasemonkeyResponse(
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     possibleResponse: any
 ): possibleResponse is GM.Response<undefined> {
     return 'finalUrl' in possibleResponse
@@ -44,7 +46,7 @@ export type GreasemonkeyBaseQuery = BaseQueryFn<
                 | 'TRACE'
                 | 'OPTIONS'
                 | 'CONNECT'
-            data?: string
+            data?: string | FormData
             headers?: {
                 [header: string]: string
             }
@@ -55,8 +57,8 @@ export type GreasemonkeyBaseQuery = BaseQueryFn<
     },
     GM.Response<undefined>,
     GreasemonkeyError,
-    {}, // DefinitionExtraOptions
-    {} // Meta
+    object, // DefinitionExtraOptions
+    object // Meta
 >
 const greasemonkeyBaseQuery = ({
     baseUrl,

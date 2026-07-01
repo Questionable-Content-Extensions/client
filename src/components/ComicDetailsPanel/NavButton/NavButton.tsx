@@ -11,7 +11,7 @@ export default function NavButton({
     faClass: ForkAwesomeIcon
     onSetCurrentComic: (comicNo: number) => void
 }) {
-    let comicLink = comicNo ? `view.php?comic=${comicNo}` : '#'
+    const comicLink = comicNo ? `view.php?comic=${comicNo}` : '#'
     return (
         <a
             href={comicLink}

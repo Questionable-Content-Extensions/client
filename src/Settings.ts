@@ -59,6 +59,7 @@ export interface SettingValues {
 // This is a bit of a hack to make TypeScript happy when we do direct property
 // transfer from defaults in `loadSettings()` below.
 interface TransferSettings {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     [prop: string | symbol | number]: any
 }
 
@@ -87,7 +88,7 @@ function loadFromGM4Shim(): string | null {
     return shimSettings
 }
 
-export class Settings {
+export default class Settings {
     static DEFAULTS: SettingValues = {
         showDebugLogs: false,
         scrollToTop: true,
@@ -172,7 +173,5 @@ export class Settings {
 }
 
 let instance: Settings | null = null
-
-export default Settings
 
 export type SettingsUpdaterFunction = (s: SettingValues) => void

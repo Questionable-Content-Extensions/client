@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-import React from 'react'
+import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { Provider } from 'react-redux'
 import { ToastContainer, toast } from 'react-toastify'
@@ -45,7 +45,7 @@ import { itemApiSlice } from '@store/api/itemApiSlice'
 import { setCurrentComic, setLatestComic } from '@store/comicSlice'
 import { loadSettings } from '@store/settingsSlice'
 
-import Settings from '~/settings'
+import Settings from '~/Settings'
 import store, { AppDispatch, RootState } from '~/store/store'
 import { awaitElement, debug, error, fetch, info, qcBug, setup } from '~/utils'
 
@@ -55,7 +55,7 @@ import { BODY_CONTAINER_ID, PORTAL_CONTAINER_ID } from './shared'
 // See <https://blog.krawaller.se/posts/unit-testing-react-redux-components/>
 // for how to properly test Redux powered components
 
-const QcStrictMode = React.StrictMode
+const QcStrictMode = StrictMode
 // React.StrictMode causes errors in Chromium; set to some innocent element
 // type instead when debugging in Chrome:
 //const QcStrictMode = React.Fragment
@@ -86,7 +86,7 @@ async function main() {
     // Handle popstate events to go back to previous comics that were
     // added using pushState/replaceState above
     window.addEventListener('popstate', (event) => {
-        let state = event.state as
+        const state = event.state as
             | { comic: number; lockedToItem: ItemId | null }
             | undefined
         if (state && state.comic) {
@@ -136,7 +136,7 @@ async function developmentMain() {
 
             // Ensure that when the fetched script runs, it doesn't keep trying to fetch and run itself.
             window.__QC_EXT_DEVELOPMENT_LOADED = true
-            // eslint-disable-next-line no-eval
+
             eval(response.responseText)
         })
         .catch((response) => {
@@ -189,14 +189,14 @@ async function initializeComic() {
     }
 
     // Grab comic we're starting out on
-    let comicLinkUrl = comicImg.src
-    let comicLinkUrlSplit = comicLinkUrl.split('/')
+    const comicLinkUrl = comicImg.src
+    const comicLinkUrlSplit = comicLinkUrl.split('/')
     const comic = parseInt(
         comicLinkUrlSplit[comicLinkUrlSplit.length - 1].split('.')[0]
     )
     debug('Current comic:', comic)
 
-    let comicContainer = document.createElement('div')
+    const comicContainer = document.createElement('div')
     comicContainer.classList.add(QC_EXT_CLASSNAME, 'qc-ext-comic-container')
 
     const comicImgParent = comicImg.parentNode as HTMLElement
@@ -274,7 +274,7 @@ function initializeComicNavigation() {
     }
     comicNav.id = 'comicnav1'
 
-    let comicNav2 = document.querySelector<HTMLUListElement>('#comicnav')
+    const comicNav2 = document.querySelector<HTMLUListElement>('#comicnav')
     if (!comicNav2) {
         qcBug('Could not find second comic navigation list element')
         return
@@ -298,7 +298,7 @@ function initializeComicNavigation() {
         </QcStrictMode>
     )
 
-    let comicNav2Parent = comicNav2.parentNode as HTMLElement
+    const comicNav2Parent = comicNav2.parentNode as HTMLElement
 
     // The second #comicnav is in a <div class="row">/<div id="row"> for some reason. Let's ditch it if present.
     comicNavContainer = document.createElement('div')
@@ -487,7 +487,7 @@ function hijackShortcut() {
             if (state.comic.lockedToItem !== null) {
                 goToLocked(dispatch, state, (i) => i.previous)
             } else {
-                let previous = previousComicSelector(state)
+                const previous = previousComicSelector(state)
                 dispatch(setCurrentComic(previous))
             }
         })
@@ -497,7 +497,7 @@ function hijackShortcut() {
             if (state.comic.lockedToItem !== null) {
                 goToLocked(dispatch, state, (i) => i.next)
             } else {
-                let next = nextComicSelector(state)
+                const next = nextComicSelector(state)
                 dispatch(setCurrentComic(next))
             }
         })
@@ -511,13 +511,14 @@ function hijackShortcut() {
         })
 
     try {
-        if (typeof unsafeWindow !== undefined) {
-            const shortcut = (unsafeWindow as any).shortcut
+        if (typeof unsafeWindow !== 'undefined') {
+            const shortcut = unsafeWindow.shortcut
 
             shortcut.remove('Left')
             shortcut.remove('Right')
 
-            const disable_in_input = createObjectIn<any>(unsafeWindow)
+            const disable_in_input =
+                createObjectIn<Partial<ShortcutOptions>>(unsafeWindow)
             disable_in_input.disable_in_input = true
 
             shortcut.add(

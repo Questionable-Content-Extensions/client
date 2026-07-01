@@ -87,6 +87,7 @@ export const rtkQueryErrorLogger: Middleware =
     }
 
 function payloadIsGreasemonkeyError(
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     payload: any
 ): payload is GreasemonkeyError {
     return 'type' in payload && GREASMONKEY_ERROR_TYPES.includes(payload.type)

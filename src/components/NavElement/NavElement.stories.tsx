@@ -5,8 +5,8 @@ import { expect } from '@storybook/jest'
 import { Meta, StoryFn } from '@storybook/react'
 import { userEvent, waitFor, within } from '@storybook/testing-library'
 
+import Settings from '~/Settings'
 import { MARTEN, MARTEN_HYDRATED, MARTEN_ITEM, useMswReady } from '~/mocks'
-import Settings from '~/settings'
 
 import NavElement, { NavElementMode } from './NavElement'
 

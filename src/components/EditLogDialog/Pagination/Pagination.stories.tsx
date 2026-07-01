@@ -8,7 +8,7 @@ export default {
 } as Meta<typeof Pagination>
 
 const Template: StoryFn<typeof Pagination> = (args) => {
-    let [_args, setArgs] = useArgs()
+    const [_args, setArgs] = useArgs()
     const onGoToPage = (page: number) => {
         setArgs({ page })
         args.onGoToPage(page)

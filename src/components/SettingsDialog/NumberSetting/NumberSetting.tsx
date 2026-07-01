@@ -1,6 +1,6 @@
 import { useState } from 'react'
 
-import { SettingValues, SettingsUpdaterFunction } from '~/settings'
+import { SettingValues, SettingsUpdaterFunction } from '~/Settings'
 import { KeyOfType } from '~/tsUtils'
 
 export default function NumberSetting({

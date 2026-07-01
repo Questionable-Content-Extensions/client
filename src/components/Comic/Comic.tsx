@@ -52,7 +52,7 @@ export default function Comic({
                 top: 0,
                 behavior: 'smooth', // for smoothly scrolling
             })
-            let _comic = currentComic
+            const _comic = currentComic
         }
     }, [settings?.scrollToTop, currentComic])
 
@@ -70,7 +70,7 @@ export default function Comic({
         }
     }, [currentComic, initialComic])
 
-    let comicLoadingTimeout = useMemo(() => {
+    const comicLoadingTimeout = useMemo(() => {
         let comicLoadingIndicatorDelay =
             settings?.comicLoadingIndicatorDelay ?? 0
         if (comicLoadingIndicatorDelay < 0) {
@@ -81,12 +81,12 @@ export default function Comic({
         return comicLoadingIndicatorDelay
     }, [settings?.comicLoadingIndicatorDelay])
 
-    let [loadingTimedOut, doneLoadingWithTimeout] = useComicLoaderTimeout(
+    const [loadingTimedOut, doneLoadingWithTimeout] = useComicLoaderTimeout(
         currentComic,
         comicLoadingTimeout
     )
 
-    let imageData = useMemo(() => {
+    const imageData = useMemo(() => {
         if (!hasComicDataError) {
             let imageType
             if (comicData?.hasData) {
@@ -103,7 +103,7 @@ export default function Comic({
         }
     }, [comicData, hasComicDataError, comicNo])
 
-    let imageReady = useCallback(() => {
+    const imageReady = useCallback(() => {
         const _comicData = comicData
         doneLoadingWithTimeout()
         info('Comic image loaded.')
@@ -191,7 +191,7 @@ function useComicLoaderTimeout(
     useEffect(() => {
         // I do this just to make the effect "need" the value as a dependency;
         // it's not actually used at all here.
-        let _comic = currentComic
+        const _comic = currentComic
         debug('Starting imageLoadingTimeout...')
         comicLoadingTimeoutId.current = setTimeout(() => {
             setIsLoading(true)

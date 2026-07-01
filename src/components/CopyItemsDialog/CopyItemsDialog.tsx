@@ -61,7 +61,7 @@ export default function CopyItemsDialog({
         [id: number]: boolean
     }>({})
     useEffect(() => {
-        let selectedItems: { [id: number]: boolean } = {}
+        const selectedItems: { [id: number]: boolean } = {}
         if (comicItems) {
             for (const item of comicItems) {
                 selectedItems[item.id] = true

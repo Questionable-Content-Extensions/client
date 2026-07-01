@@ -8,8 +8,9 @@ import {
 import { setCurrentComic } from '@store/comicSlice'
 import { useAppDispatch, useAppSelector } from '@store/hooks'
 
+// TODO: Why does this even accept any parameters?
 // eslint-disable-next-line no-empty-pattern
-export default function ComicNavigation({}: {}) {
+export default function ComicNavigation({}: Record<string, never>) {
     const dispatch = useAppDispatch()
 
     const settings = useAppSelector((state) => state.settings.values)

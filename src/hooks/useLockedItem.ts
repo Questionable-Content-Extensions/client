@@ -4,7 +4,7 @@ import { ItemId } from '@models/ItemId'
 import { skipToken } from '@reduxjs/toolkit/dist/query'
 import { useRandomComicQuery } from '@store/api/itemApiSlice'
 
-import { SettingValues } from '~/settings'
+import { SettingValues } from '~/Settings'
 
 import useHydratedItemData from './useHydratedItemData'
 

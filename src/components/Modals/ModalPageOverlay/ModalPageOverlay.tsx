@@ -16,7 +16,7 @@ export default function ModalPageOverlay({
     show: boolean
     onClick?: () => void
 }) {
-    let originalBodyOverflow = useMemo(() => document.body.style.overflow, [])
+    const originalBodyOverflow = useMemo(() => document.body.style.overflow, [])
 
     const [fadedIn, setFadedIn] = useState(false)
 
@@ -44,6 +44,7 @@ export default function ModalPageOverlay({
         }
     }, [show, originalBodyOverflow, setActive])
     return (
+        // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions
         <div
             className={
                 `fixed top-0 left-0 w-full h-full outline-none overflow-x-hidden overflow-y-auto ` +

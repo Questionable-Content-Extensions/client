@@ -12,7 +12,6 @@ export default {
 
 export const Default: StoryObj<typeof ComicFilter> = {
     render: (args) => {
-        // eslint-disable-next-line react-hooks/rules-of-hooks
         const mswReady = useMswReady()
 
         // Then, let's fake the necessary REST calls
@@ -37,7 +36,6 @@ export const Default: StoryObj<typeof ComicFilter> = {
             )
         )
 
-        // eslint-disable-next-line react-hooks/rules-of-hooks
         const [filters, setFilters] = useState<Filter[]>([])
 
         return mswReady ? (

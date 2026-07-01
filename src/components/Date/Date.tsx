@@ -10,8 +10,9 @@ import { useAppSelector } from '@store/hooks'
 
 import { formatDate } from '~/utils'
 
+// TODO: Why does this even accept any parameters?
 // eslint-disable-next-line no-empty-pattern
-export default function DateComponent({}: {}) {
+export default function DateComponent({}: Record<string, never>) {
     const settings = useAppSelector((state) => state.settings.values)
 
     const currentComic = useAppSelector((state) => state.comic.current)
