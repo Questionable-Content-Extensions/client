@@ -2,7 +2,8 @@
     "compilerOptions": {
         "baseUrl": ".",
         "paths": {
-            "@models/*": ["src/models/*"],
+            "@models/*": ["src/models/*", "src/bindings/models/*"],
+            "@endpoints/*": ["src/bindings/endpoints/*"],
             "@store/*": ["src/store/*"],
             "@hooks/*": ["src/hooks/*"],
             "@modals/*": ["src/components/Modals/*"],
