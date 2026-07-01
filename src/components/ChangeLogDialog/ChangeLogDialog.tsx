@@ -10,7 +10,7 @@ import { updateSettings } from '@store/settingsSlice'
 import constants from '~/constants'
 import { formatDate } from '~/utils'
 
-import CHANGE_LOG from './CHANGELOG.md'
+import CHANGE_LOG from './CHANGELOG.md?raw'
 
 marked.use({
     renderer: {

@@ -27,9 +27,9 @@ function assembleHeaderFor(type) {
 let developmentUserscriptHeader = assembleHeaderFor('development')
 let productionUserscriptHeader = assembleHeaderFor('production')
 
-// Run the React build script
+// Run the Vite build script
 const extraArgs = process.argv[2] || ''
-execSync('npm run react-build -- ' + extraArgs, { stdio: [0, 1, 2] })
+execSync('npm run vite-build -- ' + extraArgs, { stdio: [0, 1, 2] })
 
 // If it doesn't exist, create the `/dist` directory
 if (!fs.existsSync('./dist')) {
@@ -48,13 +48,6 @@ s.push(licenseBanner)
 s.push('\n')
 s.push(productionUserscriptHeader)
 s.push('\n')
-// HACK: To avoid a bug with inline CSS in webpack, we externalize it, and then
-// load it in ourselves:
-s.push('window.qcExtBuiltCss = ')
-s.push(
-    JSON.stringify(fs.readFileSync('./build/static/css/main.css').toString())
-)
-s.push(';\n')
 s.push(null)
 
 s.pipe(w, { end: false })
