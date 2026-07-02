@@ -3,6 +3,7 @@ import { setupListeners } from '@reduxjs/toolkit/query'
 
 import { apiSlice } from './apiSlice'
 import comicEditorReducer from './comicEditorSlice'
+import comicFilterReducer from './comicFilterSlice'
 import comicReducer from './comicSlice'
 import customLogger from './customLogger'
 import dialogReducer from './dialogSlice'
@@ -14,6 +15,7 @@ export function makeStore() {
     const store = configureStore({
         reducer: {
             comic: comicReducer,
+            comicFilter: comicFilterReducer,
             dialog: dialogReducer,
             itemEditor: itemEditorReducer,
             comicEditor: comicEditorReducer,

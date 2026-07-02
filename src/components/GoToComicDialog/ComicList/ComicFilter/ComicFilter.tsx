@@ -7,31 +7,11 @@ import {
     useState,
 } from 'react'
 
+import { Filter, FilterType } from '@models/Filter'
 import { ItemList } from '@models/ItemList'
 import { useAllItemsQuery } from '@store/api/itemApiSlice'
 
 import { getFilterWithoutType, getTypeFromFilter } from '~/itemFilters'
-
-export enum FilterType {
-    Text,
-    Item,
-    IsGuestComic,
-    IsNonCanon,
-}
-
-export type Filter =
-    | {
-          type: FilterType.Text
-          value: string
-      }
-    | {
-          type: FilterType.Item
-          value: ItemList
-      }
-    | {
-          type: FilterType.IsGuestComic | FilterType.IsNonCanon
-          value: boolean
-      }
 
 export default function ComicFilter({
     filters,

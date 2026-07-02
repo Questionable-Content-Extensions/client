@@ -31,9 +31,13 @@ export default defineConfig(({ mode }) => {
         // statically replaces it. There's no `process` global in a userscript
         // sandbox, so replace it ourselves and let dead code elimination drop
         // the guarded branches, same as webpack's DefinePlugin used to.
+        // Vitest runs with mode 'test' (neither 'development' nor
+        // 'production'), and needs the non-production React build for
+        // act()/testing-library to work, so only 'production' opts in to the
+        // production define here.
         define: {
             'process.env.NODE_ENV': JSON.stringify(
-                isDevelopment ? 'development' : 'production'
+                mode === 'production' ? 'production' : 'development'
             ),
         },
         plugins: [
@@ -92,6 +96,7 @@ export default defineConfig(({ mode }) => {
         test: {
             environment: 'jsdom',
             globals: true,
+            setupFiles: ['./src/setupTests.ts'],
         },
     }
 })

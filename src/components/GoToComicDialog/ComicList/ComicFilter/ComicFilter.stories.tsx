@@ -1,10 +1,11 @@
 import { useState } from 'react'
 
+import { Filter } from '@models/Filter'
 import { Meta, StoryObj } from '@storybook/react'
 
 import { ALL_ITEMS, useMswReady } from '~/mocks'
 
-import ComicFilter, { Filter } from './ComicFilter'
+import ComicFilter from './ComicFilter'
 
 export default {
     component: ComicFilter,

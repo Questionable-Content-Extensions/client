@@ -7,8 +7,13 @@ import useItemNavigationDataByType from '@hooks/useItemNavigationDataByType'
 import { ComicId } from '@models/ComicId'
 import { HydratedItemNavigationData } from '@models/HydratedItemData'
 import { ItemId } from '@models/ItemId'
+import { setFilteredComics } from '@store/comicFilterSlice'
+import { setShowGoToComicDialog } from '@store/dialogSlice'
+import { useAppDispatch, useAppSelector } from '@store/hooks'
 
 import { PickEnum } from '~/tsUtils'
+
+import FilteredComicsNavElement from './FilteredComicsNavElement/FilteredComicsNavElement'
 
 export default function ItemNavigation({
     itemNavigationData,
@@ -40,6 +45,15 @@ export default function ItemNavigation({
     onAddItem?: (_: ItemId) => void
     lockedToItemId?: ItemId
 }) {
+    const dispatch = useAppDispatch()
+    const currentComic = useAppSelector((state) => state.comic.current)
+    const filteredComics = useAppSelector(
+        (state) => state.comicFilter.filteredComics
+    )
+    const filters = useAppSelector((state) => state.comicFilter.filters)
+    const showFilteredComicsNav =
+        mode === NavElementMode.Present && filteredComics.length !== 0
+
     const { cast, location, storyline, locked } = useItemNavigationDataByType(
         itemNavigationData,
         lockedToItemId
@@ -104,7 +118,7 @@ export default function ItemNavigation({
         )
     }
 
-    if (!itemNavigationData.length) {
+    if (!itemNavigationData.length && !showFilteredComicsNav) {
         return <></>
     }
 
@@ -117,6 +131,33 @@ export default function ItemNavigation({
                         isFetching={isFetching}
                         mode={mode}
                         elements={itemNavElements.locked}
+                    />
+                )}
+                {showFilteredComicsNav && (
+                    <ItemTypeSection
+                        header="Filtered Navigation"
+                        isFetching={isFetching}
+                        mode={mode}
+                        elements={[
+                            <FilteredComicsNavElement
+                                key="filtered-comics"
+                                filteredComics={filteredComics}
+                                filters={filters}
+                                currentComic={currentComic}
+                                onSetCurrentComic={onSetCurrentComic}
+                                onReopenDialog={() =>
+                                    dispatch(setShowGoToComicDialog(true))
+                                }
+                                onClear={() =>
+                                    dispatch(
+                                        setFilteredComics({
+                                            comics: [],
+                                            filters: [],
+                                        })
+                                    )
+                                }
+                            />,
+                        ]}
                     />
                 )}
                 {!!itemNavElements.cast.length && (
