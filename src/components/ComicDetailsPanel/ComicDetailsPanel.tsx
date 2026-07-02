@@ -354,37 +354,34 @@ export default function ComicDetailsPanel() {
                     </Button>
                 </form>
             </div>
-            {settings.showAllMembers ||
-                (settings.editMode && (
-                    <>
-                        <hr className="my-4 mx-0 border-solid border-b max-w-none" />
-                        <FilteredNavigationData
-                            isLoading={isLoadingInitial}
-                            isFetching={isFetching}
-                            isSaving={isSaving}
-                            itemData={allItems ?? []}
-                            onSetCurrentComic={(c) =>
-                                dispatch(setCurrentComic(c))
-                            }
-                            onShowInfoFor={(i) =>
-                                dispatch(setShowItemDetailsDialogFor(i))
-                            }
-                            useColors={settings.useColors}
-                            editMode={settings.editMode}
-                            orderMembersByLastAppearance={
-                                settings.orderMembersByLastAppearance
-                            }
-                            onAddItem={(itemBody) => {
-                                addItem({
-                                    token: settings.editModeToken,
-                                    comicId: currentComic,
-                                    ...itemBody,
-                                })
-                            }}
-                            hasError={hasErrorLoadingComicData}
-                        />
-                    </>
-                ))}
+            {(settings.showAllMembers || settings.editMode) && (
+                <>
+                    <hr className="my-4 mx-0 border-solid border-b max-w-none" />
+                    <FilteredNavigationData
+                        isLoading={isLoadingInitial}
+                        isFetching={isFetching}
+                        isSaving={isSaving}
+                        itemData={allItems ?? []}
+                        onSetCurrentComic={(c) => dispatch(setCurrentComic(c))}
+                        onShowInfoFor={(i) =>
+                            dispatch(setShowItemDetailsDialogFor(i))
+                        }
+                        useColors={settings.useColors}
+                        editMode={settings.editMode}
+                        orderMembersByLastAppearance={
+                            settings.orderMembersByLastAppearance
+                        }
+                        onAddItem={(itemBody) => {
+                            addItem({
+                                token: settings.editModeToken,
+                                comicId: currentComic,
+                                ...itemBody,
+                            })
+                        }}
+                        hasError={hasErrorLoadingComicData}
+                    />
+                </>
+            )}
         </div>
     )
 }
