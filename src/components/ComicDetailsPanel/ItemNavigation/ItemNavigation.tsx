@@ -1,6 +1,6 @@
 import { useCallback, useMemo } from 'react'
 
-import InlineSpinner from '@components/InlineSpinner'
+import ChaserUnderline from '@components/ChaserUnderline'
 import NavElement, { NavElementMode } from '@components/NavElement/NavElement'
 import Spinner from '@components/Spinner'
 import useItemNavigationDataByType from '@hooks/useItemNavigationDataByType'
@@ -213,19 +213,8 @@ function ItemTypeSection({
 }) {
     return (
         <>
-            <h1 className="text-base font-normal text-center m-2">
-                <span className="invisible">
-                    <InlineSpinner />
-                </span>
-                {header}
-                <span
-                    className={
-                        'inline-block align-middle' +
-                        (!isFetching ? ' invisible' : '')
-                    }
-                >
-                    <InlineSpinner />
-                </span>
+            <h1 className="text-base font-normal text-center mx-2 mb-0 mt-4">
+                <ChaserUnderline active={isFetching}>{header}</ChaserUnderline>
             </h1>
             {mode === NavElementMode.Missing ? (
                 <h2 className="text-xs font-normal text-center">

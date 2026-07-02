@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Added a "Filtered Navigation" section to the comic navigation panel: after filtering in the "Go to comic" dialog, you can now jump between the first/previous/next/last matching comics directly, reopen the dialog to adjust the filter, or clear the filtered navigation entirely.
 
+### Changed 🔧
+
+- Replace the pair of spinners flanking each comic navigation section header with a subtle animated underline, so long headers no longer get squeezed or shifted off-center.
+
 ### Fixed 🐛
 
 - Fix the "Filtered Navigation" section not showing when "show all members" was enabled but edit mode was not. Fixes [#99](https://github.com/Questionable-Content-Extensions/client/issues/99)

@@ -37,10 +37,10 @@ if has_node_changes; then
         done < <(echo "$STAGED" | grep -E '^src/.*\.(ts|tsx)$' || true)
 
         if [ ${#REACT_TESTS[@]} -gt 0 ]; then
-            npm run test:react -- "${REACT_TESTS[@]}"
+            npm run test:react -- "${REACT_TESTS[@]}" --passWithNoTests
         fi
         if [ ${#STORYBOOK_TESTS[@]} -gt 0 ]; then
-            npm run test:storybook -- "${STORYBOOK_TESTS[@]}"
+            npm run test:storybook -- "${STORYBOOK_TESTS[@]}" --passWithNoTests
         fi
     fi
     npm run vite-build

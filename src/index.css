@@ -104,3 +104,37 @@ body {
 .qc-ext-qc-link:hover {
     @apply outline-0;
 }
+
+/*
+  A subtle "chaser" loading underline: a bar grows from the left, detaches
+  and slides across at constant width, then shrinks away into the right
+  edge. Used in place of spinners for inline/secondary loading states.
+*/
+@keyframes qc-ext-chaser {
+    0% {
+        left: 0%;
+        right: 100%;
+    }
+    30% {
+        left: 0%;
+        right: 30%;
+    }
+    70% {
+        left: 30%;
+        right: 0%;
+    }
+    100% {
+        left: 100%;
+        right: 0%;
+    }
+}
+
+.qc-ext-chaser-track {
+    position: relative;
+    overflow: hidden;
+}
+
+.qc-ext-chaser-bar {
+    position: absolute;
+    animation: qc-ext-chaser 1.6s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
