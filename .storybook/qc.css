@@ -1,2 +1,10 @@
-@import 'https://questionablecontent.net/css/foundation.css';
-@import 'https://questionablecontent.net/css/app.css';
+/*
+  Layered so it always loses to our (mostly unlayered, partly Tailwind-
+  layered) CSS regardless of selector specificity or import order — per the
+  CSS cascade layers spec, unlayered rules always beat layered ones, and this
+  is the first layer declared, so it's also the lowest-priority named layer.
+  This mirrors production, where our styles are injected without ever being
+  beaten by the live site's CSS.
+*/
+@import 'https://questionablecontent.net/css/foundation.css' layer(site);
+@import 'https://questionablecontent.net/css/app.css' layer(site);
