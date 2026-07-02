@@ -42,20 +42,22 @@ const developmentMode =
     forceDevelopmentMode || scriptVersion.indexOf('+development') !== -1
 
 const siteUrl = 'https://questionablextensions.net/' as const
-const developmentBaseUrl = 'http://localhost:3000/api/v2/' as const
+const developmentBaseUrl = 'http://localhost:3000/api/v3/' as const
 
 function getWebserviceBaseUrl() {
     if (developmentMode) {
         return developmentBaseUrl
     } else {
-        return `${siteUrl}api/v2/` as const
+        return `${siteUrl}api/v3/` as const
     }
 }
 const webserviceBaseUrl = getWebserviceBaseUrl()
 
-const comicDataEndpoint = `comicdata/` as const
+// Only needed for the two endpoints that have no generated binding (no
+// `EndpointSpec`): multipart image upload, and the raw image base URL used
+// directly as an `<img>` src. Every other endpoint's path comes from
+// `src/bindings/endpoints/*` instead.
 const itemDataEndpoint = `itemdata/` as const
-const editLogEndpoint = `log/` as const
 
 const constants = {
     settingsKey: 'settings' as const,
@@ -65,9 +67,7 @@ const constants = {
     siteUrl,
     developmentBaseUrl,
     developmentMode,
-    comicDataEndpoint,
     itemDataEndpoint,
-    editLogEndpoint,
 
     // Comics after 3132 should have a tagline
     taglineThreshold: 3132 as const,
@@ -77,16 +77,6 @@ const constants = {
      * If you need a new endpoint, add it as a separate const below.
      */
     webserviceBaseUrl,
-
-    excludedComicsEndpoint: `${comicDataEndpoint}excluded` as const,
-    containingItemsEndpoint: `${comicDataEndpoint}containing-items` as const,
-    addItemToComicEndpoint: `${comicDataEndpoint}additem` as const,
-    addItemsToComicEndpoint: `${comicDataEndpoint}additems` as const,
-    removeItemFromComicEndpoint: `${comicDataEndpoint}removeitem` as const,
-
-    itemImageEndpoint: `${itemDataEndpoint}image/` as const,
-    itemFriendDataEndpoint: `${itemDataEndpoint}friends/` as const,
-    itemLocationDataEndpoint: `${itemDataEndpoint}locations/` as const,
 
     comicExtensions: ['png' as const, 'gif' as const, 'jpg' as const] as const,
 

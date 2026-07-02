@@ -43,7 +43,7 @@ export const All: Story = {
         msw: {
             handlers: [
                 http.get(
-                    'http://localhost:3000/api/v2/log/',
+                    'http://localhost:3000/api/v3/log/',
                     async ({ request }) => {
                         const page = Number(
                             new URL(request.url).searchParams.get('page')
@@ -83,7 +83,7 @@ export const Comic: Story = {
         msw: {
             handlers: [
                 http.get(
-                    'http://localhost:3000/api/v2/log/comic',
+                    'http://localhost:3000/api/v3/log/comic',
                     async ({ request }) => {
                         const page = Number(
                             new URL(request.url).searchParams.get('page')
@@ -122,7 +122,7 @@ export const Error: Story = {
     parameters: {
         msw: {
             handlers: [
-                http.get('http://localhost:3000/api/v2/log/', async () => {
+                http.get('http://localhost:3000/api/v3/log/', async () => {
                     await delay(1000 + Math.random() * 1000)
                     return HttpResponse.text('Server Error', { status: 500 })
                 }),

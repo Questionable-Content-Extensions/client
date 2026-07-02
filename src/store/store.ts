@@ -22,11 +22,16 @@ export function makeStore() {
             settings: settingsReducer,
             [apiSlice.reducerPath]: apiSlice.reducer,
         },
-        middleware: (getDefaultMiddleware) =>
-            getDefaultMiddleware()
+        middleware: (getDefaultMiddleware) => {
+            const base = getDefaultMiddleware()
                 .concat(apiSlice.middleware)
-                .concat(customLogger)
-                .concat(rtkQueryErrorLogger),
+                .concat(rtkQueryErrorLogger)
+            // redux-logger is dev-only noise under Vitest (every dispatch in
+            // every Storybook test fires it), so skip it during test runs.
+            return import.meta.env.MODE === 'test'
+                ? base
+                : base.concat(customLogger)
+        },
     })
 
     setupListeners(store.dispatch)

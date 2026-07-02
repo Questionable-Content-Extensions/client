@@ -1,19 +1,42 @@
-import { ComicId } from '@models/ComicId'
-import { ComicList } from '@models/ComicList'
+import DeleteItemdataImageImageIdSpec, {
+    DeleteItemdataImageImageIdResponse,
+} from '@endpoints/DeleteItemdataImageImageId'
+import GetItemdataSpec, { GetItemdataResponse } from '@endpoints/GetItemdata'
+import GetItemdataItemIdSpec, {
+    GetItemdataItemIdResponse,
+} from '@endpoints/GetItemdataItemId'
+import GetItemdataItemIdComicsSpec, {
+    GetItemdataItemIdComicsResponse,
+} from '@endpoints/GetItemdataItemIdComics'
+import GetItemdataItemIdComicsRandomSpec, {
+    GetItemdataItemIdComicsRandomQuery,
+    GetItemdataItemIdComicsRandomResponse,
+} from '@endpoints/GetItemdataItemIdComicsRandom'
+import GetItemdataItemIdFriendsSpec, {
+    GetItemdataItemIdFriendsResponse,
+} from '@endpoints/GetItemdataItemIdFriends'
+import GetItemdataItemIdImagesSpec, {
+    GetItemdataItemIdImagesResponse,
+} from '@endpoints/GetItemdataItemIdImages'
+import GetItemdataItemIdLocationsSpec, {
+    GetItemdataItemIdLocationsResponse,
+} from '@endpoints/GetItemdataItemIdLocations'
+import PatchItemdataItemIdSpec, {
+    PatchItemdataItemIdResponse,
+} from '@endpoints/PatchItemdataItemId'
+import PostItemdataItemIdImagesPrimarySpec, {
+    PostItemdataItemIdImagesPrimaryResponse,
+} from '@endpoints/PostItemdataItemIdImagesPrimary'
 import { DeleteImageBody } from '@models/DeleteImageBody'
 import { ImageId } from '@models/ImageId'
-import { Item } from '@models/Item'
 import { ItemId } from '@models/ItemId'
-import { ItemImageList } from '@models/ItemImageList'
-import { ItemList } from '@models/ItemList'
 import { PatchItemBody } from '@models/PatchItemBody'
-import { RandomItemComicQuery } from '@models/RandomItemComicQuery'
-import { RelatedItem } from '@models/RelatedItem'
 import { SetPrimaryImageBody } from '@models/SetPrimaryImageBody'
 import { Token } from '@models/Token'
 import { skipToken } from '@reduxjs/toolkit/dist/query'
 import {
     apiSlice,
+    queryFromSpec,
     transformResponseByJsonParseResultText,
 } from '@store/apiSlice'
 import toastSuccess from '@store/toastSuccess'
@@ -32,7 +55,7 @@ export type UploadImageArgs = {
 }
 
 export type GetRandomComicQueryArgs = {
-    currentComic: ComicId
+    currentComic: number
     itemId: ItemId
     skipGuest: boolean
     skipNonCanon: boolean
@@ -40,13 +63,10 @@ export type GetRandomComicQueryArgs = {
 
 export const itemApiSlice = apiSlice.injectEndpoints({
     endpoints: (builder) => ({
-        allItems: builder.query<ItemList[], void>({
-            query: () => {
-                return {
-                    url: `${constants.itemDataEndpoint}`,
-                }
-            },
-            transformResponse: transformResponseByJsonParseResultText,
+        allItems: builder.query<GetItemdataResponse, void>({
+            query: () => queryFromSpec(GetItemdataSpec),
+            transformResponse:
+                transformResponseByJsonParseResultText<GetItemdataResponse>,
             providesTags: (result, _error, _args) =>
                 result
                     ? [
@@ -58,34 +78,39 @@ export const itemApiSlice = apiSlice.injectEndpoints({
                     : [],
             //keepUnusedDataFor: 60 * 60 * 24,
         }),
-        getItemData: builder.query<Item, GetDataQueryArgs>({
-            query: ({ itemId }) => {
-                return {
-                    url: `${constants.itemDataEndpoint}${itemId}`,
-                }
-            },
-            transformResponse: transformResponseByJsonParseResultText,
-            providesTags: (result, _error, _args) =>
-                result
-                    ? [
-                          {
-                              type: 'Item',
-                              id: result.id,
-                          },
-                          {
-                              type: 'Item',
-                              id: `${result.id}-data`,
-                          },
-                      ]
-                    : [],
-        }),
-        comics: builder.query<ComicList[], GetDataQueryArgs>({
-            query: ({ itemId }) => {
-                return {
-                    url: `${constants.itemDataEndpoint}${itemId}/comics`,
-                }
-            },
-            transformResponse: transformResponseByJsonParseResultText,
+        getItemData: builder.query<GetItemdataItemIdResponse, GetDataQueryArgs>(
+            {
+                query: ({ itemId }) =>
+                    queryFromSpec(GetItemdataItemIdSpec, {
+                        pathParams: itemId,
+                    }),
+                transformResponse:
+                    transformResponseByJsonParseResultText<GetItemdataItemIdResponse>,
+                providesTags: (result, _error, _args) =>
+                    result
+                        ? [
+                              {
+                                  type: 'Item',
+                                  id: result.id,
+                              },
+                              {
+                                  type: 'Item',
+                                  id: `${result.id}-data`,
+                              },
+                          ]
+                        : [],
+            }
+        ),
+        comics: builder.query<
+            GetItemdataItemIdComicsResponse,
+            GetDataQueryArgs
+        >({
+            query: ({ itemId }) =>
+                queryFromSpec(GetItemdataItemIdComicsSpec, {
+                    pathParams: itemId,
+                }),
+            transformResponse:
+                transformResponseByJsonParseResultText<GetItemdataItemIdComicsResponse>,
             providesTags: (result, _error, args) =>
                 result
                     ? [
@@ -100,25 +125,27 @@ export const itemApiSlice = apiSlice.injectEndpoints({
                       ]
                     : [],
         }),
-        randomComic: builder.query<ComicId | null, GetRandomComicQueryArgs>({
+        randomComic: builder.query<
+            GetItemdataItemIdComicsRandomResponse,
+            GetRandomComicQueryArgs
+        >({
             query: ({ currentComic, itemId, skipGuest, skipNonCanon }) => {
-                const urlParameters: RandomItemComicQuery = {
+                const query: GetItemdataItemIdComicsRandomQuery = {
                     'current-comic': currentComic.toString(),
                 }
                 if (skipNonCanon) {
-                    urlParameters.exclude = 'non-canon'
+                    query.exclude = 'non-canon'
                 } else if (skipGuest) {
-                    urlParameters.exclude = 'guest'
+                    query.exclude = 'guest'
                 }
-                const urlQuery = new URLSearchParams(
-                    urlParameters as unknown as Record<string, string>
-                ).toString()
 
-                return {
-                    url: `${constants.itemDataEndpoint}${itemId}/comics/random?${urlQuery}`,
-                }
+                return queryFromSpec(GetItemdataItemIdComicsRandomSpec, {
+                    pathParams: itemId,
+                    query,
+                })
             },
-            transformResponse: transformResponseByJsonParseResultText,
+            transformResponse:
+                transformResponseByJsonParseResultText<GetItemdataItemIdComicsRandomResponse>,
             providesTags: (result, _error, args) =>
                 result !== undefined
                     ? [
@@ -129,13 +156,16 @@ export const itemApiSlice = apiSlice.injectEndpoints({
                       ]
                     : [],
         }),
-        imageData: builder.query<ItemImageList[], GetDataQueryArgs>({
-            query: ({ itemId }) => {
-                return {
-                    url: `${constants.itemDataEndpoint}${itemId}/images`,
-                }
-            },
-            transformResponse: transformResponseByJsonParseResultText,
+        imageData: builder.query<
+            GetItemdataItemIdImagesResponse,
+            GetDataQueryArgs
+        >({
+            query: ({ itemId }) =>
+                queryFromSpec(GetItemdataItemIdImagesSpec, {
+                    pathParams: itemId,
+                }),
+            transformResponse:
+                transformResponseByJsonParseResultText<GetItemdataItemIdImagesResponse>,
             providesTags: (result, _error, args) =>
                 result
                     ? [
@@ -150,13 +180,16 @@ export const itemApiSlice = apiSlice.injectEndpoints({
                       ]
                     : [],
         }),
-        friendData: builder.query<RelatedItem[], GetDataQueryArgs>({
-            query: ({ itemId }) => {
-                return {
-                    url: `${constants.itemDataEndpoint}${itemId}/friends`,
-                }
-            },
-            transformResponse: transformResponseByJsonParseResultText,
+        friendData: builder.query<
+            GetItemdataItemIdFriendsResponse,
+            GetDataQueryArgs
+        >({
+            query: ({ itemId }) =>
+                queryFromSpec(GetItemdataItemIdFriendsSpec, {
+                    pathParams: itemId,
+                }),
+            transformResponse:
+                transformResponseByJsonParseResultText<GetItemdataItemIdFriendsResponse>,
             providesTags: (result, _error, args) =>
                 result
                     ? [
@@ -171,13 +204,16 @@ export const itemApiSlice = apiSlice.injectEndpoints({
                       ]
                     : [],
         }),
-        locationData: builder.query<RelatedItem[], GetDataQueryArgs>({
-            query: ({ itemId }) => {
-                return {
-                    url: `${constants.itemDataEndpoint}${itemId}/locations`,
-                }
-            },
-            transformResponse: transformResponseByJsonParseResultText,
+        locationData: builder.query<
+            GetItemdataItemIdLocationsResponse,
+            GetDataQueryArgs
+        >({
+            query: ({ itemId }) =>
+                queryFromSpec(GetItemdataItemIdLocationsSpec, {
+                    pathParams: itemId,
+                }),
+            transformResponse:
+                transformResponseByJsonParseResultText<GetItemdataItemIdLocationsResponse>,
             providesTags: (result, _error, args) =>
                 result
                     ? [
@@ -193,24 +229,17 @@ export const itemApiSlice = apiSlice.injectEndpoints({
                     : [],
         }),
         patchItem: builder.mutation<
-            string,
+            PatchItemdataItemIdResponse,
             { item: ItemId; body: PatchItemBody }
         >({
-            query: ({ item, body }) => {
-                const url = `${constants.itemDataEndpoint}${item}`
-                return {
-                    url,
-                    configuration: {
-                        data: JSON.stringify(body),
-                        method: 'PATCH',
-                        headers: {
-                            'Content-Type': 'application/json; charset=utf-8',
-                        },
-                    },
-                }
-            },
+            query: ({ item, body }) =>
+                queryFromSpec(PatchItemdataItemIdSpec, {
+                    pathParams: item,
+                    body,
+                }),
             onQueryStarted: toastSuccess,
-            transformResponse: (response) => response.responseText,
+            transformResponse:
+                transformResponseByJsonParseResultText<PatchItemdataItemIdResponse>,
             invalidatesTags: (result, _error, args) =>
                 result
                     ? [
@@ -229,24 +258,17 @@ export const itemApiSlice = apiSlice.injectEndpoints({
                     : [],
         }),
         deleteImage: builder.mutation<
-            string,
+            DeleteItemdataImageImageIdResponse,
             { itemId: ItemId; imageId: ImageId; body: DeleteImageBody }
         >({
-            query: ({ imageId, body }) => {
-                const url = `${constants.itemImageEndpoint}${imageId}`
-                return {
-                    url,
-                    configuration: {
-                        data: JSON.stringify(body),
-                        method: 'DELETE',
-                        headers: {
-                            'Content-Type': 'application/json; charset=utf-8',
-                        },
-                    },
-                }
-            },
+            query: ({ imageId, body }) =>
+                queryFromSpec(DeleteItemdataImageImageIdSpec, {
+                    pathParams: imageId,
+                    body,
+                }),
+            transformResponse:
+                transformResponseByJsonParseResultText<DeleteItemdataImageImageIdResponse>,
             onQueryStarted: toastSuccess,
-            transformResponse: (response) => response.responseText,
             invalidatesTags: (result, _error, args) =>
                 result
                     ? [
@@ -266,23 +288,17 @@ export const itemApiSlice = apiSlice.injectEndpoints({
                     : [],
         }),
         setPrimaryImage: builder.mutation<
-            string,
+            PostItemdataItemIdImagesPrimaryResponse,
             { itemId: ItemId; body: SetPrimaryImageBody }
         >({
-            query: ({ itemId, body }) => {
-                return {
-                    url: `${constants.itemDataEndpoint}${itemId}/images/primary`,
-                    configuration: {
-                        data: JSON.stringify(body),
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json; charset=utf-8',
-                        },
-                    },
-                }
-            },
+            query: ({ itemId, body }) =>
+                queryFromSpec(PostItemdataItemIdImagesPrimarySpec, {
+                    pathParams: itemId,
+                    body,
+                }),
             onQueryStarted: toastSuccess,
-            transformResponse: (response) => response.responseText,
+            transformResponse:
+                transformResponseByJsonParseResultText<PostItemdataItemIdImagesPrimaryResponse>,
             invalidatesTags: (result, _error, args) =>
                 result
                     ? [

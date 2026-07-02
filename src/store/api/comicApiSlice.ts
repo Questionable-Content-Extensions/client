@@ -1,11 +1,35 @@
 import { toast } from 'react-toastify'
 
+import GetComicdataSpec, {
+    GetComicdataQuery,
+    GetComicdataResponse,
+} from '@endpoints/GetComicdata'
+import GetComicdataComicIdSpec, {
+    GetComicdataComicIdQuery,
+    GetComicdataComicIdResponse,
+} from '@endpoints/GetComicdataComicId'
+import GetComicdataContainingItemsSpec, {
+    GetComicdataContainingItemsResponse,
+} from '@endpoints/GetComicdataContainingItems'
+import GetComicdataExcludedSpec, {
+    GetComicdataExcludedQuery,
+    GetComicdataExcludedResponse,
+} from '@endpoints/GetComicdataExcluded'
+import PatchComicdataComicIdSpec, {
+    PatchComicdataComicIdResponse,
+} from '@endpoints/PatchComicdataComicId'
+import PostComicdataAdditemSpec, {
+    PostComicdataAdditemResponse,
+} from '@endpoints/PostComicdataAdditem'
+import PostComicdataAdditemsSpec, {
+    PostComicdataAdditemsResponse,
+} from '@endpoints/PostComicdataAdditems'
+import PostComicdataRemoveitemSpec, {
+    PostComicdataRemoveitemResponse,
+} from '@endpoints/PostComicdataRemoveitem'
 import { AddItemToComicBody } from '@models/AddItemToComicBody'
 import { AddItemsToComicBody } from '@models/AddItemsToComicBody'
-import { ByIdQuery } from '@models/ByIdQuery'
-import { Comic } from '@models/Comic'
 import { ComicId } from '@models/ComicId'
-import { ComicList } from '@models/ComicList'
 import { FlagType } from '@models/FlagType'
 import { ItemId } from '@models/ItemId'
 import { PatchComicBody } from '@models/PatchComicBody'
@@ -15,13 +39,13 @@ import { createSelector } from '@reduxjs/toolkit'
 import { TagDescription } from '@reduxjs/toolkit/dist/query'
 import {
     apiSlice,
+    queryFromSpec,
     transformResponseByJsonParseResultText,
 } from '@store/apiSlice'
 import { RootState } from '@store/store'
 import toastSuccess from '@store/toastSuccess'
 
 import { SettingValues } from '~/Settings'
-import constants from '~/constants'
 import { EndpointBuilderTagTypeExtractor } from '~/tsUtils'
 
 export type GetDataQueryArgs = {
@@ -67,7 +91,10 @@ export type AddItemsMutationArgs = AddItemsToComicBody
 
 export const comicApiSlice = apiSlice.injectEndpoints({
     endpoints: (builder) => ({
-        getComicData: builder.query<Comic, GetDataQueryArgs>({
+        getComicData: builder.query<
+            GetComicdataComicIdResponse,
+            GetDataQueryArgs
+        >({
             query: ({
                 comic,
                 editModeToken,
@@ -76,51 +103,49 @@ export const comicApiSlice = apiSlice.injectEndpoints({
                 showAllMembers,
                 orderMembersByLastAppearance,
             }) => {
-                const urlParameters: ByIdQuery = {}
+                const query: GetComicdataComicIdQuery = {}
                 if (editModeToken) {
-                    urlParameters.token = editModeToken
+                    query.token = editModeToken
                 }
                 if (skipNonCanon) {
-                    urlParameters.exclude = 'non-canon'
+                    query.exclude = 'non-canon'
                 } else if (skipGuest) {
-                    urlParameters.exclude = 'guest'
+                    query.exclude = 'guest'
                 }
                 if (showAllMembers || editModeToken) {
-                    urlParameters.include = 'all'
+                    query.include = 'all'
                 }
-                if (orderMembersByLastAppearance) {
-                    urlParameters.sorting = 'by-last-appearance'
-                } else {
-                    urlParameters.sorting = 'by-count'
-                }
-                const urlQuery = new URLSearchParams(
-                    urlParameters as Record<string, string>
-                ).toString()
+                query.sorting = orderMembersByLastAppearance
+                    ? 'by-last-appearance'
+                    : 'by-count'
 
-                return {
-                    url: `${constants.comicDataEndpoint}${comic}?${urlQuery}`,
-                }
+                return queryFromSpec(GetComicdataComicIdSpec, {
+                    pathParams: comic,
+                    query,
+                })
             },
-            transformResponse: transformResponseByJsonParseResultText,
+            transformResponse:
+                transformResponseByJsonParseResultText<GetComicdataComicIdResponse>,
             providesTags: (result) =>
                 result ? [{ type: 'Comic', id: result.comic }] : [],
         }),
-        getExcluded: builder.query<ComicList[], GetExcludedQueryArgs>({
+        getExcluded: builder.query<
+            GetComicdataExcludedResponse,
+            GetExcludedQueryArgs
+        >({
             query: ({ skipGuest, skipNonCanon }) => {
-                const urlParameters: { exclusion?: 'guest' | 'non-canon' } = {}
+                const query: GetComicdataExcludedQuery = {}
 
                 if (skipGuest) {
-                    urlParameters.exclusion = 'guest'
+                    query.exclusion = 'guest'
                 } else if (skipNonCanon) {
-                    urlParameters.exclusion = 'non-canon'
+                    query.exclusion = 'non-canon'
                 }
-                const urlQuery = new URLSearchParams(urlParameters).toString()
 
-                return {
-                    url: `${constants.excludedComicsEndpoint}?${urlQuery}`,
-                }
+                return queryFromSpec(GetComicdataExcludedSpec, { query })
             },
-            transformResponse: transformResponseByJsonParseResultText,
+            transformResponse:
+                transformResponseByJsonParseResultText<GetComicdataExcludedResponse>,
             providesTags: (result, error, args) =>
                 result
                     ? [
@@ -135,13 +160,13 @@ export const comicApiSlice = apiSlice.injectEndpoints({
                       ]
                     : [],
         }),
-        listAll: builder.query<ComicList[], void>({
+        listAll: builder.query<GetComicdataResponse, void>({
             query: () => {
-                return {
-                    url: constants.comicDataEndpoint,
-                }
+                const query: GetComicdataQuery = {}
+                return queryFromSpec(GetComicdataSpec, { query })
             },
-            transformResponse: transformResponseByJsonParseResultText,
+            transformResponse:
+                transformResponseByJsonParseResultText<GetComicdataResponse>,
             providesTags: (result, _error, _args) =>
                 result
                     ? [
@@ -152,14 +177,17 @@ export const comicApiSlice = apiSlice.injectEndpoints({
                       ]
                     : [],
         }),
-        getConainingItems: builder.query<ComicId[], ItemId[]>({
+        getConainingItems: builder.query<
+            GetComicdataContainingItemsResponse,
+            ItemId[]
+        >({
             query: (args) => {
-                const query = args.map((c) => `item-id=${c}`).join('&')
-                return {
-                    url: `${constants.containingItemsEndpoint}?${query}`,
-                }
+                return queryFromSpec(GetComicdataContainingItemsSpec, {
+                    query: { 'item-id': args },
+                })
             },
-            transformResponse: transformResponseByJsonParseResultText,
+            transformResponse:
+                transformResponseByJsonParseResultText<GetComicdataContainingItemsResponse>,
             providesTags: (result, _error, _args) =>
                 result
                     ? [
@@ -171,22 +199,14 @@ export const comicApiSlice = apiSlice.injectEndpoints({
                     : [],
         }),
         patchComic: builder.mutation<
-            string,
+            PatchComicdataComicIdResponse,
             { comic: ComicId; body: PatchComicBody }
         >({
-            query: ({ comic, body }) => {
-                const url = `${constants.comicDataEndpoint}${comic}`
-                return {
-                    url,
-                    configuration: {
-                        data: JSON.stringify(body),
-                        method: 'PATCH',
-                        headers: {
-                            'Content-Type': 'application/json; charset=utf-8',
-                        },
-                    },
-                }
-            },
+            query: ({ comic, body }) =>
+                queryFromSpec(PatchComicdataComicIdSpec, {
+                    pathParams: comic,
+                    body,
+                }),
             onQueryStarted: toastSuccess,
             invalidatesTags: (result, _error, { body, comic }) => {
                 const tags: TagDescription<
@@ -220,24 +240,17 @@ export const comicApiSlice = apiSlice.injectEndpoints({
 
                 return tags
             },
-            transformResponse: (response) => response.responseText,
+            transformResponse:
+                transformResponseByJsonParseResultText<PatchComicdataComicIdResponse>,
         }),
-        addItem: builder.mutation<string, AddItemMutationArgs>({
-            query: (body) => {
-                const url = constants.addItemToComicEndpoint
-                return {
-                    url,
-                    configuration: {
-                        data: JSON.stringify(body),
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json; charset=utf-8',
-                        },
-                    },
-                }
-            },
+        addItem: builder.mutation<
+            PostComicdataAdditemResponse,
+            AddItemMutationArgs
+        >({
+            query: (body) => queryFromSpec(PostComicdataAdditemSpec, { body }),
             onQueryStarted: toastSuccess,
-            transformResponse: (response) => response.responseText,
+            transformResponse:
+                transformResponseByJsonParseResultText<PostComicdataAdditemResponse>,
             invalidatesTags: (result, _error, args) => {
                 const tags: TagDescription<
                     EndpointBuilderTagTypeExtractor<typeof builder>
@@ -279,27 +292,21 @@ export const comicApiSlice = apiSlice.injectEndpoints({
                 return tags
             },
         }),
-        removeItem: builder.mutation<string, RemoveItemMutationArgs>({
+        removeItem: builder.mutation<
+            PostComicdataRemoveitemResponse,
+            RemoveItemMutationArgs
+        >({
             query: (args) => {
-                const data: RemoveItemFromComicBody = {
+                const body: RemoveItemFromComicBody = {
                     token: args.editModeToken,
                     comicId: args.comicId,
                     itemId: args.itemId,
                 }
-                const url = constants.removeItemFromComicEndpoint
-                return {
-                    url,
-                    configuration: {
-                        data: JSON.stringify(data),
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json; charset=utf-8',
-                        },
-                    },
-                }
+                return queryFromSpec(PostComicdataRemoveitemSpec, { body })
             },
             onQueryStarted: toastSuccess,
-            transformResponse: (response) => response.responseText,
+            transformResponse:
+                transformResponseByJsonParseResultText<PostComicdataRemoveitemResponse>,
             invalidatesTags: (result, _error, args) => {
                 return result
                     ? [
@@ -322,20 +329,11 @@ export const comicApiSlice = apiSlice.injectEndpoints({
                     : []
             },
         }),
-        addItems: builder.mutation<string, AddItemsMutationArgs>({
-            query: (body) => {
-                const url = constants.addItemsToComicEndpoint
-                return {
-                    url,
-                    configuration: {
-                        data: JSON.stringify(body),
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json; charset=utf-8',
-                        },
-                    },
-                }
-            },
+        addItems: builder.mutation<
+            PostComicdataAdditemsResponse,
+            AddItemsMutationArgs
+        >({
+            query: (body) => queryFromSpec(PostComicdataAdditemsSpec, { body }),
             onQueryStarted: async (args, api) => {
                 try {
                     const result = await api.queryFulfilled
@@ -350,7 +348,8 @@ export const comicApiSlice = apiSlice.injectEndpoints({
                     // Errors are handled by rtkQueryErrorLogger
                 }
             },
-            transformResponse: (response) => response.responseText,
+            transformResponse:
+                transformResponseByJsonParseResultText<PostComicdataAdditemsResponse>,
             invalidatesTags: (result, _error, args) => {
                 const tags: TagDescription<
                     EndpointBuilderTagTypeExtractor<typeof builder>

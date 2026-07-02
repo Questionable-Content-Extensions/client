@@ -44,7 +44,7 @@ const meta: Meta<typeof NavElement> = {
         msw: {
             handlers: [
                 http.get(
-                    'http://localhost:3000/api/v2/itemdata/1/comics/random',
+                    'http://localhost:3000/api/v3/itemdata/1/comics/random',
                     () => HttpResponse.json(4269)
                 ),
             ],

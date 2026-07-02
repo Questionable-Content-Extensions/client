@@ -37,7 +37,7 @@ export const Default: Story = {
         msw: {
             handlers: [
                 http.get(
-                    'http://localhost:3000/api/v2/comicdata/:comicId',
+                    'http://localhost:3000/api/v3/comicdata/:comicId',
                     async () => {
                         // We pretend this takes 1-2 seconds so we get to
                         // observe the loading UX
@@ -55,7 +55,7 @@ export const Error: Story = {
         msw: {
             handlers: [
                 http.get(
-                    'http://localhost:3000/api/v2/comicdata/:comicId',
+                    'http://localhost:3000/api/v3/comicdata/:comicId',
                     async () => {
                         await delay(1000 + Math.random() * 1000)
                         return HttpResponse.text('Error!', { status: 500 })

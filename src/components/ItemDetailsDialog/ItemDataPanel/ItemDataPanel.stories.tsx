@@ -42,7 +42,7 @@ const meta: Meta<typeof ItemDataPanel> = {
     parameters: {
         msw: {
             handlers: [
-                http.get('http://localhost:3000/api/v2/itemdata/', () => {
+                http.get('http://localhost:3000/api/v3/itemdata/', () => {
                     const all = [...ALL_ITEMS]
                     const name =
                         'This is a mocked API response and will only be accurate for comic 666'
@@ -57,7 +57,7 @@ const meta: Meta<typeof ItemDataPanel> = {
                     return HttpResponse.json(all)
                 }),
                 http.get(
-                    'http://localhost:3000/api/v2/itemdata/image/:imageId',
+                    'http://localhost:3000/api/v3/itemdata/image/:imageId',
                     async () => {
                         const imageBuffer = await fetch(fayeImage).then((res) =>
                             res.arrayBuffer()

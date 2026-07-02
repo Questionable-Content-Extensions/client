@@ -30,7 +30,7 @@ const meta: Meta<typeof CopyItemsDialog> = {
     parameters: {
         msw: {
             handlers: [
-                http.get('http://localhost:3000/api/v2/itemdata/', () => {
+                http.get('http://localhost:3000/api/v3/itemdata/', () => {
                     const all = [...ALL_ITEMS]
                     const name =
                         'This is a mocked API response and will only be accurate for comic 666'
@@ -45,7 +45,7 @@ const meta: Meta<typeof CopyItemsDialog> = {
                     return HttpResponse.json(all)
                 }),
                 http.get(
-                    'http://localhost:3000/api/v2/comicdata/:comicId',
+                    'http://localhost:3000/api/v3/comicdata/:comicId',
                     async ({ params }) => {
                         const { comicId } = params
                         // We pretend this takes 1-2 seconds so we get to
@@ -71,11 +71,11 @@ const meta: Meta<typeof CopyItemsDialog> = {
                         }
                     }
                 ),
-                http.get('http://localhost:3000/api/v2/comicdata/', () => {
+                http.get('http://localhost:3000/api/v3/comicdata/', () => {
                     return HttpResponse.json(getComicListMocks(1000))
                 }),
                 http.post(
-                    'http://localhost:3000/api/v2/comicdata/additems',
+                    'http://localhost:3000/api/v3/comicdata/additems',
                     async () => {
                         // We pretend this takes 1-2 seconds so we get to
                         // observe the loading UX

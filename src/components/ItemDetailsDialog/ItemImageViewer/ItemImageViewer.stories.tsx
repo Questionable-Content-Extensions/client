@@ -27,7 +27,7 @@ const meta: Meta<typeof ItemImageViewer> = {
         msw: {
             handlers: [
                 http.get(
-                    'http://localhost:3000/api/v2/itemdata/image/:imageId',
+                    'http://localhost:3000/api/v3/itemdata/image/:imageId',
                     async () => {
                         const imageBuffer = await fetch(fayeImage).then((res) =>
                             res.arrayBuffer()

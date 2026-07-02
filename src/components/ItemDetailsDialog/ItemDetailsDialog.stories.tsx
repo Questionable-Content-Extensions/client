@@ -26,7 +26,7 @@ import ItemDetailsDialog from './ItemDetailsDialog'
 const DELAY = () => delay(1000 + Math.random() * 1000)
 
 const successHandlers = [
-    http.get('http://localhost:3000/api/v2/itemdata/', () => {
+    http.get('http://localhost:3000/api/v3/itemdata/', () => {
         const all = [...ALL_ITEMS]
         const name =
             'This is a mocked API response and will only be accurate for comic 666'
@@ -41,7 +41,7 @@ const successHandlers = [
         return HttpResponse.json(all)
     }),
     http.get(
-        'http://localhost:3000/api/v2/comicdata/:comicId',
+        'http://localhost:3000/api/v3/comicdata/:comicId',
         async ({ params }) => {
             const { comicId } = params
             await DELAY()
@@ -65,44 +65,44 @@ const successHandlers = [
             }
         }
     ),
-    http.get('http://localhost:3000/api/v2/itemdata/:itemId', async () => {
+    http.get('http://localhost:3000/api/v3/itemdata/:itemId', async () => {
         await DELAY()
         return HttpResponse.json(FAYE)
     }),
-    http.patch('http://localhost:3000/api/v2/itemdata/:itemId', async () => {
+    http.patch('http://localhost:3000/api/v3/itemdata/:itemId', async () => {
         await DELAY()
         return HttpResponse.text('Fake success!')
     }),
     http.get(
-        'http://localhost:3000/api/v2/itemdata/:itemId/comics',
+        'http://localhost:3000/api/v3/itemdata/:itemId/comics',
         async () => {
             await DELAY()
             return HttpResponse.json(FAYE_COMICS)
         }
     ),
     http.get(
-        'http://localhost:3000/api/v2/itemdata/:itemId/images',
+        'http://localhost:3000/api/v3/itemdata/:itemId/images',
         async () => {
             await DELAY()
             return HttpResponse.json(FAYE_IMAGES)
         }
     ),
     http.get(
-        'http://localhost:3000/api/v2/itemdata/:itemId/friends',
+        'http://localhost:3000/api/v3/itemdata/:itemId/friends',
         async () => {
             await DELAY()
             return HttpResponse.json(FAYE_FRIENDS)
         }
     ),
     http.get(
-        'http://localhost:3000/api/v2/itemdata/:itemId/locations',
+        'http://localhost:3000/api/v3/itemdata/:itemId/locations',
         async () => {
             await DELAY()
             return HttpResponse.json(FAYE_FRIENDS)
         }
     ),
     http.get(
-        'http://localhost:3000/api/v2/itemdata/image/:imageId',
+        'http://localhost:3000/api/v3/itemdata/image/:imageId',
         async () => {
             const imageBuffer = await fetch(fayeImage).then((res) =>
                 res.arrayBuffer()
@@ -117,7 +117,7 @@ const successHandlers = [
         }
     ),
     http.delete(
-        'http://localhost:3000/api/v2/itemdata/image/:imageId',
+        'http://localhost:3000/api/v3/itemdata/image/:imageId',
         async () => {
             // We pretend this takes 1-2 seconds so we get to
             // observe the loading UX
@@ -126,7 +126,7 @@ const successHandlers = [
         }
     ),
     http.post(
-        'http://localhost:3000/api/v2/itemdata/:itemId/images/primary',
+        'http://localhost:3000/api/v3/itemdata/:itemId/images/primary',
         async () => {
             // We pretend this takes 1-2 seconds so we get to
             // observe the loading UX
@@ -134,19 +134,19 @@ const successHandlers = [
             return HttpResponse.text('Image set as primary')
         }
     ),
-    http.post('http://localhost:3000/api/v2/comicdata/additem', async () => {
+    http.post('http://localhost:3000/api/v3/comicdata/additem', async () => {
         // We pretend this takes 1-2 seconds so we get to
         // observe the loading UX
         await DELAY()
         return HttpResponse.text('Item added to comic')
     }),
-    http.post('http://localhost:3000/api/v2/comicdata/removeitem', async () => {
+    http.post('http://localhost:3000/api/v3/comicdata/removeitem', async () => {
         // We pretend this takes 1-2 seconds so we get to
         // observe the loading UX
         await DELAY()
         return HttpResponse.text('Item removed from comic')
     }),
-    http.get('http://localhost:3000/api/v2/log/item', async ({ request }) => {
+    http.get('http://localhost:3000/api/v3/log/item', async ({ request }) => {
         // We pretend this takes 1-2 seconds so we get to
         // observe the loading UX
         const page = Number(new URL(request.url).searchParams.get('page'))
@@ -161,35 +161,35 @@ const SERVER_ERROR = async () => {
 }
 
 const errorHandlers = [
-    http.get('http://localhost:3000/api/v2/itemdata/', SERVER_ERROR),
-    http.get('http://localhost:3000/api/v2/itemdata/:itemId', SERVER_ERROR),
-    http.patch('http://localhost:3000/api/v2/itemdata/:itemId', SERVER_ERROR),
+    http.get('http://localhost:3000/api/v3/itemdata/', SERVER_ERROR),
+    http.get('http://localhost:3000/api/v3/itemdata/:itemId', SERVER_ERROR),
+    http.patch('http://localhost:3000/api/v3/itemdata/:itemId', SERVER_ERROR),
     http.get(
-        'http://localhost:3000/api/v2/itemdata/:itemId/images',
+        'http://localhost:3000/api/v3/itemdata/:itemId/images',
         SERVER_ERROR
     ),
     http.get(
-        'http://localhost:3000/api/v2/itemdata/:itemId/friends',
+        'http://localhost:3000/api/v3/itemdata/:itemId/friends',
         SERVER_ERROR
     ),
     http.get(
-        'http://localhost:3000/api/v2/itemdata/:itemId/locations',
+        'http://localhost:3000/api/v3/itemdata/:itemId/locations',
         SERVER_ERROR
     ),
     http.get(
-        'http://localhost:3000/api/v2/itemdata/image/:imageId',
+        'http://localhost:3000/api/v3/itemdata/image/:imageId',
         SERVER_ERROR
     ),
     http.delete(
-        'http://localhost:3000/api/v2/itemdata/image/:imageId',
+        'http://localhost:3000/api/v3/itemdata/image/:imageId',
         SERVER_ERROR
     ),
-    http.post('http://localhost:3000/api/v2/comicdata/additem', SERVER_ERROR),
+    http.post('http://localhost:3000/api/v3/comicdata/additem', SERVER_ERROR),
     http.post(
-        'http://localhost:3000/api/v2/comicdata/removeitem',
+        'http://localhost:3000/api/v3/comicdata/removeitem',
         SERVER_ERROR
     ),
-    http.post('http://localhost:3000/api/v2/log/item', SERVER_ERROR),
+    http.post('http://localhost:3000/api/v3/log/item', SERVER_ERROR),
 ]
 
 const meta: Meta<typeof ItemDetailsDialog> = {

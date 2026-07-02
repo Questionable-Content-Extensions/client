@@ -1,3 +1,4 @@
+import type { EndpointSpec } from '@endpoints/EndpointSpec'
 import { EndpointBuilder } from '@reduxjs/toolkit/dist/query/endpointDefinitions'
 import { BaseQueryFn, createApi } from '@reduxjs/toolkit/query/react'
 
@@ -31,30 +32,32 @@ export function isGreasemonkeyResponse(
     return 'finalUrl' in possibleResponse
 }
 
-export type GreasemonkeyBaseQuery = BaseQueryFn<
-    {
-        url: string
-        configuration?: {
-            context?: undefined
-            method?:
-                | 'GET'
-                | 'POST'
-                | 'PUT'
-                | 'DELETE'
-                | 'PATCH'
-                | 'HEAD'
-                | 'TRACE'
-                | 'OPTIONS'
-                | 'CONNECT'
-            data?: string | FormData
-            headers?: {
-                [header: string]: string
-            }
-            overrideMimeType?: string
-            user?: string
-            password?: string
+export interface GreasemonkeyQueryArgs {
+    url: string
+    configuration?: {
+        context?: undefined
+        method?:
+            | 'GET'
+            | 'POST'
+            | 'PUT'
+            | 'DELETE'
+            | 'PATCH'
+            | 'HEAD'
+            | 'TRACE'
+            | 'OPTIONS'
+            | 'CONNECT'
+        data?: string | FormData
+        headers?: {
+            [header: string]: string
         }
-    },
+        overrideMimeType?: string
+        user?: string
+        password?: string
+    }
+}
+
+export type GreasemonkeyBaseQuery = BaseQueryFn<
+    GreasemonkeyQueryArgs,
     GM.Response<undefined>,
     GreasemonkeyError,
     object, // DefinitionExtraOptions
@@ -195,4 +198,66 @@ export function transformResponseByJsonParseResultText<T>(
     response: GM.Response<undefined>
 ) {
     return JSON.parse(response.responseText) as T
+}
+
+function buildQueryString(query: Record<string, unknown> | undefined) {
+    if (!query) return ''
+    const params = new URLSearchParams()
+    for (const [key, value] of Object.entries(query)) {
+        if (value === undefined) continue
+        if (Array.isArray(value)) {
+            for (const item of value) params.append(key, String(item))
+        } else {
+            params.append(key, String(value))
+        }
+    }
+    return params.toString()
+}
+
+/**
+ * Builds the `{ url, configuration }` shape `GreasemonkeyBaseQuery` expects
+ * from a generated `EndpointSpec` (see `src/bindings/endpoints`), substituting
+ * path params and serializing the query string and JSON body.
+ */
+export function queryFromSpec<Q, B, P>(
+    spec: EndpointSpec<Q, B, P, unknown>,
+    args?: { pathParams?: P; query?: Q; body?: B }
+): GreasemonkeyQueryArgs {
+    let path: string = spec.path
+
+    if (args?.pathParams !== undefined) {
+        if (typeof args.pathParams === 'object' && args.pathParams !== null) {
+            for (const [key, value] of Object.entries(
+                args.pathParams as Record<string, unknown>
+            )) {
+                path = path.replace(`{${key}}`, String(value))
+            }
+        } else {
+            path = path.replace(/\{[^}]+\}/, String(args.pathParams))
+        }
+    }
+
+    const queryString = buildQueryString(
+        args?.query as Record<string, unknown> | undefined
+    )
+    if (queryString) path = `${path}?${queryString}`
+
+    if (args?.body !== undefined) {
+        return {
+            url: path,
+            configuration: {
+                data: JSON.stringify(args.body),
+                method: spec.method,
+                headers: {
+                    'Content-Type': 'application/json; charset=utf-8',
+                },
+            },
+        }
+    }
+
+    if (spec.method !== 'GET') {
+        return { url: path, configuration: { method: spec.method } }
+    }
+
+    return { url: path }
 }

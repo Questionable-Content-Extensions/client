@@ -17,7 +17,7 @@ setup()
 
 mswInitialize({
     onUnhandledRequest(req, print) {
-        if (!req.url.startsWith('http://localhost:3000/api/')) {
+        if (!req.url.startsWith('/api/')) {
             return
         }
 

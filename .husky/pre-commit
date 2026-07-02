@@ -1,3 +1,49 @@
+set -ex
+
+has_node_changes() {
+    echo "$STAGED" | grep -qE '\.(ts|tsx|js|jsx|mjs|cjs)$' || \
+    echo "$STAGED" | grep -qE 'package(-lock)?\.json$'
+}
+
+STAGED=$(git diff --cached --name-only)
+
+if [ "$SKIP_PRE_COMMIT" = "1" ]; then
+  npx lint-staged
+  exit 0
+fi
+
 npx tsc --noEmit
+
+if has_node_changes; then
+    if [ "$SKIP_TESTS" != "1" ]; then
+        REACT_TESTS=()
+        STORYBOOK_TESTS=()
+
+        while IFS= read -r file; do
+            [ -z "$file" ] && continue
+            name=$(basename "$file" | sed 's/\.\(ts\|tsx\)$//')
+            case "$name" in
+                *.test)
+                    REACT_TESTS+=("$name")
+                    ;;
+                *.stories)
+                    STORYBOOK_TESTS+=("$name")
+                    ;;
+                *)
+                    REACT_TESTS+=("${name}.test")
+                    STORYBOOK_TESTS+=("${name}.stories")
+                    ;;
+            esac
+        done < <(echo "$STAGED" | grep -E '^src/.*\.(ts|tsx)$' || true)
+
+        if [ ${#REACT_TESTS[@]} -gt 0 ]; then
+            npm run test:react -- "${REACT_TESTS[@]}"
+        fi
+        if [ ${#STORYBOOK_TESTS[@]} -gt 0 ]; then
+            npm run test:storybook -- "${STORYBOOK_TESTS[@]}"
+        fi
+    fi
+    npm run vite-build
+fi
 
 npx lint-staged
