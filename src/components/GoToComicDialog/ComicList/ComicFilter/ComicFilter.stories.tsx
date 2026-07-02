@@ -1,26 +1,19 @@
+import { HttpResponse, http } from 'msw'
 import { useState } from 'react'
 
 import { Filter } from '@models/Filter'
-import { Meta, StoryObj } from '@storybook/react'
+import type { Meta, StoryObj } from '@storybook/react-vite'
 
-import { ALL_ITEMS, useMswReady } from '~/mocks'
+import { ALL_ITEMS } from '~/mocks'
 
 import ComicFilter from './ComicFilter'
 
-export default {
+const meta: Meta<typeof ComicFilter> = {
     component: ComicFilter,
-} as Meta<typeof ComicFilter>
-
-export const Default: StoryObj<typeof ComicFilter> = {
-    render: (args) => {
-        const mswReady = useMswReady()
-
-        // Then, let's fake the necessary REST calls
-        const { worker, rest } = window.msw
-        worker.use(
-            rest.get(
-                'http://localhost:3000/api/v2/itemdata/',
-                (req, res, ctx) => {
+    parameters: {
+        msw: {
+            handlers: [
+                http.get('http://localhost:3000/api/v2/itemdata/', () => {
                     const all = [...ALL_ITEMS]
                     const name =
                         'This is a mocked API response and will only be accurate for comic 666'
@@ -32,17 +25,21 @@ export const Default: StoryObj<typeof ComicFilter> = {
                         type: 'storyline',
                         color: 'ffaabb',
                     })
-                    return res(ctx.json(all))
-                }
-            )
-        )
-
+                    return HttpResponse.json(all)
+                }),
+            ],
+        },
+    },
+    render: (args) => {
         const [filters, setFilters] = useState<Filter[]>([])
 
-        return mswReady ? (
+        return (
             <ComicFilter {...args} filters={filters} setFilters={setFilters} />
-        ) : (
-            <></>
         )
     },
 }
+export default meta
+
+type Story = StoryObj<typeof ComicFilter>
+
+export const Default: Story = {}

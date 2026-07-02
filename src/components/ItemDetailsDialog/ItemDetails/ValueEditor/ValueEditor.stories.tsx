@@ -1,40 +1,43 @@
-import { useArgs } from '@storybook/preview-api'
-import { Meta, StoryFn } from '@storybook/react'
+import { useArgs } from 'storybook/preview-api'
+
+import type { Meta, StoryObj } from '@storybook/react-vite'
 
 import ValueEditor from './ValueEditor'
 
-export default {
+const meta: Meta<typeof ValueEditor> = {
     component: ValueEditor,
-} as Meta<typeof ValueEditor>
+    args: {
+        dirty: false,
+        isSaving: false,
+        label: 'Label',
+        value: 'Value',
+    },
+    render: (args) => {
+        const [, setArgs] = useArgs()
+        return (
+            <ValueEditor
+                {...args}
+                setValue={(value) => {
+                    setArgs({ value, dirty: true })
+                }}
+            />
+        )
+    },
+}
+export default meta
 
-const Template: StoryFn<typeof ValueEditor> = (args) => {
-    const [_args, setArgs] = useArgs()
-    return (
-        <ValueEditor
-            {...args}
-            setValue={(value) => {
-                setArgs({ value, dirty: true })
-            }}
-        />
-    )
+type Story = StoryObj<typeof ValueEditor>
+
+export const Default: Story = {}
+
+export const Dirty: Story = {
+    args: {
+        dirty: true,
+    },
 }
 
-export const Default = Template.bind({})
-Default.args = {
-    dirty: false,
-    isSaving: false,
-    label: 'Label',
-    value: 'Value',
-}
-
-export const Dirty = Template.bind({})
-Dirty.args = {
-    ...Default.args,
-    dirty: true,
-}
-
-export const Saving = Template.bind({})
-Saving.args = {
-    ...Default.args,
-    isSaving: true,
+export const Saving: Story = {
+    args: {
+        isSaving: true,
+    },
 }

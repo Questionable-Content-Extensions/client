@@ -9,7 +9,6 @@
             "@modals/*": ["src/components/Modals/*"],
             "@services/*": ["src/services/*"],
             "@components/*": ["src/components/*"],
-            "@storybook/*": ["src/storybook/*"],
             "~/*": ["src/*"]
         },
         "target": "es2016",
@@ -22,7 +21,7 @@
         "forceConsistentCasingInFileNames": true,
         "noFallthroughCasesInSwitch": true,
         "module": "esnext",
-        "moduleResolution": "node",
+        "moduleResolution": "bundler",
         "resolveJsonModule": true,
         "isolatedModules": true,
         "noEmit": true,

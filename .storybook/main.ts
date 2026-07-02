@@ -1,43 +1,29 @@
-import TsconfigPathsPlugin from 'tsconfig-paths-webpack-plugin'
+import { mergeConfig } from 'vite'
 
-import type { StorybookConfig } from '@storybook/react-webpack5'
+import type { StorybookConfig } from '@storybook/react-vite'
 
 const config: StorybookConfig = {
-    stories: [
-        '../src/**/*.stories.mdx',
-        '../src/**/*.stories.@(js|jsx|ts|tsx)',
-    ],
+    stories: ['../src/**/*.stories.@(js|jsx|ts|tsx)'],
 
     addons: [
         '@storybook/addon-links',
-        '@storybook/addon-essentials',
-        '@storybook/addon-interactions',
-        '@storybook/preset-create-react-app',
+        'msw-storybook-addon',
+        '@storybook/addon-vitest',
     ],
 
     framework: {
-        name: '@storybook/react-webpack5',
+        name: '@storybook/react-vite',
         options: {},
     },
 
-    core: {},
+    staticDirs: ['../public'],
 
-    webpackFinal: async (config, { configType: _configType }) => {
-        if (!config.resolve) {
-            config.resolve = {}
-        }
-        if (!config.resolve.plugins) {
-            config.resolve.plugins = []
-        }
-        config.resolve.plugins.push(new TsconfigPathsPlugin())
-
-        config.devtool = 'inline-source-map'
-
-        return config
-    },
+    viteFinal: (config) =>
+        mergeConfig(config, {
+            resolve: {
+                tsconfigPaths: true,
+            },
+        }),
 }
 
 export default config
-
-// TODO: After upgrading to Storybook 7.5, interaction tests have broken.
-// Figure out why and fix it.

@@ -1,49 +1,57 @@
-import { expect } from '@storybook/jest'
-import { Meta, StoryFn } from '@storybook/react'
-import { userEvent, within } from '@storybook/testing-library'
+import { expect, fn, userEvent, within } from 'storybook/test'
+
+import type { Meta, StoryObj } from '@storybook/react-vite'
 
 import ExtraNavigation from './ExtraNavigation'
 
-export default {
+const meta: Meta<typeof ExtraNavigation> = {
     component: ExtraNavigation,
-} as Meta<typeof ExtraNavigation>
-
-const Template: StoryFn<typeof ExtraNavigation> = (args) => (
-    <ExtraNavigation {...args} />
-)
-
-export const Default = Template.bind({})
-Default.args = {
-    currentComic: 123,
-    previousComic: 122,
-    nextComic: 124,
-    latestComic: 234,
-    randomComic: 69,
+    args: {
+        currentComic: 123,
+        previousComic: 122,
+        nextComic: 124,
+        latestComic: 234,
+        randomComic: 69,
+        onSetFirstComic: fn(),
+        onSetPreviousComic: fn(),
+        onSetNextComic: fn(),
+        onSetLatestComic: fn(),
+        onSetRandomComic: fn(),
+        onShowGoToComicDialog: fn(),
+    },
 }
-Default.play = async ({ canvasElement, args }) => {
-    const canvas = within(canvasElement)
+export default meta
 
-    expect(args.onSetFirstComic).not.toBeCalled()
-    await userEvent.click(canvas.getByTitle('Go to first strip'))
-    expect(args.onSetFirstComic).toBeCalled()
+type Story = StoryObj<typeof ExtraNavigation>
 
-    expect(args.onSetPreviousComic).not.toBeCalled()
-    await userEvent.click(canvas.getByTitle('Go to previous strip'))
-    expect(args.onSetPreviousComic).toBeCalled()
+export const Default: Story = {
+    play: async ({ canvasElement, args }) => {
+        const canvas = within(canvasElement)
 
-    expect(args.onSetNextComic).not.toBeCalled()
-    await userEvent.click(canvas.getByTitle('Go to next strip'))
-    expect(args.onSetNextComic).toBeCalled()
+        await expect(args.onSetFirstComic).not.toHaveBeenCalled()
+        await userEvent.click(canvas.getByTitle('Go to first strip'))
+        await expect(args.onSetFirstComic).toHaveBeenCalled()
 
-    expect(args.onSetLatestComic).not.toBeCalled()
-    await userEvent.click(canvas.getByTitle('Go to latest strip'))
-    expect(args.onSetLatestComic).toBeCalled()
+        await expect(args.onSetPreviousComic).not.toHaveBeenCalled()
+        await userEvent.click(canvas.getByTitle('Go to previous strip'))
+        await expect(args.onSetPreviousComic).toHaveBeenCalled()
 
-    expect(args.onSetRandomComic).not.toBeCalled()
-    await userEvent.click(canvas.getByTitle('Go to random strip'))
-    expect(args.onSetRandomComic).toBeCalled()
+        await expect(args.onSetNextComic).not.toHaveBeenCalled()
+        await userEvent.click(canvas.getByTitle('Go to next strip'))
+        await expect(args.onSetNextComic).toHaveBeenCalled()
 
-    expect(args.onShowGoToComicDialog).not.toBeCalled()
-    await userEvent.click(canvas.getByTitle('Go to comic...'))
-    expect(args.onShowGoToComicDialog).toBeCalled()
+        await expect(args.onSetLatestComic).not.toHaveBeenCalled()
+        await userEvent.click(canvas.getByTitle('Go to latest strip'))
+        await expect(args.onSetLatestComic).toHaveBeenCalled()
+
+        await expect(args.onSetRandomComic).not.toHaveBeenCalled()
+        await userEvent.click(canvas.getByTitle('Go to random strip'))
+        await expect(args.onSetRandomComic).toHaveBeenCalled()
+
+        await expect(args.onShowGoToComicDialog).not.toHaveBeenCalled()
+        await userEvent.click(
+            canvas.getByTitle('Go to comic... / filter comics...')
+        )
+        await expect(args.onShowGoToComicDialog).toHaveBeenCalled()
+    },
 }

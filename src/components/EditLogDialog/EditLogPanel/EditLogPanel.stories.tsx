@@ -1,33 +1,32 @@
-import { Meta, StoryFn } from '@storybook/react'
+import type { Meta, StoryObj } from '@storybook/react-vite'
 
 import { LATEST_EDIT_LOG } from '~/mocks'
 
 import EditLogPanel from './EditLogPanel'
 
-export default {
+const meta: Meta<typeof EditLogPanel> = {
     component: EditLogPanel,
-} as Meta<typeof EditLogPanel>
+    args: {
+        logs: LATEST_EDIT_LOG,
+        isFetching: false,
+        isLoading: false,
+        useCorrectTimeFormat: true,
+    },
+}
+export default meta
 
-const Template: StoryFn<typeof EditLogPanel> = (args) => {
-    return <EditLogPanel {...args} />
+type Story = StoryObj<typeof EditLogPanel>
+
+export const Default: Story = {}
+
+export const Loading: Story = {
+    args: {
+        isLoading: true,
+    },
 }
 
-export const Default = Template.bind({})
-Default.args = {
-    logs: LATEST_EDIT_LOG,
-    isFetching: false,
-    isLoading: false,
-    useCorrectTimeFormat: true,
-}
-
-export const Loading = Template.bind({})
-Loading.args = {
-    ...Default.args,
-    isLoading: true,
-}
-
-export const Fetching = Template.bind({})
-Fetching.args = {
-    ...Default.args,
-    isFetching: true,
+export const Fetching: Story = {
+    args: {
+        isFetching: true,
+    },
 }

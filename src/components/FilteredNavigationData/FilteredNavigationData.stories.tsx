@@ -1,68 +1,70 @@
 import { setCurrentComic } from '@store/comicSlice'
 import store from '@store/store'
-import { Meta, StoryFn } from '@storybook/react'
+import type { Meta, StoryObj } from '@storybook/react-vite'
 
 import { COMIC_DATA_666_HYDRATED_ITEMS } from '~/mocks'
 
 import FilteredNavigationData from './FilteredNavigationData'
 
-export default {
+const meta: Meta<typeof FilteredNavigationData> = {
     component: FilteredNavigationData,
-} as Meta<typeof FilteredNavigationData>
+    args: {
+        editMode: false,
+        isFetching: false,
+        isLoading: false,
+        isSaving: false,
+        hasError: false,
+        itemData: COMIC_DATA_666_HYDRATED_ITEMS,
+        useColors: true,
+    },
+    loaders: [
+        () => {
+            const state = store.getState()
 
-const Template: StoryFn<typeof FilteredNavigationData> = (args) => {
-    const state = store.getState()
+            if (state.comic.current !== 666) {
+                store.dispatch(setCurrentComic(666))
+            }
+        },
+    ],
+}
+export default meta
 
-    if (state.comic.current !== 666) {
-        store.dispatch(setCurrentComic(666))
-    }
+type Story = StoryObj<typeof FilteredNavigationData>
 
-    return <FilteredNavigationData {...args} />
+export const Default: Story = {}
+
+export const NoColors: Story = {
+    args: {
+        useColors: false,
+    },
 }
 
-export const Default = Template.bind({})
-Default.args = {
-    editMode: false,
-    isFetching: false,
-    isLoading: false,
-    isSaving: false,
-    hasError: false,
-    itemData: COMIC_DATA_666_HYDRATED_ITEMS,
-    useColors: true,
+export const Loading: Story = {
+    args: {
+        isLoading: true,
+    },
 }
 
-export const NoColors = Template.bind({})
-NoColors.args = {
-    ...Default.args,
-    useColors: false,
+export const Fetching: Story = {
+    args: {
+        isFetching: true,
+    },
 }
 
-export const Loading = Template.bind({})
-Loading.args = {
-    ...Default.args,
-    isLoading: true,
+export const Saving: Story = {
+    args: {
+        isSaving: true,
+    },
 }
 
-export const Fetching = Template.bind({})
-Fetching.args = {
-    ...Default.args,
-    isFetching: true,
+export const HasError: Story = {
+    args: {
+        hasError: true,
+    },
 }
 
-export const Saving = Template.bind({})
-Saving.args = {
-    ...Default.args,
-    isSaving: true,
-}
-
-export const HasError = Template.bind({})
-HasError.args = {
-    ...Default.args,
-    hasError: true,
-}
-
-export const EditMode = Template.bind({})
-EditMode.args = {
-    ...Default.args,
-    editMode: true,
+export const EditMode: Story = {
+    args: {
+        editMode: true,
+    },
 }

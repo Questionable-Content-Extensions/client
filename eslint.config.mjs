@@ -14,8 +14,6 @@ export default defineConfig([
         'dist/**/*',
         'build/**/*',
         'storybook-static/**/*',
-        '.storybook/**/*',
-        '**/*.stories.tsx',
         'public/mockServiceWorker.js',
     ]),
     js.configs.recommended,

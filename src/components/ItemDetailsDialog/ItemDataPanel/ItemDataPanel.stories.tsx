@@ -1,10 +1,11 @@
+import { HttpResponse, http } from 'msw'
 import { useState } from 'react'
 
 import { Item } from '@models/Item'
 import { apiSlice } from '@store/apiSlice'
 import { setFromItem } from '@store/itemEditorSlice'
 import store from '@store/store'
-import { Meta, StoryFn } from '@storybook/react'
+import type { Meta, StoryObj } from '@storybook/react-vite'
 
 import {
     ALL_ITEMS,
@@ -17,12 +18,12 @@ import {
     FAYE_LOCATIONS,
     MANY_IMAGES,
     QCEXT_SERVER_DEVELOPMENT_URL,
-    useMswReady,
 } from '~/mocks'
 
+import fayeImage from '../4.png'
 import ItemDataPanel from './ItemDataPanel'
 
-export default {
+const meta: Meta<typeof ItemDataPanel> = {
     component: ItemDataPanel,
     argTypes: {
         onGoToComic: { action: 'onGoToComic' },
@@ -30,119 +31,121 @@ export default {
         onDeleteImage: { action: 'onDeleteImage' },
         onSetPrimaryImage: { action: 'onSetPrimaryImage' },
     },
-} as Meta<typeof ItemDataPanel>
+    args: {
+        itemDataUrl: QCEXT_SERVER_DEVELOPMENT_URL,
+        itemData: FAYE,
+        itemImageData: FAYE_IMAGES,
+        itemFriendData: FAYE_FRIENDS,
+        itemLocationData: FAYE_LOCATIONS,
+        editModeToken: null,
+    },
+    parameters: {
+        msw: {
+            handlers: [
+                http.get('http://localhost:3000/api/v2/itemdata/', () => {
+                    const all = [...ALL_ITEMS]
+                    const name =
+                        'This is a mocked API response and will only be accurate for comic 666'
+                    all.push({
+                        id: -1,
+                        name,
+                        shortName: name,
+                        count: 0,
+                        type: 'storyline',
+                        color: 'ffaabb',
+                    })
+                    return HttpResponse.json(all)
+                }),
+                http.get(
+                    'http://localhost:3000/api/v2/itemdata/image/:imageId',
+                    async () => {
+                        const imageBuffer = await fetch(fayeImage).then((res) =>
+                            res.arrayBuffer()
+                        )
+                        return new HttpResponse(imageBuffer, {
+                            headers: {
+                                'Content-Length':
+                                    imageBuffer.byteLength.toString(),
+                                'Content-Type': 'image/png',
+                            },
+                        })
+                    }
+                ),
+            ],
+        },
+    },
+    render: (args) => {
+        const [previousItem, setPreviousItem] = useState<Item | null>(null)
 
-const fayeImage: any = require('../4.png')
+        if (previousItem !== args.itemData && args.itemData) {
+            setPreviousItem(args.itemData)
+            store.dispatch(setFromItem(args.itemData))
+        }
 
-const Template: StoryFn<typeof ItemDataPanel> = (args) => {
-    const mswReady = useMswReady()
+        return <ItemDataPanel {...args} />
+    },
+    loaders: [
+        () => {
+            store.dispatch(apiSlice.util.resetApiState())
+        },
+    ],
+}
+export default meta
 
-    const [previousItem, setPreviousItem] = useState<Item | null>(null)
+type Story = StoryObj<typeof ItemDataPanel>
 
-    // Let's set up the Redux store to be the way we need
-    store.dispatch(apiSlice.util.resetApiState())
-    if (previousItem !== args.itemData && args.itemData) {
-        setPreviousItem(args.itemData)
-        store.dispatch(setFromItem(args.itemData))
-    }
+export const Default: Story = {}
 
-    // Then, let's fake the necessary REST calls
-    const { worker, rest } = window.msw
-    worker.use(
-        rest.get('http://localhost:3000/api/v2/itemdata/', (req, res, ctx) => {
-            const all = [...ALL_ITEMS]
-            const name =
-                'This is a mocked API response and will only be accurate for comic 666'
-            all.push({
-                id: -1,
-                name,
-                shortName: name,
-                count: 0,
-                type: 'storyline',
-                color: 'ffaabb',
-            })
-            return res(ctx.json(all))
-        }),
-        rest.get(
-            'http://localhost:3000/api/v2/itemdata/image/:imageId',
-            async (req, res, ctx) => {
-                const imageBuffer = await fetch(fayeImage).then((res) =>
-                    res.arrayBuffer()
-                )
-                return res(
-                    ctx.delay(1000 + Math.random() * 1000),
-                    ctx.set(
-                        'Content-Length',
-                        imageBuffer.byteLength.toString()
-                    ),
-                    ctx.set('Content-Type', 'image/png'),
-                    ctx.body(imageBuffer)
-                )
-            }
-        )
-    )
-
-    return mswReady ? <ItemDataPanel {...args} /> : <></>
+export const Editor: Story = {
+    args: {
+        editModeToken: '00000000-0000-0000-0000-000000000000',
+    },
 }
 
-export const Default = Template.bind({})
-Default.args = {
-    itemDataUrl: QCEXT_SERVER_DEVELOPMENT_URL,
-    itemData: FAYE,
-    itemImageData: FAYE_IMAGES,
-    itemFriendData: FAYE_FRIENDS,
-    itemLocationData: FAYE_LOCATIONS,
-    editModeToken: null,
+export const Loading: Story = {
+    args: {
+        itemData: null,
+    },
 }
 
-export const Editor = Template.bind({})
-Editor.args = {
-    ...Default.args,
-    editModeToken: '00000000-0000-0000-0000-000000000000',
+export const NoImages: Story = {
+    args: {
+        itemImageData: [],
+    },
 }
 
-export const Loading = Template.bind({})
-Loading.args = {
-    ...Default.args,
-    itemData: null,
+export const NoImagesEditor: Story = {
+    args: {
+        itemImageData: [],
+        editModeToken: '00000000-0000-0000-0000-000000000000',
+    },
 }
 
-export const NoImages = Template.bind({})
-NoImages.args = {
-    ...Default.args,
-    itemImageData: [],
+export const MultipleImages: Story = {
+    args: {
+        itemImageData: MANY_IMAGES,
+    },
 }
 
-export const NoImagesEditor = Template.bind({})
-NoImagesEditor.args = {
-    ...NoImages.args,
-    editModeToken: '00000000-0000-0000-0000-000000000000',
+export const MultipleImagesEditor: Story = {
+    args: {
+        itemImageData: MANY_IMAGES,
+        editModeToken: '00000000-0000-0000-0000-000000000000',
+    },
 }
 
-export const MultipleImages = Template.bind({})
-MultipleImages.args = {
-    ...Default.args,
-    itemImageData: MANY_IMAGES,
+export const NoRelations: Story = {
+    args: {
+        itemFriendData: [],
+        itemLocationData: [],
+    },
 }
 
-export const MultipleImagesEditor = Template.bind({})
-MultipleImagesEditor.args = {
-    ...MultipleImages.args,
-    editModeToken: '00000000-0000-0000-0000-000000000000',
-}
-
-export const NoRelations = Template.bind({})
-NoRelations.args = {
-    ...Default.args,
-    itemFriendData: [],
-    itemLocationData: [],
-}
-
-export const Location = Template.bind({})
-Location.args = {
-    ...Default.args,
-    itemData: COFFEE_OF_DOOM,
-    itemImageData: [],
-    itemFriendData: COFFEE_OF_DOOM_FRIENDS,
-    itemLocationData: COFFEE_OF_DOOM_LOCATIONS,
+export const Location: Story = {
+    args: {
+        itemData: COFFEE_OF_DOOM,
+        itemImageData: [],
+        itemFriendData: COFFEE_OF_DOOM_FRIENDS,
+        itemLocationData: COFFEE_OF_DOOM_LOCATIONS,
+    },
 }
