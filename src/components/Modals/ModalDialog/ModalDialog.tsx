@@ -14,11 +14,11 @@ export default function ModalDialog({
             className={
                 'p-0 border-none shadow-lg flex flex-col ' +
                 'pointer-events-auto ' +
-                'bg-white bg-clip-padding rounded-md outline-none text-current w-[800px] max-h-[90%] min-h-[10em]'
+                'bg-white bg-clip-padding rounded-md outline-none text-current w-200 max-h-[90%] min-h-[10em]'
             }
             aria-modal
         >
-            <div className="flex flex-shrink-0 items-center justify-between p-4 border-0 border-b border-solid border-gray-200 rounded-t-md">
+            <div className="flex shrink-0 items-center justify-between p-4 border-0 border-b border-solid border-gray-200 rounded-t-md">
                 {header}
                 <button
                     type="button"
@@ -34,7 +34,7 @@ export default function ModalDialog({
                 </button>
             </div>
             <div className="relative p-4 overflow-y-auto">{body}</div>
-            <div className="modal-footer flex gap-2 flex-shrink-0 flex-wrap items-center justify-end p-4 border-0 border-t border-solid border-gray-200 rounded-b-md">
+            <div className="modal-footer flex gap-2 shrink-0 flex-wrap items-center justify-end p-4 border-0 border-t border-solid border-gray-200 rounded-b-md">
                 {footer}
             </div>
         </dialog>

@@ -5,6 +5,5 @@ import type { NewItem } from './NewItem'
 import type { Token } from './Token'
 
 export type AddItemToComicBody = { token: Token; comicId: ComicId } & (
-    | NewItem
-    | ExistingItem
+    NewItem | ExistingItem
 )

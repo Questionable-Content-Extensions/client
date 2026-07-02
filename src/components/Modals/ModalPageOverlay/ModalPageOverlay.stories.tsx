@@ -19,7 +19,7 @@ const Template: StoryFn<typeof ModalPageOverlay> = (args) => {
             >
                 <dialog
                     className={
-                        'p-2 border-none shadow-lg flex flex-col pointer-events-auto bg-white bg-clip-padding rounded-md outline-none text-current w-[600px]'
+                        'p-2 border-none shadow-lg flex flex-col pointer-events-auto bg-white bg-clip-padding rounded-md outline-none text-current w-150'
                     }
                     aria-modal
                 >

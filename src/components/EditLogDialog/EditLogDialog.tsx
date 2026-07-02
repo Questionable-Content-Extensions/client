@@ -99,7 +99,7 @@ export default function EditLogDialog({
             }
             footer={
                 <div className="flex w-full justify-end">
-                    <div className="flex flex-col justify-center flex-grow">
+                    <div className="flex flex-col justify-center grow">
                         {logs && logs.pageCount > 1 && (
                             <div className="flex justify-center">
                                 <Pagination

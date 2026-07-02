@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 
 import { debug } from '~/utils'
 
@@ -12,14 +12,12 @@ export default function ModalDialogSeat({
     children: React.ReactChild
 }) {
     const [hidden, setHidden] = useState(!show)
-    useEffect(() => {
-        if (show) {
-            // Immediately show when `show` changes so that we can animate
-            // in from the bottom...(contd. below)
-            debug('Unhiding dialog seat')
-            setHidden(false)
-        }
-    }, [show, setHidden])
+    if (show && hidden) {
+        // Immediately show when `show` changes so that we can animate
+        // in from the bottom...(contd. below)
+        debug('Unhiding dialog seat')
+        setHidden(false)
+    }
     return (
         // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions
         <div

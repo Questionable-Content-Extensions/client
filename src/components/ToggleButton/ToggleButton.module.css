@@ -1,3 +1,5 @@
+@reference '../../index.css';
+
 input.toggle:checked ~ .dot {
     transform: translateX(100%);
 }

@@ -156,12 +156,13 @@ export default function ComicFilter({
         return suggestedFilters
     }, [itemData, filterText, filters, activeSuggestion, addFilter])
 
+    if (dropDownOpen && activeSuggestion > suggestedFilters.length - 1) {
+        setActiveSuggestion(suggestedFilters.length - 1)
+    }
+
     useEffect(() => {
         if (!dropDownOpen) {
             return
-        }
-        if (activeSuggestion > suggestedFilters.length - 1) {
-            setActiveSuggestion(suggestedFilters.length - 1)
         }
         if (activeRef.current) {
             activeRef.current.scrollIntoView({

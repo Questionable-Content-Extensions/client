@@ -20,7 +20,7 @@ import { Provider } from 'react-redux'
 import { ToastContainer, toast } from 'react-toastify'
 
 import './index.css'
-import 'react-toastify/dist/ReactToastify.min.css'
+import 'react-toastify/dist/ReactToastify.css'
 
 import Comic from '@components/Comic/Comic'
 import ComicDetailsPanel from '@components/ComicDetailsPanel/ComicDetailsPanel'
@@ -87,8 +87,7 @@ async function main() {
     // added using pushState/replaceState above
     window.addEventListener('popstate', (event) => {
         const state = event.state as
-            | { comic: number; lockedToItem: ItemId | null }
-            | undefined
+            { comic: number; lockedToItem: ItemId | null } | undefined
         if (state && state.comic) {
             if (state.lockedToItem) {
                 const storeState = store.getState()
@@ -137,7 +136,7 @@ async function developmentMain() {
             // Ensure that when the fetched script runs, it doesn't keep trying to fetch and run itself.
             window.__QC_EXT_DEVELOPMENT_LOADED = true
 
-            eval(response.responseText)
+            ;(0, eval)(response.responseText)
         })
         .catch((response) => {
             if (response.status === 0) {

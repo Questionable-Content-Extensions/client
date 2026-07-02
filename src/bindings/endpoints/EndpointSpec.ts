@@ -2,13 +2,7 @@
  * HTTP verb literals — used as the method type in {@link EndpointSpec}.
  */
 export type HttpMethod =
-    | 'GET'
-    | 'POST'
-    | 'PUT'
-    | 'PATCH'
-    | 'DELETE'
-    | 'HEAD'
-    | 'OPTIONS'
+    'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE' | 'HEAD' | 'OPTIONS'
 
 /**
  * Typed descriptor for an API endpoint.

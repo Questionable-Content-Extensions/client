@@ -21,7 +21,7 @@ export default defineConfig([
     js.configs.recommended,
     react.configs.flat.recommended,
     react.configs.flat['jsx-runtime'],
-    reactHooks.configs['recommended-latest'],
+    reactHooks.configs.flat['recommended-latest'],
     jsxA11y.flatConfigs.recommended,
     importPlugin.flatConfigs.recommended,
     ...storybook.configs['flat/recommended'],

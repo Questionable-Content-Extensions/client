@@ -14,7 +14,7 @@ import CHANGE_LOG from './CHANGELOG.md?raw'
 
 marked.use({
     renderer: {
-        heading(text, level) {
+        heading({ text, depth: level }) {
             if (level === 1 || (level === 2 && text.includes('Unreleased'))) {
                 return ''
             } else {
@@ -28,12 +28,12 @@ marked.use({
                 )}</h${level}>`
             }
         },
-        link(href, title, text) {
+        link({ href, title, text }) {
             return `<a href="${href}" target="_blank" rel="noreferrer noopener" ${
                 title ? 'title=' + title : ''
             }>${text}</a>`
         },
-        image(href, title, text) {
+        image({ href, title, text }) {
             return `<img src="${href}" ${
                 title ? 'style=' + title : ''
             } alt="${text}" />`
@@ -41,7 +41,7 @@ marked.use({
     },
 })
 
-const CHANGE_LOG_MARKDOWN = marked(CHANGE_LOG).replace(
+const CHANGE_LOG_MARKDOWN = (marked.parse(CHANGE_LOG) as string).replace(
     'documented in this file',
     'documented in this change log'
 )
@@ -71,8 +71,8 @@ export default function ChangeLogDialog({
                         {!settings?.version
                             ? 'installed!'
                             : settings.version === constants.scriptVersion
-                            ? ''
-                            : 'updated!'}
+                              ? ''
+                              : 'updated!'}
                     </h2>
                     <p>
                         {!settings?.version ? (

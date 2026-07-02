@@ -119,7 +119,7 @@ function GoToPageButton({
             disabled={disabled}
             className={
                 'w-8 disabled:opacity-50 qc-ext-qc-link hover:underline' +
-                (isFetching ? ' !cursor-wait' : '')
+                (isFetching ? ' cursor-wait!' : '')
             }
         >
             {typeof type === 'number' ? (
@@ -225,8 +225,8 @@ function usePagination({
             ...(siblingsStart > boundaryCount + 2
                 ? (['start-ellipsis'] as NavigationType[])
                 : boundaryCount + 1 < count - boundaryCount
-                ? [boundaryCount + 1]
-                : []),
+                  ? [boundaryCount + 1]
+                  : []),
 
             // Sibling pages
             ...range(siblingsStart, siblingsEnd),
@@ -236,8 +236,8 @@ function usePagination({
             ...(siblingsEnd < count - boundaryCount - 1
                 ? (['end-ellipsis'] as NavigationType[])
                 : count - boundaryCount > boundaryCount
-                ? [count - boundaryCount]
-                : []),
+                  ? [count - boundaryCount]
+                  : []),
 
             ...endPages,
             ...(hideNextButton ? [] : (['next'] as NavigationType[])),
@@ -258,9 +258,4 @@ function usePagination({
 }
 
 type NavigationType =
-    | 'first'
-    | 'previous'
-    | 'start-ellipsis'
-    | 'end-ellipsis'
-    | 'next'
-    | 'last'
+    'first' | 'previous' | 'start-ellipsis' | 'end-ellipsis' | 'next' | 'last'

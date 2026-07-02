@@ -14,7 +14,7 @@ export default function Popup({
     return (
         show && (
             <span
-                className="absolute z-[2] pt-2"
+                className="absolute z-2 pt-2"
                 style={{
                     left: position && position[0],
                     top: position && position[1],

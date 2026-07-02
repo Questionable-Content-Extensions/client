@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 
 import { PaddedButton } from '@components/Button'
 import useHydratedItemData from '@hooks/useHydratedItemData'
@@ -60,15 +60,17 @@ export default function CopyItemsDialog({
     const [selectedItems, setSelectedItems] = useState<{
         [id: number]: boolean
     }>({})
-    useEffect(() => {
-        const selectedItems: { [id: number]: boolean } = {}
+    const [prevComicItems, setPrevComicItems] = useState(comicItems)
+    if (comicItems !== prevComicItems) {
+        setPrevComicItems(comicItems)
         if (comicItems) {
+            const newSelectedItems: { [id: number]: boolean } = {}
             for (const item of comicItems) {
-                selectedItems[item.id] = true
+                newSelectedItems[item.id] = true
             }
-            setSelectedItems(selectedItems)
+            setSelectedItems(newSelectedItems)
         }
-    }, [comicItems])
+    }
 
     const [addItems, { isLoading: isAddingItems }] = useAddItemsMutation()
 

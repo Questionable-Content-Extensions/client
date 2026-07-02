@@ -26,8 +26,7 @@ const Template: StoryFn<typeof ItemNavigation> = (args) => {
     const mode = args.mode
     if (typeof mode === 'string') {
         args.mode = NavElementMode[mode] as unknown as
-            | NavElementMode.Present
-            | NavElementMode.Missing
+            NavElementMode.Present | NavElementMode.Missing
     }
 
     const state = store.getState()
@@ -51,8 +50,7 @@ Default.args = {
     isLoading: false,
     isFetching: false,
     mode: NavElementMode[NavElementMode.Present] as unknown as
-        | NavElementMode.Present
-        | NavElementMode.Missing,
+        NavElementMode.Present | NavElementMode.Missing,
     editMode: false,
 }
 
@@ -84,8 +82,7 @@ export const AllItemsMode = Template.bind({})
 AllItemsMode.args = {
     ...Default.args,
     mode: NavElementMode[NavElementMode.Missing] as unknown as
-        | NavElementMode.Present
-        | NavElementMode.Missing,
+        NavElementMode.Present | NavElementMode.Missing,
 }
 
 export const AllItemsModeNoData = Template.bind({})
@@ -93,8 +90,7 @@ AllItemsModeNoData.args = {
     ...Default.args,
     itemNavigationData: [],
     mode: NavElementMode[NavElementMode.Missing] as unknown as
-        | NavElementMode.Present
-        | NavElementMode.Missing,
+        NavElementMode.Present | NavElementMode.Missing,
 }
 
 export const EditMode = Template.bind({})
@@ -108,8 +104,7 @@ AllItemsEditMode.args = {
     ...Default.args,
     editMode: true,
     mode: NavElementMode[NavElementMode.Missing] as unknown as
-        | NavElementMode.Present
-        | NavElementMode.Missing,
+        NavElementMode.Present | NavElementMode.Missing,
 }
 
 export const LockedToItem = Template.bind({})

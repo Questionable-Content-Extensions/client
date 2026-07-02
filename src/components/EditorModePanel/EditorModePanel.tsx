@@ -204,7 +204,7 @@ export default function EditorModePanel() {
             className={
                 'bg-stone-100 border-solid border-0 border-b border-qc-header lg:border lg:border-stone-300 ' +
                 'shadow-md lg:fixed lg:top-20 xl:top-48 lg:left-[50%] lg:-ml-[750px] lg:w-64 z-10 p-2 ' +
-                'transition-transform translate-x-0 lg:hover:translate-x-[var(--corrected-margin)]'
+                'transition-transform translate-x-0 lg:hover:translate-x-(--corrected-margin)'
             }
             style={{
                 '--corrected-margin': `${correctionWidth}px`,
@@ -357,10 +357,10 @@ export default function EditorModePanel() {
                     {hasErrorLoadingComicData
                         ? 'Error'
                         : isFetching || isEditorSaving
-                        ? 'Loading...'
-                        : editorStateDirty
-                        ? 'Save changes'
-                        : 'No changes'}
+                          ? 'Loading...'
+                          : editorStateDirty
+                            ? 'Save changes'
+                            : 'No changes'}
                 </Button>
             </div>
         </form>

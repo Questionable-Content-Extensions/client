@@ -14,10 +14,7 @@ export default function FullPageLoader({
     if (show) {
         return (
             <div className="text-center absolute left-0 top-0 right-0 bottom-0">
-                <div
-                    role="status"
-                    className="h-full w-full bg-black bg-opacity-50"
-                >
+                <div role="status" className="h-full w-full bg-black/50">
                     <div className="pt-20">
                         <Spinner
                             loadingText={loadingText}

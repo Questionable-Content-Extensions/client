@@ -56,11 +56,9 @@ export default function Comic({
         }
     }, [settings?.scrollToTop, currentComic])
 
-    useEffect(() => {
-        if (comicData && isInitializing) {
-            setIsInitializing(false)
-        }
-    }, [comicData, isInitializing, setIsInitializing])
+    if (comicData && isInitializing) {
+        setIsInitializing(false)
+    }
 
     const comicNo = useMemo(() => {
         if (!currentComic) {

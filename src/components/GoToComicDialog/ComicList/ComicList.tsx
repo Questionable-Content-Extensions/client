@@ -163,7 +163,7 @@ export default function ComicList({
     }
 
     return (
-        <div className="min-h-[16rem]">
+        <div className="min-h-64">
             <ComicFilter filters={filters} setFilters={setFilters} />
             {filters.length !== 0 && (
                 <p>{comicCount} comic titles or taglines match your filters</p>

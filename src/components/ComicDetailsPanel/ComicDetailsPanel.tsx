@@ -111,11 +111,13 @@ export default function ComicDetailsPanel() {
     const isSaving = isAddingItem || isRemovingItem
 
     const [comicSelectorNo, setComicSelectorNo] = useState<string | null>(null)
-    useEffect(() => {
-        if (comicData) {
-            setComicSelectorNo(comicData.comic.toString())
-        }
-    }, [comicData])
+    const [prevComicSelectorComic, setPrevComicSelectorComic] = useState<
+        number | undefined
+    >(undefined)
+    if (comicData && comicData.comic !== prevComicSelectorComic) {
+        setPrevComicSelectorComic(comicData.comic)
+        setComicSelectorNo(comicData.comic.toString())
+    }
 
     const developmentMode = useMemo(
         () =>
