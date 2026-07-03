@@ -1,6 +1,7 @@
-import react from '@vitejs/plugin-react'
 import { defineConfig } from 'vite'
 import cssInjectedByJsPlugin from 'vite-plugin-css-injected-by-js'
+
+import react from '@vitejs/plugin-react'
 
 // React, Redux & friends are loaded from a CDN as globals (see buildValues.js
 // / the userscript's @require lines), so we don't want to bundle them.
@@ -43,7 +44,9 @@ export default defineConfig(({ mode }) => {
             react(),
             // Userscripts are a single injected <script>, so CSS has to travel
             // inside the JS rather than as a linked stylesheet.
-            cssInjectedByJsPlugin(),
+            cssInjectedByJsPlugin({
+                attributes: { id: 'qcext-css' },
+            }),
         ],
         build: {
             outDir: 'build',

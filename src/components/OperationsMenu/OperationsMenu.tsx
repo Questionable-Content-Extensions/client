@@ -1,6 +1,8 @@
 import { useState } from 'react'
 
+import { useRunComicUpdaterMutation } from '@store/api/comicApiSlice'
 import {
+    setShowAddAdvanceComicDialog,
     setShowCopyItemsDialog,
     setShowEditLogDialog,
 } from '@store/dialogSlice'
@@ -14,6 +16,9 @@ export default function OperationsMenu({}: Record<string, never>) {
     const dispatch = useAppDispatch()
 
     const currentComic = useAppSelector((state) => state.comic.current)
+    const settings = useAppSelector((state) => state.settings.values)
+
+    const [runComicUpdater] = useRunComicUpdaterMutation()
 
     const [showPopup, setShowPopup] = useState(false)
     const [popupPosition, setPopupPosition] = useState<[number, number]>([0, 0])
@@ -68,6 +73,27 @@ export default function OperationsMenu({}: Record<string, never>) {
                     >
                         Show edit log...
                     </MenuItem>
+                    <hr className="-mx-2 my-0 border-solid border-b max-w-none" />
+                    <MenuItem
+                        onClick={() => {
+                            setShowPopup(false)
+                            dispatch(setShowAddAdvanceComicDialog(true))
+                        }}
+                    >
+                        Add advance comic...
+                    </MenuItem>
+                    {settings?.editModeToken && (
+                        <MenuItem
+                            onClick={() => {
+                                setShowPopup(false)
+                                void runComicUpdater({
+                                    token: settings.editModeToken,
+                                })
+                            }}
+                        >
+                            Run comic updater now
+                        </MenuItem>
+                    )}
                 </div>
             </Popup>
         </>

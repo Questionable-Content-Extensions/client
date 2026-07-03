@@ -4,6 +4,10 @@ import GetComicdataSpec, {
     GetComicdataQuery,
     GetComicdataResponse,
 } from '@endpoints/GetComicdata'
+import GetComicdataAdvanceSpec, {
+    GetComicdataAdvanceQuery,
+    GetComicdataAdvanceResponse,
+} from '@endpoints/GetComicdataAdvance'
 import GetComicdataComicIdSpec, {
     GetComicdataComicIdQuery,
     GetComicdataComicIdResponse,
@@ -24,9 +28,16 @@ import PostComicdataAdditemSpec, {
 import PostComicdataAdditemsSpec, {
     PostComicdataAdditemsResponse,
 } from '@endpoints/PostComicdataAdditems'
+import PostComicdataAdvanceSpec, {
+    PostComicdataAdvanceResponse,
+} from '@endpoints/PostComicdataAdvance'
+import PostComicdataAdvanceRunUpdaterSpec, {
+    PostComicdataAdvanceRunUpdaterResponse,
+} from '@endpoints/PostComicdataAdvanceRunUpdater'
 import PostComicdataRemoveitemSpec, {
     PostComicdataRemoveitemResponse,
 } from '@endpoints/PostComicdataRemoveitem'
+import { AddAdvanceComicBody } from '@models/AddAdvanceComicBody'
 import { AddItemToComicBody } from '@models/AddItemToComicBody'
 import { AddItemsToComicBody } from '@models/AddItemsToComicBody'
 import { ComicId } from '@models/ComicId'
@@ -34,6 +45,7 @@ import { FlagType } from '@models/FlagType'
 import { ItemId } from '@models/ItemId'
 import { PatchComicBody } from '@models/PatchComicBody'
 import { RemoveItemFromComicBody } from '@models/RemoveItemFromComicBody'
+import { RunComicUpdaterBody } from '@models/RunComicUpdaterBody'
 import { Token } from '@models/Token'
 import { createSelector } from '@reduxjs/toolkit'
 import { TagDescription } from '@reduxjs/toolkit/dist/query'
@@ -88,6 +100,12 @@ export type RemoveItemMutationArgs = SharedMutationArgs & {
 }
 
 export type AddItemsMutationArgs = AddItemsToComicBody
+
+export type AddAdvanceComicMutationArgs = AddAdvanceComicBody
+
+export type ListAdvanceComicsQueryArgs = { editModeToken: Token }
+
+export type RunComicUpdaterMutationArgs = RunComicUpdaterBody
 
 export const comicApiSlice = apiSlice.injectEndpoints({
     endpoints: (builder) => ({
@@ -222,6 +240,10 @@ export const comicApiSlice = apiSlice.injectEndpoints({
                         {
                             type: 'Log',
                             id: `comic-${comic}`,
+                        },
+                        {
+                            type: 'Comic',
+                            id: 'ADVANCE',
                         }
                     )
                     if (body.isGuestComic || body.isNonCanon) {
@@ -378,6 +400,52 @@ export const comicApiSlice = apiSlice.injectEndpoints({
                 return tags
             },
         }),
+        listAdvanceComics: builder.query<
+            GetComicdataAdvanceResponse,
+            ListAdvanceComicsQueryArgs
+        >({
+            query: ({ editModeToken }) => {
+                const query: GetComicdataAdvanceQuery = { token: editModeToken }
+                return queryFromSpec(GetComicdataAdvanceSpec, { query })
+            },
+            transformResponse:
+                transformResponseByJsonParseResultText<GetComicdataAdvanceResponse>,
+            providesTags: (result) =>
+                result
+                    ? [
+                          {
+                              type: 'Comic',
+                              id: 'ADVANCE',
+                          },
+                      ]
+                    : [],
+        }),
+        addAdvanceComic: builder.mutation<
+            PostComicdataAdvanceResponse,
+            AddAdvanceComicMutationArgs
+        >({
+            query: (body) => queryFromSpec(PostComicdataAdvanceSpec, { body }),
+            onQueryStarted: toastSuccess,
+            transformResponse:
+                transformResponseByJsonParseResultText<PostComicdataAdvanceResponse>,
+            invalidatesTags: (result) =>
+                result
+                    ? [
+                          { type: 'Comic', id: 'ADVANCE' },
+                          { type: 'Comic', id: 'ALL' },
+                      ]
+                    : [],
+        }),
+        runComicUpdater: builder.mutation<
+            PostComicdataAdvanceRunUpdaterResponse,
+            RunComicUpdaterMutationArgs
+        >({
+            query: (body) =>
+                queryFromSpec(PostComicdataAdvanceRunUpdaterSpec, { body }),
+            onQueryStarted: toastSuccess,
+            transformResponse:
+                transformResponseByJsonParseResultText<PostComicdataAdvanceRunUpdaterResponse>,
+        }),
     }),
 })
 
@@ -390,6 +458,9 @@ export const {
     useAddItemMutation,
     useRemoveItemMutation,
     useAddItemsMutation,
+    useListAdvanceComicsQuery,
+    useAddAdvanceComicMutation,
+    useRunComicUpdaterMutation,
 } = comicApiSlice
 
 export function toGetDataQueryArgs(

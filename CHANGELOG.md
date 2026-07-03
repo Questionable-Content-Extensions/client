@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added ✨
 
 - Added a "Filtered Navigation" section to the comic navigation panel: after filtering in the "Go to comic" dialog, you can now jump between the first/previous/next/last matching comics directly, reopen the dialog to adjust the filter, or clear the filtered navigation entirely.
+- Editors with sufficient permissions can now add an advance comic (hidden from regular users until it's actually published), revisit and edit pending advance comics from the operations menu, and manually trigger the comic updater to pick up a just-published comic early. Resolves [#79](https://github.com/Questionable-Content-Extensions/client/issues/79)
 
 ### Changed 🔧
 

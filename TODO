@@ -1,1 +1,2 @@
 ☐ Add a setting for remembering the filter between reloads
+☐ CSS gets injected multiple times for some reason; we need to make that stop.

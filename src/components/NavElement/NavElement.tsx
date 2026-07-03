@@ -171,7 +171,7 @@ export default function NavElement({
                     ))}
                 <button
                     className={
-                        'font-bold flex-auto py-1' +
+                        'font-bold flex-auto mt-0.5 -mb-0.5' +
                         (alternateLayout ? ' -order-1 basis-full' : '')
                     }
                     onClick={(e) => {

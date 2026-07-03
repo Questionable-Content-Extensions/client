@@ -1,3 +1,4 @@
+import AddAdvanceComicDialogPortal from './AddAdvanceComicDialog/AddAdvanceComicDialogPortal/AddAdvanceComicDialogPortal'
 import ChangeLogDialogPortal from './ChangeLogDialog/ChangeLogDialogPortal/ChangeLogDialogPortal'
 import CopyItemsDialogPortal from './CopyItemsDialog/CopyItemsDialogPortal/CopyItemsDialogPortal'
 import EditLogDialogPortal from './EditLogDialog/EditLogDialogPortal'
@@ -8,6 +9,7 @@ import SettingsDialogPortal from './SettingsDialog/SettingDialogPortal/SettingsD
 export default function Portals() {
     return (
         <>
+            <AddAdvanceComicDialogPortal />
             <ChangeLogDialogPortal />
             <CopyItemsDialogPortal />
             <EditLogDialogPortal />
