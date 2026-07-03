@@ -18,6 +18,8 @@ import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { Provider } from 'react-redux'
 import { ToastContainer, toast } from 'react-toastify'
+// eslint-disable-next-line import/no-unresolved
+import { injectCSS } from 'virtual:css-injected-by-js'
 
 import './index.css'
 import 'react-toastify/dist/ReactToastify.css'
@@ -67,6 +69,9 @@ async function main() {
     await Settings.loadSettings()
     setup()
     store.dispatch(loadSettings())
+
+    info('Injecting CSS')
+    injectCSS()
 
     info('Running QC Extensions v' + GM.info.script.version)
 
@@ -136,7 +141,17 @@ async function developmentMain() {
             // Ensure that when the fetched script runs, it doesn't keep trying to fetch and run itself.
             window.__QC_EXT_DEVELOPMENT_LOADED = true
 
-            ;(0, eval)(response.responseText)
+            // This copy of the bundle already registered its own CSS
+            // injector into these global queues at load time, but never
+            // calls injectCSS() itself (developmentMain() doesn't). Clear
+            // them so the fetched copy's registration is the only one that
+            // survives to be run when its main() calls injectCSS() —
+            // otherwise both this copy's stale injector and the fetched
+            // copy's injector fire, producing duplicate <style> elements.
+            globalThis.__VITE_CSS_QUEUE__ = []
+            globalThis.__VITE_CSS_EXECUTED__ = []
+
+            eval(response.responseText)
         })
         .catch((response) => {
             if (response.status === 0) {

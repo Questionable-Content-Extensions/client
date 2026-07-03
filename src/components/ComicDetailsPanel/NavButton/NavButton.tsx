@@ -16,10 +16,7 @@ export default function NavButton({
         <a
             href={comicLink}
             title={title}
-            className={
-                'flex-none px-2 block mt-0.5 -mb-0.5' +
-                (!comicNo ? ' invisible' : '')
-            }
+            className={'flex-none px-2 block' + (!comicNo ? ' invisible' : '')}
             onClick={(e) => {
                 e.preventDefault()
                 onSetCurrentComic(comicNo as number)

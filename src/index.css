@@ -8,8 +8,13 @@ layer(base);
 /* Preflight (Tailwind's base style reset) is intentionally omitted here,
    matching the old `corePlugins: { preflight: false }` config, since this
    extension is injected into an existing page and must not reset its styles. */
-@import 'tailwindcss/theme.css' layer(theme);
-@import 'tailwindcss/utilities.css' layer(utilities);
+@import 'tailwindcss/theme.css' layer(theme) important;
+/* `important` makes every generated utility carry `!important`. Per the CSS
+   Cascade Layers spec, unlayered declarations always beat layered ones for
+   normal rules, but `!important` declarations always beat normal ones
+   regardless of layer — this is what lets our utilities win against the
+   host site's hard-hitting unlayered element selectors (e.g. `h1 { ... }`). */
+@import 'tailwindcss/utilities.css' layer(utilities) important;
 
 @theme {
     --font-*: initial;
@@ -42,6 +47,10 @@ layer(base);
     ::file-selector-button {
         border-color: var(--color-gray-200, currentcolor);
     }
+
+    i.fa {
+        font-style: normal !important;
+    }
 }
 
 body {
@@ -57,6 +66,11 @@ body {
     --qc-ext-navelement-color: #0f3a48;
     --qc-ext-navelement-accent-color: #0f3a48;
     --qc-ext-navelement-underline-color: #0f3a48;
+}
+
+.qc-ext-extra-navigation-container,
+.qc-ext-extra-navigation-container *:not(.fa) {
+    @apply font-sans!;
 }
 
 .qc-ext-navelement {

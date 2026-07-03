@@ -215,7 +215,7 @@ export default function EditorModePanel() {
             }}
         >
             <div className="flex justify-between border-b border-solid border-b-stone-300 border-l-0 border-t-0 border-r-0 -mx-2 -mt-2 mb-2">
-                <h1 className="ml-2 mb-0 text-center small-caps text-sm font-thin ">
+                <h1 className="ml-2 mb-0 text-center small-caps text-sm font-medium ">
                     Editor Mode
                 </h1>
 
