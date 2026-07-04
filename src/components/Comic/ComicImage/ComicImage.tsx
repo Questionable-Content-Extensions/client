@@ -37,9 +37,14 @@ export default function ComicImage({
     }
 
     useEffect(() => {
+        let cancelled = false
+
         function tryImage(comic: number, imageType: KnownImageType) {
             const downloadingImage = new Image()
             downloadingImage.onload = function (event) {
+                if (cancelled) {
+                    return
+                }
                 comicExtensionCache[comic] = imageType
                 setComicSrc((event.target as HTMLImageElement).src)
                 debug(
@@ -48,6 +53,9 @@ export default function ComicImage({
                 imageReady()
             }
             downloadingImage.onerror = function (event) {
+                if (cancelled) {
+                    return
+                }
                 // TODO: Report image error to user
                 error(event)
             }
@@ -71,6 +79,9 @@ export default function ComicImage({
             let currentExtension = 0
             const downloadingImage = new Image()
             downloadingImage.onload = function (event) {
+                if (cancelled) {
+                    return
+                }
                 debug('succeeded try/fail image extension')
                 setComicSrc((event.target as HTMLImageElement).src)
                 debug(
@@ -79,6 +90,9 @@ export default function ComicImage({
                 imageReady()
             }
             downloadingImage.onerror = function (event) {
+                if (cancelled) {
+                    return
+                }
                 if (currentExtension < constants.comicExtensions.length - 1) {
                     currentExtension++
                     debug(
@@ -103,6 +117,10 @@ export default function ComicImage({
             debug(
                 `comic data isn't ready yet, nothing to do yet for image loading`
             )
+        }
+
+        return () => {
+            cancelled = true
         }
     }, [previousImageData, imageReady])
 
