@@ -8,8 +8,6 @@ import { Filter, FilterType } from '@models/Filter'
 import { ItemList } from '@models/ItemList'
 import { skipToken } from '@reduxjs/toolkit/dist/query'
 import { useGetConainingItemsQuery } from '@store/api/comicApiSlice'
-import { setFilteredComics } from '@store/comicFilterSlice'
-import { useAppDispatch } from '@store/hooks'
 
 import CollapsibleDetails from '../CollapsibleDetails/CollapsibleDetails'
 import GoToComicButton from './GoToComicButton/GoToComicButton'
@@ -19,14 +17,17 @@ export default function ComicList({
     subDivideGotoComics,
     onGoToComic,
     isLoading,
+    onFilteredComicsChange,
 }: {
     allComicData: ComicListModel[]
     subDivideGotoComics: boolean
     onGoToComic: (comic: number) => void
     isLoading: boolean
+    onFilteredComicsChange?: (
+        filteredComics: ComicId[],
+        filters: Filter[]
+    ) => void
 }) {
-    const dispatch = useAppDispatch()
-
     const [filters, setFilters] = useState<Filter[]>([])
     const requiresServer = useMemo(() => {
         return !!filters.find((f) => f.type === FilterType.Item)
@@ -48,19 +49,20 @@ export default function ComicList({
 
     const hadActiveFilters = useRef(false)
     useEffect(() => {
+        if (!onFilteredComicsChange) {
+            return
+        }
         const hasActiveFilters = filters.length !== 0
         if (hasActiveFilters) {
-            dispatch(
-                setFilteredComics({
-                    comics: (filteredComicData ?? []).map((c) => c.comic),
-                    filters,
-                })
+            onFilteredComicsChange(
+                (filteredComicData ?? []).map((c) => c.comic),
+                filters
             )
         } else if (hadActiveFilters.current) {
-            dispatch(setFilteredComics({ comics: [], filters: [] }))
+            onFilteredComicsChange([], [])
         }
         hadActiveFilters.current = hasActiveFilters
-    }, [dispatch, filters, filteredComicData])
+    }, [onFilteredComicsChange, filters, filteredComicData])
 
     const [comicList, comicCount] = useMemo(() => {
         const comicEntries: {
