@@ -52,6 +52,7 @@ export default function SecretStringSetting({
                             setHidden(false)
                         }
                     }}
+                    onBlur={() => setHidden(true)}
                 />
                 <button
                     className="ml-2 text-gray-600 border border-solid border-gray-400 rounded-full py-1 px-1.5"
