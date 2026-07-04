@@ -1,4 +1,4 @@
-import { HttpResponse, delay, http } from 'msw'
+import { HttpResponse, http } from 'msw'
 import { expect, userEvent, waitFor, within } from 'storybook/test'
 
 import { Comic } from '@models/Comic'
@@ -13,6 +13,7 @@ import store from '@store/store'
 import type { Meta, StoryObj } from '@storybook/react-vite'
 
 import { ALL_ITEMS, COMIC_DATA_666 } from '~/mocks'
+import { mockNetworkDelay } from '~/storybook/mockNetworkDelay'
 
 import ComicNavigation from './ComicNavigation'
 
@@ -32,6 +33,8 @@ const meta: Meta<typeof ComicNavigation> = {
                         count: 0,
                         type: 'storyline',
                         color: 'ffaabb',
+                        startComicId: null,
+                        endComicId: null,
                     })
                     return HttpResponse.json(all)
                 }),
@@ -40,7 +43,7 @@ const meta: Meta<typeof ComicNavigation> = {
                     async ({ params }) => {
                         const { comicId } = params
                         if (comicId === '666') {
-                            await delay(1000 + Math.random() * 1000)
+                            await mockNetworkDelay()
                             return HttpResponse.json(COMIC_DATA_666)
                         } else {
                             const comic: Comic = {

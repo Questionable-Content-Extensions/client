@@ -24,6 +24,8 @@ const meta: Meta<typeof ComicFilter> = {
                         count: 0,
                         type: 'storyline',
                         color: 'ffaabb',
+                        startComicId: null,
+                        endComicId: null,
                     })
                     return HttpResponse.json(all)
                 }),

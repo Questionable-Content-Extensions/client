@@ -16,4 +16,13 @@ export type Item = {
     presence: number
     hasImage: boolean
     primaryImage: number | null
+    /**
+     * Only meaningful for `type === 'storyline'`; `null` for cast/location.
+     */
+    startComicId: ComicId | null
+    /**
+     * Only meaningful for `type === 'storyline'`; `null` means either
+     * ongoing or not a storyline.
+     */
+    endComicId: ComicId | null
 }

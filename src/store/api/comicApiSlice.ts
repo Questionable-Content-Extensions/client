@@ -278,7 +278,12 @@ export const comicApiSlice = apiSlice.injectEndpoints({
                     EndpointBuilderTagTypeExtractor<typeof builder>
                 >[] = []
                 if (result) {
-                    tags.push({ type: 'Comic', id: args.comicId })
+                    // Untagged, so it invalidates every cached comic, not
+                    // just `args.comicId` — an added storyline can affect
+                    // `activeStorylines` on any other comic within its
+                    // (possibly open-ended) start/end range, matching
+                    // `patchItem`'s invalidation of the same tag.
+                    tags.push({ type: 'Comic' })
                     tags.push({ type: 'Comic', id: 'ITEMS' })
                     if (!args.new) {
                         tags.push(
@@ -332,7 +337,9 @@ export const comicApiSlice = apiSlice.injectEndpoints({
             invalidatesTags: (result, _error, args) => {
                 return result
                     ? [
-                          { type: 'Comic', id: args.comicId },
+                          // Untagged, so it invalidates every cached comic —
+                          // see the matching comment in `addItem`.
+                          { type: 'Comic' },
                           { type: 'Comic', id: 'ITEMS' },
 
                           {
@@ -377,7 +384,9 @@ export const comicApiSlice = apiSlice.injectEndpoints({
                     EndpointBuilderTagTypeExtractor<typeof builder>
                 >[] = []
                 if (result) {
-                    tags.push({ type: 'Comic', id: args.comicId })
+                    // Untagged, so it invalidates every cached comic — see
+                    // the matching comment in `addItem`.
+                    tags.push({ type: 'Comic' })
                     tags.push({ type: 'Comic', id: 'ITEMS' })
 
                     tags.push(

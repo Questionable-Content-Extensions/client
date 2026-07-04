@@ -1,4 +1,4 @@
-import { HttpResponse, delay, http } from 'msw'
+import { HttpResponse, http } from 'msw'
 
 import { Comic } from '@models/Comic'
 import { PresentComic } from '@models/PresentComic'
@@ -9,6 +9,7 @@ import store from '@store/store'
 import type { Meta, StoryObj } from '@storybook/react-vite'
 
 import { ALL_ITEMS, COMIC_DATA_666, getComicListMocks } from '~/mocks'
+import { mockNetworkDelay } from '~/storybook/mockNetworkDelay'
 
 import CopyItemsDialog from './CopyItemsDialog'
 
@@ -41,6 +42,8 @@ const meta: Meta<typeof CopyItemsDialog> = {
                         count: 0,
                         type: 'storyline',
                         color: 'ffaabb',
+                        startComicId: null,
+                        endComicId: null,
                     })
                     return HttpResponse.json(all)
                 }),
@@ -50,7 +53,7 @@ const meta: Meta<typeof CopyItemsDialog> = {
                         const { comicId } = params
                         // We pretend this takes 1-2 seconds so we get to
                         // observe the loading UX
-                        await delay(1000 + Math.random() * 1000)
+                        await mockNetworkDelay()
                         if (comicId === '666') {
                             return HttpResponse.json(COMIC_DATA_666)
                         } else {
@@ -79,7 +82,7 @@ const meta: Meta<typeof CopyItemsDialog> = {
                     async () => {
                         // We pretend this takes 1-2 seconds so we get to
                         // observe the loading UX
-                        await delay(1000 + Math.random() * 1000)
+                        await mockNetworkDelay()
                         return HttpResponse.text('Items added to comic')
                     }
                 ),

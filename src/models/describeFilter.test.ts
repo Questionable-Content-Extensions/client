@@ -26,6 +26,8 @@ describe('describeFilters', () => {
                     type: 'cast',
                     color: 'ffffff',
                     count: 1,
+                    startComicId: null,
+                    endComicId: null,
                 },
             },
             {
@@ -37,6 +39,8 @@ describe('describeFilters', () => {
                     type: 'location',
                     color: 'ffffff',
                     count: 1,
+                    startComicId: null,
+                    endComicId: null,
                 },
             },
             { type: FilterType.Text, value: 'baz' },

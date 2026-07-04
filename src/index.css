@@ -108,6 +108,27 @@ body {
     border-color: transparent;
 }
 
+.qc-ext-storyline-timeline.with-color {
+    background-color: var(--qc-ext-storyline-bg-color);
+}
+
+.qc-ext-storyline-timeline button,
+.qc-ext-storyline-timeline a {
+    @apply duration-500;
+}
+
+.qc-ext-storyline-timeline.with-color button,
+.qc-ext-storyline-timeline.with-color a {
+    color: var(--qc-ext-storyline-color);
+}
+
+.qc-ext-storyline-timeline.with-color button:hover,
+.qc-ext-storyline-timeline.with-color button:focus,
+.qc-ext-storyline-timeline.with-color a:hover,
+.qc-ext-storyline-timeline.with-color a:focus {
+    color: var(--qc-ext-storyline-accent-color);
+}
+
 .qc-ext-qc-link {
     @apply text-qc-link;
 }

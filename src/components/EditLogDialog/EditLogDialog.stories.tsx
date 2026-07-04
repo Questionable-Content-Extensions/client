@@ -1,4 +1,4 @@
-import { HttpResponse, delay, http } from 'msw'
+import { HttpResponse, http } from 'msw'
 
 import { apiSlice } from '@store/apiSlice'
 import { setShowEditLogDialog } from '@store/dialogSlice'
@@ -8,6 +8,7 @@ import type { Meta, StoryObj } from '@storybook/react-vite'
 
 import Settings from '~/Settings'
 import { EDIT_LOG_COMIC_4269, LATEST_EDIT_LOG } from '~/mocks'
+import { mockNetworkDelay } from '~/storybook/mockNetworkDelay'
 
 import EditLogDialog from './EditLogDialog'
 
@@ -48,7 +49,7 @@ export const All: Story = {
                         const page = Number(
                             new URL(request.url).searchParams.get('page')
                         )
-                        await delay(1000 + Math.random() * 1000)
+                        await mockNetworkDelay()
                         return HttpResponse.json({
                             ...LATEST_EDIT_LOG,
                             page,
@@ -88,7 +89,7 @@ export const Comic: Story = {
                         const page = Number(
                             new URL(request.url).searchParams.get('page')
                         )
-                        await delay(1000 + Math.random() * 1000)
+                        await mockNetworkDelay()
                         return HttpResponse.json({
                             ...EDIT_LOG_COMIC_4269,
                             page,
@@ -123,7 +124,7 @@ export const Error: Story = {
         msw: {
             handlers: [
                 http.get('http://localhost:3000/api/v3/log/', async () => {
-                    await delay(1000 + Math.random() * 1000)
+                    await mockNetworkDelay()
                     return HttpResponse.text('Server Error', { status: 500 })
                 }),
             ],

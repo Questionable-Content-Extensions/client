@@ -1,4 +1,4 @@
-import { HttpResponse, delay, http } from 'msw'
+import { HttpResponse, http } from 'msw'
 
 import type { Meta, StoryObj } from '@storybook/react-vite'
 
@@ -8,6 +8,7 @@ import {
     MANY_IMAGES,
     QCEXT_SERVER_DEVELOPMENT_URL,
 } from '~/mocks'
+import { mockNetworkDelay } from '~/storybook/mockNetworkDelay'
 
 import fayeImage from '../4.png'
 import ItemImageViewer from './ItemImageViewer'
@@ -32,7 +33,7 @@ const meta: Meta<typeof ItemImageViewer> = {
                         const imageBuffer = await fetch(fayeImage).then((res) =>
                             res.arrayBuffer()
                         )
-                        await delay(1000 + Math.random() * 1000)
+                        await mockNetworkDelay()
                         return new HttpResponse(imageBuffer, {
                             headers: {
                                 'Content-Length':

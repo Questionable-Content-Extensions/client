@@ -7,18 +7,23 @@ import { ItemType } from '@models/ItemType'
 import { useAppDispatch, useAppSelector } from '@store/hooks'
 import {
     isColorDirtySelector,
+    isEndComicIdDirtySelector,
     isNameDirtySelector,
     isShortNameDirtySelector,
+    isStartComicIdDirtySelector,
     isTypeDirtySelector,
     setColor,
+    setEndComicId,
     setName,
     setShortName,
+    setStartComicId,
     setType,
 } from '@store/itemEditorSlice'
 
 import { createTintOrShade } from '~/color'
 
 import ColorPicker from './ColorPicker/ColorPicker'
+import ComicIdEditor from './ComicIdEditor/ComicIdEditor'
 import ValueEditor from './ValueEditor/ValueEditor'
 
 export default function ItemDetails({
@@ -42,6 +47,16 @@ export default function ItemDetails({
     const isColorDirty = useAppSelector((state) => isColorDirtySelector(state))
     const type = useAppSelector((state) => state.itemEditor.type)
     const isTypeDirty = useAppSelector((state) => isTypeDirtySelector(state))
+    const startComicId = useAppSelector(
+        (state) => state.itemEditor.startComicId
+    )
+    const isStartComicIdDirty = useAppSelector((state) =>
+        isStartComicIdDirtySelector(state)
+    )
+    const endComicId = useAppSelector((state) => state.itemEditor.endComicId)
+    const isEndComicIdDirty = useAppSelector((state) =>
+        isEndComicIdDirtySelector(state)
+    )
     const isSaving = useAppSelector((state) => state.itemEditor.isSaving)
     const settings = useAppSelector((state) => state.settings.values)
     const currentComic = useAppSelector((state) => state.comic.current)
@@ -61,6 +76,13 @@ export default function ItemDetails({
     )
 
     const isLockedItem = hasLockedItem && lockedItem.id === item.id
+
+    // `endComicId` is stored/transmitted as an exclusive upper bound (a
+    // storyline is active while `N < endComicId`), which matches the
+    // segment RLE the server sends but isn't how an editor thinks about "the
+    // last comic this storyline appears in" — so the editor-facing value is
+    // shifted to be inclusive (`endComicId - 1`) here, at the UI boundary.
+    const displayedEndComicId = endComicId !== null ? endComicId - 1 : null
 
     return (
         <div className={styles.smallGapped}>
@@ -134,6 +156,64 @@ export default function ItemDetails({
                 <p>
                     <strong>Abbreviated name:</strong> {item.shortName}
                 </p>
+            )}
+            {editMode && type === 'storyline' && (
+                <>
+                    <p>
+                        <ComicIdEditor
+                            label="Start comic"
+                            dirty={isStartComicIdDirty}
+                            value={startComicId}
+                            setValue={(v) => dispatch(setStartComicId(v))}
+                            isSaving={isSaving}
+                        />
+                    </p>
+                    <p>
+                        <label className="font-bold">
+                            Ongoing (no end comic):{' '}
+                            <input
+                                type="checkbox"
+                                checked={endComicId === null}
+                                disabled={isSaving}
+                                onChange={(e) =>
+                                    dispatch(
+                                        setEndComicId(
+                                            e.target.checked
+                                                ? null
+                                                : // Default to just past the
+                                                  // last comic this storyline
+                                                  // has actually appeared in,
+                                                  // rather than an empty
+                                                  // one-comic range at the
+                                                  // start.
+                                                  Math.max(
+                                                      item.last,
+                                                      startComicId
+                                                  ) + 1
+                                        )
+                                    )
+                                }
+                            />
+                        </label>
+                    </p>
+                    {displayedEndComicId !== null && (
+                        <p>
+                            <ComicIdEditor
+                                label="End comic"
+                                dirty={isEndComicIdDirty}
+                                value={displayedEndComicId}
+                                setValue={(v) => dispatch(setEndComicId(v + 1))}
+                                isSaving={isSaving}
+                            />
+                        </p>
+                    )}
+                    {displayedEndComicId !== null &&
+                        displayedEndComicId < startComicId && (
+                            <p className="text-[#ff3030]">
+                                End comic must not be before the start comic.
+                            </p>
+                        )}
+                </>
             )}
             <p>
                 <strong>First appearance:</strong>{' '}
@@ -213,6 +293,8 @@ export default function ItemDetails({
                     next: item.last,
                     last: item.last,
                     count: item.totalComics,
+                    startComicId: type === 'storyline' ? startComicId : null,
+                    endComicId: type === 'storyline' ? endComicId : null,
                 }}
                 useColors={true}
                 onSetCurrentComic={() => {}}

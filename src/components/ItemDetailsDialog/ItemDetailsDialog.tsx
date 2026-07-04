@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 
 import { PaddedButton } from '@components/Button'
 import EditLogPanel from '@components/EditLogDialog/EditLogPanel/EditLogPanel'
@@ -45,6 +45,17 @@ export default function ItemDetailsDialog({
     const settings = useAppSelector((state) => state.settings.values)
     const editorItemId = useAppSelector((state) => state.itemEditor.id)
     const isItemDirty = useAppSelector((state) => isStateDirtySelector(state))
+    const editorType = useAppSelector((state) => state.itemEditor.type)
+    const editorStartComicId = useAppSelector(
+        (state) => state.itemEditor.startComicId
+    )
+    const editorEndComicId = useAppSelector(
+        (state) => state.itemEditor.endComicId
+    )
+    const hasInvalidStorylineRange =
+        editorType === 'storyline' &&
+        editorEndComicId !== null &&
+        editorEndComicId < editorStartComicId
     const currentComic = useAppSelector((state) => state.comic.current)
     const lockedToItem = useAppSelector((state) => state.comic.lockedToItem)
     const itemName = useAppSelector((state) => state.itemEditor.name)
@@ -70,16 +81,25 @@ export default function ItemDetailsDialog({
         isFetching: isItemDataFetching,
     } = useAllDataQuery(currentItemId ? { itemId: currentItemId } : skipToken)
 
-    const [previousItem, setPreviousItem] = useState(itemData)
-    if (previousItem !== itemData && itemData) {
-        setPreviousItem(itemData)
-    }
+    // Tracks the last `itemData` object actually synced into `itemEditor`, so
+    // a background refetch that changes the *content* of the same item (e.g.
+    // another action patched its lifecycle fields while this item was
+    // already the one loaded in the editor) still triggers a re-sync —
+    // comparing `itemData.id !== editorItemId` alone missed that case, since
+    // the id doesn't change on a content-only refetch.
+    const lastSyncedItemData = useRef(itemData)
 
     useEffect(() => {
-        if (itemData && itemData.id !== editorItemId) {
+        if (
+            itemData &&
+            !isItemDirty &&
+            (itemData.id !== editorItemId ||
+                itemData !== lastSyncedItemData.current)
+        ) {
+            lastSyncedItemData.current = itemData
             dispatch(setFromItem(itemData))
         }
-    }, [itemData, editorItemId, dispatch])
+    }, [itemData, editorItemId, isItemDirty, dispatch])
 
     const [deleteImage, { isLoading: _isDeletingImage }] =
         useDeleteImageMutation()
@@ -92,7 +112,7 @@ export default function ItemDetailsDialog({
         isFetching: isFetchingItemData,
         isError: hasAllItemDataError,
     } = useHydratedItemData(
-        settings?.editMode ?? false ? currentComic : 0,
+        (settings?.editMode ?? false) ? currentComic : 0,
         settings
     )
 
@@ -249,7 +269,7 @@ export default function ItemDetailsDialog({
             }
             footer={
                 <>
-                    {settings?.editMode ?? false ? (
+                    {(settings?.editMode ?? false) ? (
                         <>
                             <PaddedButton
                                 onClick={() => {
@@ -274,12 +294,14 @@ export default function ItemDetailsDialog({
                                 {isFetchingItemData
                                     ? 'Loading...'
                                     : !existsInComic
-                                    ? 'Add item to current comic'
-                                    : 'Remove item from current comic'}
+                                      ? 'Add item to current comic'
+                                      : 'Remove item from current comic'}
                             </PaddedButton>
                             <PaddedButton
                                 className="ml-2"
-                                disabled={!isItemDirty}
+                                disabled={
+                                    !isItemDirty || hasInvalidStorylineRange
+                                }
                                 onClick={() => dispatch(saveChanges())}
                             >
                                 {isItemDirty ? 'Save changes' : 'No changes'}

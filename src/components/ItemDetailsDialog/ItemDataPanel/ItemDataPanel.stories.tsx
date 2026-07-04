@@ -53,6 +53,8 @@ const meta: Meta<typeof ItemDataPanel> = {
                         count: 0,
                         type: 'storyline',
                         color: 'ffaabb',
+                        startComicId: null,
+                        endComicId: null,
                     })
                     return HttpResponse.json(all)
                 }),

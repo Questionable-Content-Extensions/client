@@ -48,6 +48,8 @@ const meta: Meta<ComponentProps<typeof ComicList> & ExtraArgs> = {
                         count: 0,
                         type: 'storyline',
                         color: 'ffaabb',
+                        startComicId: null,
+                        endComicId: null,
                     })
                     return HttpResponse.json(all)
                 }),

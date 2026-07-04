@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 
+import { ActiveStorylineSummary } from '@models/ActiveStorylineSummary'
 import { Comic } from '@models/Comic'
 import { ComicList } from '@models/ComicList'
 import { HydratedItemNavigationData } from '@models/HydratedItemData'
@@ -9,6 +10,7 @@ import { ItemList } from '@models/ItemList'
 import { ItemNavigationData } from '@models/ItemNavigationData'
 import { LogResponse } from '@models/LogResponse'
 import { RelatedItem } from '@models/RelatedItem'
+import { HydratedActiveStoryline } from '@models/StorylineLifecycle'
 
 import constants from './constants'
 
@@ -31,6 +33,7 @@ export const COMIC_DATA_666: Comic = {
     news: "SIX HUNDRED AND SIXTY SIX COMICS WOOOO!\n\nConsider today's strip a break in QC's usual strict continuity. I simply couldn't let such a once-in-a-comic's-lifetime opportunity pass me by. Can you tell I had fun drawing this one? 'Cause I did!\n\nQC won another <a href=\"http://www.ccawards.com/\">WCCA</a> for \"Outstanding Romantic Comic\"! Thanks a ton to the nice folks who voted for me, I truly appreciate it.\n\nThat's all for now. Got more comics to draw! Join me again tomorrow for a return to your regularly scheduled QC. Until next Monday, anyway, when my Guest Week Doomstravaganza begins.",
     previous: 665,
     next: 667,
+    activeStorylines: [],
     items: [
         {
             id: 4,
@@ -119,6 +122,8 @@ export const COMIC_DATA_666_ITEMS: Array<ItemList> = [
         name: 'Faye Whitaker',
         type: 'cast',
         color: '341400',
+        startComicId: null,
+        endComicId: null,
         count: 1974,
     },
     {
@@ -127,6 +132,8 @@ export const COMIC_DATA_666_ITEMS: Array<ItemList> = [
         name: 'Marten Reed',
         type: 'cast',
         color: '7d929e',
+        startComicId: null,
+        endComicId: null,
         count: 1869,
     },
     {
@@ -135,6 +142,8 @@ export const COMIC_DATA_666_ITEMS: Array<ItemList> = [
         name: 'Dora Bianchi',
         type: 'cast',
         color: '1d1d1d',
+        startComicId: null,
+        endComicId: null,
         count: 1204,
     },
     {
@@ -143,6 +152,8 @@ export const COMIC_DATA_666_ITEMS: Array<ItemList> = [
         name: 'Hannelore Ellicott-Chatham',
         type: 'cast',
         color: '00c1d6',
+        startComicId: null,
+        endComicId: null,
         count: 910,
     },
     {
@@ -151,6 +162,8 @@ export const COMIC_DATA_666_ITEMS: Array<ItemList> = [
         name: "Marten, Claire, Faye, and Bubbles' Apartment",
         type: 'location',
         color: 'daeff6',
+        startComicId: null,
+        endComicId: null,
         count: 758,
     },
     {
@@ -159,6 +172,8 @@ export const COMIC_DATA_666_ITEMS: Array<ItemList> = [
         name: 'Pintsize',
         type: 'cast',
         color: '8dbd9a',
+        startComicId: null,
+        endComicId: null,
         count: 486,
     },
     {
@@ -167,6 +182,8 @@ export const COMIC_DATA_666_ITEMS: Array<ItemList> = [
         name: 'Steve',
         type: 'cast',
         color: '5b2900',
+        startComicId: null,
+        endComicId: null,
         count: 232,
     },
     {
@@ -175,6 +192,8 @@ export const COMIC_DATA_666_ITEMS: Array<ItemList> = [
         name: 'Winslow',
         type: 'cast',
         color: 'eeeeee',
+        startComicId: null,
+        endComicId: null,
         count: 148,
     },
     {
@@ -183,6 +202,8 @@ export const COMIC_DATA_666_ITEMS: Array<ItemList> = [
         name: 'Amir Afridi',
         type: 'cast',
         color: '003388',
+        startComicId: null,
+        endComicId: null,
         count: 37,
     },
     {
@@ -191,6 +212,8 @@ export const COMIC_DATA_666_ITEMS: Array<ItemList> = [
         name: 'Natasha',
         type: 'cast',
         color: '000000',
+        startComicId: null,
+        endComicId: null,
         count: 33,
     },
     {
@@ -199,6 +222,8 @@ export const COMIC_DATA_666_ITEMS: Array<ItemList> = [
         name: 'Practice space on Ward avenue',
         type: 'location',
         color: 'eae2dd',
+        startComicId: null,
+        endComicId: null,
         count: 22,
     },
 ]
@@ -215,6 +240,8 @@ export const FAYE: Item = {
     name: 'Faye Whitaker',
     type: 'cast',
     color: '341400',
+    startComicId: null,
+    endComicId: null,
     first: 3,
     last: 4805,
     appearances: 1974,
@@ -429,6 +456,8 @@ export const COFFEE_OF_DOOM: Item = {
     name: 'Coffee of Doom',
     type: 'location',
     color: 'f0d6bd',
+    startComicId: null,
+    endComicId: null,
     first: 9,
     last: 4857,
     appearances: 1063,
@@ -498,12 +527,144 @@ export const MARTEN_ITEM: ItemList = {
     name: 'Marten Reed',
     type: 'cast',
     color: '7d929e',
+    startComicId: null,
+    endComicId: null,
     count: 6969,
 }
 
 export const MARTEN_HYDRATED: HydratedItemNavigationData = {
     ...MARTEN,
     ...MARTEN_ITEM,
+}
+
+export const STORYLINE_SHORT_ARC_ITEM: ItemList = {
+    id: 201,
+    shortName: 'Coffee Coup',
+    name: 'The Coffee of Doom Coup',
+    type: 'storyline',
+    color: '8a5a2b',
+    startComicId: 640,
+    endComicId: 660,
+    count: 12,
+}
+
+export const STORYLINE_SHORT_ARC_SUMMARY: ActiveStorylineSummary = {
+    id: 201,
+    startComicId: 640,
+    endComicId: 660,
+    segments: [{ fromComicId: 640, toComicId: 660, featured: true }],
+}
+
+export const STORYLINE_SHORT_ARC_HYDRATED: HydratedActiveStoryline = {
+    ...STORYLINE_SHORT_ARC_ITEM,
+    ...STORYLINE_SHORT_ARC_SUMMARY,
+}
+
+export const STORYLINE_LONG_GAP_ITEM: ItemList = {
+    id: 202,
+    shortName: 'Momerath',
+    name: "Momma Momerath's Arc",
+    type: 'storyline',
+    color: '2b6a8a',
+    startComicId: 400,
+    endComicId: 900,
+    count: 40,
+}
+
+export const STORYLINE_LONG_GAP_SUMMARY: ActiveStorylineSummary = {
+    id: 202,
+    startComicId: 400,
+    endComicId: 900,
+    segments: [
+        { fromComicId: 400, toComicId: 420, featured: true },
+        { fromComicId: 420, toComicId: 860, featured: false },
+        { fromComicId: 860, toComicId: 900, featured: true },
+    ],
+}
+
+export const STORYLINE_LONG_GAP_HYDRATED: HydratedActiveStoryline = {
+    ...STORYLINE_LONG_GAP_ITEM,
+    ...STORYLINE_LONG_GAP_SUMMARY,
+}
+
+export const STORYLINE_INTERMITTENT_ITEM: ItemList = {
+    id: 203,
+    shortName: 'AI Uprising',
+    name: 'The AI Uprising',
+    type: 'storyline',
+    color: '6a2b8a',
+    startComicId: 500,
+    endComicId: 560,
+    count: 25,
+}
+
+export const STORYLINE_INTERMITTENT_SUMMARY: ActiveStorylineSummary = {
+    id: 203,
+    startComicId: 500,
+    endComicId: 560,
+    segments: [
+        { fromComicId: 500, toComicId: 503, featured: true },
+        { fromComicId: 503, toComicId: 507, featured: false },
+        { fromComicId: 507, toComicId: 511, featured: true },
+        { fromComicId: 511, toComicId: 515, featured: false },
+        { fromComicId: 515, toComicId: 519, featured: true },
+        { fromComicId: 519, toComicId: 560, featured: false },
+    ],
+}
+
+export const STORYLINE_INTERMITTENT_HYDRATED: HydratedActiveStoryline = {
+    ...STORYLINE_INTERMITTENT_ITEM,
+    ...STORYLINE_INTERMITTENT_SUMMARY,
+}
+
+export const STORYLINE_OPEN_ENDED_ITEM: ItemList = {
+    id: 204,
+    shortName: 'Hostile Alien',
+    name: 'The Hostile Alien Storyline',
+    type: 'storyline',
+    color: '2b8a5a',
+    startComicId: 600,
+    endComicId: null,
+    count: 18,
+}
+
+export const STORYLINE_OPEN_ENDED_SUMMARY: ActiveStorylineSummary = {
+    id: 204,
+    startComicId: 600,
+    endComicId: null,
+    segments: [
+        { fromComicId: 600, toComicId: 630, featured: true },
+        { fromComicId: 630, toComicId: 650, featured: false },
+        { fromComicId: 650, toComicId: 666, featured: true },
+    ],
+}
+
+export const STORYLINE_OPEN_ENDED_HYDRATED: HydratedActiveStoryline = {
+    ...STORYLINE_OPEN_ENDED_ITEM,
+    ...STORYLINE_OPEN_ENDED_SUMMARY,
+}
+
+export const ACTIVE_STORYLINES_COMIC_666: HydratedActiveStoryline[] = [
+    STORYLINE_LONG_GAP_HYDRATED,
+    STORYLINE_INTERMITTENT_HYDRATED,
+    STORYLINE_OPEN_ENDED_HYDRATED,
+]
+
+export const STORYLINE_ONGOING_ITEM: Item = {
+    id: 205,
+    shortName: 'Momerath',
+    name: "Momma Momerath's Arc",
+    type: 'storyline',
+    color: '2b6a8a',
+    startComicId: 400,
+    endComicId: null,
+    first: 400,
+    last: 850,
+    appearances: 40,
+    totalComics: 450,
+    presence: 8.888888888888888,
+    hasImage: false,
+    primaryImage: null,
 }
 
 export const EDIT_LOG_COMIC_4269: LogResponse = {
@@ -668,6 +829,8 @@ export const ALL_ITEMS: ItemList[] = [
         name: 'Faye Whitaker',
         type: 'cast',
         color: '341400',
+        startComicId: null,
+        endComicId: null,
         count: 1974,
     },
     {
@@ -676,6 +839,8 @@ export const ALL_ITEMS: ItemList[] = [
         name: 'Marten Reed',
         type: 'cast',
         color: '7d929e',
+        startComicId: null,
+        endComicId: null,
         count: 1870,
     },
     {
@@ -684,6 +849,8 @@ export const ALL_ITEMS: ItemList[] = [
         name: 'Dora Bianchi',
         type: 'cast',
         color: '1d1d1d',
+        startComicId: null,
+        endComicId: null,
         count: 1205,
     },
     {
@@ -692,6 +859,8 @@ export const ALL_ITEMS: ItemList[] = [
         name: 'Coffee of Doom',
         type: 'location',
         color: 'f0d6bd',
+        startComicId: null,
+        endComicId: null,
         count: 1064,
     },
     {
@@ -700,6 +869,8 @@ export const ALL_ITEMS: ItemList[] = [
         name: 'Hannelore Ellicott-Chatham',
         type: 'cast',
         color: '00c1d6',
+        startComicId: null,
+        endComicId: null,
         count: 911,
     },
     {
@@ -708,6 +879,8 @@ export const ALL_ITEMS: ItemList[] = [
         name: "Marten, Claire, Faye, and Bubbles' Apartment",
         type: 'location',
         color: 'daeff6',
+        startComicId: null,
+        endComicId: null,
         count: 758,
     },
     {
@@ -716,6 +889,8 @@ export const ALL_ITEMS: ItemList[] = [
         name: 'Claire Augustus',
         type: 'cast',
         color: 'c13232',
+        startComicId: null,
+        endComicId: null,
         count: 527,
     },
     {
@@ -724,6 +899,8 @@ export const ALL_ITEMS: ItemList[] = [
         name: 'Pintsize',
         type: 'cast',
         color: '8dbd9a',
+        startComicId: null,
+        endComicId: null,
         count: 486,
     },
     {
@@ -732,6 +909,8 @@ export const ALL_ITEMS: ItemList[] = [
         name: 'Marigold Louise Farmer',
         type: 'cast',
         color: '5a3e1c',
+        startComicId: null,
+        endComicId: null,
         count: 465,
     },
     {
@@ -740,6 +919,8 @@ export const ALL_ITEMS: ItemList[] = [
         name: 'Bubbles',
         type: 'cast',
         color: 'b26262',
+        startComicId: null,
+        endComicId: null,
         count: 431,
     },
     {
@@ -748,6 +929,8 @@ export const ALL_ITEMS: ItemList[] = [
         name: 'Downtown Northampton',
         type: 'location',
         color: '95dffd',
+        startComicId: null,
+        endComicId: null,
         count: 394,
     },
     {
@@ -756,6 +939,8 @@ export const ALL_ITEMS: ItemList[] = [
         name: 'Tai Hubbert',
         type: 'cast',
         color: '5f0000',
+        startComicId: null,
+        endComicId: null,
         count: 333,
     },
     {
@@ -764,6 +949,8 @@ export const ALL_ITEMS: ItemList[] = [
         name: 'Clinton P. Augustus',
         type: 'cast',
         color: 'c0c0c0',
+        startComicId: null,
+        endComicId: null,
         count: 307,
     },
     {
@@ -772,6 +959,8 @@ export const ALL_ITEMS: ItemList[] = [
         name: 'May (Virtual companion)',
         type: 'cast',
         color: 'e4f9ff',
+        startComicId: null,
+        endComicId: null,
         count: 276,
     },
     {
@@ -780,6 +969,8 @@ export const ALL_ITEMS: ItemList[] = [
         name: 'Momo-tan',
         type: 'cast',
         color: 'dd2875',
+        startComicId: null,
+        endComicId: null,
         count: 263,
     },
     {
@@ -788,6 +979,8 @@ export const ALL_ITEMS: ItemList[] = [
         name: 'Roko Basilisk',
         type: 'cast',
         color: 'debedf',
+        startComicId: null,
+        endComicId: null,
         count: 253,
     },
     {
@@ -796,6 +989,8 @@ export const ALL_ITEMS: ItemList[] = [
         name: "Marigold's Apartment",
         type: 'location',
         color: '8186b6',
+        startComicId: null,
+        endComicId: null,
         count: 247,
     },
     {
@@ -804,6 +999,8 @@ export const ALL_ITEMS: ItemList[] = [
         name: 'Steve',
         type: 'cast',
         color: '5b2900',
+        startComicId: null,
+        endComicId: null,
         count: 232,
     },
     {
@@ -812,6 +1009,8 @@ export const ALL_ITEMS: ItemList[] = [
         name: 'Elliot',
         type: 'cast',
         color: 'b26d24',
+        startComicId: null,
+        endComicId: null,
         count: 225,
     },
     {
@@ -820,6 +1019,8 @@ export const ALL_ITEMS: ItemList[] = [
         name: 'Sven Bianchi',
         type: 'cast',
         color: 'c17b27',
+        startComicId: null,
+        endComicId: null,
         count: 220,
     },
     {
@@ -828,6 +1029,8 @@ export const ALL_ITEMS: ItemList[] = [
         name: 'Brunhilde Khoury',
         type: 'cast',
         color: 'd5d5da',
+        startComicId: null,
+        endComicId: null,
         count: 209,
     },
     {
@@ -836,6 +1039,8 @@ export const ALL_ITEMS: ItemList[] = [
         name: 'Union Robotics',
         type: 'location',
         color: '96aac3',
+        startComicId: null,
+        endComicId: null,
         count: 205,
     },
     {
@@ -844,6 +1049,8 @@ export const ALL_ITEMS: ItemList[] = [
         name: 'Angus McPhee',
         type: 'cast',
         color: 'ce7700',
+        startComicId: null,
+        endComicId: null,
         count: 195,
     },
     {
@@ -852,6 +1059,8 @@ export const ALL_ITEMS: ItemList[] = [
         name: 'Smith College Williston Library',
         type: 'location',
         color: 'bfb757',
+        startComicId: null,
+        endComicId: null,
         count: 191,
     },
     {
@@ -860,6 +1069,8 @@ export const ALL_ITEMS: ItemList[] = [
         name: 'Dale',
         type: 'cast',
         color: 'fafafa',
+        startComicId: null,
+        endComicId: null,
         count: 185,
     },
     {
@@ -868,6 +1079,8 @@ export const ALL_ITEMS: ItemList[] = [
         name: 'Emily Azuma',
         type: 'cast',
         color: 'ee9c6b',
+        startComicId: null,
+        endComicId: null,
         count: 176,
     },
     {
@@ -876,6 +1089,8 @@ export const ALL_ITEMS: ItemList[] = [
         name: "Marten's Initial Apartment",
         type: 'location',
         color: '455293',
+        startComicId: null,
+        endComicId: null,
         count: 173,
     },
     {
@@ -884,6 +1099,8 @@ export const ALL_ITEMS: ItemList[] = [
         name: 'Samantha Bean',
         type: 'cast',
         color: 'f8a673',
+        startComicId: null,
+        endComicId: null,
         count: 160,
     },
     {
@@ -892,6 +1109,8 @@ export const ALL_ITEMS: ItemList[] = [
         name: 'Blodwyn Raven Pritchard',
         type: 'cast',
         color: 'fb0b65',
+        startComicId: null,
+        endComicId: null,
         count: 159,
     },
     {
@@ -900,6 +1119,8 @@ export const ALL_ITEMS: ItemList[] = [
         name: 'Winslow',
         type: 'cast',
         color: 'eeeeee',
+        startComicId: null,
+        endComicId: null,
         count: 148,
     },
     {
@@ -908,6 +1129,8 @@ export const ALL_ITEMS: ItemList[] = [
         name: 'Renee',
         type: 'cast',
         color: '060666',
+        startComicId: null,
+        endComicId: null,
         count: 143,
     },
     {
@@ -916,6 +1139,8 @@ export const ALL_ITEMS: ItemList[] = [
         name: 'Penelope Gaines',
         type: 'cast',
         color: 'f3cf75',
+        startComicId: null,
+        endComicId: null,
         count: 139,
     },
     {
@@ -924,6 +1149,8 @@ export const ALL_ITEMS: ItemList[] = [
         name: "Hannelore's apartment",
         type: 'location',
         color: 'fbfaf3',
+        startComicId: null,
+        endComicId: null,
         count: 135,
     },
     {
@@ -932,6 +1159,8 @@ export const ALL_ITEMS: ItemList[] = [
         name: 'Bar / Restaurant (Horrible Revelation)',
         type: 'location',
         color: '7c1414',
+        startComicId: null,
+        endComicId: null,
         count: 131,
     },
     {
@@ -940,6 +1169,8 @@ export const ALL_ITEMS: ItemList[] = [
         name: 'Yaaaaaaaay Newfriend',
         type: 'cast',
         color: 'eff7ff',
+        startComicId: null,
+        endComicId: null,
         count: 127,
     },
     {
@@ -948,6 +1179,8 @@ export const ALL_ITEMS: ItemList[] = [
         name: 'Outside Coffee of Doom',
         type: 'location',
         color: 'f0d5ac',
+        startComicId: null,
+        endComicId: null,
         count: 69,
     },
     {
@@ -956,6 +1189,8 @@ export const ALL_ITEMS: ItemList[] = [
         name: 'Amir Afridi',
         type: 'cast',
         color: '003388',
+        startComicId: null,
+        endComicId: null,
         count: 37,
     },
     {
@@ -964,6 +1199,8 @@ export const ALL_ITEMS: ItemList[] = [
         name: 'Natasha',
         type: 'cast',
         color: '000000',
+        startComicId: null,
+        endComicId: null,
         count: 33,
     },
     {
@@ -972,6 +1209,8 @@ export const ALL_ITEMS: ItemList[] = [
         name: 'Practice space on Ward avenue',
         type: 'location',
         color: 'eae2dd',
+        startComicId: null,
+        endComicId: null,
         count: 22,
     },
     {
@@ -980,6 +1219,8 @@ export const ALL_ITEMS: ItemList[] = [
         name: 'Unicorn Grove',
         type: 'location',
         color: '7f7f7f',
+        startComicId: null,
+        endComicId: null,
         count: 6,
     },
 ]

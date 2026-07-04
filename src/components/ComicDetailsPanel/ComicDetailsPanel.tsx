@@ -292,6 +292,14 @@ export default function ComicDetailsPanel() {
                         itemId,
                     })
                 }}
+                onAddItem={(itemId) => {
+                    addItem({
+                        token: settings.editModeToken,
+                        comicId: currentComic,
+                        new: false,
+                        itemId,
+                    })
+                }}
                 lockedToItemId={lockedItem?.id}
             />
             <hr className="my-4 mx-0 border-solid border-b max-w-none" />

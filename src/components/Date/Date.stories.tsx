@@ -1,4 +1,4 @@
-import { HttpResponse, delay, http } from 'msw'
+import { HttpResponse, http } from 'msw'
 
 import { apiSlice } from '@store/apiSlice'
 import { setCurrentComic } from '@store/comicSlice'
@@ -6,6 +6,7 @@ import store from '@store/store'
 import type { Meta, StoryObj } from '@storybook/react-vite'
 
 import { COMIC_DATA_666 } from '~/mocks'
+import { mockNetworkDelay } from '~/storybook/mockNetworkDelay'
 
 import Date from './Date'
 
@@ -41,7 +42,7 @@ export const Default: Story = {
                     async () => {
                         // We pretend this takes 1-2 seconds so we get to
                         // observe the loading UX
-                        await delay(1000 + Math.random() * 1000)
+                        await mockNetworkDelay()
                         return HttpResponse.json(COMIC_DATA_666)
                     }
                 ),
@@ -57,7 +58,7 @@ export const Error: Story = {
                 http.get(
                     'http://localhost:3000/api/v3/comicdata/:comicId',
                     async () => {
-                        await delay(1000 + Math.random() * 1000)
+                        await mockNetworkDelay()
                         return HttpResponse.text('Error!', { status: 500 })
                     }
                 ),
