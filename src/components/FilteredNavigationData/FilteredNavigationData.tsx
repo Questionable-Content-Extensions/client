@@ -60,8 +60,15 @@ export default function FilteredNavigationData({
     // Ctrl+Enter shortcuts below), the filter only clears once it succeeds.
     const handleAddItem = useCallback(
         async (item: ItemBody) => {
-            await onAddItem(item)
-            setFilter('')
+            try {
+                await onAddItem(item)
+                setFilter('')
+            } catch {
+                // A rejected add-item mutation already surfaces a toast via
+                // the global rtkQueryErrorLogger middleware; swallow it here
+                // so callers can fire-and-forget without an unhandled
+                // rejection.
+            }
         },
         [onAddItem, setFilter]
     )
