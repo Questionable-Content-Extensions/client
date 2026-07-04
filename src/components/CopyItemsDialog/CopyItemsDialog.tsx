@@ -82,7 +82,6 @@ export default function CopyItemsDialog({
             }
         }
         const result = await addItems({
-            token: settings!.editModeToken,
             comicId: currentComic,
             items: itemsToAdd.map((itemId) => ({
                 new: false,

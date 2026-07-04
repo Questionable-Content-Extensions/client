@@ -27,12 +27,10 @@ import PatchItemdataItemIdSpec, {
 import PostItemdataItemIdImagesPrimarySpec, {
     PostItemdataItemIdImagesPrimaryResponse,
 } from '@endpoints/PostItemdataItemIdImagesPrimary'
-import { DeleteImageBody } from '@models/DeleteImageBody'
 import { ImageId } from '@models/ImageId'
 import { ItemId } from '@models/ItemId'
 import { PatchItemBody } from '@models/PatchItemBody'
 import { SetPrimaryImageBody } from '@models/SetPrimaryImageBody'
-import { Token } from '@models/Token'
 import { skipToken } from '@reduxjs/toolkit/dist/query'
 import {
     apiSlice,
@@ -49,7 +47,6 @@ export type GetDataQueryArgs = {
 
 export type UploadImageArgs = {
     itemId: ItemId
-    token: Token
     image: Blob
     imageFileName: string
 }
@@ -259,12 +256,11 @@ export const itemApiSlice = apiSlice.injectEndpoints({
         }),
         deleteImage: builder.mutation<
             DeleteItemdataImageImageIdResponse,
-            { itemId: ItemId; imageId: ImageId; body: DeleteImageBody }
+            { itemId: ItemId; imageId: ImageId }
         >({
-            query: ({ imageId, body }) =>
+            query: ({ imageId }) =>
                 queryFromSpec(DeleteItemdataImageImageIdSpec, {
                     pathParams: imageId,
-                    body,
                 }),
             transformResponse:
                 transformResponseByJsonParseResultText<DeleteItemdataImageImageIdResponse>,
@@ -318,17 +314,12 @@ export const itemApiSlice = apiSlice.injectEndpoints({
                     : [],
         }),
         uploadImage: builder.mutation<string, UploadImageArgs>({
-            query: ({ itemId, token, image, imageFileName }) => {
+            query: ({ itemId, image, imageFileName }) => {
                 const formData = new FormData()
                 formData.append('image', image, imageFileName)
-                formData.append('token', token)
                 return {
                     url: `${constants.itemDataEndpoint}${itemId}/images`,
                     configuration: {
-                        // HACK: GM supports `FormData`, but the
-                        // @types/greasemonkey TS types don't seem to be aware
-                        // of this, so for the sake of typechecking,
-                        // we use `any` to get TS off our backs.
                         data: formData,
                         method: 'POST',
                     },

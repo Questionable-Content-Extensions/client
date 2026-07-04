@@ -1,6 +1,7 @@
 import type { EndpointSpec } from '@endpoints/EndpointSpec'
 import { EndpointBuilder } from '@reduxjs/toolkit/dist/query/endpointDefinitions'
 import { BaseQueryFn, createApi } from '@reduxjs/toolkit/query/react'
+import type { RootState } from '@store/store'
 
 import constants, { HAS_GREASEMONKEY } from '~/constants'
 import { error, fetch as gmFetch, warn } from '~/utils'
@@ -24,6 +25,11 @@ export type GreasemonkeyError =
           type: 'STATUS_ERROR'
           response: GM.Response<undefined>
       }
+
+function authHeaderFromState(getState: () => unknown): Record<string, string> {
+    const token = (getState() as RootState).settings.values?.editModeToken
+    return token ? { Authorization: `Bearer ${token}` } : {}
+}
 
 export function isGreasemonkeyResponse(
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -68,13 +74,15 @@ const greasemonkeyBaseQuery = ({
 }: {
     baseUrl: string
 }): GreasemonkeyBaseQuery => {
-    return async ({ url, configuration }, _api, _extraOptions) => {
+    return async ({ url, configuration }, api, _extraOptions) => {
         const requestUrl = `${baseUrl}${url}`
+        const authHeader = authHeaderFromState(api.getState)
 
         if (!configuration) {
             configuration = {
                 headers: {
                     'X-QCExt-Version': GM.info.script.version,
+                    ...authHeader,
                 },
             }
         } else {
@@ -83,6 +91,7 @@ const greasemonkeyBaseQuery = ({
                 headers: {
                     ...(configuration.headers ?? {}),
                     'X-QCExt-Version': GM.info.script.version,
+                    ...authHeader,
                 },
             }
         }
@@ -120,13 +129,17 @@ const fakeGreasemonkeyBaseQuery = ({
 }: {
     baseUrl: string
 }): GreasemonkeyBaseQuery => {
-    return async ({ url, configuration }, _api, _extraOptions) => {
+    return async ({ url, configuration }, api, _extraOptions) => {
         const requestUrl = `${baseUrl}${url}`
+        const authHeader = authHeaderFromState(api.getState)
 
-        const requestOptions: RequestInit = {}
+        const requestOptions: RequestInit = { headers: authHeader }
         if (configuration) {
             requestOptions.body = configuration.data
-            requestOptions.headers = configuration.headers
+            requestOptions.headers = {
+                ...(configuration.headers ?? {}),
+                ...authHeader,
+            }
             requestOptions.method = configuration.method
         }
 

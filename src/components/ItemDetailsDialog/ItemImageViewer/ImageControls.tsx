@@ -173,7 +173,6 @@ export default function ImageControls({
                                             image: files[0],
                                             imageFileName: files[0].name,
                                             itemId,
-                                            token: editModeToken,
                                         })
                                         setShowImageUploadPopup(false)
                                         setPreviewImage(null)
@@ -196,8 +195,8 @@ export default function ImageControls({
                                     {!hasImage
                                         ? '👆 Choose file'
                                         : isUploadingImage
-                                        ? 'Uploading...'
-                                        : 'Upload'}
+                                          ? 'Uploading...'
+                                          : 'Upload'}
                                     <div className="invisible -mt-0.5 -mb-1">
                                         <InlineSpinner color="text-qc-background" />
                                     </div>

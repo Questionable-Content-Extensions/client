@@ -2,21 +2,19 @@
 import { callEndpoint } from '../../services/callEndpoint'
 import spec from '../endpoints/DeleteItemdataImageImageId'
 import type {
-    DeleteItemdataImageImageIdBody,
     DeleteItemdataImageImageIdPathParams,
     DeleteItemdataImageImageIdResponse,
 } from '../endpoints/DeleteItemdataImageImageId'
 
 export async function deleteItemdataImageImageId(
     pathParams: DeleteItemdataImageImageIdPathParams,
-    body: DeleteItemdataImageImageIdBody,
     options?: Omit<RequestInit, 'method'>
 ): Promise<DeleteItemdataImageImageIdResponse> {
     return callEndpoint<
         never,
-        DeleteItemdataImageImageIdBody,
+        never,
         DeleteItemdataImageImageIdPathParams,
         DeleteItemdataImageImageIdResponse,
         never
-    >(spec, { body, pathParams }, options)
+    >(spec, { pathParams }, options)
 }

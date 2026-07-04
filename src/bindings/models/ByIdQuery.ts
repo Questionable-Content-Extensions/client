@@ -2,10 +2,8 @@
 import type { Exclusion } from './Exclusion'
 import type { Inclusion } from './Inclusion'
 import type { Sorting } from './Sorting'
-import type { Token } from './Token'
 
 export type ByIdQuery = {
-    token?: Token
     exclude?: Exclusion
     include?: Inclusion
     sorting?: Sorting

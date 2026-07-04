@@ -405,7 +405,6 @@ export const ResyncsAfterBackgroundPatch: Story = {
             itemApiSlice.endpoints.patchItem.initiate({
                 item: 4,
                 body: {
-                    token: '00000000-0000-0000-0000-000000000000',
                     endComicId: 121,
                 },
             })

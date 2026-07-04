@@ -163,7 +163,6 @@ export default function ItemNavigation({
                 patchItem({
                     item: item.id,
                     body: {
-                        token: settings.editModeToken,
                         ...(newStartComicId !== undefined
                             ? { startComicId: newStartComicId }
                             : {}),

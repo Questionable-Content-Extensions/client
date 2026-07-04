@@ -146,11 +146,7 @@ export default function ItemDetailsDialog({
         //refetch: reloadItemLog,
     } = useGetLogsForItemQuery(
         itemData && settings?.editMode && currentItemId
-            ? {
-                  token: settings.editModeToken,
-                  page: currentLogPage,
-                  id: currentItemId,
-              }
+            ? { page: currentLogPage, id: currentItemId }
             : skipToken
     )
 
@@ -193,16 +189,12 @@ export default function ItemDetailsDialog({
                             deleteImage({
                                 itemId: editorItemId,
                                 imageId,
-                                body: { token: settings!.editModeToken },
                             })
                         }}
                         onSetPrimaryImage={(imageId) =>
                             setPrimaryImage({
                                 itemId: editorItemId,
-                                body: {
-                                    token: settings!.editModeToken,
-                                    imageId,
-                                },
+                                body: { imageId },
                             })
                         }
                         hasError={hasItemDataError || hasAllItemDataError}
@@ -276,14 +268,11 @@ export default function ItemDetailsDialog({
                                     if (existsInComic) {
                                         removeItem({
                                             comicId: currentComic,
-                                            editModeToken:
-                                                settings!.editModeToken,
                                             itemId: currentItemId!,
                                         })
                                     } else {
                                         addItem({
                                             comicId: currentComic,
-                                            token: settings!.editModeToken,
                                             new: false,
                                             itemId: currentItemId!,
                                         })

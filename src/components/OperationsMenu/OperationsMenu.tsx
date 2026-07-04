@@ -86,9 +86,7 @@ export default function OperationsMenu({}: Record<string, never>) {
                         <MenuItem
                             onClick={() => {
                                 setShowPopup(false)
-                                void runComicUpdater({
-                                    token: settings.editModeToken,
-                                })
+                                void runComicUpdater()
                             }}
                         >
                             Run comic updater now

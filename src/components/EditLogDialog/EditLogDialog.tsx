@@ -36,9 +36,7 @@ export default function EditLogDialog({
         isError: hasAllLogsError,
         refetch: reloadAllEditLog,
     } = useGetLogsQuery(
-        currentShowFor === true && settings
-            ? { token: settings!.editModeToken, page: currentPage }
-            : skipToken
+        currentShowFor === true && settings ? { page: currentPage } : skipToken
     )
     const {
         data: comicLogs,
@@ -48,11 +46,7 @@ export default function EditLogDialog({
         refetch: reloadComicEditLog,
     } = useGetLogsForComicQuery(
         typeof currentShowFor === 'number' && settings
-            ? {
-                  token: settings!.editModeToken,
-                  page: currentPage,
-                  id: currentShowFor,
-              }
+            ? { page: currentPage, id: currentShowFor }
             : skipToken
     )
 

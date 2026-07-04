@@ -52,12 +52,8 @@ export const saveChanges = createAppAsyncThunk(
     'itemEditor/saveChanges',
     async (item, { dispatch, getState, rejectWithValue }) => {
         const state = getState()
-        // Setting values should always be loaded by the time we get here
-        const editModeToken = state.settings.values!.editModeToken
 
-        const patchBody: PatchItemBody = {
-            token: editModeToken,
-        }
+        const patchBody: PatchItemBody = {}
 
         if (isNameDirtySelector(state)) {
             patchBody.name = state.itemEditor.name

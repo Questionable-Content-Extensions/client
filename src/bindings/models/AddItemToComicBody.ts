@@ -2,8 +2,5 @@
 import type { ComicId } from './ComicId'
 import type { ExistingItem } from './ExistingItem'
 import type { NewItem } from './NewItem'
-import type { Token } from './Token'
 
-export type AddItemToComicBody = { token: Token; comicId: ComicId } & (
-    NewItem | ExistingItem
-)
+export type AddItemToComicBody = { comicId: ComicId } & (NewItem | ExistingItem)

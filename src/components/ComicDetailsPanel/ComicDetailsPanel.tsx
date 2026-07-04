@@ -287,14 +287,12 @@ export default function ComicDetailsPanel() {
                 editMode={settings.editMode}
                 onRemoveItem={(itemId) => {
                     removeItem({
-                        editModeToken: settings.editModeToken,
                         comicId: currentComic,
                         itemId,
                     })
                 }}
                 onAddItem={(itemId) => {
                     addItem({
-                        token: settings.editModeToken,
                         comicId: currentComic,
                         new: false,
                         itemId,
@@ -381,7 +379,6 @@ export default function ComicDetailsPanel() {
                         }
                         onAddItem={async (itemBody) => {
                             await addItem({
-                                token: settings.editModeToken,
                                 comicId: currentComic,
                                 ...itemBody,
                             }).unwrap()

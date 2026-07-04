@@ -5,7 +5,6 @@ import GetComicdataSpec, {
     GetComicdataResponse,
 } from '@endpoints/GetComicdata'
 import GetComicdataAdvanceSpec, {
-    GetComicdataAdvanceQuery,
     GetComicdataAdvanceResponse,
 } from '@endpoints/GetComicdataAdvance'
 import GetComicdataComicIdSpec, {
@@ -41,12 +40,9 @@ import { AddAdvanceComicBody } from '@models/AddAdvanceComicBody'
 import { AddItemToComicBody } from '@models/AddItemToComicBody'
 import { AddItemsToComicBody } from '@models/AddItemsToComicBody'
 import { ComicId } from '@models/ComicId'
-import { FlagType } from '@models/FlagType'
 import { ItemId } from '@models/ItemId'
 import { PatchComicBody } from '@models/PatchComicBody'
 import { RemoveItemFromComicBody } from '@models/RemoveItemFromComicBody'
-import { RunComicUpdaterBody } from '@models/RunComicUpdaterBody'
-import { Token } from '@models/Token'
 import { createSelector } from '@reduxjs/toolkit'
 import { TagDescription } from '@reduxjs/toolkit/dist/query'
 import {
@@ -74,38 +70,16 @@ export type GetExcludedQueryArgs = {
     skipNonCanon: boolean
 }
 
-type SharedMutationArgs = {
-    editModeToken: Token
-    comicId: ComicId
-}
-
-export type SetFlagMutationArgs = SharedMutationArgs & {
-    flagType: FlagType
-    value: boolean
-}
-
-export type SetTextMutationArgs = SharedMutationArgs & {
-    value: string
-}
-
-export type SetPublishDateMutationArgs = SharedMutationArgs & {
-    publishDate: string
-    isAccuratePublishDate: boolean
-}
-
 export type AddItemMutationArgs = AddItemToComicBody
 
-export type RemoveItemMutationArgs = SharedMutationArgs & {
+export type RemoveItemMutationArgs = {
+    comicId: ComicId
     itemId: ItemId
 }
 
 export type AddItemsMutationArgs = AddItemsToComicBody
 
 export type AddAdvanceComicMutationArgs = AddAdvanceComicBody
-
-export type ListAdvanceComicsQueryArgs = { editModeToken: Token }
-
-export type RunComicUpdaterMutationArgs = RunComicUpdaterBody
 
 export const comicApiSlice = apiSlice.injectEndpoints({
     endpoints: (builder) => ({
@@ -122,9 +96,6 @@ export const comicApiSlice = apiSlice.injectEndpoints({
                 orderMembersByLastAppearance,
             }) => {
                 const query: GetComicdataComicIdQuery = {}
-                if (editModeToken) {
-                    query.token = editModeToken
-                }
                 if (skipNonCanon) {
                     query.exclude = 'non-canon'
                 } else if (skipGuest) {
@@ -325,7 +296,6 @@ export const comicApiSlice = apiSlice.injectEndpoints({
         >({
             query: (args) => {
                 const body: RemoveItemFromComicBody = {
-                    token: args.editModeToken,
                     comicId: args.comicId,
                     itemId: args.itemId,
                 }
@@ -409,14 +379,8 @@ export const comicApiSlice = apiSlice.injectEndpoints({
                 return tags
             },
         }),
-        listAdvanceComics: builder.query<
-            GetComicdataAdvanceResponse,
-            ListAdvanceComicsQueryArgs
-        >({
-            query: ({ editModeToken }) => {
-                const query: GetComicdataAdvanceQuery = { token: editModeToken }
-                return queryFromSpec(GetComicdataAdvanceSpec, { query })
-            },
+        listAdvanceComics: builder.query<GetComicdataAdvanceResponse, void>({
+            query: () => queryFromSpec(GetComicdataAdvanceSpec),
             transformResponse:
                 transformResponseByJsonParseResultText<GetComicdataAdvanceResponse>,
             providesTags: (result) =>
@@ -447,10 +411,9 @@ export const comicApiSlice = apiSlice.injectEndpoints({
         }),
         runComicUpdater: builder.mutation<
             PostComicdataAdvanceRunUpdaterResponse,
-            RunComicUpdaterMutationArgs
+            void
         >({
-            query: (body) =>
-                queryFromSpec(PostComicdataAdvanceRunUpdaterSpec, { body }),
+            query: () => queryFromSpec(PostComicdataAdvanceRunUpdaterSpec),
             onQueryStarted: toastSuccess,
             transformResponse:
                 transformResponseByJsonParseResultText<PostComicdataAdvanceRunUpdaterResponse>,

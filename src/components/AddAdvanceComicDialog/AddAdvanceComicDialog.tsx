@@ -83,9 +83,7 @@ function CreateAdvanceComicDialog({
 }) {
     const { data: pendingComics, isFetching: isFetchingPendingComics } =
         useListAdvanceComicsQuery(
-            !show || !settings?.editModeToken
-                ? skipToken
-                : { editModeToken: settings.editModeToken }
+            !show || !settings?.editModeToken ? skipToken : undefined
         )
 
     const [comicId, setComicId] = useState('')
@@ -106,7 +104,6 @@ function CreateAdvanceComicDialog({
         }
 
         const result = await addAdvanceComic({
-            token: settings!.editModeToken,
             comicId: parsedComicId,
             title,
             tagline: tagline || undefined,
@@ -310,8 +307,6 @@ function EditAdvanceComicFields({
     onBack: () => void
     onClose: () => void
 }) {
-    const editModeToken = settings.editModeToken
-
     const [title, setTitle] = useState(initialData.title)
     const [tagline, setTagline] = useState(initialData.tagline ?? '')
     const [publishDate, setPublishDate] = useState(
@@ -353,7 +348,6 @@ function EditAdvanceComicFields({
         const result = await patchComic({
             comic: comicId,
             body: {
-                token: editModeToken,
                 title,
                 tagline: tagline || undefined,
                 publishDate: publishDate
@@ -448,7 +442,6 @@ function EditAdvanceComicFields({
                         editMode
                         onRemoveItem={(itemId) => {
                             removeItem({
-                                editModeToken,
                                 comicId,
                                 itemId,
                             })
@@ -467,7 +460,6 @@ function EditAdvanceComicFields({
                         editMode
                         onAddItem={async (itemBody) => {
                             await addItem({
-                                token: editModeToken,
                                 comicId,
                                 ...itemBody,
                             }).unwrap()
