@@ -269,7 +269,12 @@ const meta: Meta<typeof ItemDetailsDialog> = {
     args: {
         initialItemId: 4,
         onClose: () => {
-            alert('In the userscript, this window would close now.')
+            // Under Vitest, `alert` has no dismiss button to click, so it'd
+            // just block the story - only show it for a real interactive
+            // Storybook preview.
+            if (import.meta.env.MODE !== 'test') {
+                alert('In the userscript, this window would close now.')
+            }
         },
     },
     loaders: [
@@ -366,6 +371,37 @@ export const Error: Story = {
                 })
             }
         )
+    },
+}
+
+// Regression coverage for a bug where `onGoToComic` called `setCurrentComic`
+// without wrapping it in `dispatch`, making it a silent no-op.
+export const NavigatesToFeaturedComic: Story = {
+    parameters: {
+        msw: {
+            handlers: successHandlers,
+        },
+    },
+    loaders: [
+        () => {
+            store.dispatch(setSettings(Settings.DEFAULTS))
+        },
+    ],
+    play: async ({ canvasElement }) => {
+        const canvas = within(canvasElement)
+
+        const summary = await waitFor(() =>
+            canvas.getByText('Comics item is featured in')
+        )
+        summary.click()
+
+        const comicButton = await waitFor(
+            () => canvas.getByText(/Comic 4805:/),
+            { timeout: 15000 }
+        )
+        comicButton.click()
+
+        await waitFor(() => expect(store.getState().comic.current).toBe(4805))
     },
 }
 

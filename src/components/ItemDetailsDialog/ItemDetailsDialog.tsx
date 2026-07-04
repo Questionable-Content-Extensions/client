@@ -216,12 +216,14 @@ export default function ItemDetailsDialog({
                             }
                             onGoToComic={(comic) => {
                                 setLoadComics(false)
-                                setCurrentComic(comic, {
-                                    locked:
-                                        lockedToItem && itemData
-                                            ? lockedToItem === itemData.id
-                                            : false,
-                                })
+                                dispatch(
+                                    setCurrentComic(comic, {
+                                        locked:
+                                            lockedToItem && itemData
+                                                ? lockedToItem === itemData.id
+                                                : false,
+                                    })
+                                )
                                 onClose()
                             }}
                         />
