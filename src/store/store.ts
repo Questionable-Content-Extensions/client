@@ -4,6 +4,7 @@ import { setupListeners } from '@reduxjs/toolkit/query'
 import { apiSlice } from './apiSlice'
 import comicEditorReducer from './comicEditorSlice'
 import comicFilterReducer from './comicFilterSlice'
+import { comicNavigationMiddleware } from './comicNavigationMiddleware'
 import comicReducer from './comicSlice'
 import customLogger from './customLogger'
 import dialogReducer from './dialogSlice'
@@ -26,6 +27,7 @@ export function makeStore() {
             const base = getDefaultMiddleware()
                 .concat(apiSlice.middleware)
                 .concat(rtkQueryErrorLogger)
+                .concat(comicNavigationMiddleware)
             // redux-logger is dev-only noise under Vitest (every dispatch in
             // every Storybook test fires it), so skip it during test runs.
             return import.meta.env.MODE === 'test'
