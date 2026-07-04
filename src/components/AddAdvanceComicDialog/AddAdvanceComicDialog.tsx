@@ -465,12 +465,12 @@ function EditAdvanceComicFields({
                         useColors={settings.useColors}
                         orderMembersByLastAppearance={false}
                         editMode
-                        onAddItem={(itemBody) => {
-                            addItem({
+                        onAddItem={async (itemBody) => {
+                            await addItem({
                                 token: editModeToken,
                                 comicId,
                                 ...itemBody,
-                            })
+                            }).unwrap()
                         }}
                     />
                 </div>

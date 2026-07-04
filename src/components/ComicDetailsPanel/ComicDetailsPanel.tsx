@@ -379,12 +379,12 @@ export default function ComicDetailsPanel() {
                         orderMembersByLastAppearance={
                             settings.orderMembersByLastAppearance
                         }
-                        onAddItem={(itemBody) => {
-                            addItem({
+                        onAddItem={async (itemBody) => {
+                            await addItem({
                                 token: settings.editModeToken,
                                 comicId: currentComic,
                                 ...itemBody,
-                            })
+                            }).unwrap()
                         }}
                         hasError={hasErrorLoadingComicData}
                     />

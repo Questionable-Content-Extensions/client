@@ -1,3 +1,1 @@
 ☐ Add a setting for remembering the filter between reloads
-☐ CSS gets injected multiple times for some reason; we need to make that stop.
-☐ Hitting enter in filter after entering something does not actually hit "add to comic" or "add new X called Y" which is bad ergonomics. It should do "add to comic" to the first search result if you hit Enter and "add new X to Y" if you hit Ctrl+Enter.

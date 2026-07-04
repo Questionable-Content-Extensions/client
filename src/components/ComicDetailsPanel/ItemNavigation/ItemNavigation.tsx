@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from 'react'
+import { useCallback, useEffect, useMemo } from 'react'
 
 import ChaserUnderline from '@components/ChaserUnderline'
 import NavElement, { NavElementMode } from '@components/NavElement/NavElement'
@@ -30,6 +30,7 @@ export default function ItemNavigation({
     editMode,
     onRemoveItem,
     onAddItem,
+    onAddFirstMatchChange,
     lockedToItemId,
 }: {
     itemNavigationData: HydratedItemNavigationData[]
@@ -46,6 +47,9 @@ export default function ItemNavigation({
     editMode?: boolean
     onRemoveItem?: (_: ItemId) => void
     onAddItem?: (_: ItemId) => void
+    // Lets the caller (e.g. a filter box) trigger "add" on whichever item
+    // is first in this component's display order
+    onAddFirstMatchChange?: (add: (() => void) | undefined) => void
     lockedToItemId?: ItemId
 }) {
     const dispatch = useAppDispatch()
@@ -176,6 +180,49 @@ export default function ItemNavigation({
         },
         [currentComic, onAddItem, patchItem, settings]
     )
+
+    // Mirrors the display order used below (grouped by type, or flattened
+    // when ordering by last appearance) so that "the first search result"
+    // means the same thing here as it does visually.
+    const firstOrderedItem = useMemo(() => {
+        const nonActiveStoryline = storyline.filter(
+            (item) => !activeStorylineIds.has(item.id)
+        )
+        const ordered = orderMembersByLastAppearance
+            ? itemNavigationData.filter(
+                  (item) =>
+                      item.type !== 'storyline' ||
+                      !activeStorylineIds.has(item.id)
+              )
+            : [...cast, ...location, ...nonActiveStoryline]
+        return ordered[0]
+    }, [
+        cast,
+        location,
+        storyline,
+        activeStorylineIds,
+        itemNavigationData,
+        orderMembersByLastAppearance,
+    ])
+
+    const addFirstMatch = useMemo(() => {
+        if (!editMode || mode !== NavElementMode.Missing || !firstOrderedItem) {
+            return undefined
+        }
+        const item = firstOrderedItem
+        return () => {
+            if (item.type === 'storyline') {
+                handleAddStoryline(item)
+            } else {
+                onAddItem?.(item.id)
+            }
+        }
+    }, [editMode, mode, firstOrderedItem, handleAddStoryline, onAddItem])
+
+    useEffect(() => {
+        onAddFirstMatchChange?.(addFirstMatch)
+        return () => onAddFirstMatchChange?.(undefined)
+    }, [addFirstMatch, onAddFirstMatchChange])
 
     const storylineNavigationToNavElement = useCallback(
         (item: HydratedItemNavigationData) => {
