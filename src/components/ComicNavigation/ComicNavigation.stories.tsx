@@ -7,6 +7,7 @@ import { apiSlice } from '@store/apiSlice'
 import {
     setCurrentComic,
     setLatestComic,
+    setLockedToItem,
     setRandomComic,
 } from '@store/comicSlice'
 import store from '@store/store'
@@ -65,6 +66,10 @@ const meta: Meta<typeof ComicNavigation> = {
                             return HttpResponse.json(comic)
                         }
                     }
+                ),
+                http.get(
+                    'http://localhost:3000/api/v3/itemdata/:itemId/comics/random',
+                    () => HttpResponse.json(420)
                 ),
             ],
         },
@@ -143,5 +148,27 @@ export const Default: Story = {
         )
         await userEvent.click(canvas.getByTitle('Go to random strip'))
         await expect(store.getState().comic.current).toEqual(420)
+    },
+}
+
+export const LockedToItem: Story = {
+    play: async ({ canvasElement }) => {
+        const canvas = within(canvasElement)
+
+        store.dispatch(setCurrentComic(666))
+        store.dispatch(setLatestComic(5000))
+        store.dispatch(setLockedToItem(4))
+
+        // Item id 4 ("Faye", from COMIC_DATA_666) last appears in comic
+        // 4805, which differs from the site's overall latest comic (5000)
+        // set above. Clicking "Last" while locked to an item must honor
+        // the locked item's last appearance, not the global latest comic.
+        await waitFor(async () =>
+            expect(
+                canvas.getByTitle('Go to last strip with Faye')
+            ).not.toHaveStyle('pointer-events: none')
+        )
+        await userEvent.click(canvas.getByTitle('Go to last strip with Faye'))
+        await expect(store.getState().comic.current).toEqual(4805)
     },
 }

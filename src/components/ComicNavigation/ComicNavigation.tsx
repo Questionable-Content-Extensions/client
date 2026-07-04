@@ -99,7 +99,7 @@ export default function ComicNavigation({}: Record<string, never>) {
                     onClick={(e) => {
                         e.preventDefault()
                         dispatch(
-                            setCurrentComic(latestComic, {
+                            setCurrentComic(navigationData.last, {
                                 locked: hasLockedItem,
                             })
                         )

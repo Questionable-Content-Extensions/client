@@ -22,6 +22,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Fix the "Filtered Navigation" section not showing when "show all members" was enabled but edit mode was not. Fixes [#99](https://github.com/Questionable-Content-Extensions/client/issues/99)
 - Fix clicking a comic in an item's "Comics item is featured in" list doing nothing.
+- Fix the "Last"/"Latest" comic navigation link jumping to the site's overall latest comic instead of the locked item's last appearance when locked to an item.
 
 ## [1.3.0] - 2024-02-03
 
