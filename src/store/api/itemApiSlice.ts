@@ -40,6 +40,7 @@ import {
 import toastSuccess from '@store/toastSuccess'
 
 import constants from '~/constants'
+import { buildMultipartFormData } from '~/utils'
 
 export type GetDataQueryArgs = {
     itemId: number
@@ -314,19 +315,29 @@ export const itemApiSlice = apiSlice.injectEndpoints({
                     : [],
         }),
         uploadImage: builder.mutation<string, UploadImageArgs>({
-            query: ({ itemId, image, imageFileName }) => {
-                const formData = new FormData()
-                formData.append('image', image, imageFileName)
-                return {
+            queryFn: async (
+                { itemId, image, imageFileName },
+                _api,
+                _extraOptions,
+                baseQuery
+            ) => {
+                const { body, contentType } = await buildMultipartFormData(
+                    'image',
+                    image,
+                    imageFileName
+                )
+                const result = await baseQuery({
                     url: `${constants.itemDataEndpoint}${itemId}/images`,
                     configuration: {
-                        data: formData,
+                        data: body,
                         method: 'POST',
+                        headers: { 'Content-Type': contentType },
                     },
-                }
+                })
+                if (result.error) return { error: result.error }
+                return { data: result.data.responseText }
             },
             onQueryStarted: toastSuccess,
-            transformResponse: (response) => response.responseText,
             invalidatesTags: (result, _error, args) =>
                 result
                     ? [

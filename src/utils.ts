@@ -171,7 +171,7 @@ export async function fetch<TContext = undefined>(
             | 'TRACE'
             | 'OPTIONS'
             | 'CONNECT'
-        data?: string | FormData
+        data?: string | Uint8Array
         headers?: {
             [header: string]: string
         }
@@ -181,11 +181,17 @@ export async function fetch<TContext = undefined>(
     }
 ): Promise<GM.Response<TContext>> {
     return new Promise((resolve, reject) => {
+        const rawData = configuration?.data
+        const isRawBytes = rawData instanceof Uint8Array
+        const data = isRawBytes ? bytesToBinaryString(rawData) : rawData
         GM.xmlHttpRequest({
             url: url,
             method: configuration?.method ? configuration.method : 'GET',
             context: configuration?.context,
-            data: configuration?.data as string,
+            data,
+            // Without this, GM.xmlHttpRequest UTF-8-encodes `data`, mangling
+            // any byte >= 0x80.
+            binary: isRawBytes,
             headers: configuration?.headers,
             overrideMimeType: configuration?.overrideMimeType,
             user: configuration?.user,
@@ -198,6 +204,51 @@ export async function fetch<TContext = undefined>(
             },
         })
     })
+}
+
+/**
+ * `GM.xmlHttpRequest`'s `data` field only accepts a `string`, which it sends
+ * as raw bytes rather than re-encoding as UTF-8 (so byte values above 127
+ * survive intact). This converts raw bytes into that representation.
+ */
+export function bytesToBinaryString(bytes: Uint8Array): string {
+    const chunkSize = 0x8000
+    let binary = ''
+    for (let i = 0; i < bytes.length; i += chunkSize) {
+        binary += String.fromCharCode(...bytes.subarray(i, i + chunkSize))
+    }
+    return binary
+}
+
+/**
+ * Some userscript managers no longer auto-encode a `FormData` value passed
+ * as `GM.xmlHttpRequest`'s `data` field (it gets coerced to the string
+ * `"[object Object]"` instead), so multipart/form-data bodies for file
+ * uploads must be built by hand.
+ */
+export async function buildMultipartFormData(
+    fieldName: string,
+    file: Blob,
+    filename: string
+): Promise<{ body: Uint8Array; contentType: string }> {
+    const boundary = `----QCExtBoundary${Date.now().toString(36)}${Math.random().toString(36).slice(2)}`
+    const encoder = new TextEncoder()
+    const header = encoder.encode(
+        `--${boundary}\r\n` +
+            `Content-Disposition: form-data; name="${fieldName}"; filename="${filename}"\r\n` +
+            `Content-Type: ${file.type || 'application/octet-stream'}\r\n\r\n`
+    )
+    const footer = encoder.encode(`\r\n--${boundary}--\r\n`)
+    const fileBytes = new Uint8Array(await file.arrayBuffer())
+
+    const body = new Uint8Array(
+        header.length + fileBytes.length + footer.length
+    )
+    body.set(header, 0)
+    body.set(fileBytes, header.length)
+    body.set(footer, header.length + fileBytes.length)
+
+    return { body, contentType: `multipart/form-data; boundary=${boundary}` }
 }
 
 export function nl2br(str: string, isXhtml?: boolean) {

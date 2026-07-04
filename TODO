@@ -1,2 +1,1 @@
 ☐ Add a setting for remembering the filter between reloads
-☐ Image upload is broken; sends `content-type` of `text/plain;charset=UTF-8`
