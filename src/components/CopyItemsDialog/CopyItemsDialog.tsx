@@ -55,7 +55,7 @@ export default function CopyItemsDialog({
         comicItems,
         isLoading: isLoadingInitialItemData,
         isFetching: isFetchingItemData,
-    } = useHydratedItemData(selectedComic ?? 0, settings)
+    } = useHydratedItemData(selectedComic ?? 0, settings, show)
 
     const [selectedItems, setSelectedItems] = useState<{
         [id: number]: boolean
