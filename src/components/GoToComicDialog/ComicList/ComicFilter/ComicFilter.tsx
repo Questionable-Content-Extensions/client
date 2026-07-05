@@ -227,8 +227,8 @@ export default function ComicFilter({
                                 }
                                 if (activeRef.current) {
                                     activeRef.current
-                                        .querySelector('button')!
-                                        .click()
+                                        .querySelector('button')
+                                        ?.click()
                                 }
                             } else if (e.code === 'Escape') {
                                 if (dropDownOpen) {
