@@ -4,6 +4,7 @@ import { BaseQueryFn, createApi } from '@reduxjs/toolkit/query/react'
 import type { RootState } from '@store/store'
 
 import constants, { HAS_GREASEMONKEY } from '~/constants'
+import { buildQueryString } from '~/util/buildQueryString'
 import { error, fetch as gmFetch, warn } from '~/utils'
 
 export type GreasemonkeyErrorType = 'TRY_CATCH' | 'MAINTENANCE' | 'STATUS_ERROR'
@@ -211,20 +212,6 @@ export function transformResponseByJsonParseResultText<T>(
     response: GM.Response<undefined>
 ) {
     return JSON.parse(response.responseText) as T
-}
-
-function buildQueryString(query: Record<string, unknown> | undefined) {
-    if (!query) return ''
-    const params = new URLSearchParams()
-    for (const [key, value] of Object.entries(query)) {
-        if (value === undefined) continue
-        if (Array.isArray(value)) {
-            for (const item of value) params.append(key, String(item))
-        } else {
-            params.append(key, String(value))
-        }
-    }
-    return params.toString()
 }
 
 /**

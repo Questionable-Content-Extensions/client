@@ -1,5 +1,7 @@
 import type { EndpointSpec } from '@endpoints/EndpointSpec'
 
+import { buildQueryString } from '~/util/buildQueryString'
+
 export async function callEndpoint<Q, B, P, R, Fe>(
     spec: EndpointSpec<Q, B, P, R, Fe>,
     args?: { query?: Q; body?: B; pathParams?: P },
@@ -20,9 +22,7 @@ export async function callEndpoint<Q, B, P, R, Fe>(
     }
 
     if (args?.query) {
-        const qs = new URLSearchParams(
-            args.query as Record<string, string>
-        ).toString()
+        const qs = buildQueryString(args.query as Record<string, unknown>)
         if (qs) path = `${path}?${qs}`
     }
 
