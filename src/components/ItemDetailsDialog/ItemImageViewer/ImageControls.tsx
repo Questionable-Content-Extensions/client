@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { toast } from 'react-toastify'
 
 import { PaddedButton } from '@components/Button'
 import InlineSpinner from '@components/InlineSpinner'
@@ -153,10 +154,21 @@ export default function ImageControls({
                                 onChange={async (e) => {
                                     const files = e.target.files
                                     if (files) {
-                                        const imageData =
-                                            await readFileToDataURL(files[0])
-                                        setPreviewImage(imageData)
-                                        setHasImage(true)
+                                        try {
+                                            const imageData =
+                                                await readFileToDataURL(
+                                                    files[0]
+                                                )
+                                            setPreviewImage(imageData)
+                                            setHasImage(true)
+                                        } catch {
+                                            toast.error(
+                                                'Failed to read the selected file',
+                                                { autoClose: 15000 }
+                                            )
+                                            setPreviewImage(null)
+                                            setHasImage(false)
+                                        }
                                     }
                                 }}
                                 disabled={isUploadingImage}
