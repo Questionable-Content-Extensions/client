@@ -11,10 +11,10 @@ jobs:
         runs-on: ubuntu-latest
 
         steps:
-            - uses: actions/checkout@v3
+            - uses: actions/checkout@v7
 
             - name: Use Node.js 24.x
-              uses: actions/setup-node@v3
+              uses: actions/setup-node@v6
               with:
                   node-version: 24.x
                   cache: 'npm'
@@ -28,20 +28,11 @@ jobs:
             - name: Ensure everything builds
               run: npm run build
 
-            # Having no tests makes this command exit with an error
-            # status. You can uncomment it once there's at least
-            # one test.
-            #- name: Run tests
-            #  run: npm test
-
             - name: Install Playwright
               run: npx playwright install --with-deps
 
-            - name: Run Storybook tests
-              run: |
-                  npx concurrently -k -s first -n "SB,TEST" -c "magenta,blue" \
-                  "npx http-server storybook-static --port 6006 --silent" \
-                  "npx wait-on http://127.0.0.1:6006/ && npm run test-storybook"
+            - name: Run tests
+              run: npm run test
 
             - name: Deploy Storybook
               if: github.event_name != 'pull_request'

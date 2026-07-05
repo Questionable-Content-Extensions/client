@@ -32,12 +32,12 @@ jobs:
 
                   echo "RELEASE_VERSION=$VERSION" >> $GITHUB_ENV
 
-            - uses: actions/checkout@v3
+            - uses: actions/checkout@v7
 
-            - name: Use Node.js 18.x
-              uses: actions/setup-node@v3
+            - name: Use Node.js 24.x
+              uses: actions/setup-node@v6
               with:
-                  node-version: 18.x
+                  node-version: 24.x
                   cache: 'npm'
 
             - name: Install Node modules
@@ -48,12 +48,12 @@ jobs:
 
             - name: Extract release notes
               id: extract-release-notes
-              uses: ffurrer2/extract-release-notes@v1
+              uses: ffurrer2/extract-release-notes@v3
               with:
                   changelog_file: CHANGELOG.md
 
             - name: Release
-              uses: softprops/action-gh-release@v1
+              uses: softprops/action-gh-release@v3
               with:
                   target_commitish: ${{ github.event.pull_request.merge_commit_sha }}
                   tag_name: ${{ env.RELEASE_VERSION }}
@@ -66,10 +66,9 @@ jobs:
                       ./dist/qc-ext.meta.js
 
             - name: Merge main into dev branch
-              uses: thomaseizinger/create-pull-request@1.0.0
-              env:
-                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+              uses: thomaseizinger/create-pull-request@1.4.0
               with:
+                  github_token: ${{ secrets.GITHUB_TOKEN }}
                   head: main
                   base: develop
                   title: Merge main into develop branch
