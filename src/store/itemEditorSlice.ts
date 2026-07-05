@@ -105,7 +105,7 @@ export const itemEditorSlice = createSlice({
             state.originalName = initialState.originalName
             state.originalShortName = initialState.originalShortName
             state.originalColor = initialState.originalColor
-            state.originalType = initialState.type
+            state.originalType = initialState.originalType
             state.originalStartComicId = initialState.originalStartComicId
             state.originalEndComicId = initialState.originalEndComicId
         },
