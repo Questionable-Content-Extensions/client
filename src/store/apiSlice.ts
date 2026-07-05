@@ -192,7 +192,7 @@ const fakeGreasemonkeyBaseQuery = ({
 
 export type Builder = EndpointBuilder<
     GreasemonkeyBaseQuery,
-    'Comic' | 'Item',
+    'Comic' | 'Item' | 'Log',
     'qcExtApi'
 >
 
