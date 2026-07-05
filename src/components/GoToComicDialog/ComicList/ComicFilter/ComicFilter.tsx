@@ -8,10 +8,9 @@ import {
 } from 'react'
 
 import { Filter, FilterType } from '@models/Filter'
-import { ItemList } from '@models/ItemList'
 import { useAllItemsQuery } from '@store/api/itemApiSlice'
 
-import { getFilterWithoutType, getTypeFromFilter } from '~/itemFilters'
+import { filterItems } from '~/itemFilters'
 
 export default function ComicFilter({
     filters,
@@ -261,22 +260,6 @@ export default function ComicFilter({
             </ul>
         </div>
     )
-}
-
-function filterItems(allItems: ItemList[], filter: string) {
-    const [filterType, filterName] = [
-        getTypeFromFilter(filter),
-        getFilterWithoutType(filter),
-    ]
-
-    return allItems.filter((c) => {
-        const isRightType = filterType === 'item' || c.type === filterType
-        const hasName =
-            c.name.toUpperCase().indexOf(filterName.toUpperCase()) !== -1
-        const hasShortName =
-            c.shortName.toUpperCase().indexOf(filterName.toUpperCase()) !== -1
-        return isRightType && (hasName || hasShortName)
-    })
 }
 
 const SuggestedFilter = forwardRef<
