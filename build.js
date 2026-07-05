@@ -26,6 +26,11 @@ function assembleHeaderFor(type) {
 let developmentUserscriptHeader = assembleHeaderFor('development')
 let productionUserscriptHeader = assembleHeaderFor('production')
 
+function onStreamError(err) {
+    console.error(err)
+    process.exit(1)
+}
+
 // Run the Vite build script
 const extraArgs = process.argv[2] || ''
 execSync('npm run vite-build -- ' + extraArgs, { stdio: [0, 1, 2] })
@@ -39,10 +44,12 @@ if (!fs.existsSync('./dist')) {
 let w = fs.createWriteStream('./dist/qc-ext.user.js', {
     flags: 'w',
 })
+w.on('error', onStreamError)
 
 const Readable = require('stream').Readable
 let s = new Readable()
 s._read = () => {}
+s.on('error', onStreamError)
 s.push(licenseBanner)
 s.push('\n')
 s.push(productionUserscriptHeader)
@@ -52,15 +59,18 @@ s.push(null)
 s.pipe(w, { end: false })
 s.on('end', () => {
     let mr = fs.createReadStream('./build/static/js/main.js')
+    mr.on('error', onStreamError)
     mr.pipe(w)
     mr.on('end', () => {
         // Open the dev file for writing
         let w = fs.createWriteStream('./dist/qc-ext-dev.user.js', {
             flags: 'w',
         })
+        w.on('error', onStreamError)
 
         let s = new Readable()
         s._read = () => {}
+        s.on('error', onStreamError)
         s.push(licenseBanner)
         s.push('\n')
         s.push(developmentUserscriptHeader)
@@ -70,15 +80,18 @@ s.on('end', () => {
         s.pipe(w, { end: false })
         s.on('end', () => {
             let mr = fs.createReadStream('./build/static/js/main.js')
+            mr.on('error', onStreamError)
             mr.pipe(w)
             mr.on('end', () => {
                 // Open the meta file for writing
                 let w = fs.createWriteStream('./dist/qc-ext.meta.js', {
                     flags: 'w',
                 })
+                w.on('error', onStreamError)
 
                 let s = new Readable()
                 s._read = () => {}
+                s.on('error', onStreamError)
                 s.push(licenseBanner)
                 s.push('\n')
                 s.push(productionUserscriptHeader)
