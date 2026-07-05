@@ -9,7 +9,7 @@ export default function DonutGraph({
     fillColor: string
     backgroundColor: string
 }) {
-    const percent = (amount / totalAmount) * 100
+    const percent = totalAmount === 0 ? 0 : (amount / totalAmount) * 100
     const degrees = Math.round((percent / 100) * 360)
     return (
         <div className="flex flex-col items-center justify-center">
