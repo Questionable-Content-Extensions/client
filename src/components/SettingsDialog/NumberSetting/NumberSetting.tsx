@@ -23,8 +23,12 @@ export default function NumberSetting({
     const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const value = e.target.value
         setValue(value)
-        const parsed = Number.parseInt(value)
-        if (Number.isNaN(parsed) || (positiveOnly && parsed < 0)) {
+        const parsed = Number(value)
+        if (
+            value.trim() === '' ||
+            !Number.isInteger(parsed) ||
+            (positiveOnly && parsed < 0)
+        ) {
             setError(true)
             return
         }
