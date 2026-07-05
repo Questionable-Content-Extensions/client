@@ -1,7 +1,6 @@
 import { useState } from 'react'
 
 import { PaddedButton } from '@components/Button'
-import DialogPortal from '@components/DialogPortal'
 import ComicList from '@components/GoToComicDialog/ComicList/ComicList'
 import ModalDialog from '@components/Modals/ModalDialog/ModalDialog'
 import { ComicId } from '@models/ComicId'
@@ -32,30 +31,24 @@ export default function PickComicDialog({
     }
 
     return (
-        <DialogPortal show={show} onClose={onClose}>
-            <ModalDialog
-                onCloseClicked={onClose}
-                header={
-                    <h5 className="m-0 text-xl font-medium leading-normal text-gray-800">
-                        Pick a comic
-                    </h5>
-                }
-                body={
-                    <ComicList
-                        allComicData={currentData ?? []}
-                        subDivideGotoComics={
-                            settings?.subDivideGotoComics ?? true
-                        }
-                        onGoToComic={(comic) => onSelectComic(comic)}
-                        isLoading={isLoading}
-                    />
-                }
-                footer={
-                    <PaddedButton onClick={() => onClose()}>
-                        Cancel
-                    </PaddedButton>
-                }
-            />
-        </DialogPortal>
+        <ModalDialog
+            onCloseClicked={onClose}
+            header={
+                <h5 className="m-0 text-xl font-medium leading-normal text-gray-800">
+                    Pick a comic
+                </h5>
+            }
+            body={
+                <ComicList
+                    allComicData={currentData ?? []}
+                    subDivideGotoComics={settings?.subDivideGotoComics ?? true}
+                    onGoToComic={(comic) => onSelectComic(comic)}
+                    isLoading={isLoading}
+                />
+            }
+            footer={
+                <PaddedButton onClick={() => onClose()}>Cancel</PaddedButton>
+            }
+        />
     )
 }

@@ -1,6 +1,6 @@
 import { useState } from 'react'
 
-import PickComicDialog from '@components/PickComicDialog/PickComicDialog'
+import PickComicDialogPortal from '@components/PickComicDialog/PickComicDialogPortal/PickComicDialogPortal'
 import { ComicId } from '@models/ComicId'
 
 export default function ComicIdEditor({
@@ -52,7 +52,7 @@ export default function ComicIdEditor({
                     <i className="fa fa-list" aria-hidden></i>
                 </button>
             </label>
-            <PickComicDialog
+            <PickComicDialogPortal
                 show={showPicker}
                 onClose={() => setShowPicker(false)}
                 onSelectComic={(comic) => {
