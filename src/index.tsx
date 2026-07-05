@@ -562,7 +562,10 @@ function hijackShortcut() {
             )
         }
     } catch (ex) {
-        if (ex !== 'ReferenceError: unsafeWindow is not defined') {
+        if (
+            !(ex instanceof ReferenceError) ||
+            ex.message !== 'unsafeWindow is not defined'
+        ) {
             console.error(ex)
         }
     }
