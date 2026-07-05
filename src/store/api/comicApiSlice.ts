@@ -40,6 +40,7 @@ import { AddAdvanceComicBody } from '@models/AddAdvanceComicBody'
 import { AddItemToComicBody } from '@models/AddItemToComicBody'
 import { AddItemsToComicBody } from '@models/AddItemsToComicBody'
 import { ComicId } from '@models/ComicId'
+import { Exclusion } from '@models/Exclusion'
 import { ItemId } from '@models/ItemId'
 import { PatchComicBody } from '@models/PatchComicBody'
 import { RemoveItemFromComicBody } from '@models/RemoveItemFromComicBody'
@@ -81,6 +82,20 @@ export type AddItemsMutationArgs = AddItemsToComicBody
 
 export type AddAdvanceComicMutationArgs = AddAdvanceComicBody
 
+/**
+ * Every guest comic is non-canon, but not every non-canon comic is a guest
+ * comic, so `skipNonCanon` always excludes a superset of what `skipGuest`
+ * excludes. When both are enabled, `skipNonCanon` must take precedence.
+ */
+export function getExclusion(
+    skipGuest: boolean,
+    skipNonCanon: boolean
+): Exclusion | undefined {
+    if (skipNonCanon) return 'non-canon'
+    if (skipGuest) return 'guest'
+    return undefined
+}
+
 export const comicApiSlice = apiSlice.injectEndpoints({
     endpoints: (builder) => ({
         getComicData: builder.query<
@@ -95,11 +110,8 @@ export const comicApiSlice = apiSlice.injectEndpoints({
                 showAllMembers,
                 orderMembersByLastAppearance,
             }) => {
-                const query: GetComicdataComicIdQuery = {}
-                if (skipNonCanon) {
-                    query.exclude = 'non-canon'
-                } else if (skipGuest) {
-                    query.exclude = 'guest'
+                const query: GetComicdataComicIdQuery = {
+                    exclude: getExclusion(skipGuest, skipNonCanon),
                 }
                 if (showAllMembers || editModeToken) {
                     query.include = 'all'
@@ -123,12 +135,8 @@ export const comicApiSlice = apiSlice.injectEndpoints({
             GetExcludedQueryArgs
         >({
             query: ({ skipGuest, skipNonCanon }) => {
-                const query: GetComicdataExcludedQuery = {}
-
-                if (skipGuest) {
-                    query.exclusion = 'guest'
-                } else if (skipNonCanon) {
-                    query.exclusion = 'non-canon'
+                const query: GetComicdataExcludedQuery = {
+                    exclusion: getExclusion(skipGuest, skipNonCanon),
                 }
 
                 return queryFromSpec(GetComicdataExcludedSpec, { query })
