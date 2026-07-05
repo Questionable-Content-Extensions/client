@@ -43,7 +43,11 @@ import {
     toGetDataQueryArgs,
 } from '@store/api/comicApiSlice'
 import { itemApiSlice } from '@store/api/itemApiSlice'
-import { setCurrentComic, setLatestComic } from '@store/comicSlice'
+import {
+    setCurrentComic,
+    setLatestComic,
+    setLockedToItem,
+} from '@store/comicSlice'
 import { loadSettings } from '@store/settingsSlice'
 
 import Settings from '~/Settings'
@@ -498,7 +502,18 @@ function hijackShortcut() {
 
         const lockedItem = hydratedComicItemData.find(
             (i) => i.id === state.comic.lockedToItem
-        )!
+        )
+        if (!lockedItem) {
+            error(
+                "Can't navigate because the locked item wasn't found in this comic's data."
+            )
+            toast.error(
+                "Can't navigate because the locked item wasn't found in this comic's data."
+            )
+            dispatch(setLockedToItem(null))
+            return
+        }
+
         const destination = itemSelector(lockedItem)
         if (destination) {
             dispatch(setCurrentComic(destination, { locked: true }))
