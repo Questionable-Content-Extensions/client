@@ -10,9 +10,7 @@ import { useAppDispatch, useAppSelector } from '@store/hooks'
 
 import Popup from '../Popup'
 
-// TODO: Why does this even accept any parameters?
-// eslint-disable-next-line no-empty-pattern
-export default function OperationsMenu({}: Record<string, never>) {
+export default function OperationsMenu() {
     const dispatch = useAppDispatch()
 
     const currentComic = useAppSelector((state) => state.comic.current)

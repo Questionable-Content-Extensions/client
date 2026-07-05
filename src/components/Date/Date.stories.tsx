@@ -14,9 +14,9 @@ import Date from './Date'
 
 const meta: Meta<typeof Date> = {
     component: Date,
-    render: (args) => (
+    render: () => (
         <div className="relative inline-block mt-4 mr-4">
-            <Date {...args} />
+            <Date />
         </div>
     ),
     loaders: [

@@ -116,7 +116,7 @@ export default function Comic({
         }
     }
     return (
-        <div className="relative inline-block">
+        <div className="relative">
             <a
                 className="qc-ext qc-ext-comic-anchor"
                 href={`view.php?comic=${
