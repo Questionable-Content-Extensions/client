@@ -356,9 +356,12 @@ function initializeDateAndNews() {
     }
     const newsData = news.innerHTML
     const newsParent = news.parentNode as ParentNode
-    const newsPrevious = news.previousElementSibling as Element
+    const newsPrevious = news.previousElementSibling
 
-    if (!newsPrevious.classList.contains(NAVIGATION_CONTAINER_CLASSNAME)) {
+    if (
+        newsPrevious &&
+        !newsPrevious.classList.contains(NAVIGATION_CONTAINER_CLASSNAME)
+    ) {
         newsParent.removeChild(newsPrevious)
     }
 
