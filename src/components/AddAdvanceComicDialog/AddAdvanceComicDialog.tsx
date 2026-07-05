@@ -96,6 +96,7 @@ function CreateAdvanceComicDialog({
 
     const [addAdvanceComic, { isLoading: isAdding }] =
         useAddAdvanceComicMutation()
+    const [addFailed, setAddFailed] = useState(false)
 
     const onAdd = async () => {
         const parsedComicId = Number(comicId)
@@ -115,6 +116,7 @@ function CreateAdvanceComicDialog({
             isNonCanon,
         })
         if ('data' in result) {
+            setAddFailed(false)
             setComicId('')
             setTitle('')
             setTagline('')
@@ -123,6 +125,8 @@ function CreateAdvanceComicDialog({
             setIsGuestComic(false)
             setIsNonCanon(false)
             onSelectPending(parsedComicId)
+        } else {
+            setAddFailed(true)
         }
     }
 
@@ -230,6 +234,12 @@ function CreateAdvanceComicDialog({
                             />
                             Non-canon
                         </label>
+                        {addFailed && (
+                            <p className="text-red-600 m-0">
+                                Failed to add advance comic. See notification
+                                for details.
+                            </p>
+                        )}
                     </div>
                 </>
             }
@@ -321,6 +331,7 @@ function EditAdvanceComicFields({
     const [isNonCanon, setIsNonCanon] = useState(initialData.isNonCanon)
 
     const [patchComic, { isLoading: isPatching }] = usePatchComicMutation()
+    const [saveFailed, setSaveFailed] = useState(false)
 
     const {
         comicItems,
@@ -361,7 +372,10 @@ function EditAdvanceComicFields({
             },
         })
         if ('data' in result) {
+            setSaveFailed(false)
             onBack()
+        } else {
+            setSaveFailed(true)
         }
     }
 
@@ -428,6 +442,12 @@ function EditAdvanceComicFields({
                         />
                         Non-canon
                     </label>
+                    {saveFailed && (
+                        <p className="text-red-600 m-0">
+                            Failed to save changes. See notification for
+                            details.
+                        </p>
+                    )}
                     <hr className="my-2 mx-0 border-solid border-b max-w-none" />
                     <h6 className="font-medium mb-0">Items</h6>
                     <ItemNavigation

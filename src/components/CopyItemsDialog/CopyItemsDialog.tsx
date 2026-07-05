@@ -73,6 +73,7 @@ export default function CopyItemsDialog({
     }
 
     const [addItems, { isLoading: isAddingItems }] = useAddItemsMutation()
+    const [copyFailed, setCopyFailed] = useState(false)
 
     const onCopy = async () => {
         const itemsToAdd: number[] = []
@@ -89,7 +90,10 @@ export default function CopyItemsDialog({
             })),
         })
         if ('data' in result) {
+            setCopyFailed(false)
             onClose()
+        } else {
+            setCopyFailed(true)
         }
     }
 
@@ -102,22 +106,29 @@ export default function CopyItemsDialog({
                 </h5>
             }
             body={
-                <CopyItemsDialogPanel
-                    allComics={reverseAllComicData}
-                    isLoading={
-                        isLoadingAllComicData || isLoadingInitialItemData
-                    }
-                    isFetching={
-                        isFetchingAllComicData ||
-                        isFetchingItemData ||
-                        isAddingItems
-                    }
-                    selectedComic={selectedComic ?? undefined}
-                    comicItems={comicItems}
-                    onChangeSelectedComic={setSelectedComic}
-                    selectedItems={selectedItems}
-                    onUpdateSelectedItems={setSelectedItems}
-                />
+                <>
+                    <CopyItemsDialogPanel
+                        allComics={reverseAllComicData}
+                        isLoading={
+                            isLoadingAllComicData || isLoadingInitialItemData
+                        }
+                        isFetching={
+                            isFetchingAllComicData ||
+                            isFetchingItemData ||
+                            isAddingItems
+                        }
+                        selectedComic={selectedComic ?? undefined}
+                        comicItems={comicItems}
+                        onChangeSelectedComic={setSelectedComic}
+                        selectedItems={selectedItems}
+                        onUpdateSelectedItems={setSelectedItems}
+                    />
+                    {copyFailed && (
+                        <p className="text-red-600 m-0">
+                            Failed to copy items. See notification for details.
+                        </p>
+                    )}
+                </>
             }
             footer={
                 <>

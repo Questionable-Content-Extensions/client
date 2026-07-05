@@ -1,4 +1,5 @@
 import { HttpResponse, http } from 'msw'
+import { expect, userEvent, waitFor, within } from 'storybook/test'
 
 import { Comic } from '@models/Comic'
 import { PresentComic } from '@models/PresentComic'
@@ -10,6 +11,7 @@ import type { Meta, StoryObj } from '@storybook/react-vite'
 
 import { ALL_ITEMS, COMIC_DATA_666, getComicListMocks } from '~/mocks'
 import { mockNetworkDelay } from '~/storybook/mockNetworkDelay'
+import { withSuppressedExpectedErrorAsync } from '~/util/testUtils'
 
 import CopyItemsDialog from './CopyItemsDialog'
 
@@ -108,3 +110,77 @@ export default meta
 type Story = StoryObj<typeof CopyItemsDialog>
 
 export const Default: Story = {}
+
+export const CopyFails: Story = {
+    parameters: {
+        msw: {
+            handlers: [
+                http.get('http://localhost:3000/api/v3/itemdata/', () => {
+                    return HttpResponse.json(ALL_ITEMS)
+                }),
+                http.get(
+                    'http://localhost:3000/api/v3/comicdata/:comicId',
+                    () => {
+                        return HttpResponse.json(COMIC_DATA_666)
+                    }
+                ),
+                http.get('http://localhost:3000/api/v3/comicdata/', () => {
+                    return HttpResponse.json(getComicListMocks(1000))
+                }),
+                http.post(
+                    'http://localhost:3000/api/v3/comicdata/additems',
+                    async () => {
+                        await mockNetworkDelay(500)
+                        return HttpResponse.text('Server Error', {
+                            status: 500,
+                        })
+                    }
+                ),
+            ],
+        },
+    },
+    play: async ({ canvasElement }) => {
+        const canvas = within(canvasElement)
+
+        await waitFor(() =>
+            expect(
+                canvas.getByRole('heading', {
+                    name: 'Copy items from another comic',
+                })
+            ).toBeInTheDocument()
+        )
+        await waitFor(() =>
+            expect(
+                canvas.getByRole('button', {
+                    name: 'Copy selected into current comic',
+                })
+            ).not.toBeDisabled()
+        )
+
+        await withSuppressedExpectedErrorAsync(
+            'Got unexpected response from server',
+            async () => {
+                await userEvent.click(
+                    canvas.getByRole('button', {
+                        name: 'Copy selected into current comic',
+                    })
+                )
+
+                await waitFor(() =>
+                    expect(
+                        canvas.getByText(
+                            'Failed to copy items. See notification for details.'
+                        )
+                    ).toBeInTheDocument()
+                )
+            }
+        )
+
+        // A failed copy must not close the dialog.
+        await expect(
+            canvas.getByRole('heading', {
+                name: 'Copy items from another comic',
+            })
+        ).toBeInTheDocument()
+    },
+}
