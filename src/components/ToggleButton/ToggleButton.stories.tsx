@@ -1,4 +1,5 @@
 import { useArgs } from 'storybook/preview-api'
+import { fn } from 'storybook/test'
 
 import type { Meta, StoryObj } from '@storybook/react-vite'
 
@@ -19,6 +20,7 @@ const meta: Meta<typeof ToggleButton> = {
         kind: Kind[Kind.Skinny] as unknown as Kind,
         checked: false,
         disabled: false,
+        onChange: fn(),
     },
     render: (args) => {
         const [, setArgs] = useArgs()

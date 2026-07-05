@@ -9,6 +9,8 @@ import tseslint from 'typescript-eslint'
 
 import js from '@eslint/js'
 
+import localRules from './eslint-rules/no-implicit-story-actions.mjs'
+
 export default defineConfig([
     globalIgnores([
         'dist/**/*',
@@ -25,6 +27,8 @@ export default defineConfig([
     ...storybook.configs['flat/recommended'],
     {
         languageOptions: {
+            ecmaVersion: 'latest',
+            sourceType: 'module',
             globals: {
                 ...globals.browser,
                 ...globals.node,
@@ -75,6 +79,24 @@ export default defineConfig([
 
         rules: {
             'import/no-anonymous-default-export': 'off',
+        },
+    },
+    {
+        files: ['**/*.stories.@(ts|tsx)'],
+
+        languageOptions: {
+            parserOptions: {
+                projectService: true,
+                tsconfigRootDir: import.meta.dirname,
+            },
+        },
+
+        plugins: {
+            local: localRules,
+        },
+
+        rules: {
+            'local/no-implicit-story-actions': 'error',
         },
     },
 ])

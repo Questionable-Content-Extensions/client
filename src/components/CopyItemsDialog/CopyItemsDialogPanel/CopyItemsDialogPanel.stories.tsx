@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useArgs } from 'storybook/preview-api'
+import { fn } from 'storybook/test'
 
 import { ComicId } from '@models/ComicId'
 import type { Meta, StoryObj } from '@storybook/react-vite'
@@ -28,6 +29,8 @@ const meta: Meta<typeof CopyItemsDialogPanel> = {
         isLoading: false,
         isFetching: false,
         comicItems: COMIC_DATA_666_HYDRATED_ITEMS,
+        onChangeSelectedComic: fn(),
+        onUpdateSelectedItems: fn(),
     },
     render: (args) => {
         const [, setArgs] = useArgs()

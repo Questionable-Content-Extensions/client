@@ -1,6 +1,6 @@
 import { HttpResponse, http } from 'msw'
 import { useState } from 'react'
-import { expect, within } from 'storybook/test'
+import { expect, fn, within } from 'storybook/test'
 
 import { Item } from '@models/Item'
 import { useAppDispatch } from '@store/hooks'
@@ -19,6 +19,7 @@ const meta: Meta<typeof ItemDetails> = {
     args: {
         item: FAYE,
         editMode: false,
+        onGoToComic: fn(),
     },
     parameters: {
         msw: {

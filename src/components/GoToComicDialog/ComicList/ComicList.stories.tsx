@@ -1,6 +1,7 @@
 import { HttpResponse, http } from 'msw'
 import { getWorker } from 'msw-storybook-addon'
 import type { ComponentProps } from 'react'
+import { fn } from 'storybook/test'
 
 import { ComicList as ComicDataListing } from '@models/ComicList'
 import type { Meta, StoryObj } from '@storybook/react-vite'
@@ -33,6 +34,8 @@ const meta: Meta<ComponentProps<typeof ComicList> & ExtraArgs> = {
         subDivideGotoComics: true,
         comicCount: 5110,
         isLoading: false,
+        onGoToComic: fn(),
+        onFilteredComicsChange: fn(),
     },
     parameters: {
         msw: {

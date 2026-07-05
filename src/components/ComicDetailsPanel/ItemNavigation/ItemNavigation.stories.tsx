@@ -1,3 +1,5 @@
+import { fn } from 'storybook/test'
+
 import { NavElementMode } from '@components/NavElement/NavElement'
 import { setCurrentComic, setLockedToItem } from '@store/comicSlice'
 import store from '@store/store'
@@ -26,6 +28,11 @@ const meta: Meta<typeof ItemNavigation> = {
         mode: NavElementMode[NavElementMode.Present] as unknown as
             NavElementMode.Present | NavElementMode.Missing,
         editMode: false,
+        onSetCurrentComic: fn(),
+        onShowInfoFor: fn(),
+        onRemoveItem: fn(),
+        onAddItem: fn(),
+        onAddFirstMatchChange: fn(),
     },
     // For better Storybook experience, the control shows the enum's string
     // names, but the component needs the underlying numeric enum value.

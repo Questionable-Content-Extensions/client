@@ -1,4 +1,5 @@
 import { useArgs } from 'storybook/preview-api'
+import { fn } from 'storybook/test'
 
 import type { Meta, StoryObj } from '@storybook/react-vite'
 
@@ -17,6 +18,7 @@ const meta: Meta<typeof Pagination> = {
         hidePrevButton: false,
         disabled: false,
         isFetching: false,
+        onGoToPage: fn(),
     },
     render: (args) => {
         const [, setArgs] = useArgs()

@@ -1,5 +1,6 @@
 import { HttpResponse, http } from 'msw'
 import { useState } from 'react'
+import { fn } from 'storybook/test'
 
 import { Item } from '@models/Item'
 import { apiSlice } from '@store/apiSlice'
@@ -38,6 +39,11 @@ const meta: Meta<typeof ItemDataPanel> = {
         itemFriendData: FAYE_FRIENDS,
         itemLocationData: FAYE_LOCATIONS,
         editModeToken: null,
+        onGoToComic: fn(),
+        onShowItemData: fn(),
+        onDeleteImage: fn(),
+        onSetPrimaryImage: fn(),
+        onUploadImage: fn(),
     },
     parameters: {
         msw: {

@@ -1,4 +1,5 @@
 import { useArgs } from 'storybook/preview-api'
+import { fn } from 'storybook/test'
 
 import type { Meta, StoryObj } from '@storybook/react-vite'
 
@@ -17,6 +18,8 @@ const meta: Meta<typeof DateEditor> = {
         isDateValueDirty: false,
         isIsAccurateValueDirty: false,
         disabled: false,
+        onDateValueChange: fn(),
+        onIsAccurateValueChange: fn(),
     },
     render: (args) => {
         const [, setArgs] = useArgs()

@@ -1,3 +1,5 @@
+import { fn } from 'storybook/test'
+
 import { forkAwesomeIcons } from '@models/ForkAwesomeIcon'
 import type { Meta, StoryObj } from '@storybook/react-vite'
 
@@ -12,6 +14,7 @@ const meta: Meta<typeof NavButton> = {
         comicNo: 1234,
         title: 'Title',
         faClass: 'question',
+        onSetCurrentComic: fn(),
     },
 }
 export default meta

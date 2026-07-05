@@ -22,6 +22,8 @@ const meta: Meta<typeof FilteredNavigationData> = {
         itemData: COMIC_DATA_666_HYDRATED_ITEMS,
         useColors: true,
         onAddItem: fn(),
+        onSetCurrentComic: fn(),
+        onShowInfoFor: fn(),
     },
     loaders: [
         () => {

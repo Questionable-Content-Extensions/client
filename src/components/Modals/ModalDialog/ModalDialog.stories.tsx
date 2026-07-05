@@ -1,3 +1,5 @@
+import { fn } from 'storybook/test'
+
 import { PaddedButton } from '@components/Button'
 import type { Meta, StoryObj } from '@storybook/react-vite'
 
@@ -30,6 +32,7 @@ type Story = StoryObj<typeof ModalDialog>
 
 export const Default: Story = {
     args: {
+        onCloseClicked: fn(),
         header: (
             <h1 className="m-0 text-xl font-medium leading-normal text-gray-800">
                 Header
