@@ -25,30 +25,36 @@ vi.mock('@store/api/itemApiSlice', () => ({
     }),
 }))
 
-const fakeState = {
-    settings: { values: undefined },
-    comic: { current: 0 },
-    comicEditor: {
-        title: '',
-        tagline: '',
-        publishDate: '',
-        isAccuratePublishDate: false,
-        originalTitle: '',
-        originalTagline: '',
-        originalPublishDate: '',
-        originalIsAccuratePublishDate: false,
-        isSaving: false,
-    },
+function buildFakeState(title: string) {
+    return {
+        settings: { values: undefined },
+        comic: { current: 0 },
+        comicEditor: {
+            title,
+            tagline: '',
+            publishDate: '',
+            isAccuratePublishDate: false,
+            originalTitle: '',
+            originalTagline: '',
+            originalPublishDate: '',
+            originalIsAccuratePublishDate: false,
+            isSaving: false,
+        },
+    }
 }
 
+let fakeState = buildFakeState('')
+
 vi.mock('@store/hooks', () => ({
-    useAppSelector: (selector: (state: typeof fakeState) => unknown) =>
-        selector(fakeState),
+    useAppSelector: (
+        selector: (state: ReturnType<typeof buildFakeState>) => unknown
+    ) => selector(fakeState),
     useAppDispatch: () => vi.fn(),
 }))
 
 describe('EditorModePanel', () => {
     afterEach(() => {
+        fakeState = buildFakeState('')
         vi.restoreAllMocks()
     })
 
@@ -69,5 +75,29 @@ describe('EditorModePanel', () => {
 
         expect(resizeAddCalls).toHaveLength(1)
         expect(resizeRemoveCalls).toHaveLength(0)
+    })
+
+    it('prevents the default beforeunload behavior when the editor is dirty', () => {
+        fakeState = buildFakeState('unsaved title')
+
+        render(<EditorModePanel />)
+
+        const event = new Event('beforeunload', {
+            cancelable: true,
+        }) as BeforeUnloadEvent
+        window.dispatchEvent(event)
+
+        expect(event.defaultPrevented).toBe(true)
+    })
+
+    it('does not prevent the default beforeunload behavior when there are no unsaved changes', () => {
+        render(<EditorModePanel />)
+
+        const event = new Event('beforeunload', {
+            cancelable: true,
+        }) as BeforeUnloadEvent
+        window.dispatchEvent(event)
+
+        expect(event.defaultPrevented).toBe(false)
     })
 })

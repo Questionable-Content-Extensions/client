@@ -201,6 +201,23 @@ export default function EditorModePanel() {
             window.removeEventListener('resize', onResize)
         }
     }, [])
+
+    // Warn before an actual page unload/reload/close if there are unsaved
+    // editor changes; in-app navigation between comics is separately guarded
+    // by `comicNavigationMiddleware`.
+    useEffect(() => {
+        function onBeforeUnload(event: BeforeUnloadEvent) {
+            if (!editorStateDirty) {
+                return
+            }
+            event.preventDefault()
+        }
+
+        window.addEventListener('beforeunload', onBeforeUnload)
+        return () => {
+            window.removeEventListener('beforeunload', onBeforeUnload)
+        }
+    }, [editorStateDirty])
     const correctionWidth = useMemo(
         () => (clientWidth < 1530 ? (1530 - clientWidth) / 2 : 0),
         [clientWidth]
