@@ -1,5 +1,3 @@
-import { useEffect, useState } from 'react'
-
 import { ActiveStorylineSummary } from '@models/ActiveStorylineSummary'
 import { Comic } from '@models/Comic'
 import { ComicList } from '@models/ComicList'
@@ -1262,16 +1260,4 @@ export function getComicListMocks(count: number) {
     }
 
     return comicList
-}
-
-export function useMswReady() {
-    const [ready, setReady] = useState(false)
-    useEffect(() => {
-        async function waitForMswReady() {
-            await window.mswStart
-            setReady(true)
-        }
-        waitForMswReady()
-    })
-    return ready
 }

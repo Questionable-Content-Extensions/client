@@ -63,31 +63,6 @@ interface TransferSettings {
     [prop: string | symbol | number]: any
 }
 
-/**
- * Because we used a shim for GM4 temporarily, we should
- * load our shimmed settings when migrating, to give the
- * user a better UX.
- */
-function loadFromGM4Shim(): string | null {
-    const storagePrefix = GM.info.script.name.replace(/[^A-Z]*/g, '') + '-'
-    function shimGetValue(aKey: string, aDefault?: string): string | null {
-        const aValue = localStorage.getItem(storagePrefix + aKey)
-        if (null === aValue && 'undefined' !== typeof aDefault) {
-            return aDefault
-        }
-        return aValue
-    }
-    function shimDeleteValue(aKey: string): void {
-        localStorage.removeItem(storagePrefix + aKey)
-    }
-
-    const shimSettings = shimGetValue(constants.settingsKey)
-    if (shimSettings) {
-        shimDeleteValue(constants.settingsKey)
-    }
-    return shimSettings
-}
-
 export default class Settings {
     static DEFAULTS: SettingValues = {
         showDebugLogs: false,
@@ -134,13 +109,20 @@ export default class Settings {
             return instance
         }
 
-        const shimSettings = loadFromGM4Shim()
-        const settingsValue = shimSettings
-            ? shimSettings
-            : ((await GM.getValue(
-                  constants.settingsKey,
-                  JSON.stringify(this.DEFAULTS)
-              )) as string)
+        if (!loadingPromise) {
+            loadingPromise = this.doLoadSettings().finally(() => {
+                loadingPromise = null
+            })
+        }
+
+        return loadingPromise
+    }
+
+    private static async doLoadSettings() {
+        const settingsValue = await GM.getValue(
+            constants.settingsKey,
+            JSON.stringify(this.DEFAULTS)
+        )
 
         const settings = JSON.parse(settingsValue) as SettingValues
 
@@ -173,5 +155,6 @@ export default class Settings {
 }
 
 let instance: Settings | null = null
+let loadingPromise: Promise<Settings> | null = null
 
 export type SettingsUpdaterFunction = (s: SettingValues) => void
