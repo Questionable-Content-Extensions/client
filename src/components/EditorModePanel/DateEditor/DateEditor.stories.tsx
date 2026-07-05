@@ -1,5 +1,5 @@
 import { useArgs } from 'storybook/preview-api'
-import { fn } from 'storybook/test'
+import { fn, userEvent, within } from 'storybook/test'
 
 import type { Meta, StoryObj } from '@storybook/react-vite'
 
@@ -59,5 +59,13 @@ export const Dirty: Story = {
 export const Disabled: Story = {
     args: {
         disabled: true,
+    },
+}
+
+export const InvalidInput: Story = {
+    play: async ({ canvasElement }) => {
+        const canvas = within(canvasElement)
+        const input = canvas.getByPlaceholderText('Label Title')
+        await userEvent.clear(input)
     },
 }
