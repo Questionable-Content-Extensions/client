@@ -1,40 +1,44 @@
+import { expect, fn, userEvent, within } from 'storybook/test'
+
 import { forkAwesomeIcons } from '@models/ForkAwesomeIcon'
-import { expect } from '@storybook/jest'
-import { Meta, StoryFn } from '@storybook/react'
-import { userEvent, within } from '@storybook/testing-library'
+import type { Meta, StoryObj } from '@storybook/react-vite'
 
 import ExtraNavButton from './ExtraNavButton'
 
-export default {
+const meta: Meta<typeof ExtraNavButton> = {
     component: ExtraNavButton,
     argTypes: {
         faClass: { control: { type: 'select' }, options: forkAwesomeIcons },
     },
-} as Meta<typeof ExtraNavButton>
-
-const Template: StoryFn<typeof ExtraNavButton> = (args) => (
-    <div
-        className={
-            'inline-block shadow m-auto' + (args.visible ? '' : ' hidden')
-        }
-    >
-        <ExtraNavButton {...args} />
-    </div>
-)
-
-export const Default = Template.bind({})
-Default.args = {
-    comicNo: 69,
-    title: 'Previous strip',
-    visible: true,
-    faClass: 'backward',
-    smallXPadding: false,
+    args: {
+        comicNo: 69,
+        title: 'Previous strip',
+        visible: true,
+        faClass: 'backward',
+        smallXPadding: false,
+        onClick: fn(),
+    },
+    render: (args) => (
+        <div
+            className={
+                'inline-block shadow m-auto' + (args.visible ? '' : ' hidden')
+            }
+        >
+            <ExtraNavButton {...args} />
+        </div>
+    ),
 }
-Default.play = async ({ canvasElement, args }) => {
-    const canvas = within(canvasElement)
+export default meta
 
-    const navButton = canvas.getByRole('link')
-    await userEvent.click(navButton)
+type Story = StoryObj<typeof ExtraNavButton>
 
-    expect(args.onClick).toBeCalled()
+export const Default: Story = {
+    play: async ({ canvasElement, args }) => {
+        const canvas = within(canvasElement)
+
+        const navButton = canvas.getByRole('link')
+        await userEvent.click(navButton)
+
+        await expect(args.onClick).toHaveBeenCalled()
+    },
 }

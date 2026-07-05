@@ -1,7 +1,7 @@
 import { PayloadAction, createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 
+import Settings, { SettingValues } from '~/Settings'
 import { HAS_GREASEMONKEY } from '~/constants'
-import Settings, { SettingValues } from '~/settings'
 
 interface SettingsState {
     values: SettingValues | null

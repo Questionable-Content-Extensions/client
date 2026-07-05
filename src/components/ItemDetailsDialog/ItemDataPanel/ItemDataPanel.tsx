@@ -42,7 +42,7 @@ export default function ItemDataPanel({
     onDeleteImage: (imageId: ImageId) => void
     onSetPrimaryImage: (imageId: ImageId) => void
     hasError: boolean
-    onUploadImage: (args: UploadImageArgs) => Promise<unknown>
+    onUploadImage: (args: UploadImageArgs) => Promise<void>
     isUploadingImage: boolean
 }) {
     const shortName = useAppSelector((state) => state.itemEditor.shortName)
@@ -142,7 +142,11 @@ export default function ItemDataPanel({
     )
 }
 
-function involvesLocationText(type: ItemType) {
+function assertExhaustive(value: never): never {
+    throw new Error(`Unhandled ItemType: ${String(value)}`)
+}
+
+export function involvesLocationText(type: ItemType) {
     switch (type) {
         case 'cast':
             return 'spotted at'
@@ -150,10 +154,12 @@ function involvesLocationText(type: ItemType) {
             return 'visited simultaneously with'
         case 'storyline':
             return 'involves the places'
+        default:
+            return assertExhaustive(type)
     }
 }
 
-function involvesCastText(type: ItemType) {
+export function involvesCastText(type: ItemType) {
     switch (type) {
         case 'cast':
             return 'spotted with'
@@ -161,5 +167,7 @@ function involvesCastText(type: ItemType) {
             return 'visited by'
         case 'storyline':
             return 'involves the people'
+        default:
+            return assertExhaustive(type)
     }
 }

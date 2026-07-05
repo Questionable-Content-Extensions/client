@@ -1,9 +1,57 @@
-@import url('https://unpkg.com/fork-awesome@1.2.0/css/fork-awesome.min.css');
-@import url('https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@200;400;700&display=swap');
+@layer site, theme, utilities, base;
 
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import url('https://unpkg.com/fork-awesome@1.2.0/css/fork-awesome.min.css')
+layer(base);
+@import url('https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@200;400;700&display=swap')
+layer(base);
+
+/* Preflight (Tailwind's base style reset) is intentionally omitted here,
+   matching the old `corePlugins: { preflight: false }` config, since this
+   extension is injected into an existing page and must not reset its styles. */
+@import 'tailwindcss/theme.css' layer(theme) important;
+/* `important` makes every generated utility carry `!important`. Per the CSS
+   Cascade Layers spec, unlayered declarations always beat layered ones for
+   normal rules, but `!important` declarations always beat normal ones
+   regardless of layer — this is what lets our utilities win against the
+   host site's hard-hitting unlayered element selectors (e.g. `h1 { ... }`). */
+@import 'tailwindcss/utilities.css' layer(utilities) important;
+
+@theme {
+    --font-*: initial;
+    --font-sans: Source Sans Pro, sans-serif;
+
+    --color-qc-header: #124766;
+    --color-qc-header-second: #1a6591;
+    --color-qc-background: #7297ac;
+    --color-qc-link: #2ba6cb;
+    --color-qc-link-hover: #258faf;
+    --color-qc-non-canon: #bb3629;
+    --color-qc-non-canon-second: #ee4433;
+
+    --transition-property-filter: filter;
+}
+
+/*
+  The default border color has changed to `currentcolor` in Tailwind CSS v4,
+  so we've added these compatibility styles to make sure everything still
+  looks the same as it did with Tailwind CSS v3.
+
+  If we ever want to remove these styles, we need to add an explicit border
+  color utility to any element that depends on these defaults.
+*/
+@layer base {
+    *,
+    ::after,
+    ::before,
+    ::backdrop,
+    ::file-selector-button {
+        border-color: var(--color-gray-200, currentcolor);
+    }
+
+    i.fa {
+        font-style: normal !important;
+    }
+}
 
 body {
     position: relative;
@@ -18,6 +66,11 @@ body {
     --qc-ext-navelement-color: #0f3a48;
     --qc-ext-navelement-accent-color: #0f3a48;
     --qc-ext-navelement-underline-color: #0f3a48;
+}
+
+.qc-ext-extra-navigation-container,
+.qc-ext-extra-navigation-container *:not(.fa) {
+    @apply font-sans!;
 }
 
 .qc-ext-navelement {
@@ -55,6 +108,27 @@ body {
     border-color: transparent;
 }
 
+.qc-ext-storyline-timeline.with-color {
+    background-color: var(--qc-ext-storyline-bg-color);
+}
+
+.qc-ext-storyline-timeline button,
+.qc-ext-storyline-timeline a {
+    @apply duration-500;
+}
+
+.qc-ext-storyline-timeline.with-color button,
+.qc-ext-storyline-timeline.with-color a {
+    color: var(--qc-ext-storyline-color);
+}
+
+.qc-ext-storyline-timeline.with-color button:hover,
+.qc-ext-storyline-timeline.with-color button:focus,
+.qc-ext-storyline-timeline.with-color a:hover,
+.qc-ext-storyline-timeline.with-color a:focus {
+    color: var(--qc-ext-storyline-accent-color);
+}
+
 .qc-ext-qc-link {
     @apply text-qc-link;
 }
@@ -66,4 +140,38 @@ body {
 .qc-ext-qc-link:active,
 .qc-ext-qc-link:hover {
     @apply outline-0;
+}
+
+/*
+  A subtle "chaser" loading underline: a bar grows from the left, detaches
+  and slides across at constant width, then shrinks away into the right
+  edge. Used in place of spinners for inline/secondary loading states.
+*/
+@keyframes qc-ext-chaser {
+    0% {
+        left: 0%;
+        right: 100%;
+    }
+    30% {
+        left: 0%;
+        right: 30%;
+    }
+    70% {
+        left: 30%;
+        right: 0%;
+    }
+    100% {
+        left: 100%;
+        right: 0%;
+    }
+}
+
+.qc-ext-chaser-track {
+    position: relative;
+    overflow: hidden;
+}
+
+.qc-ext-chaser-bar {
+    position: absolute;
+    animation: qc-ext-chaser 1.6s cubic-bezier(0.4, 0, 0.2, 1) infinite;
 }

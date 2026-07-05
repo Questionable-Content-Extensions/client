@@ -7,31 +7,10 @@ import {
     useState,
 } from 'react'
 
-import { ItemList } from '@models/ItemList'
+import { Filter, FilterType } from '@models/Filter'
 import { useAllItemsQuery } from '@store/api/itemApiSlice'
 
-import { getFilterWithoutType, getTypeFromFilter } from '~/itemFilters'
-
-export enum FilterType {
-    Text,
-    Item,
-    IsGuestComic,
-    IsNonCanon,
-}
-
-export type Filter =
-    | {
-          type: FilterType.Text
-          value: string
-      }
-    | {
-          type: FilterType.Item
-          value: ItemList
-      }
-    | {
-          type: FilterType.IsGuestComic | FilterType.IsNonCanon
-          value: boolean
-      }
+import { filterItems } from '~/itemFilters'
 
 export default function ComicFilter({
     filters,
@@ -151,17 +130,18 @@ export default function ComicFilter({
                     ref={activeSuggestion === index ? activeRef : undefined}
                 />
             )
-            index++
+            // index++
         }
         return suggestedFilters
     }, [itemData, filterText, filters, activeSuggestion, addFilter])
 
+    if (dropDownOpen && activeSuggestion > suggestedFilters.length - 1) {
+        setActiveSuggestion(suggestedFilters.length - 1)
+    }
+
     useEffect(() => {
         if (!dropDownOpen) {
             return
-        }
-        if (activeSuggestion > suggestedFilters.length - 1) {
-            setActiveSuggestion(suggestedFilters.length - 1)
         }
         if (activeRef.current) {
             activeRef.current.scrollIntoView({
@@ -174,6 +154,7 @@ export default function ComicFilter({
 
     return (
         <div className="relative">
+            {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */}
             <span
                 className={'fixed inset-0' + (!dropDownOpen ? ' hidden' : '')}
                 onClick={(e) => {
@@ -245,8 +226,8 @@ export default function ComicFilter({
                                 }
                                 if (activeRef.current) {
                                     activeRef.current
-                                        .querySelector('button')!
-                                        .click()
+                                        .querySelector('button')
+                                        ?.click()
                                 }
                             } else if (e.code === 'Escape') {
                                 if (dropDownOpen) {
@@ -281,22 +262,6 @@ export default function ComicFilter({
     )
 }
 
-function filterItems(allItems: ItemList[], filter: string) {
-    const [filterType, filterName] = [
-        getTypeFromFilter(filter),
-        getFilterWithoutType(filter),
-    ]
-
-    return allItems.filter((c) => {
-        const isRightType = filterType === 'item' || c.type === filterType
-        const hasName =
-            c.name.toUpperCase().indexOf(filterName.toUpperCase()) !== -1
-        const hasShortName =
-            c.shortName.toUpperCase().indexOf(filterName.toUpperCase()) !== -1
-        return isRightType && (hasName || hasShortName)
-    })
-}
-
 const SuggestedFilter = forwardRef<
     HTMLLIElement,
     {
@@ -304,7 +269,7 @@ const SuggestedFilter = forwardRef<
         filter: Filter
         addFilter: (filter: Filter) => void
     }
->(function ({ highlighted, filter, addFilter }, ref) {
+>(function SuggestedFilter({ highlighted, filter, addFilter }, ref) {
     let filterElement
     switch (filter.type) {
         case FilterType.Text:
@@ -335,7 +300,7 @@ const SuggestedFilter = forwardRef<
             break
 
         case FilterType.IsGuestComic:
-        case FilterType.IsNonCanon:
+        case FilterType.IsNonCanon: {
             let color
             if (filter.type === FilterType.IsGuestComic) {
                 color = 'border-qc-header bg-qc-header-second'
@@ -359,6 +324,7 @@ const SuggestedFilter = forwardRef<
                     filter...
                 </>
             )
+        }
     }
     return (
         <li
@@ -414,7 +380,7 @@ function ActiveFilter({
             break
 
         case FilterType.IsGuestComic:
-        case FilterType.IsNonCanon:
+        case FilterType.IsNonCanon: {
             let contains
             colorClassName = 'text-white '
             if (filter.type === FilterType.IsGuestComic) {
@@ -437,6 +403,7 @@ function ActiveFilter({
                 </>
             )
             break
+        }
     }
     return (
         <li

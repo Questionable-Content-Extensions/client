@@ -1,7 +1,10 @@
+import type { EndpointSpec } from '@endpoints/EndpointSpec'
 import { EndpointBuilder } from '@reduxjs/toolkit/dist/query/endpointDefinitions'
 import { BaseQueryFn, createApi } from '@reduxjs/toolkit/query/react'
+import type { RootState } from '@store/store'
 
 import constants, { HAS_GREASEMONKEY } from '~/constants'
+import { buildQueryString } from '~/util/buildQueryString'
 import { error, fetch as gmFetch, warn } from '~/utils'
 
 export type GreasemonkeyErrorType = 'TRY_CATCH' | 'MAINTENANCE' | 'STATUS_ERROR'
@@ -13,6 +16,7 @@ export const GREASMONKEY_ERROR_TYPES: GreasemonkeyErrorType[] = [
 export type GreasemonkeyError =
     | {
           type: 'TRY_CATCH'
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           error: GM.Response<undefined> | any
       }
     | {
@@ -23,53 +27,63 @@ export type GreasemonkeyError =
           response: GM.Response<undefined>
       }
 
+function authHeaderFromState(getState: () => unknown): Record<string, string> {
+    const token = (getState() as RootState).settings.values?.editModeToken
+    return token ? { Authorization: `Bearer ${token}` } : {}
+}
+
 export function isGreasemonkeyResponse(
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     possibleResponse: any
 ): possibleResponse is GM.Response<undefined> {
     return 'finalUrl' in possibleResponse
 }
 
-export type GreasemonkeyBaseQuery = BaseQueryFn<
-    {
-        url: string
-        configuration?: {
-            context?: undefined
-            method?:
-                | 'GET'
-                | 'POST'
-                | 'PUT'
-                | 'DELETE'
-                | 'PATCH'
-                | 'HEAD'
-                | 'TRACE'
-                | 'OPTIONS'
-                | 'CONNECT'
-            data?: string
-            headers?: {
-                [header: string]: string
-            }
-            overrideMimeType?: string
-            user?: string
-            password?: string
+export interface GreasemonkeyQueryArgs {
+    url: string
+    configuration?: {
+        context?: undefined
+        method?:
+            | 'GET'
+            | 'POST'
+            | 'PUT'
+            | 'DELETE'
+            | 'PATCH'
+            | 'HEAD'
+            | 'TRACE'
+            | 'OPTIONS'
+            | 'CONNECT'
+        data?: string | Uint8Array
+        headers?: {
+            [header: string]: string
         }
-    },
+        overrideMimeType?: string
+        user?: string
+        password?: string
+    }
+}
+
+export type GreasemonkeyBaseQuery = BaseQueryFn<
+    GreasemonkeyQueryArgs,
     GM.Response<undefined>,
     GreasemonkeyError,
-    {}, // DefinitionExtraOptions
-    {} // Meta
+    object, // DefinitionExtraOptions
+    object // Meta
 >
 const greasemonkeyBaseQuery = ({
     baseUrl,
 }: {
     baseUrl: string
 }): GreasemonkeyBaseQuery => {
-    return async ({ url, configuration }, _api, _extraOptions) => {
+    return async ({ url, configuration }, api, _extraOptions) => {
         const requestUrl = `${baseUrl}${url}`
+        const authHeader = authHeaderFromState(api.getState)
 
         if (!configuration) {
             configuration = {
                 headers: {
                     'X-QCExt-Version': GM.info.script.version,
+                    ...authHeader,
                 },
             }
         } else {
@@ -78,6 +92,7 @@ const greasemonkeyBaseQuery = ({
                 headers: {
                     ...(configuration.headers ?? {}),
                     'X-QCExt-Version': GM.info.script.version,
+                    ...authHeader,
                 },
             }
         }
@@ -115,13 +130,17 @@ const fakeGreasemonkeyBaseQuery = ({
 }: {
     baseUrl: string
 }): GreasemonkeyBaseQuery => {
-    return async ({ url, configuration }, _api, _extraOptions) => {
+    return async ({ url, configuration }, api, _extraOptions) => {
         const requestUrl = `${baseUrl}${url}`
+        const authHeader = authHeaderFromState(api.getState)
 
-        const requestOptions: RequestInit = {}
+        const requestOptions: RequestInit = { headers: authHeader }
         if (configuration) {
             requestOptions.body = configuration.data
-            requestOptions.headers = configuration.headers
+            requestOptions.headers = {
+                ...(configuration.headers ?? {}),
+                ...authHeader,
+            }
             requestOptions.method = configuration.method
         }
 
@@ -173,7 +192,7 @@ const fakeGreasemonkeyBaseQuery = ({
 
 export type Builder = EndpointBuilder<
     GreasemonkeyBaseQuery,
-    'Comic' | 'Item',
+    'Comic' | 'Item' | 'Log',
     'qcExtApi'
 >
 
@@ -193,4 +212,52 @@ export function transformResponseByJsonParseResultText<T>(
     response: GM.Response<undefined>
 ) {
     return JSON.parse(response.responseText) as T
+}
+
+/**
+ * Builds the `{ url, configuration }` shape `GreasemonkeyBaseQuery` expects
+ * from a generated `EndpointSpec` (see `src/bindings/endpoints`), substituting
+ * path params and serializing the query string and JSON body.
+ */
+export function queryFromSpec<Q, B, P>(
+    spec: EndpointSpec<Q, B, P, unknown>,
+    args?: { pathParams?: P; query?: Q; body?: B }
+): GreasemonkeyQueryArgs {
+    let path: string = spec.path
+
+    if (args?.pathParams !== undefined) {
+        if (typeof args.pathParams === 'object' && args.pathParams !== null) {
+            for (const [key, value] of Object.entries(
+                args.pathParams as Record<string, unknown>
+            )) {
+                path = path.replace(`{${key}}`, String(value))
+            }
+        } else {
+            path = path.replace(/\{[^}]+\}/, String(args.pathParams))
+        }
+    }
+
+    const queryString = buildQueryString(
+        args?.query as Record<string, unknown> | undefined
+    )
+    if (queryString) path = `${path}?${queryString}`
+
+    if (args?.body !== undefined) {
+        return {
+            url: path,
+            configuration: {
+                data: JSON.stringify(args.body),
+                method: spec.method,
+                headers: {
+                    'Content-Type': 'application/json; charset=utf-8',
+                },
+            },
+        }
+    }
+
+    if (spec.method !== 'GET') {
+        return { url: path, configuration: { method: spec.method } }
+    }
+
+    return { url: path }
 }

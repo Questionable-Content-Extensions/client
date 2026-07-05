@@ -1,4 +1,4 @@
-import { SettingValues, SettingsUpdaterFunction } from '~/settings'
+import { SettingValues, SettingsUpdaterFunction } from '~/Settings'
 
 import NumberSetting from '../NumberSetting/NumberSetting'
 import SecretStringSetting from '../SecretStringSetting/SecretStringSetting'

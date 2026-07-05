@@ -1,89 +1,84 @@
+import { HttpResponse, http } from 'msw'
+import { expect, waitFor, within } from 'storybook/test'
+
 import { apiSlice } from '@store/apiSlice'
 import { setCurrentComic } from '@store/comicSlice'
 import store from '@store/store'
-import { Meta, StoryFn } from '@storybook/react'
+import type { Meta, StoryObj } from '@storybook/react-vite'
 
-import { COMIC_DATA_666, useMswReady } from '~/mocks'
+import { COMIC_DATA_666 } from '~/mocks'
+import { mockNetworkDelay } from '~/storybook/mockNetworkDelay'
+import { withSuppressedExpectedErrorAsync } from '~/util/testUtils'
 
 import Date from './Date'
 
-export default {
+const meta: Meta<typeof Date> = {
     component: Date,
-} as Meta<typeof Date>
+    render: () => (
+        <div className="relative inline-block mt-4 mr-4">
+            <Date />
+        </div>
+    ),
+    loaders: [
+        () => {
+            store.dispatch(apiSlice.util.resetApiState())
 
-const Template: StoryFn<typeof Date> = (args) => {
-    const mswReady = useMswReady()
+            const state = store.getState()
 
-    store.dispatch(apiSlice.util.resetApiState())
+            if (state.comic.current === 0) {
+                store.dispatch(setCurrentComic(666))
+            }
+        },
+    ],
+}
+export default meta
 
-    // Let's set up the Redux store to be the way we need
-    const state = store.getState()
+type Story = StoryObj<typeof Date>
 
-    if (state.comic.current === 0) {
-        store.dispatch(setCurrentComic(666))
-    }
+export const Default: Story = {
+    parameters: {
+        msw: {
+            handlers: [
+                http.get(
+                    'http://localhost:3000/api/v3/comicdata/:comicId',
+                    async () => {
+                        // We pretend this takes 1-2 seconds so we get to
+                        // observe the loading UX
+                        await mockNetworkDelay()
+                        return HttpResponse.json(COMIC_DATA_666)
+                    }
+                ),
+            ],
+        },
+    },
+}
 
-    // Then, let's fake the necessary REST calls
-    const { worker, rest } = window.msw
-    worker.use(
-        rest.get(
-            'http://localhost:3000/api/v2/comicdata/:comicId',
-            (req, res, ctx) => {
-                // We pretend this takes 1-2 seconds so we get to
-                // observe the loading UX
-                return res(
-                    ctx.delay(1000 + Math.random() * 1000),
-                    ctx.json(COMIC_DATA_666)
+export const Error: Story = {
+    parameters: {
+        msw: {
+            handlers: [
+                http.get(
+                    'http://localhost:3000/api/v3/comicdata/:comicId',
+                    async () => {
+                        await mockNetworkDelay()
+                        return HttpResponse.text('Error!', { status: 500 })
+                    }
+                ),
+            ],
+        },
+    },
+    play: async ({ canvasElement }) => {
+        const canvas = within(canvasElement)
+
+        await withSuppressedExpectedErrorAsync(
+            'Got unexpected response from server',
+            async () => {
+                await waitFor(() =>
+                    expect(
+                        canvas.getByText('Error loading comic data')
+                    ).toBeInTheDocument()
                 )
             }
         )
-    )
-
-    return mswReady ? (
-        <div className="relative inline-block mt-4 mr-4">
-            <Date {...args} />
-        </div>
-    ) : (
-        <></>
-    )
+    },
 }
-
-export const Default = Template.bind({})
-
-const ErrorTemplate: StoryFn<typeof Date> = (args) => {
-    const mswReady = useMswReady()
-
-    store.dispatch(apiSlice.util.resetApiState())
-
-    // Let's set up the Redux store to be the way we need
-    const state = store.getState()
-
-    if (state.comic.current === 0) {
-        store.dispatch(setCurrentComic(666))
-    }
-
-    // Then, let's fake the necessary REST calls
-    const { worker, rest } = window.msw
-    worker.use(
-        rest.get(
-            'http://localhost:3000/api/v2/comicdata/:comicId',
-            (req, res, ctx) => {
-                return res(
-                    ctx.delay(1000 + Math.random() * 1000),
-                    ctx.status(500),
-                    ctx.text('Error!')
-                )
-            }
-        )
-    )
-
-    return mswReady ? (
-        <div className="relative inline-block mt-4 mr-4">
-            <Date {...args} />
-        </div>
-    ) : (
-        <></>
-    )
-}
-
-export const Error = ErrorTemplate.bind({})

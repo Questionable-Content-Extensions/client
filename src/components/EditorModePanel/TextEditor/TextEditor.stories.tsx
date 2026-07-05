@@ -1,39 +1,44 @@
-import { useArgs } from '@storybook/preview-api'
-import { Meta, StoryFn } from '@storybook/react'
+import { useArgs } from 'storybook/preview-api'
+import { fn } from 'storybook/test'
+
+import type { Meta, StoryObj } from '@storybook/react-vite'
 
 import TextEditor from './TextEditor'
 
-export default {
+const meta: Meta<typeof TextEditor> = {
     component: TextEditor,
-} as Meta<typeof TextEditor>
+    args: {
+        label: 'Label',
+        labelTitle: 'Label Title',
+        value: 'Value',
+        inputId: 'Input Id',
+        dirty: false,
+        disabled: false,
+        onValueChange: fn(),
+    },
+    render: (args) => {
+        const [, setArgs] = useArgs()
+        const onValueChange = (newValue: string) => {
+            setArgs({ value: newValue, dirty: true })
+            args.onValueChange(newValue)
+        }
+        return <TextEditor {...args} onValueChange={onValueChange} />
+    },
+}
+export default meta
 
-const Template: StoryFn<typeof TextEditor> = (args) => {
-    const [_args, setArgs] = useArgs()
-    const onValueChange = (newValue: string) => {
-        setArgs({ value: newValue, dirty: true })
-        args.onValueChange(newValue)
-    }
-    return <TextEditor {...args} onValueChange={onValueChange} />
+type Story = StoryObj<typeof TextEditor>
+
+export const Default: Story = {}
+
+export const Dirty: Story = {
+    args: {
+        dirty: true,
+    },
 }
 
-export const Default = Template.bind({})
-Default.args = {
-    label: 'Label',
-    labelTitle: 'Label Title',
-    value: 'Value',
-    inputId: 'Input Id',
-    dirty: false,
-    disabled: false,
-}
-
-export const Dirty = Template.bind({})
-Dirty.args = {
-    ...Default.args,
-    dirty: true,
-}
-
-export const Disabled = Template.bind({})
-Disabled.args = {
-    ...Default.args,
-    disabled: true,
+export const Disabled: Story = {
+    args: {
+        disabled: true,
+    },
 }

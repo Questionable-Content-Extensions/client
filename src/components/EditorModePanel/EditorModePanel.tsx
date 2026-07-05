@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 
+import useActiveStorylines from '@hooks/useActiveStorylines'
 import useHydratedItemData from '@hooks/useHydratedItemData'
 import { HydratedItemNavigationData } from '@models/HydratedItemData'
 import { ItemType } from '@models/ItemType'
@@ -82,6 +83,8 @@ export default function EditorModePanel() {
         isFetching: isFetchingItemData,
     } = useHydratedItemData(currentComic, settings)
 
+    const { activeStorylines } = useActiveStorylines(currentComic, settings)
+
     const isLoadingInitial =
         isLoadingInitialComicDataz || isLoadingInitialItemData
     const isFetching = isFetchingComicDataz || isFetchingItemData
@@ -107,10 +110,15 @@ export default function EditorModePanel() {
             !comicData?.hasData ||
             comicData.hasNoLocation ||
             comicItems?.filter((i) => i.type === 'location').length !== 0
+        const hasUnconfiguredStoryline = comicItems?.some(
+            (i) =>
+                i.type === 'storyline' &&
+                !activeStorylines.some((as) => as.id === i.id)
+        )
         const hasStoryline =
             !comicData?.hasData ||
             comicData.hasNoStoryline ||
-            comicItems?.filter((i) => i.type === 'storyline').length !== 0
+            activeStorylines.length !== 0
         const hasTitle =
             !comicData?.hasData ||
             comicData.hasNoTitle ||
@@ -128,8 +136,11 @@ export default function EditorModePanel() {
             missingData.push('a location')
         }
         if (!hasStoryline) {
-            // TODO: Add back when storylines get added
-            //missingData.push('a storyline')
+            missingData.push(
+                hasUnconfiguredStoryline
+                    ? 'a storyline (added, but needs a start comic set — see below)'
+                    : 'a storyline'
+            )
         }
         if (!hasTitle) {
             missingData.push('a title')
@@ -174,6 +185,7 @@ export default function EditorModePanel() {
         hasErrorLoadingComicData,
         comicDataError,
         comicItems,
+        activeStorylines,
     ])
 
     const [clientWidth, setClientWidth] = useState(
@@ -188,7 +200,24 @@ export default function EditorModePanel() {
         return () => {
             window.removeEventListener('resize', onResize)
         }
-    })
+    }, [])
+
+    // Warn before an actual page unload/reload/close if there are unsaved
+    // editor changes; in-app navigation between comics is separately guarded
+    // by `comicNavigationMiddleware`.
+    useEffect(() => {
+        function onBeforeUnload(event: BeforeUnloadEvent) {
+            if (!editorStateDirty) {
+                return
+            }
+            event.preventDefault()
+        }
+
+        window.addEventListener('beforeunload', onBeforeUnload)
+        return () => {
+            window.removeEventListener('beforeunload', onBeforeUnload)
+        }
+    }, [editorStateDirty])
     const correctionWidth = useMemo(
         () => (clientWidth < 1530 ? (1530 - clientWidth) / 2 : 0),
         [clientWidth]
@@ -204,20 +233,18 @@ export default function EditorModePanel() {
             className={
                 'bg-stone-100 border-solid border-0 border-b border-qc-header lg:border lg:border-stone-300 ' +
                 'shadow-md lg:fixed lg:top-20 xl:top-48 lg:left-[50%] lg:-ml-[750px] lg:w-64 z-10 p-2 ' +
-                'transition-transform translate-x-0 lg:hover:translate-x-[var(--corrected-margin)]'
+                'transition-transform translate-x-0 lg:hover:translate-x-(--corrected-margin)'
             }
-            style={
-                {
-                    '--corrected-margin': `${correctionWidth}px`,
-                } as any
-            }
+            style={{
+                '--corrected-margin': `${correctionWidth}px`,
+            }}
             onSubmit={(e) => {
                 e.preventDefault()
                 dispatch(saveChanges())
             }}
         >
             <div className="flex justify-between border-b border-solid border-b-stone-300 border-l-0 border-t-0 border-r-0 -mx-2 -mt-2 mb-2">
-                <h1 className="ml-2 mb-0 text-center small-caps text-sm font-thin ">
+                <h1 className="ml-2 mb-0 text-center small-caps text-sm font-medium ">
                     Editor Mode
                 </h1>
 
@@ -359,10 +386,10 @@ export default function EditorModePanel() {
                     {hasErrorLoadingComicData
                         ? 'Error'
                         : isFetching || isEditorSaving
-                        ? 'Loading...'
-                        : editorStateDirty
-                        ? 'Save changes'
-                        : 'No changes'}
+                          ? 'Loading...'
+                          : editorStateDirty
+                            ? 'Save changes'
+                            : 'No changes'}
                 </Button>
             </div>
         </form>

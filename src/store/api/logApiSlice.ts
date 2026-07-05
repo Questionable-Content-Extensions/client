@@ -1,27 +1,24 @@
-import { LogByIdQuery } from '@models/LogByIdQuery'
-import { LogQuery } from '@models/LogQuery'
-import { LogResponse } from '@models/LogResponse'
+import GetLogSpec, { GetLogQuery, GetLogResponse } from '@endpoints/GetLog'
+import GetLogComicSpec, {
+    GetLogComicQuery,
+    GetLogComicResponse,
+} from '@endpoints/GetLogComic'
+import GetLogItemSpec, {
+    GetLogItemQuery,
+    GetLogItemResponse,
+} from '@endpoints/GetLogItem'
 import {
     apiSlice,
+    queryFromSpec,
     transformResponseByJsonParseResultText,
 } from '@store/apiSlice'
 
-import constants from '~/constants'
-
 export const logApiSlice = apiSlice.injectEndpoints({
     endpoints: (builder) => ({
-        getLogs: builder.query<LogResponse, LogQuery>({
-            query: (args) => {
-                const urlQuery = new URLSearchParams({
-                    token: args.token,
-                    page: '' + args.page,
-                }).toString()
-
-                return {
-                    url: `${constants.editLogEndpoint}?${urlQuery}`,
-                }
-            },
-            transformResponse: transformResponseByJsonParseResultText,
+        getLogs: builder.query<GetLogResponse, GetLogQuery>({
+            query: (query) => queryFromSpec(GetLogSpec, { query }),
+            transformResponse:
+                transformResponseByJsonParseResultText<GetLogResponse>,
             providesTags: (result, _error, args) =>
                 result
                     ? [
@@ -37,19 +34,10 @@ export const logApiSlice = apiSlice.injectEndpoints({
                       ]
                     : [],
         }),
-        getLogsForComic: builder.query<LogResponse, LogByIdQuery>({
-            query: (args) => {
-                const urlQuery = new URLSearchParams({
-                    token: args.token,
-                    page: '' + args.page,
-                    id: '' + args.id,
-                }).toString()
-
-                return {
-                    url: `${constants.editLogEndpoint}comic?${urlQuery}`,
-                }
-            },
-            transformResponse: transformResponseByJsonParseResultText,
+        getLogsForComic: builder.query<GetLogComicResponse, GetLogComicQuery>({
+            query: (query) => queryFromSpec(GetLogComicSpec, { query }),
+            transformResponse:
+                transformResponseByJsonParseResultText<GetLogComicResponse>,
             providesTags: (result, _error, args) =>
                 result
                     ? [
@@ -68,19 +56,10 @@ export const logApiSlice = apiSlice.injectEndpoints({
                       ]
                     : [],
         }),
-        getLogsForItem: builder.query<LogResponse, LogByIdQuery>({
-            query: (args) => {
-                const urlQuery = new URLSearchParams({
-                    token: args.token,
-                    page: '' + args.page,
-                    id: '' + args.id,
-                }).toString()
-
-                return {
-                    url: `${constants.editLogEndpoint}item?${urlQuery}`,
-                }
-            },
-            transformResponse: transformResponseByJsonParseResultText,
+        getLogsForItem: builder.query<GetLogItemResponse, GetLogItemQuery>({
+            query: (query) => queryFromSpec(GetLogItemSpec, { query }),
+            transformResponse:
+                transformResponseByJsonParseResultText<GetLogItemResponse>,
             providesTags: (result, _error, args) =>
                 result
                     ? [

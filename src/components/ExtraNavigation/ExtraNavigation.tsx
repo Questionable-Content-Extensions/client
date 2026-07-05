@@ -50,13 +50,15 @@ export default function ExtraNavigation({
                 <div className="flex flex-col justify-center h-full">
                     <button
                         onClick={() => onShowGoToComicDialog()}
-                        title="Go to comic..."
+                        title="Go to comic... / filter comics..."
                         className="py-0.5"
                     >
                         <span aria-hidden>
                             {currentComic ? `#${currentComic}` : ''}
                         </span>{' '}
-                        <span className="sr-only">Go to comic...</span>
+                        <span className="sr-only">
+                            Go to comic / filter comics...
+                        </span>
                         <i className="fa fa-expand" aria-hidden="true"></i>
                     </button>
                 </div>

@@ -1,5 +1,7 @@
 /* Inspired by <https://www.cssportal.com/blog/create-corner-ribbon/> */
 
+@reference '../../../index.css';
+
 .ribbon {
     --ribbon-width: 120px;
     --ribbon-color: #000000;
@@ -78,13 +80,13 @@
 }
 
 .ribbon.guestComic {
-    --ribbon-color: theme('colors.qc-header');
-    --ribbon-highlight-color: theme('colors.qc-header-second');
+    --ribbon-color: theme(--color-qc-header);
+    --ribbon-highlight-color: theme(--color-qc-header-second);
 }
 
 .ribbon.nonCanon {
-    --ribbon-color: theme('colors.qc-non-canon');
-    --ribbon-highlight-color: theme('colors.qc-non-canon-second');
+    --ribbon-color: theme(--color-qc-non-canon);
+    --ribbon-highlight-color: theme(--color-qc-non-canon-second);
 }
 
 /*

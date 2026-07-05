@@ -73,14 +73,14 @@ function getIndicesOf(
     needle: string,
     caseSensitive?: boolean
 ) {
-    let needleLength = needle.length
+    const needleLength = needle.length
     if (!needleLength) {
         return []
     }
 
     let startIndex = 0
     let index
-    let indices: [number, number][] = []
+    const indices: [number, number][] = []
     if (!caseSensitive) {
         haystack = haystack.toUpperCase()
         needle = needle.toUpperCase()

@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { toast } from 'react-toastify'
 
 import { ImageType } from '@models/ImageType'
 
@@ -6,7 +7,7 @@ import constants from '~/constants'
 import { KnownImageType } from '~/models/KnownImageType'
 import { debug, error } from '~/utils'
 
-const comicExtensionCache: { [extension: string]: KnownImageType } = {}
+const comicImageTypeCache: { [comicNo: number]: KnownImageType } = {}
 
 export default function ComicImage({
     imageData,
@@ -37,10 +38,15 @@ export default function ComicImage({
     }
 
     useEffect(() => {
+        let cancelled = false
+
         function tryImage(comic: number, imageType: KnownImageType) {
             const downloadingImage = new Image()
             downloadingImage.onload = function (event) {
-                comicExtensionCache[comic] = imageType
+                if (cancelled) {
+                    return
+                }
+                comicImageTypeCache[comic] = imageType
                 setComicSrc((event.target as HTMLImageElement).src)
                 debug(
                     `setting src to ${(event.target as HTMLImageElement).src}`
@@ -48,19 +54,25 @@ export default function ComicImage({
                 imageReady()
             }
             downloadingImage.onerror = function (event) {
-                // TODO: Report image error to user
+                if (cancelled) {
+                    return
+                }
                 error(event)
+                toast.error(`Failed to load the image for comic #${comic}`, {
+                    autoClose: 15000,
+                    toastId: `comic-image-error-${comic}`,
+                })
             }
-            let imageExtension = imageTypeToExtension(imageType)
+            const imageExtension = imageTypeToExtension(imageType)
             downloadingImage.src = `./comics/${comic}.${imageExtension}`
         }
 
-        let { comicNo, imageType } = previousImageData
-        if (comicNo && comicNo in comicExtensionCache) {
+        const { comicNo, imageType } = previousImageData
+        if (comicNo && comicNo in comicImageTypeCache) {
             debug(
-                `using cached image extension ${comicExtensionCache[comicNo]} for ${comicNo}`
+                `using cached image extension ${comicImageTypeCache[comicNo]} for ${comicNo}`
             )
-            tryImage(comicNo, comicExtensionCache[comicNo])
+            tryImage(comicNo, comicImageTypeCache[comicNo])
         } else if (comicNo && imageType && imageType !== 'unknown') {
             debug(
                 `using hard-coded image extension ${imageType} for ${comicNo}`
@@ -71,6 +83,9 @@ export default function ComicImage({
             let currentExtension = 0
             const downloadingImage = new Image()
             downloadingImage.onload = function (event) {
+                if (cancelled) {
+                    return
+                }
                 debug('succeeded try/fail image extension')
                 setComicSrc((event.target as HTMLImageElement).src)
                 debug(
@@ -79,30 +94,43 @@ export default function ComicImage({
                 imageReady()
             }
             downloadingImage.onerror = function (event) {
+                if (cancelled) {
+                    return
+                }
                 if (currentExtension < constants.comicExtensions.length - 1) {
                     currentExtension++
                     debug(
                         'fallbackImageLoading -- Trying ' +
                             constants.comicExtensions[currentExtension]
                     )
-                    let imageExtension =
+                    const imageExtension =
                         constants.comicExtensions[currentExtension]
                     downloadingImage.src = `./comics/${comicNo}.${imageExtension}`
                 } else {
-                    // TODO: Report image error to user
                     error(event)
+                    toast.error(
+                        `Failed to load the image for comic #${comicNo}`,
+                        {
+                            autoClose: 15000,
+                            toastId: `comic-image-error-${comicNo}`,
+                        }
+                    )
                 }
             }
             debug(
                 'fallbackImageLoading -- Trying ' +
                     constants.comicExtensions[currentExtension]
             )
-            let imageExtension = constants.comicExtensions[currentExtension]
+            const imageExtension = constants.comicExtensions[currentExtension]
             downloadingImage.src = `./comics/${comicNo}.${imageExtension}`
         } else {
             debug(
                 `comic data isn't ready yet, nothing to do yet for image loading`
             )
+        }
+
+        return () => {
+            cancelled = true
         }
     }, [previousImageData, imageReady])
 

@@ -1,81 +1,90 @@
-import { useArgs } from '@storybook/preview-api'
-import { Meta, StoryFn } from '@storybook/react'
+import { useArgs } from 'storybook/preview-api'
+import { fn } from 'storybook/test'
+
+import type { Meta, StoryObj } from '@storybook/react-vite'
 
 import Pagination from './Pagination'
 
-export default {
+const meta: Meta<typeof Pagination> = {
     component: Pagination,
-} as Meta<typeof Pagination>
+    args: {
+        page: 1,
+        count: 1,
+        siblingCount: 2,
+        boundaryCount: 3,
+        showFirstButton: false,
+        showLastButton: false,
+        hideNextButton: false,
+        hidePrevButton: false,
+        disabled: false,
+        isFetching: false,
+        onGoToPage: fn(),
+    },
+    render: (args) => {
+        const [, setArgs] = useArgs()
+        const onGoToPage = (page: number) => {
+            setArgs({ page })
+            args.onGoToPage(page)
+        }
 
-const Template: StoryFn<typeof Pagination> = (args) => {
-    let [_args, setArgs] = useArgs()
-    const onGoToPage = (page: number) => {
-        setArgs({ page })
-        args.onGoToPage(page)
-    }
+        return (
+            <div className="flex justify-center">
+                <Pagination {...args} onGoToPage={onGoToPage} />
+            </div>
+        )
+    },
+}
+export default meta
 
-    return (
-        <div className="flex justify-center">
-            <Pagination {...args} onGoToPage={onGoToPage} />
-        </div>
-    )
+type Story = StoryObj<typeof Pagination>
+
+export const SinglePage: Story = {}
+
+export const TenPages: Story = {
+    args: {
+        count: 10,
+    },
 }
 
-export const SinglePage = Template.bind({})
-SinglePage.args = {
-    page: 1,
-    count: 1,
-    siblingCount: 2,
-    boundaryCount: 3,
-    showFirstButton: false,
-    showLastButton: false,
-    hideNextButton: false,
-    hidePrevButton: false,
-    disabled: false,
-    isFetching: false,
+export const HundredPages: Story = {
+    args: {
+        count: 100,
+    },
 }
 
-export const TenPages = Template.bind({})
-TenPages.args = {
-    ...SinglePage.args,
-    count: 10,
+export const ThousandPages: Story = {
+    args: {
+        count: 1000,
+    },
 }
 
-export const HundredPages = Template.bind({})
-HundredPages.args = {
-    ...SinglePage.args,
-    count: 100,
+export const WithFirstAndLast: Story = {
+    args: {
+        ...ThousandPages.args,
+        showFirstButton: true,
+        showLastButton: true,
+    },
 }
 
-export const ThousandPages = Template.bind({})
-ThousandPages.args = {
-    ...SinglePage.args,
-    count: 1000,
+export const WithoutPrevAndNext: Story = {
+    args: {
+        ...ThousandPages.args,
+        hideNextButton: true,
+        hidePrevButton: true,
+    },
 }
 
-export const WithFirstAndLast = Template.bind({})
-WithFirstAndLast.args = {
-    ...ThousandPages.args,
-    showFirstButton: true,
-    showLastButton: true,
+export const Disabled: Story = {
+    args: {
+        ...ThousandPages.args,
+        disabled: true,
+    },
 }
 
-export const WithoutPrevAndNext = Template.bind({})
-WithoutPrevAndNext.args = {
-    ...ThousandPages.args,
-    hideNextButton: true,
-    hidePrevButton: true,
-}
-
-export const Disabled = Template.bind({})
-Disabled.args = {
-    ...ThousandPages.args,
-    disabled: true,
-}
-
-export const Fetching = Template.bind({})
-Fetching.args = {
-    ...ThousandPages.args,
-    isFetching: true,
-    page: 4,
+export const Fetching: Story = {
+    args: {
+        ...ThousandPages.args,
+        isFetching: true,
+        page: 4,
+    },
 }

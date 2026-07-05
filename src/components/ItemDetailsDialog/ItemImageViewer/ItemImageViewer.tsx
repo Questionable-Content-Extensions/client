@@ -26,7 +26,7 @@ export default function ItemImageViewer({
     editModeToken: string | null
     onDeleteImage: (imageId: number) => void
     onSetPrimaryImage: (imageId: number) => void
-    onUploadImage: (args: UploadImageArgs) => Promise<unknown>
+    onUploadImage: (args: UploadImageArgs) => Promise<void>
     isUploadingImage: boolean
 }) {
     const primaryImageIndex = useCallback(
@@ -45,7 +45,7 @@ export default function ItemImageViewer({
 
     const [currentImages, setCurrentImages] = useState(itemImageData)
     const [currentImage, setCurrentImage] = useState(
-        primaryImage ? primaryImageIndex(primaryImage) ?? 0 : 0
+        primaryImage ? (primaryImageIndex(primaryImage) ?? 0) : 0
     )
     const [currentPrimaryImage, setCurrentPrimaryImage] = useState(primaryImage)
 
@@ -53,12 +53,16 @@ export default function ItemImageViewer({
 
     if (currentPrimaryImage !== primaryImage) {
         setCurrentPrimaryImage(primaryImage)
-        setCurrentImage(primaryImage ? primaryImageIndex(primaryImage) ?? 0 : 0)
+        setCurrentImage(
+            primaryImage ? (primaryImageIndex(primaryImage) ?? 0) : 0
+        )
     }
 
     if (currentImages !== itemImageData) {
         setCurrentImages(itemImageData)
-        setCurrentImage(primaryImage ? primaryImageIndex(primaryImage) ?? 0 : 0)
+        setCurrentImage(
+            primaryImage ? (primaryImageIndex(primaryImage) ?? 0) : 0
+        )
     }
 
     if (!currentImages.length) {

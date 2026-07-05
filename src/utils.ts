@@ -1,5 +1,8 @@
+import { ComicId } from '@models/ComicId'
+import { ItemId } from '@models/ItemId'
+
+import Settings from './Settings'
 import { HAS_GREASEMONKEY } from './constants'
-import Settings from './settings'
 
 const qcDebug = Function.prototype.bind.call(
     console.debug,
@@ -7,7 +10,8 @@ const qcDebug = Function.prototype.bind.call(
     '%c[QC-Ext]:',
     'color: purple; font-weight: bold'
 )
-let debug = function (...args: any[]) {
+/* eslint-disable @typescript-eslint/no-explicit-any */
+const debug = function (...args: any[]) {
     if (HAS_GREASEMONKEY) {
         if (Settings.get().values.showDebugLogs) {
             qcDebug(...args)
@@ -37,6 +41,7 @@ let error = function (...args: any[]) {
 let qcBug = function (...args: any[]) {
     forgotSetup()
 }
+/* eslint-enable @typescript-eslint/no-explicit-any */
 /* eslint-enable @typescript-eslint/no-unused-vars */
 
 function forgotSetup() {
@@ -149,7 +154,7 @@ export function wrapElement(element: HTMLElement, wrapper: HTMLElement | null) {
  * @return {HTMLElement} The element created from the given HTML
  */
 export function htmlToElement(html: string): HTMLElement {
-    var template = document.createElement('template')
+    const template = document.createElement('template')
     html = html.trim()
     template.innerHTML = html
     return template.content.firstChild as HTMLElement
@@ -169,7 +174,7 @@ export async function fetch<TContext = undefined>(
             | 'TRACE'
             | 'OPTIONS'
             | 'CONNECT'
-        data?: string
+        data?: string | Uint8Array
         headers?: {
             [header: string]: string
         }
@@ -179,11 +184,17 @@ export async function fetch<TContext = undefined>(
     }
 ): Promise<GM.Response<TContext>> {
     return new Promise((resolve, reject) => {
+        const rawData = configuration?.data
+        const isRawBytes = rawData instanceof Uint8Array
+        const data = isRawBytes ? bytesToBinaryString(rawData) : rawData
         GM.xmlHttpRequest({
             url: url,
             method: configuration?.method ? configuration.method : 'GET',
             context: configuration?.context,
-            data: configuration?.data,
+            data,
+            // Without this, GM.xmlHttpRequest UTF-8-encodes `data`, mangling
+            // any byte >= 0x80.
+            binary: isRawBytes,
             headers: configuration?.headers,
             overrideMimeType: configuration?.overrideMimeType,
             user: configuration?.user,
@@ -196,6 +207,51 @@ export async function fetch<TContext = undefined>(
             },
         })
     })
+}
+
+/**
+ * `GM.xmlHttpRequest`'s `data` field only accepts a `string`, which it sends
+ * as raw bytes rather than re-encoding as UTF-8 (so byte values above 127
+ * survive intact). This converts raw bytes into that representation.
+ */
+export function bytesToBinaryString(bytes: Uint8Array): string {
+    const chunkSize = 0x8000
+    let binary = ''
+    for (let i = 0; i < bytes.length; i += chunkSize) {
+        binary += String.fromCharCode(...bytes.subarray(i, i + chunkSize))
+    }
+    return binary
+}
+
+/**
+ * Some userscript managers no longer auto-encode a `FormData` value passed
+ * as `GM.xmlHttpRequest`'s `data` field (it gets coerced to the string
+ * `"[object Object]"` instead), so multipart/form-data bodies for file
+ * uploads must be built by hand.
+ */
+export async function buildMultipartFormData(
+    fieldName: string,
+    file: Blob,
+    filename: string
+): Promise<{ body: Uint8Array; contentType: string }> {
+    const boundary = `----QCExtBoundary${Date.now().toString(36)}${Math.random().toString(36).slice(2)}`
+    const encoder = new TextEncoder()
+    const header = encoder.encode(
+        `--${boundary}\r\n` +
+            `Content-Disposition: form-data; name="${fieldName}"; filename="${filename}"\r\n` +
+            `Content-Type: ${file.type || 'application/octet-stream'}\r\n\r\n`
+    )
+    const footer = encoder.encode(`\r\n--${boundary}--\r\n`)
+    const fileBytes = new Uint8Array(await file.arrayBuffer())
+
+    const body = new Uint8Array(
+        header.length + fileBytes.length + footer.length
+    )
+    body.set(header, 0)
+    body.set(fileBytes, header.length)
+    body.set(footer, header.length + fileBytes.length)
+
+    return { body, contentType: `multipart/form-data; boundary=${boundary}` }
 }
 
 export function nl2br(str: string, isXhtml?: boolean) {
@@ -243,9 +299,38 @@ export function dbg<T>(v: T, d?: string) {
     return v
 }
 
+export interface PopStateComicData {
+    comic: ComicId
+    lockedToItem: ItemId | null
+}
+
+export function parsePopStateComicData(
+    state: unknown
+): PopStateComicData | null {
+    if (typeof state !== 'object' || state === null) {
+        return null
+    }
+
+    const candidate = state as Record<string, unknown>
+    if (typeof candidate.comic !== 'number') {
+        return null
+    }
+    if (
+        candidate.lockedToItem !== null &&
+        typeof candidate.lockedToItem !== 'number'
+    ) {
+        return null
+    }
+
+    return {
+        comic: candidate.comic,
+        lockedToItem: candidate.lockedToItem,
+    }
+}
+
 export function readFileToDataURL(file: File): Promise<string> {
     return new Promise((resolve, reject) => {
-        var fr = new FileReader()
+        const fr = new FileReader()
         fr.onload = () => {
             resolve(fr.result as string)
         }

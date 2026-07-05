@@ -1,4 +1,4 @@
-import { useMemo } from 'react'
+import { useCallback, useMemo, useRef } from 'react'
 
 import { PaddedButton } from '@components/Button'
 import ItemNavigation from '@components/ComicDetailsPanel/ItemNavigation/ItemNavigation'
@@ -38,7 +38,7 @@ export default function FilteredNavigationData({
     useColors: boolean
     orderMembersByLastAppearance: boolean
     editMode: boolean
-    onAddItem: (item: ItemBody) => void
+    onAddItem: (item: ItemBody) => Promise<void>
 }) {
     const { activeFilter, filter, setFilter } = useDebouncedFilter()
 
@@ -53,6 +53,49 @@ export default function FilteredNavigationData({
             getFilterWithoutType(activeFilter),
         ],
         [activeFilter]
+    )
+
+    // Single choke point for adding an item: whoever triggers the add
+    // (a NavElement's + button, the "Add new X" button, or the Enter/
+    // Ctrl+Enter shortcuts below), the filter only clears once it succeeds.
+    const handleAddItem = useCallback(
+        async (item: ItemBody) => {
+            try {
+                await onAddItem(item)
+                setFilter('')
+            } catch {
+                // A rejected add-item mutation already surfaces a toast via
+                // the global rtkQueryErrorLogger middleware; swallow it here
+                // so callers can fire-and-forget without an unhandled
+                // rejection.
+            }
+        },
+        [onAddItem, setFilter]
+    )
+
+    const handleAddNew = useCallback(() => {
+        if (filterName === '' || isSaving) {
+            return
+        }
+        if (filterType === 'item') {
+            alert(
+                'Prefix the filter by ! for cast, @ for location or # for storyline to choose the type of item to create'
+            )
+            return
+        }
+        void handleAddItem({
+            new: true,
+            newItemName: filterName,
+            newItemType: filterType,
+        })
+    }, [filterName, filterType, handleAddItem, isSaving])
+
+    const addFirstMatchRef = useRef<(() => void) | undefined>(undefined)
+    const handleAddFirstMatchChange = useCallback(
+        (add: (() => void) | undefined) => {
+            addFirstMatchRef.current = add
+        },
+        []
     )
 
     return (
@@ -73,6 +116,17 @@ export default function FilteredNavigationData({
                         e.preventDefault()
                     }
                 }}
+                onKeyDown={(e) => {
+                    if (!editMode || e.key !== 'Enter') {
+                        return
+                    }
+                    e.preventDefault()
+                    if (e.ctrlKey) {
+                        handleAddNew()
+                    } else {
+                        addFirstMatchRef.current?.()
+                    }
+                }}
             />
 
             {(filteredItemData.length > 0 || isLoading) && !hasError ? (
@@ -90,8 +144,9 @@ export default function FilteredNavigationData({
                         mode={NavElementMode.Missing}
                         editMode={editMode}
                         onAddItem={(itemId) =>
-                            onAddItem({ new: false, itemId })
+                            void handleAddItem({ new: false, itemId })
                         }
+                        onAddFirstMatchChange={handleAddFirstMatchChange}
                     />
                 </div>
             ) : hasError ? (
@@ -104,19 +159,7 @@ export default function FilteredNavigationData({
             {editMode && (
                 <PaddedButton
                     className="mt-2 w-full"
-                    onClick={async () => {
-                        if (filterType === 'item') {
-                            alert(
-                                'Prefix the filter by ! for cast, @ for location or # for storyline to choose the type of item to create'
-                            )
-                        } else {
-                            onAddItem({
-                                new: true,
-                                newItemName: filterName,
-                                newItemType: filterType,
-                            })
-                        }
-                    }}
+                    onClick={handleAddNew}
                     disabled={filterName === '' || isSaving}
                     title={
                         filterName === ''

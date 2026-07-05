@@ -1,68 +1,158 @@
+import { HttpResponse, http } from 'msw'
+import { expect, fn, userEvent, waitFor, within } from 'storybook/test'
+
+import { apiSlice } from '@store/apiSlice'
 import { setCurrentComic } from '@store/comicSlice'
 import store from '@store/store'
-import { Meta, StoryFn } from '@storybook/react'
+import type { Meta, StoryObj } from '@storybook/react-vite'
 
-import { COMIC_DATA_666_HYDRATED_ITEMS } from '~/mocks'
+import {
+    ALL_ITEMS,
+    COMIC_DATA_666,
+    COMIC_DATA_666_HYDRATED_ITEMS,
+    FAYE,
+} from '~/mocks'
 
 import FilteredNavigationData from './FilteredNavigationData'
 
-export default {
+// Renders `ItemNavigation` internally, which calls `useActiveStorylines`
+// regardless of the props passed in below, firing real `allItems` and
+// `comicData` queries - mock them so every story here is self-contained
+// instead of relying on some other story's cache still being populated.
+const mswHandlers = [
+    http.get('http://localhost:3000/api/v3/itemdata/', () =>
+        HttpResponse.json(ALL_ITEMS)
+    ),
+    http.get('http://localhost:3000/api/v3/comicdata/:comicId', () =>
+        HttpResponse.json(COMIC_DATA_666)
+    ),
+]
+
+const meta: Meta<typeof FilteredNavigationData> = {
     component: FilteredNavigationData,
-} as Meta<typeof FilteredNavigationData>
+    parameters: {
+        msw: {
+            handlers: mswHandlers,
+        },
+    },
+    argTypes: {
+        onAddItem: { action: 'onAddItem' },
+    },
+    args: {
+        editMode: false,
+        isFetching: false,
+        isLoading: false,
+        isSaving: false,
+        hasError: false,
+        itemData: COMIC_DATA_666_HYDRATED_ITEMS,
+        useColors: true,
+        onAddItem: fn(),
+        onSetCurrentComic: fn(),
+        onShowInfoFor: fn(),
+    },
+    loaders: [
+        () => {
+            store.dispatch(apiSlice.util.resetApiState())
 
-const Template: StoryFn<typeof FilteredNavigationData> = (args) => {
-    const state = store.getState()
+            const state = store.getState()
 
-    if (state.comic.current !== 666) {
-        store.dispatch(setCurrentComic(666))
-    }
+            if (state.comic.current !== 666) {
+                store.dispatch(setCurrentComic(666))
+            }
+        },
+    ],
+}
+export default meta
 
-    return <FilteredNavigationData {...args} />
+type Story = StoryObj<typeof FilteredNavigationData>
+
+export const Default: Story = {}
+
+export const NoColors: Story = {
+    args: {
+        useColors: false,
+    },
 }
 
-export const Default = Template.bind({})
-Default.args = {
-    editMode: false,
-    isFetching: false,
-    isLoading: false,
-    isSaving: false,
-    hasError: false,
-    itemData: COMIC_DATA_666_HYDRATED_ITEMS,
-    useColors: true,
+export const Loading: Story = {
+    args: {
+        isLoading: true,
+    },
 }
 
-export const NoColors = Template.bind({})
-NoColors.args = {
-    ...Default.args,
-    useColors: false,
+export const Fetching: Story = {
+    args: {
+        isFetching: true,
+    },
 }
 
-export const Loading = Template.bind({})
-Loading.args = {
-    ...Default.args,
-    isLoading: true,
+export const Saving: Story = {
+    args: {
+        isSaving: true,
+    },
 }
 
-export const Fetching = Template.bind({})
-Fetching.args = {
-    ...Default.args,
-    isFetching: true,
+export const HasError: Story = {
+    args: {
+        hasError: true,
+    },
 }
 
-export const Saving = Template.bind({})
-Saving.args = {
-    ...Default.args,
-    isSaving: true,
+export const EditMode: Story = {
+    args: {
+        editMode: true,
+    },
 }
 
-export const HasError = Template.bind({})
-HasError.args = {
-    ...Default.args,
-    hasError: true,
+export const EditModeAddFirstMatchViaEnter: Story = {
+    args: {
+        editMode: true,
+    },
+    play: async ({ canvasElement, args }) => {
+        const canvas = within(canvasElement)
+
+        const input = canvas.getByPlaceholderText('Filter non-present')
+        await userEvent.type(input, FAYE.shortName)
+
+        await waitFor(async () =>
+            expect(
+                canvas.getByTitle(`Add ${FAYE.shortName} to comic`)
+            ).toBeInTheDocument()
+        )
+
+        await expect(args.onAddItem).not.toHaveBeenCalled()
+        await userEvent.keyboard('{Enter}')
+        await expect(args.onAddItem).toHaveBeenCalledWith({
+            new: false,
+            itemId: FAYE.id,
+        })
+
+        await waitFor(async () => expect(input).toHaveValue(''))
+    },
 }
 
-export const EditMode = Template.bind({})
-EditMode.args = {
-    ...Default.args,
-    editMode: true,
+export const EditModeAddNewViaCtrlEnter: Story = {
+    args: {
+        editMode: true,
+    },
+    play: async ({ canvasElement, args }) => {
+        const canvas = within(canvasElement)
+
+        const input = canvas.getByPlaceholderText('Filter non-present')
+        await userEvent.type(input, '!Newbie')
+
+        await waitFor(async () =>
+            expect(canvas.getByTitle('Add cast')).toBeInTheDocument()
+        )
+
+        await expect(args.onAddItem).not.toHaveBeenCalled()
+        await userEvent.keyboard('{Control>}{Enter}{/Control}')
+        await expect(args.onAddItem).toHaveBeenCalledWith({
+            new: true,
+            newItemName: 'Newbie',
+            newItemType: 'cast',
+        })
+
+        await waitFor(async () => expect(input).toHaveValue(''))
+    },
 }

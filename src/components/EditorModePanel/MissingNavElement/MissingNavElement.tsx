@@ -34,6 +34,8 @@ export default function MissingNavElement({
                         shortName: title,
                         type: 'cast',
                         count: 0,
+                        startComicId: null,
+                        endComicId: null,
                     }}
                     onSetCurrentComic={onSetCurrentComic}
                     useColors={useColors}

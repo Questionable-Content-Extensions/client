@@ -2,12 +2,19 @@ import { ToastContent, toast } from 'react-toastify'
 
 import { MutationLifecycleApi } from '@reduxjs/toolkit/dist/query/endpointDefinitions'
 
+import { GreasemonkeyBaseQuery } from '~/store/apiSlice'
+
 export default async function toastSuccess<
     Arg,
     Data extends ToastContent<unknown>,
->(_arg: Arg, api: MutationLifecycleApi<Arg, any, Data, string>) {
+>(
+    _arg: Arg,
+    api: MutationLifecycleApi<Arg, GreasemonkeyBaseQuery, Data, string>
+) {
     try {
         const result = await api.queryFulfilled
         toast.success(result.data)
-    } catch {}
+    } catch {
+        // Errors are handled by rtkQueryErrorLogger
+    }
 }

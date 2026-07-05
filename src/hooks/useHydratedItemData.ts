@@ -11,7 +11,7 @@ import {
 } from '@store/api/comicApiSlice'
 import { useAllItemsQuery } from '@store/api/itemApiSlice'
 
-import { SettingValues } from '~/settings'
+import { SettingValues } from '~/Settings'
 import { error } from '~/utils'
 
 export type HydratedItemData = {
@@ -24,7 +24,8 @@ export type HydratedItemData = {
 
 export default function useHydratedItemData(
     currentComic: ComicId,
-    settings: SettingValues | null
+    settings: SettingValues | null,
+    enabled = true
 ) {
     const {
         data: itemData,
@@ -32,7 +33,7 @@ export default function useHydratedItemData(
         isFetching: isFetchingAllItems,
         isError: isErrorAllItems,
         refetch: refetchAllItems,
-    } = useAllItemsQuery()
+    } = useAllItemsQuery(undefined, { skip: !enabled })
 
     const {
         data: comicData,
@@ -41,7 +42,7 @@ export default function useHydratedItemData(
         isError: isErrorComicData,
         refetch: refetchComicData,
     } = useGetComicDataQuery(
-        currentComic === 0 || !settings
+        !enabled || currentComic === 0 || !settings
             ? skipToken
             : toGetDataQueryArgs(currentComic, settings)
     )

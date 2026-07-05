@@ -1,5 +1,3 @@
-import { toast } from 'react-toastify'
-
 import { ComicId } from '@models/ComicId'
 import { ItemId } from '@models/ItemId'
 import { PayloadAction, createSlice } from '@reduxjs/toolkit'
@@ -42,11 +40,6 @@ export const comicSlice = createSlice({
 
                 const locked = action.payload.locked
                 if (!locked && state.lockedToItem !== null) {
-                    toast.info(
-                        `A navigation event that was unrelated to the navigation-locked ` +
-                            `item took place, ` +
-                            `so the page navigation is back to being unlocked again`
-                    )
                     state.lockedToItem = null
                 }
 

@@ -10,38 +10,47 @@ import { updateSettings } from '@store/settingsSlice'
 import constants from '~/constants'
 import { formatDate } from '~/utils'
 
-import CHANGE_LOG from './CHANGELOG.md'
+import CHANGE_LOG from './CHANGELOG.md?raw'
+
+function escapeAttribute(value: string): string {
+    return value
+        .replace(/&/g, '&amp;')
+        .replace(/"/g, '&quot;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+}
 
 marked.use({
     renderer: {
-        heading(text, level) {
+        heading({ tokens, text, depth: level }) {
             if (level === 1 || (level === 2 && text.includes('Unreleased'))) {
                 return ''
             } else {
-                return `<h${level}>${text.replace(
+                const parsedText = this.parser.parseInline(tokens)
+                return `<h${level}>${parsedText.replace(
                     /- (\d{4}-\d{2}-\d{2})/,
                     (_, date) => {
                         let dateTime = formatDate(new Date(date), true)
                         dateTime = dateTime.substring(0, dateTime.length - 6)
-                        return `<span class="text-sm" title="${date}">${dateTime}</span>`
+                        return `<span class="text-sm" title="${escapeAttribute(date)}">${dateTime}</span>`
                     }
                 )}</h${level}>`
             }
         },
-        link(href, title, text) {
-            return `<a href="${href}" target="_blank" rel="noreferrer noopener" ${
-                title ? 'title=' + title : ''
+        link({ href, title, text }) {
+            return `<a href="${escapeAttribute(href)}" target="_blank" rel="noreferrer noopener" ${
+                title ? `title="${escapeAttribute(title)}"` : ''
             }>${text}</a>`
         },
-        image(href, title, text) {
-            return `<img src="${href}" ${
-                title ? 'style=' + title : ''
-            } alt="${text}" />`
+        image({ href, title, text }) {
+            return `<img src="${escapeAttribute(href)}" ${
+                title ? `style="${escapeAttribute(title)}"` : ''
+            } alt="${escapeAttribute(text)}" />`
         },
     },
 })
 
-const CHANGE_LOG_MARKDOWN = marked(CHANGE_LOG).replace(
+const CHANGE_LOG_MARKDOWN = (marked.parse(CHANGE_LOG) as string).replace(
     'documented in this file',
     'documented in this change log'
 )
@@ -71,8 +80,8 @@ export default function ChangeLogDialog({
                         {!settings?.version
                             ? 'installed!'
                             : settings.version === constants.scriptVersion
-                            ? ''
-                            : 'updated!'}
+                              ? ''
+                              : 'updated!'}
                     </h2>
                     <p>
                         {!settings?.version ? (

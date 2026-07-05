@@ -222,7 +222,7 @@ export default function CopyItemsDialogPanel({
 function getLatestComic(allComics: ComicList[]) {
     let latest = allComics[0].comic
 
-    for (let comic of allComics) {
+    for (const comic of allComics) {
         if (comic.comic > latest) {
             latest = comic.comic
         }

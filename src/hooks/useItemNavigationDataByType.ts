@@ -8,7 +8,7 @@ export default function useItemNavigationDataByType(
     lockedToItemId?: ItemId
 ) {
     return useMemo(() => {
-        let itemNavigationDataByType: {
+        const itemNavigationDataByType: {
             cast: HydratedItemNavigationData[]
             location: HydratedItemNavigationData[]
             storyline: HydratedItemNavigationData[]

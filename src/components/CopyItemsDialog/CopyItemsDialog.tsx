@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 
 import { PaddedButton } from '@components/Button'
 import useHydratedItemData from '@hooks/useHydratedItemData'
@@ -55,22 +55,25 @@ export default function CopyItemsDialog({
         comicItems,
         isLoading: isLoadingInitialItemData,
         isFetching: isFetchingItemData,
-    } = useHydratedItemData(selectedComic ?? 0, settings)
+    } = useHydratedItemData(selectedComic ?? 0, settings, show)
 
     const [selectedItems, setSelectedItems] = useState<{
         [id: number]: boolean
     }>({})
-    useEffect(() => {
-        let selectedItems: { [id: number]: boolean } = {}
+    const [prevComicItems, setPrevComicItems] = useState(comicItems)
+    if (comicItems !== prevComicItems) {
+        setPrevComicItems(comicItems)
         if (comicItems) {
+            const newSelectedItems: { [id: number]: boolean } = {}
             for (const item of comicItems) {
-                selectedItems[item.id] = true
+                newSelectedItems[item.id] = true
             }
-            setSelectedItems(selectedItems)
+            setSelectedItems(newSelectedItems)
         }
-    }, [comicItems])
+    }
 
     const [addItems, { isLoading: isAddingItems }] = useAddItemsMutation()
+    const [copyFailed, setCopyFailed] = useState(false)
 
     const onCopy = async () => {
         const itemsToAdd: number[] = []
@@ -80,7 +83,6 @@ export default function CopyItemsDialog({
             }
         }
         const result = await addItems({
-            token: settings!.editModeToken,
             comicId: currentComic,
             items: itemsToAdd.map((itemId) => ({
                 new: false,
@@ -88,7 +90,10 @@ export default function CopyItemsDialog({
             })),
         })
         if ('data' in result) {
+            setCopyFailed(false)
             onClose()
+        } else {
+            setCopyFailed(true)
         }
     }
 
@@ -101,22 +106,29 @@ export default function CopyItemsDialog({
                 </h5>
             }
             body={
-                <CopyItemsDialogPanel
-                    allComics={reverseAllComicData}
-                    isLoading={
-                        isLoadingAllComicData || isLoadingInitialItemData
-                    }
-                    isFetching={
-                        isFetchingAllComicData ||
-                        isFetchingItemData ||
-                        isAddingItems
-                    }
-                    selectedComic={selectedComic ?? undefined}
-                    comicItems={comicItems}
-                    onChangeSelectedComic={setSelectedComic}
-                    selectedItems={selectedItems}
-                    onUpdateSelectedItems={setSelectedItems}
-                />
+                <>
+                    <CopyItemsDialogPanel
+                        allComics={reverseAllComicData}
+                        isLoading={
+                            isLoadingAllComicData || isLoadingInitialItemData
+                        }
+                        isFetching={
+                            isFetchingAllComicData ||
+                            isFetchingItemData ||
+                            isAddingItems
+                        }
+                        selectedComic={selectedComic ?? undefined}
+                        comicItems={comicItems}
+                        onChangeSelectedComic={setSelectedComic}
+                        selectedItems={selectedItems}
+                        onUpdateSelectedItems={setSelectedItems}
+                    />
+                    {copyFailed && (
+                        <p className="text-red-600 m-0">
+                            Failed to copy items. See notification for details.
+                        </p>
+                    )}
+                </>
             }
             footer={
                 <>

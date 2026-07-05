@@ -1,4 +1,4 @@
-import { useContext } from 'react'
+import { useContext, useState } from 'react'
 
 import { ExpandedContext } from '@components/EditorModePanel/ExpandingEditor/ExpandingEditor'
 import ToggleButton from '@components/ToggleButton/ToggleButton'
@@ -27,6 +27,7 @@ export default function DateEditor({
     onIsAccurateValueChange: (newValue: boolean) => void
 }) {
     const [_expanded, setExpanded] = useContext(ExpandedContext)
+    const [error, setError] = useState(false)
 
     function toISOLocal(d: Date) {
         return new Date(d.getTime() - d.getTimezoneOffset() * 60000)
@@ -72,10 +73,14 @@ export default function DateEditor({
                             onDateValueChange(
                                 new Date(e.target.value).toISOString()
                             )
-                        } catch {}
+                            setError(false)
+                        } catch {
+                            setError(true)
+                        }
                     }}
                     className={
-                        'min-w-0 border border-qc-header focus:outline-none flex-auto rounded-none pl-2 disabled:opacity-75' +
+                        'min-w-0 border focus:outline-none flex-auto rounded-none pl-2 disabled:opacity-75' +
+                        (error ? ' border-red-600' : ' border-qc-header') +
                         (disabled ? ' cursor-not-allowed' : '')
                     }
                     disabled={disabled}

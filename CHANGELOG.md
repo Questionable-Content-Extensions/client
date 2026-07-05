@@ -7,53 +7,74 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.4.0] - 2026-07-05
+
+### Added ✨
+
+- Added a "Filtered Navigation" section to the comic navigation panel: after filtering in the "Go to comic" dialog, you can now jump between the first/previous/next/last matching comics directly, reopen the dialog to adjust the filter, or clear the filtered navigation entirely.
+- Editors with sufficient permissions can now add an advance comic (hidden from regular users until it's actually published), revisit and edit pending advance comics from the operations menu, and manually trigger the comic updater to pick up a just-published comic early. Resolves [#79](https://github.com/Questionable-Content-Extensions/client/issues/79)
+- Storylines now have an explicit lifecycle (start/end comic, with an open-ended option) independent of which comics they're actually attached to. The comic details panel shows a compact timeline bar per active storyline, distinguishing featured appearances from gaps, with first/previous/next/last navigation and an editor for adjusting a storyline's start/end comics. Resolves [#76](https://github.com/Questionable-Content-Extensions/client/issues/76)
+- In edit mode, the non-present member filter box now supports Enter to add the first matching result to the comic, and Ctrl+Enter to create a new item from the filter text.
+
+### Changed 🔧
+
+- Replace the pair of spinners flanking each comic navigation section header with a subtle animated underline, so long headers no longer get squeezed or shifted off-center.
+
+### Fixed 🐛
+
+- Fix the "Filtered Navigation" section not showing when "show all members" was enabled but edit mode was not. Fixes [#99](https://github.com/Questionable-Content-Extensions/client/issues/99)
+- Fix clicking a comic in an item's "Comics item is featured in" list doing nothing.
+- Fix the "Last"/"Latest" comic navigation link jumping to the site's overall latest comic instead of the locked item's last appearance when locked to an item.
+- Fix rapid comic navigation occasionally showing a stale comic image after a slower-loading earlier request resolves after a newer one.
+- Fix the item donut graph showing "NaN%" instead of "0%" when its total amount is zero.
+
 ## [1.3.0] - 2024-02-03
 
 ### Added ✨
 
--   Add option for sorting members by recent apperance in addition to the existing option of sorting by number of appearances. Closes [#87](https://github.com/Questionable-Content-Extensions/client/issues/87)
+- Add option for sorting members by recent apperance in addition to the existing option of sorting by number of appearances. Closes [#87](https://github.com/Questionable-Content-Extensions/client/issues/87)
 
 ## [1.2.1] - 2023-09-22
 
 ### Fixed 🐛
 
--   Use the current edit values to render the item details so they update live when they're changed
--   Fix broken Redux thunks during earlier refactoring that prevented editors from being able to update and save comic values
+- Use the current edit values to render the item details so they update live when they're changed
+- Fix broken Redux thunks during earlier refactoring that prevented editors from being able to update and save comic values
 
 ## [1.2.0] - 2023-09-20
 
 ### Added ✨
 
--   Add the ability to lock comic navigation to an item. Closes [#33](https://github.com/Questionable-Content-Extensions/client/issues/33)
--   Expand the search functionality in the `GoToComicDialog` to allow for searching for comics not only by the text in their title/tagline, but also by which items are present in the comic and whether or not the comic is a guest comic or non-canon. Closes [#15](https://github.com/Questionable-Content-Extensions/client/issues/15)
+- Add the ability to lock comic navigation to an item. Closes [#33](https://github.com/Questionable-Content-Extensions/client/issues/33)
+- Expand the search functionality in the `GoToComicDialog` to allow for searching for comics not only by the text in their title/tagline, but also by which items are present in the comic and whether or not the comic is a guest comic or non-canon. Closes [#15](https://github.com/Questionable-Content-Extensions/client/issues/15)
 
 ### Changed 🔧
 
--   Move to using Redux hooks instead of `connect()`. Resolves [#77](https://github.com/Questionable-Content-Extensions/client/issues/77)
+- Move to using Redux hooks instead of `connect()`. Resolves [#77](https://github.com/Questionable-Content-Extensions/client/issues/77)
 
 ### Fixed 🐛
 
--   Fix Storybook tests after upgrading from 6.5 to 7.4. Fixes [#78](https://github.com/Questionable-Content-Extensions/client/issues/78)
+- Fix Storybook tests after upgrading from 6.5 to 7.4. Fixes [#78](https://github.com/Questionable-Content-Extensions/client/issues/78)
 
 ## [1.1.0] - 2023-09-10
 
 ### Added ✨
 
--   Add guest comic/non-canon pills to `ComicList`
--   Add Storybook link to README
--   Added list of comics an item is featured in. Closes [#19](https://github.com/Questionable-Content-Extensions/client/issues/19)
--   Added feature and setting for whether to show the current comic's tagline as its tooltip. Closes [#47](https://github.com/Questionable-Content-Extensions/client/issues/47)
--   Added feature and setting for being able to navigate to random comics by item. Closes [#20](https://github.com/Questionable-Content-Extensions/client/issues/20)
+- Add guest comic/non-canon pills to `ComicList`
+- Add Storybook link to README
+- Added list of comics an item is featured in. Closes [#19](https://github.com/Questionable-Content-Extensions/client/issues/19)
+- Added feature and setting for whether to show the current comic's tagline as its tooltip. Closes [#47](https://github.com/Questionable-Content-Extensions/client/issues/47)
+- Added feature and setting for being able to navigate to random comics by item. Closes [#20](https://github.com/Questionable-Content-Extensions/client/issues/20)
 
 ### Changed 🔧
 
--   Upgraded all dependencies to their latest versions and made the necessary changes to make things work the same as before
+- Upgraded all dependencies to their latest versions and made the necessary changes to make things work the same as before
 
 ### Fixed 🐛
 
--   Don't show "last strip" button in item navigation bar when said strip is the current strip
--   The logic for which exclusion setting takes precedence was backwards, so if you had set both "skip non-canon comics" and "skip guest comics," it would only skip guest comics, but not non-canon comics. Fixes [#36](https://github.com/Questionable-Content-Extensions/client/issues/36)
--   Single-frame flicker at the end of dialog close animation removed. Fixes [#70](https://github.com/Questionable-Content-Extensions/client/issues/70)
+- Don't show "last strip" button in item navigation bar when said strip is the current strip
+- The logic for which exclusion setting takes precedence was backwards, so if you had set both "skip non-canon comics" and "skip guest comics," it would only skip guest comics, but not non-canon comics. Fixes [#36](https://github.com/Questionable-Content-Extensions/client/issues/36)
+- Single-frame flicker at the end of dialog close animation removed. Fixes [#70](https://github.com/Questionable-Content-Extensions/client/issues/70)
 
 ## [1.0.0][] - 2023-09-09
 
@@ -63,22 +84,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added ✨
 
--   Add Storybookjs
--   Added `GoToComicDialog` for choosing a specific comic from a list
--   Added ko-fi donation link in bottom of `SettingsDialog`
+- Add Storybookjs
+- Added `GoToComicDialog` for choosing a specific comic from a list
+- Added ko-fi donation link in bottom of `SettingsDialog`
 
 ### Changed 🔧
 
--   In coordination with the server, the API has been optimized to transfer a lot less data in each request.
--   Make `debug` logging dynamic rather than chosen at startup
+- In coordination with the server, the API has been optimized to transfer a lot less data in each request.
+- Make `debug` logging dynamic rather than chosen at startup
 
 ### Fixed 🐛
 
--   Make `shortcut` take-over code work properly everywhere
+- Make `shortcut` take-over code work properly everywhere
 
 ### Removed 🗑
 
--   Removed small/large ribbon setting; ribbon is always small now.
+- Removed small/large ribbon setting; ribbon is always small now.
 
 ## [0.6.2][] - 2022-08-31
 
@@ -92,23 +113,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed 🔧
 
--   Move to Docker from Vagrant
--   Format files according to Prettier standard.
--   Better handling of error communicating with server
--   Accept colors with and without `#` prefix
--   Run `dist` with the build script
--   Change link from Heroku to local server
--   Update copyright end year
+- Move to Docker from Vagrant
+- Format files according to Prettier standard.
+- Better handling of error communicating with server
+- Accept colors with and without `#` prefix
+- Run `dist` with the build script
+- Change link from Heroku to local server
+- Update copyright end year
 
 ### Fixed 🐛
 
--   Fix field spelling
+- Fix field spelling
 
 ## [0.6.1][] - 2019-12-08
 
 ### Fixed 🐛
 
--   Better fix for missing sidebar. More idiomatic fix for Issue [#37](https://github.com/Questionable-Content-Extensions/client/issues/37). It uses jQuery within the proper file, just before adding the sidebar base. It also directly tests the DOM to see if the "small-2" column is missing, rather than just guessing using the URL. Fixes [#37](https://github.com/Questionable-Content-Extensions/client/issues/37)
+- Better fix for missing sidebar. More idiomatic fix for Issue [#37](https://github.com/Questionable-Content-Extensions/client/issues/37). It uses jQuery within the proper file, just before adding the sidebar base. It also directly tests the DOM to see if the "small-2" column is missing, rather than just guessing using the URL. Fixes [#37](https://github.com/Questionable-Content-Extensions/client/issues/37)
 
 ## [0.6.0][] - 2019-03-08
 
@@ -116,269 +137,276 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added ✨
 
--   Add support for the new item image system and for image uploading
--   Add edit log view for editors
--   Add flags for indicating whether a comic is lacking certain features
--   Add loading indicators for the comic image. Implements the comic image of [#14](https://github.com/Questionable-Content-Extensions/client/issues/14).
--   Add updating indicators for the item details dialog
--   Add updating indicators and/or disable controls for editor actions
--   Add loading indicators for edit log. Closes [#14](https://github.com/Questionable-Content-Extensions/client/issues/14)
--   Add ItemService to avoid loading data multiple times
--   Report version to server. Closes [#29](https://github.com/Questionable-Content-Extensions/client/issues/29)
--   Create LICENSE
+- Add support for the new item image system and for image uploading
+- Add edit log view for editors
+- Add flags for indicating whether a comic is lacking certain features
+- Add loading indicators for the comic image. Implements the comic image of [#14](https://github.com/Questionable-Content-Extensions/client/issues/14).
+- Add updating indicators for the item details dialog
+- Add updating indicators and/or disable controls for editor actions
+- Add loading indicators for edit log. Closes [#14](https://github.com/Questionable-Content-Extensions/client/issues/14)
+- Add ItemService to avoid loading data multiple times
+- Report version to server. Closes [#29](https://github.com/Questionable-Content-Extensions/client/issues/29)
+- Create LICENSE
 
 ### Changed 🔧
 
--   Use async where possible
--   Do events for loading item data
--   Supports using the correct image format data from the server, which closes [#17](https://github.com/Questionable-Content-Extensions/client/issues/17)
--   Update copyright year
--   Rename ComicDataControllerBase to EventHandlingControllerBase
--   Separate out code checking from building. To speed up building simple fixes and amendments (Flow and ESLint are slow)
--   Move more code to ItemService, where it belongs. Closes [#31](https://github.com/Questionable-Content-Extensions/client/issues/31)
--   Organize the existing CSS
--   Extract inline styles to proper style classes. Closes [#32](https://github.com/Questionable-Content-Extensions/client/issues/32)
--   Update copyright year also for HTML templates
--   Update build packages
--   Fully transition to using events for maintenance mode
+- Use async where possible
+- Do events for loading item data
+- Supports using the correct image format data from the server, which closes [#17](https://github.com/Questionable-Content-Extensions/client/issues/17)
+- Update copyright year
+- Rename ComicDataControllerBase to EventHandlingControllerBase
+- Separate out code checking from building. To speed up building simple fixes and amendments (Flow and ESLint are slow)
+- Move more code to ItemService, where it belongs. Closes [#31](https://github.com/Questionable-Content-Extensions/client/issues/31)
+- Organize the existing CSS
+- Extract inline styles to proper style classes. Closes [#32](https://github.com/Questionable-Content-Extensions/client/issues/32)
+- Update copyright year also for HTML templates
+- Update build packages
+- Fully transition to using events for maintenance mode
 
 ### Fixed 🐛
 
--   Fix various minor bugs
--   Ensure maintenance mode is handled correctly everywhere. Closes [#27](https://github.com/Questionable-Content-Extensions/client/issues/27)
--   Handle errors at all in the edit log dialog
--   Set $inject on SettingsController so the code keeps working uglified/minified
--   Ensure that random comic navigation respects exclusion settings. Closes [#18](https://github.com/Questionable-Content-Extensions/client/issues/18)
--   Fix indentation in constants.js
--   Undo checkboxes and turn off update indicator when updates fail
--   Fix server/client API mismatch
--   Due to requiring generated assets, building must happen before checking
+- Fix various minor bugs
+- Ensure maintenance mode is handled correctly everywhere. Closes [#27](https://github.com/Questionable-Content-Extensions/client/issues/27)
+- Handle errors at all in the edit log dialog
+- Set $inject on SettingsController so the code keeps working uglified/minified
+- Ensure that random comic navigation respects exclusion settings. Closes [#18](https://github.com/Questionable-Content-Extensions/client/issues/18)
+- Fix indentation in constants.js
+- Undo checkboxes and turn off update indicator when updates fail
+- Fix server/client API mismatch
+- Due to requiring generated assets, building must happen before checking
 
 ## [0.5.3][] - 2019-03-01
 
 ### Added ✨
 
--   Added upgrade path for settings saved with GM4 shim
+- Added upgrade path for settings saved with GM4 shim
 
 ### Changed 🔧
 
--   Replaced JSHint and JSCS with ESLint
--   Upgraded codebase to use ES6 modules instead of implied file order and allow using up to ES2017 features
--   Begin transition to using Flow for type checking
--   Switch to new server address
--   Use Flow
--   Refactor code to use classes
--   Improve build system
+- Replaced JSHint and JSCS with ESLint
+- Upgraded codebase to use ES6 modules instead of implied file order and allow using up to ES2017 features
+- Begin transition to using Flow for type checking
+- Switch to new server address
+- Use Flow
+- Refactor code to use classes
+- Improve build system
 
 ### Fixed 🐛
 
--   Fix change log version comparison issue
--   (Attempted to) Fix Travis build
--   Fix issue where settings weren't being saved
+- Fix change log version comparison issue
+- (Attempted to) Fix Travis build
+- Fix issue where settings weren't being saved
 
 ### Removed 🗑
 
--   Removed GM4 shim now that we're using native GM4 functions
+- Removed GM4 shim now that we're using native GM4 functions
 
 ## [0.5.2][] - 2018-10-03
 
 ### Added ✨
 
--   Add shim to support GM 4.0 (PR [#23](https://github.com/Questionable-Content-Extensions/client/pull/23))
+- Add shim to support GM 4.0 (PR [#23](https://github.com/Questionable-Content-Extensions/client/pull/23))
 
 ### Changed 🔧
 
--   Turn off maximum line length code style requirement
--   Don't reinvent the wheel — use Angular's date formatting. Also, since the date formatting is now done at the template level rather than on comic data load, changing the 12h/24h time setting doesn't require a full refresh of the comic data in order to reformat.
--   Set approximateDate to false during load to hide "(Approximately)" text
--   Ignore .tmp directory
--   Improve script installation/update change log handling
+- Turn off maximum line length code style requirement
+- Don't reinvent the wheel — use Angular's date formatting. Also, since the date formatting is now done at the template level rather than on comic data load, changing the 12h/24h time setting doesn't require a full refresh of the comic data in order to reformat.
+- Set approximateDate to false during load to hide "(Approximately)" text
+- Ignore .tmp directory
+- Improve script installation/update change log handling
 
 ### Fixed 🐛
 
--   Fix build errors
--   Fix [#25](https://github.com/Questionable-Content-Extensions/client/issues/25)
+- Fix build errors
+- Fix [#25](https://github.com/Questionable-Content-Extensions/client/issues/25)
 
 ## [0.5.1][] - 2017-04-08
 
 ### Added ✨
 
--   Add support for showing the comic strip publish date
--   Add support for setting the comic strip publish date
--   Add support for approximate publish dates
--   Add a ribbon indicating comic status for non-canon and guest strips. Closes [#4](https://github.com/Questionable-Content-Extensions/client/issues/4)
--   Show an indicator when the script is set to development mode
+- Add support for showing the comic strip publish date
+- Add support for setting the comic strip publish date
+- Add support for approximate publish dates
+- Add a ribbon indicating comic status for non-canon and guest strips. Closes [#4](https://github.com/Questionable-Content-Extensions/client/issues/4)
+- Show an indicator when the script is set to development mode
 
 ### Changed 🔧
 
--   Have our $http service always ask for JSON data
--   Deal better with server errors and maintenance
--   Make it possible to hit ENTER to navigate in the comic navigation widget
--   Add change log dialog that shows up on install and update
+- Have our $http service always ask for JSON data
+- Deal better with server errors and maintenance
+- Make it possible to hit ENTER to navigate in the comic navigation widget
+- Add change log dialog that shows up on install and update
 
 ### Fixed 🐛
 
--   Reduce scope of overzealous border removal style. Fixes [#16](https://github.com/Questionable-Content-Extensions/client/issues/16)
+- Reduce scope of overzealous border removal style. Fixes [#16](https://github.com/Questionable-Content-Extensions/client/issues/16)
 
 ### Removed 🗑
 
--   Remove unnecessary CSS logic from allItems header
+- Remove unnecessary CSS logic from allItems header
 
 ## [0.5.0][] - 2017-03-30
 
 ### Added ✨
 
--   Show locations an item has visited/been shown together with
--   Set up support for using Vagrant to build our user script
--   Add navigation control, which lets you navigate to any specific comic #
+- Show locations an item has visited/been shown together with
+- Set up support for using Vagrant to build our user script
+- Add navigation control, which lets you navigate to any specific comic #
 
 ### Changed 🔧
 
--   Update Grunt version and Grunt plugin versions
--   Make Travis use Ruby v2.4.1
--   Have VersionEye watch 'develop' branch instead of 'master'
--   Make "Show all members" behave much nicer than before. It now shows the cast/locations/storylines in the comic strip separate from the non-present cast/locations/storylines, and out of the way. (Also, fixes [#8](https://github.com/Questionable-Content-Extensions/client/issues/8) for real this time.)
+- Update Grunt version and Grunt plugin versions
+- Make Travis use Ruby v2.4.1
+- Have VersionEye watch 'develop' branch instead of 'master'
+- Make "Show all members" behave much nicer than before. It now shows the cast/locations/storylines in the comic strip separate from the non-present cast/locations/storylines, and out of the way. (Also, fixes [#8](https://github.com/Questionable-Content-Extensions/client/issues/8) for real this time.)
 
 ### Fixed 🐛
 
--   Show all members should always work, even when a comic has no data. Fixes [#8](https://github.com/Questionable-Content-Extensions/client/issues/8)
--   Make the button the correct size
+- Show all members should always work, even when a comic has no data. Fixes [#8](https://github.com/Questionable-Content-Extensions/client/issues/8)
+- Make the button the correct size
 
 ## [0.4.1][] - 2016-12-26
 
 ### Fixed 🐛
 
--   Fix invalid editor token causing an error in the comic load routine
+- Fix invalid editor token causing an error in the comic load routine
 
 ## [0.4.0][] - 2016-12-26
 
 ### Added ✨
 
--   Add in missing notifications for locations, storylines, titles and taglines
--   Put comic number in site title for better browser navigation experience. Resolves [#11](https://github.com/Questionable-Content-Extensions/client/issues/11)
+- Add in missing notifications for locations, storylines, titles and taglines
+- Put comic number in site title for better browser navigation experience. Resolves [#11](https://github.com/Questionable-Content-Extensions/client/issues/11)
 
 ### Changed 🔧
 
--   Refactor extra-comic navigation into directive
--   Extract constant for tagline requirement threshold
--   When edit mode is enabled, include editor token on comic data request
--   Update non-color style to work with new page design
--   Refresh comic data when editor mode enabled
--   Changing an item's color now updates the UI immediately
+- Refactor extra-comic navigation into directive
+- Extract constant for tagline requirement threshold
+- When edit mode is enabled, include editor token on comic data request
+- Update non-color style to work with new page design
+- Refresh comic data when editor mode enabled
+- Changing an item's color now updates the UI immediately
 
 ### Fixed 🐛
 
--   Fix create-release script
--   Fix for dynamic news on QC frontpage
--   Fix indentation issues
--   Fix bug introduced regarding editorData from the web service
--   Save settings regardless of how the setting dialog is closed. Fixes [#3](https://github.com/Questionable-Content-Extensions/client/issues/3)
--   Fixed [#13](https://github.com/Questionable-Content-Extensions/client/issues/13) and hopefully also fixed [#12](https://github.com/Questionable-Content-Extensions/client/issues/12)
+- Fix create-release script
+- Fix for dynamic news on QC frontpage
+- Fix indentation issues
+- Fix bug introduced regarding editorData from the web service
+- Save settings regardless of how the setting dialog is closed. Fixes [#3](https://github.com/Questionable-Content-Extensions/client/issues/3)
+- Fixed [#13](https://github.com/Questionable-Content-Extensions/client/issues/13) and hopefully also fixed [#12](https://github.com/Questionable-Content-Extensions/client/issues/12)
 
 ### Removed 🗑
 
--   Transfer TODO.txt to issues and delete it
+- Transfer TODO.txt to issues and delete it
 
 ## [0.3.3][] - 2016-08-19
 
 ### Changed 🔧
 
--   Update our visual style to better match new page design/layout
+- Update our visual style to better match new page design/layout
 
 ## [0.3.2][] - 2016-08-19
 
 ### Added ✨
 
--   Allow filtering quick-add dropdown by type of item.
+- Allow filtering quick-add dropdown by type of item.
 
 ### Fixed 🐛
 
--   Fix issue with getting latest comic # on homepage
--   Fix script to work with new page design/layout
+- Fix issue with getting latest comic # on homepage
+- Fix script to work with new page design/layout
 
 ## [0.3.1][] - 2016-03-23
 
 ### Fixed 🐛
 
--   Fix issue with next/previous comic calculation when server reports null/unknown
+- Fix issue with next/previous comic calculation when server reports null/unknown
 
 ## [0.3.0][] - 2016-03-18
 
 ### Added ✨
 
--   Add "friend list" to cast info: Who's seen the most together with whom
+- Add "friend list" to cast info: Who's seen the most together with whom
 
 ### Changed 🔧
 
--   Use navigation data for next and previous comic from the webservice. Previously, the next and previous comic was just simple arithmetic, but this new method ensures that the next and previous comics respect the "skip guest" and "skip non-canon" settings.
--   Show different messages for different kinds of items
+- Use navigation data for next and previous comic from the webservice. Previously, the next and previous comic was just simple arithmetic, but this new method ensures that the next and previous comics respect the "skip guest" and "skip non-canon" settings.
+- Show different messages for different kinds of items
 
 ### Fixed 🐛
 
--   Don't interfere with Firefox' Alt+Left/Alt+Right navigation. Fixes [#2](https://github.com/Questionable-Content-Extensions/client/issues/2).
--   Deal with the two special cases of no next or no previous comic from the web service.
--   Editor mode: Show taglines missing only for comics >= 3133 and missing location
+- Don't interfere with Firefox' Alt+Left/Alt+Right navigation. Fixes [#2](https://github.com/Questionable-Content-Extensions/client/issues/2).
+- Deal with the two special cases of no next or no previous comic from the web service.
+- Editor mode: Show taglines missing only for comics >= 3133 and missing location
 
 ### Removed 🗑
 
--   Remove no longer used page.html template
+- Remove no longer used page.html template
 
 ## [0.2.1][] - 2016-03-13
 
 ### Fixed 🐛
 
--   Create special case for Firefox when it comes to using the "shortcut.js" script already in the page because it's not willing to work as you'd expect it to.
+- Create special case for Firefox when it comes to using the "shortcut.js" script already in the page because it's not willing to work as you'd expect it to.
 
 ### Removed 🗑
 
--   Remove all dependencies on unsafeWindow (found ways around using it)
+- Remove all dependencies on unsafeWindow (found ways around using it)
 
 ## [0.2.0][] - 2016-03-13
 
 ### Added ✨
 
--   Add some keyboard shortcuts to make edit mode easier to use
--   Add "tagline" support to the comic
+- Add some keyboard shortcuts to make edit mode easier to use
+- Add "tagline" support to the comic
 
 ### Changed 🔧
 
--   Position the "no image" elements more centrally
--   Better choice of word doesn't imply it's the last time we'll ever see them again
--   Doing some minor user interface improvements before first public release
--   Show proper error message dialog instead of just logging to console
+- Position the "no image" elements more centrally
+- Better choice of word doesn't imply it's the last time we'll ever see them again
+- Doing some minor user interface improvements before first public release
+- Show proper error message dialog instead of just logging to console
 
 ## [0.1.2][] - 2016-03-12
 
 ### Added ✨
 
--   Add a developmentMode flag to let you easily switch between development and production server
--   Added item details dialog
--   Added donut/radial graph for showing how many % of comics items have participated in
--   Add script for easily making releases
+- Add a developmentMode flag to let you easily switch between development and production server
+- Added item details dialog
+- Added donut/radial graph for showing how many % of comics items have participated in
+- Add script for easily making releases
 
 ### Changed 🔧
 
--   Show "Loading..." text when data for the next comic is loading rather than keep showing the old comic's news
--   Made default grunt task be 'build' instead of 'watch'
--   Move 'createTintOrShade' function from comicService to colorService (where it should've been in the first place)
+- Show "Loading..." text when data for the next comic is loading rather than keep showing the old comic's news
+- Made default grunt task be 'build' instead of 'watch'
+- Move 'createTintOrShade' function from comicService to colorService (where it should've been in the first place)
 
 ### Fixed 🐛
 
--   Disable left/right directional button navigation in input boxes (mostly only useful for edit mode)
--   Fix item-group-button position issue
+- Disable left/right directional button navigation in input boxes (mostly only useful for edit mode)
+- Fix item-group-button position issue
 
 ## [0.1.0][] - 2016-03-10
 
 ### Added ✨
 
--   Initial commit of existing source code
--   Add VersionEye dependency tracking to README.md
--   Update README.md and TODO.txt with information on Firefox issues
+- Initial commit of existing source code
+- Add VersionEye dependency tracking to README.md
+- Update README.md and TODO.txt with information on Firefox issues
 
 ### Fixed 🐛
 
--   Attempt to fix Travis build
+- Attempt to fix Travis build
 
+[unreleased]: https://github.com/Questionable-Content-Extensions/client/compare/v1.4.0...HEAD
+[1.4.0]: https://github.com/Questionable-Content-Extensions/client/compare/1.3.0...v1.4.0
+[1.3.0]: https://github.com/Questionable-Content-Extensions/client/compare/1.2.1...1.3.0
+[1.2.1]: https://github.com/Questionable-Content-Extensions/client/compare/1.2.0...1.2.1
+[1.2.0]: https://github.com/Questionable-Content-Extensions/client/compare/1.1.0...1.2.0
+[1.1.0]: https://github.com/Questionable-Content-Extensions/client/compare/1.0.0...1.1.0
+[1.0.0]: https://github.com/Questionable-Content-Extensions/client/compare/0.6.2...1.0.0
 [0.6.2]: https://github.com/Questionable-Content-Extensions/client/compare/0.6.1...0.6.2
 [0.6.1]: https://github.com/Questionable-Content-Extensions/client/compare/0.6.0...0.6.1
 [0.6.0]: https://github.com/Questionable-Content-Extensions/client/compare/0.5.3...0.6.0
@@ -397,9 +425,3 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [0.1.2]: https://github.com/Questionable-Content-Extensions/client/compare/0.1.0...0.1.2
 [0.1.0]: https://github.com/Questionable-Content-Extensions/client/releases/tag/0.1.0
 [issues]: https://github.com/Questionable-Content-Extensions/client/issues
-[1.0.0]: https://github.com/Questionable-Content-Extensions/client/compare/0.6.2...1.0.0
-[Unreleased]: https://github.com/Questionable-Content-Extensions/client/compare/1.3.0...HEAD
-[1.3.0]: https://github.com/Questionable-Content-Extensions/client/compare/1.2.1...1.3.0
-[1.2.1]: https://github.com/Questionable-Content-Extensions/client/compare/1.2.0...1.2.1
-[1.2.0]: https://github.com/Questionable-Content-Extensions/client/compare/1.1.0...1.2.0
-[1.1.0]: https://github.com/Questionable-Content-Extensions/client/compare/1.0.0...1.1.0

@@ -2,13 +2,13 @@
     "compilerOptions": {
         "baseUrl": ".",
         "paths": {
-            "@models/*": ["src/models/*"],
+            "@models/*": ["src/models/*", "src/bindings/models/*"],
+            "@endpoints/*": ["src/bindings/endpoints/*"],
             "@store/*": ["src/store/*"],
             "@hooks/*": ["src/hooks/*"],
             "@modals/*": ["src/components/Modals/*"],
             "@services/*": ["src/services/*"],
             "@components/*": ["src/components/*"],
-            "@storybook/*": ["src/storybook/*"],
             "~/*": ["src/*"]
         },
         "target": "es2016",
@@ -21,7 +21,7 @@
         "forceConsistentCasingInFileNames": true,
         "noFallthroughCasesInSwitch": true,
         "module": "esnext",
-        "moduleResolution": "node",
+        "moduleResolution": "bundler",
         "resolveJsonModule": true,
         "isolatedModules": true,
         "noEmit": true,

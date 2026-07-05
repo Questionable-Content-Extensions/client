@@ -2,13 +2,17 @@ import { ComicId } from '@models/ComicId'
 import { ItemId } from '@models/ItemId'
 import { PayloadAction, createSlice } from '@reduxjs/toolkit'
 
+export type EditLogDialogTarget =
+    { kind: 'closed' } | { kind: 'all' } | { kind: 'comic'; comicId: ComicId }
+
 interface DialogState {
     showGoToComicDialog: boolean
     showSettingsDialog: boolean
     showItemDetailsDialogFor: number | null
     showCopyItemsDialogFor: number | null
-    showEditLogDialogFor: ComicId | boolean
+    showEditLogDialogFor: EditLogDialogTarget
     showChangeLogDialog: boolean
+    showAddAdvanceComicDialog: boolean
 }
 
 const initialState: DialogState = {
@@ -16,8 +20,9 @@ const initialState: DialogState = {
     showSettingsDialog: false,
     showItemDetailsDialogFor: null,
     showCopyItemsDialogFor: null,
-    showEditLogDialogFor: false,
+    showEditLogDialogFor: { kind: 'closed' },
     showChangeLogDialog: false,
+    showAddAdvanceComicDialog: false,
 }
 
 export const dialogSlice = createSlice({
@@ -50,7 +55,7 @@ export const dialogSlice = createSlice({
         },
         setShowEditLogDialog: (
             state,
-            { payload: showEditLogDialog }: PayloadAction<ComicId | boolean>
+            { payload: showEditLogDialog }: PayloadAction<EditLogDialogTarget>
         ) => {
             state.showEditLogDialogFor = showEditLogDialog
         },
@@ -59,6 +64,12 @@ export const dialogSlice = createSlice({
             { payload: showChangeLogDialog }: PayloadAction<boolean>
         ) => {
             state.showChangeLogDialog = showChangeLogDialog
+        },
+        setShowAddAdvanceComicDialog: (
+            state,
+            { payload: showAddAdvanceComicDialog }: PayloadAction<boolean>
+        ) => {
+            state.showAddAdvanceComicDialog = showAddAdvanceComicDialog
         },
     },
 })
@@ -72,4 +83,5 @@ export const {
     setShowCopyItemsDialog,
     setShowEditLogDialog,
     setShowChangeLogDialog,
+    setShowAddAdvanceComicDialog,
 } = dialogSlice.actions

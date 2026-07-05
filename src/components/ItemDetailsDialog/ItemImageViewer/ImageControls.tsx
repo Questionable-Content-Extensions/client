@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { toast } from 'react-toastify'
 
 import { PaddedButton } from '@components/Button'
 import InlineSpinner from '@components/InlineSpinner'
@@ -20,7 +21,7 @@ type ImageControlsProps = {
     onSetPrimaryImage: (image: number) => void
     onDeleteImage: (image: number) => void
     setPreviewImage: (image: string | null) => void
-    uploadImage: (args: UploadImageArgs) => Promise<unknown>
+    uploadImage: (args: UploadImageArgs) => Promise<void>
     isUploadingImage: boolean
 }
 
@@ -153,10 +154,21 @@ export default function ImageControls({
                                 onChange={async (e) => {
                                     const files = e.target.files
                                     if (files) {
-                                        const imageData =
-                                            await readFileToDataURL(files[0])
-                                        setPreviewImage(imageData)
-                                        setHasImage(true)
+                                        try {
+                                            const imageData =
+                                                await readFileToDataURL(
+                                                    files[0]
+                                                )
+                                            setPreviewImage(imageData)
+                                            setHasImage(true)
+                                        } catch {
+                                            toast.error(
+                                                'Failed to read the selected file',
+                                                { autoClose: 15000 }
+                                            )
+                                            setPreviewImage(null)
+                                            setHasImage(false)
+                                        }
                                     }
                                 }}
                                 disabled={isUploadingImage}
@@ -169,15 +181,21 @@ export default function ImageControls({
                                     ) as HTMLInputElement
                                     const files = imageUpload.files
                                     if (files) {
-                                        await uploadImage({
-                                            image: files[0],
-                                            imageFileName: files[0].name,
-                                            itemId,
-                                            token: editModeToken,
-                                        })
-                                        setShowImageUploadPopup(false)
-                                        setPreviewImage(null)
-                                        setHasImage(false)
+                                        try {
+                                            await uploadImage({
+                                                image: files[0],
+                                                imageFileName: files[0].name,
+                                                itemId,
+                                            })
+                                            setShowImageUploadPopup(false)
+                                            setPreviewImage(null)
+                                            setHasImage(false)
+                                        } catch {
+                                            // A rejected upload mutation already surfaces a
+                                            // toast via the global rtkQueryErrorLogger
+                                            // middleware; keep the popup open with the
+                                            // selected file intact so the user can retry.
+                                        }
                                     }
                                 }}
                                 disabled={!hasImage || isUploadingImage}
@@ -196,8 +214,8 @@ export default function ImageControls({
                                     {!hasImage
                                         ? '👆 Choose file'
                                         : isUploadingImage
-                                        ? 'Uploading...'
-                                        : 'Upload'}
+                                          ? 'Uploading...'
+                                          : 'Upload'}
                                     <div className="invisible -mt-0.5 -mb-1">
                                         <InlineSpinner color="text-qc-background" />
                                     </div>

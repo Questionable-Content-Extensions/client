@@ -1,18 +1,24 @@
-import { useContext, useEffect, useState } from 'react'
+import { useContext, useEffect, useLayoutEffect, useRef } from 'react'
 
 import { OverlayContext } from '@modals/ModalPageOverlay/ModalPageOverlay'
 
 export default function useOnNextOverlayClosed(action: () => void) {
     const [overlayActive, _] = useContext(OverlayContext)
-    const [takeActionNextOverlayClosed, setTakeActionNextOverlayClosed] =
-        useState(false)
+    const takeActionNextOverlayClosed = useRef(false)
+    const actionRef = useRef(action)
+
+    useLayoutEffect(() => {
+        actionRef.current = action
+    })
 
     useEffect(() => {
-        if (!overlayActive && takeActionNextOverlayClosed) {
-            action()
-            setTakeActionNextOverlayClosed(false)
+        if (!overlayActive && takeActionNextOverlayClosed.current) {
+            takeActionNextOverlayClosed.current = false
+            actionRef.current()
         }
-    }, [overlayActive, takeActionNextOverlayClosed, action])
+    }, [overlayActive])
 
-    return setTakeActionNextOverlayClosed
+    return (value: boolean) => {
+        takeActionNextOverlayClosed.current = value
+    }
 }

@@ -1,34 +1,37 @@
-import { useArgs } from '@storybook/preview-api'
-import { Meta, StoryFn } from '@storybook/react'
+import { useArgs } from 'storybook/preview-api'
 
-import Settings, { SettingsUpdaterFunction } from '~/settings'
+import type { Meta, StoryObj } from '@storybook/react-vite'
+
+import Settings, { SettingsUpdaterFunction } from '~/Settings'
 
 import SettingsPanel from './SettingsPanel'
 
-export default {
+const meta: Meta<typeof SettingsPanel> = {
     component: SettingsPanel,
     argTypes: {
         updateSettings: { action: 'updateSettings' },
     },
-} as Meta<typeof SettingsPanel>
+    args: {
+        settings: {
+            ...Settings.DEFAULTS,
+            editModeToken: '00000000-0000-0000-0000-000000000000',
+        },
+    },
+    render: (args) => {
+        const [, setArgs] = useArgs()
+        const updateSettings = (s: SettingsUpdaterFunction) => {
+            if (args.updateSettings) {
+                args.updateSettings(s)
+            }
 
-const Template: StoryFn<typeof SettingsPanel> = (args) => {
-    const [_, setArgs] = useArgs()
-    const updateSettings = (s: SettingsUpdaterFunction) => {
-        if (args.updateSettings) {
-            args.updateSettings(s)
+            s(args.settings)
+            setArgs({ settings: args.settings })
         }
-
-        s(args.settings)
-        setArgs({ settings: args.settings })
-    }
-    return <SettingsPanel {...args} updateSettings={updateSettings} />
-}
-
-export const Default = Template.bind({})
-Default.args = {
-    settings: {
-        ...Settings.DEFAULTS,
-        editModeToken: '00000000-0000-0000-0000-000000000000',
+        return <SettingsPanel {...args} updateSettings={updateSettings} />
     },
 }
+export default meta
+
+type Story = StoryObj<typeof SettingsPanel>
+
+export const Default: Story = {}

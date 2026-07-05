@@ -1,12 +1,10 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 
-import ComicFilter, {
-    Filter,
-    FilterType,
-} from '@components/GoToComicDialog/ComicList/ComicFilter/ComicFilter'
+import ComicFilter from '@components/GoToComicDialog/ComicList/ComicFilter/ComicFilter'
 import Spinner from '@components/Spinner'
 import { ComicId } from '@models/ComicId'
 import { ComicList as ComicListModel } from '@models/ComicList'
+import { Filter, FilterType } from '@models/Filter'
 import { ItemList } from '@models/ItemList'
 import { skipToken } from '@reduxjs/toolkit/dist/query'
 import { useGetConainingItemsQuery } from '@store/api/comicApiSlice'
@@ -19,11 +17,16 @@ export default function ComicList({
     subDivideGotoComics,
     onGoToComic,
     isLoading,
+    onFilteredComicsChange,
 }: {
     allComicData: ComicListModel[]
     subDivideGotoComics: boolean
     onGoToComic: (comic: number) => void
     isLoading: boolean
+    onFilteredComicsChange?: (
+        filteredComics: ComicId[],
+        filters: Filter[]
+    ) => void
 }) {
     const [filters, setFilters] = useState<Filter[]>([])
     const requiresServer = useMemo(() => {
@@ -43,6 +46,23 @@ export default function ComicList({
                 : allComicData,
         [allComicData, filters, comicsWithItems]
     )
+
+    const hadActiveFilters = useRef(false)
+    useEffect(() => {
+        if (!onFilteredComicsChange) {
+            return
+        }
+        const hasActiveFilters = filters.length !== 0
+        if (hasActiveFilters) {
+            onFilteredComicsChange(
+                (filteredComicData ?? []).map((c) => c.comic),
+                filters
+            )
+        } else if (hadActiveFilters.current) {
+            onFilteredComicsChange([], [])
+        }
+        hadActiveFilters.current = hasActiveFilters
+    }, [onFilteredComicsChange, filters, filteredComicData])
 
     const [comicList, comicCount] = useMemo(() => {
         const comicEntries: {
@@ -119,7 +139,10 @@ export default function ComicList({
                 )
             }
 
-            return [<div>{thousandDividers}</div>, count]
+            return [
+                <div key="thousand-dividers">{thousandDividers}</div>,
+                count,
+            ]
         } else {
             const comicEntries: JSX.Element[] = []
             if (filteredComicData) {
@@ -137,7 +160,10 @@ export default function ComicList({
                     )
                 }
             }
-            return [<ul>{comicEntries}</ul>, comicEntries.length]
+            return [
+                <ul key="comic-entries">{comicEntries}</ul>,
+                comicEntries.length,
+            ]
         }
     }, [filteredComicData, onGoToComic, subDivideGotoComics, filters])
 
@@ -157,7 +183,7 @@ export default function ComicList({
     }
 
     return (
-        <div className="min-h-[16rem]">
+        <div className="min-h-64">
             <ComicFilter filters={filters} setFilters={setFilters} />
             {filters.length !== 0 && (
                 <p>{comicCount} comic titles or taglines match your filters</p>

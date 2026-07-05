@@ -1,0 +1,94 @@
+.featured,
+.gap,
+.intermittent {
+    cursor: pointer;
+    border: none;
+    height: 100%;
+    padding: 0;
+}
+
+.featured {
+    background-color: rgba(0, 0, 0, 0.55);
+}
+
+.gap {
+    background-color: rgba(0, 0, 0, 0.08);
+    background-image: repeating-linear-gradient(
+        45deg,
+        rgba(0, 0, 0, 0.18) 0,
+        rgba(0, 0, 0, 0.18) 2px,
+        transparent 2px,
+        transparent 6px
+    );
+}
+
+.intermittent {
+    background-color: rgba(0, 0, 0, 0.08);
+    background-image: repeating-linear-gradient(
+        45deg,
+        rgba(0, 0, 0, 0.3) 0,
+        rgba(0, 0, 0, 0.3) 2px,
+        transparent 2px,
+        transparent 4px
+    );
+}
+
+/* Colored variant: the featured fill is set inline (see StorylineTimeline.tsx)
+   since it's a solid color, but the gap/intermittent stripe patterns are
+   defined here so they can reuse the accent color's individual rgb channels
+   (set as --qc-ext-storyline-accent-rgb by the component) at different
+   opacities for the pattern vs. its base fill. */
+:global(.qc-ext-storyline-timeline.with-color) .gap {
+    background-color: rgba(var(--qc-ext-storyline-accent-rgb), 0.18);
+    background-image: repeating-linear-gradient(
+        45deg,
+        rgba(var(--qc-ext-storyline-accent-rgb), 0.45) 0,
+        rgba(var(--qc-ext-storyline-accent-rgb), 0.45) 2px,
+        transparent 2px,
+        transparent 6px
+    );
+}
+
+:global(.qc-ext-storyline-timeline.with-color) .intermittent {
+    background-color: rgba(var(--qc-ext-storyline-accent-rgb), 0.18);
+    background-image: repeating-linear-gradient(
+        45deg,
+        rgba(var(--qc-ext-storyline-accent-rgb), 0.7) 0,
+        rgba(var(--qc-ext-storyline-accent-rgb), 0.7) 2px,
+        transparent 2px,
+        transparent 4px
+    );
+}
+
+.marker {
+    position: absolute;
+    top: -3px;
+    bottom: -3px;
+    width: 2px;
+    background-color: #000;
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.8);
+    pointer-events: none;
+    transform: translateX(-50%);
+}
+
+:global(.qc-ext-storyline-timeline.with-color) .marker {
+    background-color: var(--qc-ext-storyline-color);
+    box-shadow: 0 0 0 1px var(--qc-ext-storyline-bg-color);
+}
+
+/* Storylines with no end fade out toward the right instead of showing a hard
+   finish marker, signaling "still ongoing". */
+.openEnded {
+    mask-image: linear-gradient(
+        to right,
+        black 0%,
+        black 85%,
+        transparent 100%
+    );
+    -webkit-mask-image: linear-gradient(
+        to right,
+        black 0%,
+        black 85%,
+        transparent 100%
+    );
+}

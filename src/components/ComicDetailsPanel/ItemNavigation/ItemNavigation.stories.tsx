@@ -1,14 +1,40 @@
+import { HttpResponse, http } from 'msw'
+import { fn } from 'storybook/test'
+
 import { NavElementMode } from '@components/NavElement/NavElement'
+import { apiSlice } from '@store/apiSlice'
 import { setCurrentComic, setLockedToItem } from '@store/comicSlice'
 import store from '@store/store'
-import { Meta, StoryFn } from '@storybook/react'
+import type { Meta, StoryObj } from '@storybook/react-vite'
 
-import { COMIC_DATA_666_HYDRATED_ITEMS } from '~/mocks'
+import {
+    ALL_ITEMS,
+    COMIC_DATA_666,
+    COMIC_DATA_666_HYDRATED_ITEMS,
+} from '~/mocks'
 
 import ItemNavigation from './ItemNavigation'
 
-export default {
+// `ItemNavigation` calls `useActiveStorylines` internally regardless of the
+// `itemNavigationData` prop passed in below, which fires real `allItems` and
+// `comicData` queries - mock them so every story here is self-contained
+// instead of relying on some other story's cache still being populated.
+const mswHandlers = [
+    http.get('http://localhost:3000/api/v3/itemdata/', () =>
+        HttpResponse.json(ALL_ITEMS)
+    ),
+    http.get('http://localhost:3000/api/v3/comicdata/:comicId', () =>
+        HttpResponse.json(COMIC_DATA_666)
+    ),
+]
+
+const meta: Meta<typeof ItemNavigation> = {
     component: ItemNavigation,
+    parameters: {
+        msw: {
+            handlers: mswHandlers,
+        },
+    },
     argTypes: {
         mode: {
             control: 'select',
@@ -18,102 +44,106 @@ export default {
             ],
         },
     },
-} as Meta<typeof ItemNavigation>
+    args: {
+        itemNavigationData: COMIC_DATA_666_HYDRATED_ITEMS,
+        useColors: true,
+        isLoading: false,
+        isFetching: false,
+        mode: NavElementMode[NavElementMode.Present] as unknown as
+            NavElementMode.Present | NavElementMode.Missing,
+        editMode: false,
+        onSetCurrentComic: fn(),
+        onShowInfoFor: fn(),
+        onRemoveItem: fn(),
+        onAddItem: fn(),
+        onAddFirstMatchChange: fn(),
+    },
+    // For better Storybook experience, the control shows the enum's string
+    // names, but the component needs the underlying numeric enum value.
+    render: (args) => {
+        const mode =
+            typeof args.mode === 'string'
+                ? (NavElementMode[args.mode] as unknown as
+                      NavElementMode.Present | NavElementMode.Missing)
+                : args.mode
 
-const Template: StoryFn<typeof ItemNavigation> = (args) => {
-    // For better Storybook experience, we pretend this field is a string
-    // and then turn it into a number here
-    const mode = args.mode
-    if (typeof mode === 'string') {
-        args.mode = NavElementMode[mode] as unknown as
-            | NavElementMode.Present
-            | NavElementMode.Missing
-    }
+        return <ItemNavigation {...args} mode={mode} />
+    },
+    loaders: [
+        (context) => {
+            store.dispatch(apiSlice.util.resetApiState())
 
-    const state = store.getState()
+            const state = store.getState()
 
-    if (state.comic.current !== 666) {
-        store.dispatch(setCurrentComic(666))
-    }
-    if (args.lockedToItemId) {
-        store.dispatch(setLockedToItem(args.lockedToItemId))
-    } else {
-        store.dispatch(setLockedToItem(null))
-    }
+            if (state.comic.current !== 666) {
+                store.dispatch(setCurrentComic(666))
+            }
+            const lockedToItemId = context.args.lockedToItemId
+            store.dispatch(setLockedToItem(lockedToItemId ?? null))
+        },
+    ],
+}
+export default meta
 
-    return <ItemNavigation {...args} />
+type Story = StoryObj<typeof ItemNavigation>
+
+export const Default: Story = {}
+
+export const WithoutColor: Story = {
+    args: {
+        useColors: false,
+    },
 }
 
-export const Default = Template.bind({})
-Default.args = {
-    itemNavigationData: COMIC_DATA_666_HYDRATED_ITEMS,
-    useColors: true,
-    isLoading: false,
-    isFetching: false,
-    mode: NavElementMode[NavElementMode.Present] as unknown as
-        | NavElementMode.Present
-        | NavElementMode.Missing,
-    editMode: false,
+export const InitialLoading: Story = {
+    args: {
+        isLoading: true,
+    },
 }
 
-export const WithoutColor = Template.bind({})
-WithoutColor.args = {
-    ...Default.args,
-    useColors: false,
+export const ConsecutiveLoading: Story = {
+    args: {
+        isFetching: true,
+    },
 }
 
-export const InitialLoading = Template.bind({})
-InitialLoading.args = {
-    ...Default.args,
-    isLoading: true,
+export const NoData: Story = {
+    args: {
+        itemNavigationData: [],
+    },
 }
 
-export const ConsecutiveLoading = Template.bind({})
-ConsecutiveLoading.args = {
-    ...Default.args,
-    isFetching: true,
+export const AllItemsMode: Story = {
+    args: {
+        mode: NavElementMode[NavElementMode.Missing] as unknown as
+            NavElementMode.Present | NavElementMode.Missing,
+    },
 }
 
-export const NoData = Template.bind({})
-NoData.args = {
-    ...Default.args,
-    itemNavigationData: [],
+export const AllItemsModeNoData: Story = {
+    args: {
+        itemNavigationData: [],
+        mode: NavElementMode[NavElementMode.Missing] as unknown as
+            NavElementMode.Present | NavElementMode.Missing,
+    },
 }
 
-export const AllItemsMode = Template.bind({})
-AllItemsMode.args = {
-    ...Default.args,
-    mode: NavElementMode[NavElementMode.Missing] as unknown as
-        | NavElementMode.Present
-        | NavElementMode.Missing,
+export const EditMode: Story = {
+    args: {
+        editMode: true,
+    },
 }
 
-export const AllItemsModeNoData = Template.bind({})
-AllItemsModeNoData.args = {
-    ...Default.args,
-    itemNavigationData: [],
-    mode: NavElementMode[NavElementMode.Missing] as unknown as
-        | NavElementMode.Present
-        | NavElementMode.Missing,
+export const AllItemsEditMode: Story = {
+    args: {
+        editMode: true,
+        mode: NavElementMode[NavElementMode.Missing] as unknown as
+            NavElementMode.Present | NavElementMode.Missing,
+    },
 }
 
-export const EditMode = Template.bind({})
-EditMode.args = {
-    ...Default.args,
-    editMode: true,
-}
-
-export const AllItemsEditMode = Template.bind({})
-AllItemsEditMode.args = {
-    ...Default.args,
-    editMode: true,
-    mode: NavElementMode[NavElementMode.Missing] as unknown as
-        | NavElementMode.Present
-        | NavElementMode.Missing,
-}
-
-export const LockedToItem = Template.bind({})
-LockedToItem.args = {
-    ...Default.args,
-    lockedToItemId: 4,
+export const LockedToItem: Story = {
+    args: {
+        lockedToItemId: 4,
+    },
 }

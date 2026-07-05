@@ -5,6 +5,7 @@ import ModalDialog from '@modals/ModalDialog/ModalDialog'
 import { ComicList as ComicListModel } from '@models/ComicList'
 import { skipToken } from '@reduxjs/toolkit/dist/query'
 import { useListAllQuery } from '@store/api/comicApiSlice'
+import { setFilteredComics } from '@store/comicFilterSlice'
 import { setCurrentComic } from '@store/comicSlice'
 import { useAppDispatch, useAppSelector } from '@store/hooks'
 
@@ -35,7 +36,7 @@ export default function GoToComicDialog({
             onCloseClicked={onClose}
             header={
                 <h5 className="m-0 text-xl font-medium leading-normal text-gray-800">
-                    Go to comic
+                    Go to comic / filter comics
                 </h5>
             }
             body={
@@ -47,6 +48,9 @@ export default function GoToComicDialog({
                         onClose()
                     }}
                     isLoading={isLoading}
+                    onFilteredComicsChange={(comics, filters) =>
+                        dispatch(setFilteredComics({ comics, filters }))
+                    }
                 />
             }
             footer={

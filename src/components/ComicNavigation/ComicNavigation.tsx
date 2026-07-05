@@ -8,8 +8,7 @@ import {
 import { setCurrentComic } from '@store/comicSlice'
 import { useAppDispatch, useAppSelector } from '@store/hooks'
 
-// eslint-disable-next-line no-empty-pattern
-export default function ComicNavigation({}: {}) {
+export default function ComicNavigation() {
     const dispatch = useAppDispatch()
 
     const settings = useAppSelector((state) => state.settings.values)
@@ -98,7 +97,7 @@ export default function ComicNavigation({}: {}) {
                     onClick={(e) => {
                         e.preventDefault()
                         dispatch(
-                            setCurrentComic(latestComic, {
+                            setCurrentComic(navigationData.last, {
                                 locked: hasLockedItem,
                             })
                         )

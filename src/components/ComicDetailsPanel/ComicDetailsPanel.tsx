@@ -111,11 +111,13 @@ export default function ComicDetailsPanel() {
     const isSaving = isAddingItem || isRemovingItem
 
     const [comicSelectorNo, setComicSelectorNo] = useState<string | null>(null)
-    useEffect(() => {
-        if (comicData) {
-            setComicSelectorNo(comicData.comic.toString())
-        }
-    }, [comicData])
+    const [prevComicSelectorComic, setPrevComicSelectorComic] = useState<
+        number | undefined
+    >(undefined)
+    if (comicData && comicData.comic !== prevComicSelectorComic) {
+        setPrevComicSelectorComic(comicData.comic)
+        setComicSelectorNo(comicData.comic.toString())
+    }
 
     const developmentMode = useMemo(
         () =>
@@ -214,7 +216,7 @@ export default function ComicDetailsPanel() {
                 'shadow-md lg:fixed lg:top-20 xl:top-48 lg:right-[50%] lg:-mr-[620px] lg:w-64 z-10 p-2 lg:max-h-[calc(100vh-5rem)] xl:max-h-[calc(100vh-12rem)] lg:overflow-y-auto'
             }
         >
-            <h1 className="-mx-2 -mt-2 mb-0 text-center small-caps text-sm font-thin border-b border-solid border-b-stone-300 border-l-0 border-t-0 border-r-0">
+            <h1 className="-mx-2 -mt-2 mb-0 text-center small-caps text-sm font-medium border-b border-solid border-b-stone-300 border-l-0 border-t-0 border-r-0">
                 Questionable Content Extensions {developmentMode}
                 {installUpdate}
             </h1>
@@ -285,8 +287,14 @@ export default function ComicDetailsPanel() {
                 editMode={settings.editMode}
                 onRemoveItem={(itemId) => {
                     removeItem({
-                        editModeToken: settings.editModeToken,
                         comicId: currentComic,
+                        itemId,
+                    })
+                }}
+                onAddItem={(itemId) => {
+                    addItem({
+                        comicId: currentComic,
+                        new: false,
                         itemId,
                     })
                 }}
@@ -352,37 +360,33 @@ export default function ComicDetailsPanel() {
                     </Button>
                 </form>
             </div>
-            {settings.showAllMembers ||
-                (settings.editMode && (
-                    <>
-                        <hr className="my-4 mx-0 border-solid border-b max-w-none" />
-                        <FilteredNavigationData
-                            isLoading={isLoadingInitial}
-                            isFetching={isFetching}
-                            isSaving={isSaving}
-                            itemData={allItems ?? []}
-                            onSetCurrentComic={(c) =>
-                                dispatch(setCurrentComic(c))
-                            }
-                            onShowInfoFor={(i) =>
-                                dispatch(setShowItemDetailsDialogFor(i))
-                            }
-                            useColors={settings.useColors}
-                            editMode={settings.editMode}
-                            orderMembersByLastAppearance={
-                                settings.orderMembersByLastAppearance
-                            }
-                            onAddItem={(itemBody) => {
-                                addItem({
-                                    token: settings.editModeToken,
-                                    comicId: currentComic,
-                                    ...itemBody,
-                                })
-                            }}
-                            hasError={hasErrorLoadingComicData}
-                        />
-                    </>
-                ))}
+            {(settings.showAllMembers || settings.editMode) && (
+                <>
+                    <hr className="my-4 mx-0 border-solid border-b max-w-none" />
+                    <FilteredNavigationData
+                        isLoading={isLoadingInitial}
+                        isFetching={isFetching}
+                        isSaving={isSaving}
+                        itemData={allItems ?? []}
+                        onSetCurrentComic={(c) => dispatch(setCurrentComic(c))}
+                        onShowInfoFor={(i) =>
+                            dispatch(setShowItemDetailsDialogFor(i))
+                        }
+                        useColors={settings.useColors}
+                        editMode={settings.editMode}
+                        orderMembersByLastAppearance={
+                            settings.orderMembersByLastAppearance
+                        }
+                        onAddItem={async (itemBody) => {
+                            await addItem({
+                                comicId: currentComic,
+                                ...itemBody,
+                            }).unwrap()
+                        }}
+                        hasError={hasErrorLoadingComicData}
+                    />
+                </>
+            )}
         </div>
     )
 }

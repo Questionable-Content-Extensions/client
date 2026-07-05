@@ -1,6 +1,8 @@
 import { useState } from 'react'
 
+import { useRunComicUpdaterMutation } from '@store/api/comicApiSlice'
 import {
+    setShowAddAdvanceComicDialog,
     setShowCopyItemsDialog,
     setShowEditLogDialog,
 } from '@store/dialogSlice'
@@ -8,11 +10,13 @@ import { useAppDispatch, useAppSelector } from '@store/hooks'
 
 import Popup from '../Popup'
 
-// eslint-disable-next-line no-empty-pattern
-export default function OperationsMenu({}: {}) {
+export default function OperationsMenu() {
     const dispatch = useAppDispatch()
 
     const currentComic = useAppSelector((state) => state.comic.current)
+    const settings = useAppSelector((state) => state.settings.values)
+
+    const [runComicUpdater] = useRunComicUpdaterMutation()
 
     const [showPopup, setShowPopup] = useState(false)
     const [popupPosition, setPopupPosition] = useState<[number, number]>([0, 0])
@@ -54,7 +58,12 @@ export default function OperationsMenu({}: {}) {
                     <MenuItem
                         onClick={() => {
                             setShowPopup(false)
-                            dispatch(setShowEditLogDialog(currentComic))
+                            dispatch(
+                                setShowEditLogDialog({
+                                    kind: 'comic',
+                                    comicId: currentComic,
+                                })
+                            )
                         }}
                     >
                         Show edit log for comic {currentComic}...
@@ -62,11 +71,30 @@ export default function OperationsMenu({}: {}) {
                     <MenuItem
                         onClick={() => {
                             setShowPopup(false)
-                            dispatch(setShowEditLogDialog(true))
+                            dispatch(setShowEditLogDialog({ kind: 'all' }))
                         }}
                     >
                         Show edit log...
                     </MenuItem>
+                    <hr className="-mx-2 my-0 border-solid border-b max-w-none" />
+                    <MenuItem
+                        onClick={() => {
+                            setShowPopup(false)
+                            dispatch(setShowAddAdvanceComicDialog(true))
+                        }}
+                    >
+                        Add advance comic...
+                    </MenuItem>
+                    {settings?.editModeToken && (
+                        <MenuItem
+                            onClick={() => {
+                                setShowPopup(false)
+                                void runComicUpdater()
+                            }}
+                        >
+                            Run comic updater now
+                        </MenuItem>
+                    )}
                 </div>
             </Popup>
         </>

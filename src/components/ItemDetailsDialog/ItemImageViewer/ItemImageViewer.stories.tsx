@@ -1,18 +1,20 @@
-import { Meta, StoryFn } from '@storybook/react'
+import { HttpResponse, http } from 'msw'
+import { fn } from 'storybook/test'
+
+import type { Meta, StoryObj } from '@storybook/react-vite'
 
 import {
     FAYE,
     FAYE_IMAGES,
     MANY_IMAGES,
     QCEXT_SERVER_DEVELOPMENT_URL,
-    useMswReady,
 } from '~/mocks'
+import { mockNetworkDelay } from '~/storybook/mockNetworkDelay'
 
+import fayeImage from '../4.png'
 import ItemImageViewer from './ItemImageViewer'
 
-const fayeImage: any = require('../4.png')
-
-export default {
+const meta: Meta<typeof ItemImageViewer> = {
     component: ItemImageViewer,
     argTypes: {
         onDeleteImage: { action: 'onDeleteImage' },
@@ -23,69 +25,76 @@ export default {
             },
         },
     },
-} as Meta<typeof ItemImageViewer>
+    args: {
+        onDeleteImage: fn(),
+        onSetPrimaryImage: fn(),
+        onUploadImage: fn(),
+    },
+    parameters: {
+        msw: {
+            handlers: [
+                http.get(
+                    'http://localhost:3000/api/v3/itemdata/image/:imageId',
+                    async () => {
+                        const imageBuffer = await fetch(fayeImage).then((res) =>
+                            res.arrayBuffer()
+                        )
+                        await mockNetworkDelay()
+                        return new HttpResponse(imageBuffer, {
+                            headers: {
+                                'Content-Length':
+                                    imageBuffer.byteLength.toString(),
+                                'Content-Type': 'image/png',
+                            },
+                        })
+                    }
+                ),
+            ],
+        },
+    },
+}
+export default meta
 
-const Template: StoryFn<typeof ItemImageViewer> = (args) => {
-    const mswReady = useMswReady()
+type Story = StoryObj<typeof ItemImageViewer>
 
-    // Then, let's fake the necessary REST calls
-    const { worker, rest } = window.msw
-    worker.use(
-        rest.get(
-            'http://localhost:3000/api/v2/itemdata/image/:imageId',
-            async (req, res, ctx) => {
-                const imageBuffer = await fetch(fayeImage).then((res) =>
-                    res.arrayBuffer()
-                )
-                return res(
-                    ctx.delay(1000 + Math.random() * 1000),
-                    ctx.set(
-                        'Content-Length',
-                        imageBuffer.byteLength.toString()
-                    ),
-                    ctx.set('Content-Type', 'image/png'),
-                    ctx.body(imageBuffer)
-                )
-            }
-        )
-    )
-
-    return !mswReady ? <></> : <ItemImageViewer {...args} />
+export const Single: Story = {
+    args: {
+        itemId: 4,
+        editModeToken: null,
+        itemDataUrl: QCEXT_SERVER_DEVELOPMENT_URL,
+        itemImageData: FAYE_IMAGES,
+        itemShortName: FAYE.shortName,
+        primaryImage: null,
+    },
 }
 
-export const Single = Template.bind({})
-Single.args = {
-    itemId: 4,
-    editModeToken: null,
-    itemDataUrl: QCEXT_SERVER_DEVELOPMENT_URL,
-    itemImageData: FAYE_IMAGES,
-    itemShortName: FAYE.shortName,
-    primaryImage: null,
+export const SingleEditMode: Story = {
+    args: {
+        ...Single.args,
+        editModeToken: '00000000-0000-0000-0000-000000000000',
+    },
 }
 
-export const SingleEditMode = Template.bind({})
-SingleEditMode.args = {
-    ...Single.args,
-    editModeToken: '00000000-0000-0000-0000-000000000000',
+export const Many: Story = {
+    args: {
+        itemId: 4,
+        editModeToken: null,
+        itemDataUrl: QCEXT_SERVER_DEVELOPMENT_URL,
+        itemImageData: MANY_IMAGES,
+        itemShortName: FAYE.shortName,
+    },
 }
 
-export const Many = Template.bind({})
-Many.args = {
-    itemId: 4,
-    editModeToken: null,
-    itemDataUrl: QCEXT_SERVER_DEVELOPMENT_URL,
-    itemImageData: MANY_IMAGES,
-    itemShortName: FAYE.shortName,
+export const ManyWithPrimarySet: Story = {
+    args: {
+        ...Many.args,
+        primaryImage: 4,
+    },
 }
 
-export const ManyWithPrimarySet = Template.bind({})
-ManyWithPrimarySet.args = {
-    ...Many.args,
-    primaryImage: 4,
-}
-
-export const ManyEditMode = Template.bind({})
-ManyEditMode.args = {
-    ...Many.args,
-    editModeToken: '00000000-0000-0000-0000-000000000000',
+export const ManyEditMode: Story = {
+    args: {
+        ...Many.args,
+        editModeToken: '00000000-0000-0000-0000-000000000000',
+    },
 }

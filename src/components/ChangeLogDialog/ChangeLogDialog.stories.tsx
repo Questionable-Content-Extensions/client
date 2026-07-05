@@ -1,13 +1,13 @@
 import { setSettings } from '@store/settingsSlice'
 import store from '@store/store'
-import { Meta, StoryFn } from '@storybook/react'
+import type { Meta, StoryObj } from '@storybook/react-vite'
 
+import Settings from '~/Settings'
 import constants from '~/constants'
-import Settings from '~/settings'
 
 import ChangeLogDialog from './ChangeLogDialog'
 
-export default {
+const meta: Meta<typeof ChangeLogDialog> = {
     component: ChangeLogDialog,
     argTypes: {
         show: {
@@ -16,49 +16,44 @@ export default {
             },
         },
     },
-} as Meta<typeof ChangeLogDialog>
-
-type ChangeLogDialogStoryThis = {
-    kind: 'FirstInstall' | 'LaterInstalled' | 'Updated'
+    args: {
+        show: true,
+        onClose: () => {
+            alert('In the userscript, this window would close now.')
+        },
+    },
 }
-const Template: StoryFn<typeof ChangeLogDialog> = function (
-    this: ChangeLogDialogStoryThis,
-    args
-) {
-    // Let's set up the Redux store to be the way we need
-    if (this.kind === 'FirstInstall') {
-        store.dispatch(setSettings(Settings.DEFAULTS))
-    } else if (this.kind === 'LaterInstalled') {
-        store.dispatch(
-            setSettings({
-                ...Settings.DEFAULTS,
-                version: constants.scriptVersion,
-            })
-        )
-    } else {
-        store.dispatch(
-            setSettings({ ...Settings.DEFAULTS, version: 'OldVersion' })
-        )
-    }
+export default meta
 
-    const onClose = () => {
-        alert('In the userscript, this window would close now.')
-    }
+type Story = StoryObj<typeof ChangeLogDialog>
 
-    return <ChangeLogDialog {...args} onClose={onClose} />
+export const FirstInstall: Story = {
+    loaders: [
+        () => {
+            store.dispatch(setSettings(Settings.DEFAULTS))
+        },
+    ],
 }
 
-export const FirstInstall = Template.bind({ kind: 'FirstInstall' })
-FirstInstall.args = {
-    show: true,
+export const LaterInstalled: Story = {
+    loaders: [
+        () => {
+            store.dispatch(
+                setSettings({
+                    ...Settings.DEFAULTS,
+                    version: constants.scriptVersion,
+                })
+            )
+        },
+    ],
 }
 
-export const LaterInstalled = Template.bind({ kind: 'LaterInstalled' })
-LaterInstalled.args = {
-    show: true,
-}
-
-export const Updated = Template.bind({ kind: 'Updated' })
-Updated.args = {
-    show: true,
+export const Updated: Story = {
+    loaders: [
+        () => {
+            store.dispatch(
+                setSettings({ ...Settings.DEFAULTS, version: 'OldVersion' })
+            )
+        },
+    ],
 }

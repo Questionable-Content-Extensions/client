@@ -14,13 +14,15 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-import React from 'react'
+import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { Provider } from 'react-redux'
 import { ToastContainer, toast } from 'react-toastify'
+// eslint-disable-next-line import/no-unresolved
+import { injectCSS } from 'virtual:css-injected-by-js'
 
 import './index.css'
-import 'react-toastify/dist/ReactToastify.min.css'
+import 'react-toastify/dist/ReactToastify.css'
 
 import Comic from '@components/Comic/Comic'
 import ComicDetailsPanel from '@components/ComicDetailsPanel/ComicDetailsPanel'
@@ -34,7 +36,6 @@ import Portals from '@components/Portals'
 import { hydrateItemData } from '@hooks/useHydratedItemData'
 import { ComicId } from '@models/ComicId'
 import { HydratedItemNavigationData } from '@models/HydratedItemData'
-import { ItemId } from '@models/ItemId'
 import {
     comicApiSlice,
     nextComicSelector,
@@ -42,12 +43,25 @@ import {
     toGetDataQueryArgs,
 } from '@store/api/comicApiSlice'
 import { itemApiSlice } from '@store/api/itemApiSlice'
-import { setCurrentComic, setLatestComic } from '@store/comicSlice'
+import {
+    setCurrentComic,
+    setLatestComic,
+    setLockedToItem,
+} from '@store/comicSlice'
 import { loadSettings } from '@store/settingsSlice'
 
-import Settings from '~/settings'
+import Settings from '~/Settings'
 import store, { AppDispatch, RootState } from '~/store/store'
-import { awaitElement, debug, error, fetch, info, qcBug, setup } from '~/utils'
+import {
+    awaitElement,
+    debug,
+    error,
+    fetch,
+    info,
+    parsePopStateComicData,
+    qcBug,
+    setup,
+} from '~/utils'
 
 import { BODY_CONTAINER_ID, PORTAL_CONTAINER_ID } from './shared'
 
@@ -55,7 +69,7 @@ import { BODY_CONTAINER_ID, PORTAL_CONTAINER_ID } from './shared'
 // See <https://blog.krawaller.se/posts/unit-testing-react-redux-components/>
 // for how to properly test Redux powered components
 
-const QcStrictMode = React.StrictMode
+const QcStrictMode = StrictMode
 // React.StrictMode causes errors in Chromium; set to some innocent element
 // type instead when debugging in Chrome:
 //const QcStrictMode = React.Fragment
@@ -64,16 +78,12 @@ const QC_EXT_CLASSNAME = 'qc-ext'
 const NAVIGATION_CONTAINER_CLASSNAME = 'qc-ext-navigation-container'
 
 async function main() {
-    // HACK: Webpack CSS hack. See ./global.d.ts and ../build.js for more details.
-    if (window.qcExtBuiltCss) {
-        var style = document.createElement('style')
-        style.innerHTML = window.qcExtBuiltCss
-        document.head.appendChild(style)
-    }
-
     await Settings.loadSettings()
     setup()
     store.dispatch(loadSettings())
+
+    info('Injecting CSS')
+    injectCSS()
 
     info('Running QC Extensions v' + GM.info.script.version)
 
@@ -93,9 +103,7 @@ async function main() {
     // Handle popstate events to go back to previous comics that were
     // added using pushState/replaceState above
     window.addEventListener('popstate', (event) => {
-        let state = event.state as
-            | { comic: number; lockedToItem: ItemId | null }
-            | undefined
+        const state = parsePopStateComicData(event.state)
         if (state && state.comic) {
             if (state.lockedToItem) {
                 const storeState = store.getState()
@@ -143,7 +151,17 @@ async function developmentMain() {
 
             // Ensure that when the fetched script runs, it doesn't keep trying to fetch and run itself.
             window.__QC_EXT_DEVELOPMENT_LOADED = true
-            // eslint-disable-next-line no-eval
+
+            // This copy of the bundle already registered its own CSS
+            // injector into these global queues at load time, but never
+            // calls injectCSS() itself (developmentMain() doesn't). Clear
+            // them so the fetched copy's registration is the only one that
+            // survives to be run when its main() calls injectCSS() —
+            // otherwise both this copy's stale injector and the fetched
+            // copy's injector fire, producing duplicate <style> elements.
+            globalThis.__VITE_CSS_QUEUE__ = []
+            globalThis.__VITE_CSS_EXECUTED__ = []
+
             eval(response.responseText)
         })
         .catch((response) => {
@@ -196,14 +214,14 @@ async function initializeComic() {
     }
 
     // Grab comic we're starting out on
-    let comicLinkUrl = comicImg.src
-    let comicLinkUrlSplit = comicLinkUrl.split('/')
+    const comicLinkUrl = comicImg.src
+    const comicLinkUrlSplit = comicLinkUrl.split('/')
     const comic = parseInt(
         comicLinkUrlSplit[comicLinkUrlSplit.length - 1].split('.')[0]
     )
     debug('Current comic:', comic)
 
-    let comicContainer = document.createElement('div')
+    const comicContainer = document.createElement('div')
     comicContainer.classList.add(QC_EXT_CLASSNAME, 'qc-ext-comic-container')
 
     const comicImgParent = comicImg.parentNode as HTMLElement
@@ -281,7 +299,7 @@ function initializeComicNavigation() {
     }
     comicNav.id = 'comicnav1'
 
-    let comicNav2 = document.querySelector<HTMLUListElement>('#comicnav')
+    const comicNav2 = document.querySelector<HTMLUListElement>('#comicnav')
     if (!comicNav2) {
         qcBug('Could not find second comic navigation list element')
         return
@@ -305,7 +323,7 @@ function initializeComicNavigation() {
         </QcStrictMode>
     )
 
-    let comicNav2Parent = comicNav2.parentNode as HTMLElement
+    const comicNav2Parent = comicNav2.parentNode as HTMLElement
 
     // The second #comicnav is in a <div class="row">/<div id="row"> for some reason. Let's ditch it if present.
     comicNavContainer = document.createElement('div')
@@ -349,9 +367,12 @@ function initializeDateAndNews() {
     }
     const newsData = news.innerHTML
     const newsParent = news.parentNode as ParentNode
-    const newsPrevious = news.previousElementSibling as Element
+    const newsPrevious = news.previousElementSibling
 
-    if (!newsPrevious.classList.contains(NAVIGATION_CONTAINER_CLASSNAME)) {
+    if (
+        newsPrevious &&
+        !newsPrevious.classList.contains(NAVIGATION_CONTAINER_CLASSNAME)
+    ) {
         newsParent.removeChild(newsPrevious)
     }
 
@@ -481,7 +502,18 @@ function hijackShortcut() {
 
         const lockedItem = hydratedComicItemData.find(
             (i) => i.id === state.comic.lockedToItem
-        )!
+        )
+        if (!lockedItem) {
+            error(
+                "Can't navigate because the locked item wasn't found in this comic's data."
+            )
+            toast.error(
+                "Can't navigate because the locked item wasn't found in this comic's data."
+            )
+            dispatch(setLockedToItem(null))
+            return
+        }
+
         const destination = itemSelector(lockedItem)
         if (destination) {
             dispatch(setCurrentComic(destination, { locked: true }))
@@ -494,7 +526,7 @@ function hijackShortcut() {
             if (state.comic.lockedToItem !== null) {
                 goToLocked(dispatch, state, (i) => i.previous)
             } else {
-                let previous = previousComicSelector(state)
+                const previous = previousComicSelector(state)
                 dispatch(setCurrentComic(previous))
             }
         })
@@ -504,7 +536,7 @@ function hijackShortcut() {
             if (state.comic.lockedToItem !== null) {
                 goToLocked(dispatch, state, (i) => i.next)
             } else {
-                let next = nextComicSelector(state)
+                const next = nextComicSelector(state)
                 dispatch(setCurrentComic(next))
             }
         })
@@ -518,13 +550,14 @@ function hijackShortcut() {
         })
 
     try {
-        if (typeof unsafeWindow !== undefined) {
-            const shortcut = (unsafeWindow as any).shortcut
+        if (typeof unsafeWindow !== 'undefined') {
+            const shortcut = unsafeWindow.shortcut
 
             shortcut.remove('Left')
             shortcut.remove('Right')
 
-            const disable_in_input = createObjectIn<any>(unsafeWindow)
+            const disable_in_input =
+                createObjectIn<Partial<ShortcutOptions>>(unsafeWindow)
             disable_in_input.disable_in_input = true
 
             shortcut.add(
@@ -554,7 +587,10 @@ function hijackShortcut() {
             )
         }
     } catch (ex) {
-        if (ex !== 'ReferenceError: unsafeWindow is not defined') {
+        if (
+            !(ex instanceof ReferenceError) ||
+            ex.message !== 'unsafeWindow is not defined'
+        ) {
             console.error(ex)
         }
     }
