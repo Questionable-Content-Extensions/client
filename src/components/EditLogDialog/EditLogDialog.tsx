@@ -7,25 +7,39 @@ import {
     useGetLogsForComicQuery,
     useGetLogsQuery,
 } from '@store/api/logApiSlice'
+import { EditLogDialogTarget } from '@store/dialogSlice'
 import { useAppSelector } from '@store/hooks'
 
 import EditLogPanel from './EditLogPanel/EditLogPanel'
 import Pagination from './Pagination/Pagination'
 
+function isSameEditLogTarget(
+    a: EditLogDialogTarget,
+    b: EditLogDialogTarget
+): boolean {
+    if (a.kind !== b.kind) return false
+    return a.kind === 'comic' && b.kind === 'comic'
+        ? a.comicId === b.comicId
+        : true
+}
+
 export default function EditLogDialog({
     showFor,
     onClose,
 }: {
-    showFor: number | boolean
+    showFor: EditLogDialogTarget
     onClose: () => void
 }) {
     const settings = useAppSelector((state) => state.settings.values)
 
-    const [currentShowFor, setCurrentShowFor] = useState<number | boolean>(
-        false
-    )
+    const [currentShowFor, setCurrentShowFor] = useState<EditLogDialogTarget>({
+        kind: 'closed',
+    })
     const [currentPage, setCurrentPage] = useState(1)
-    if (showFor && currentShowFor !== showFor) {
+    if (
+        showFor.kind !== 'closed' &&
+        !isSameEditLogTarget(currentShowFor, showFor)
+    ) {
         setCurrentShowFor(showFor)
         setCurrentPage(1)
     }
@@ -36,7 +50,9 @@ export default function EditLogDialog({
         isError: hasAllLogsError,
         refetch: reloadAllEditLog,
     } = useGetLogsQuery(
-        currentShowFor === true && settings ? { page: currentPage } : skipToken
+        currentShowFor.kind === 'all' && settings
+            ? { page: currentPage }
+            : skipToken
     )
     const {
         data: comicLogs,
@@ -45,8 +61,8 @@ export default function EditLogDialog({
         isError: hasComicLogsError,
         refetch: reloadComicEditLog,
     } = useGetLogsForComicQuery(
-        typeof currentShowFor === 'number' && settings
-            ? { page: currentPage, id: currentShowFor }
+        currentShowFor.kind === 'comic' && settings
+            ? { page: currentPage, id: currentShowFor.comicId }
             : skipToken
     )
 
@@ -55,7 +71,7 @@ export default function EditLogDialog({
     let isFetchingLogs
     let hasLogsError
     let reloadEditLog: typeof reloadComicEditLog | typeof reloadAllEditLog
-    if (typeof currentShowFor === 'number') {
+    if (currentShowFor.kind === 'comic') {
         logs = comicLogs
         isLoadingLogs = isLoadingComicLogs
         isFetchingLogs = isFetchingComicLogs
@@ -75,8 +91,8 @@ export default function EditLogDialog({
             header={
                 <h5 className="m-0 text-xl font-medium leading-normal text-gray-800">
                     Edit log
-                    {typeof currentShowFor === 'number'
-                        ? ` for comic ${currentShowFor}`
+                    {currentShowFor.kind === 'comic'
+                        ? ` for comic ${currentShowFor.comicId}`
                         : ''}
                 </h5>
             }

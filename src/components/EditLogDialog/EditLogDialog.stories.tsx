@@ -40,7 +40,7 @@ type Story = StoryObj<typeof EditLogDialog>
 
 export const All: Story = {
     args: {
-        showFor: true,
+        showFor: { kind: 'all' },
     },
     parameters: {
         msw: {
@@ -64,8 +64,8 @@ export const All: Story = {
     loaders: [
         () => {
             const state = store.getState()
-            if (state.dialog.showEditLogDialogFor === false) {
-                store.dispatch(setShowEditLogDialog(true))
+            if (state.dialog.showEditLogDialogFor.kind === 'closed') {
+                store.dispatch(setShowEditLogDialog({ kind: 'all' }))
                 store.dispatch(
                     setSettings({
                         ...Settings.DEFAULTS,
@@ -80,7 +80,7 @@ export const All: Story = {
 
 export const Comic: Story = {
     args: {
-        showFor: 4269,
+        showFor: { kind: 'comic', comicId: 4269 },
     },
     parameters: {
         msw: {
@@ -104,8 +104,10 @@ export const Comic: Story = {
     loaders: [
         () => {
             const state = store.getState()
-            if (state.dialog.showEditLogDialogFor === false) {
-                store.dispatch(setShowEditLogDialog(666))
+            if (state.dialog.showEditLogDialogFor.kind === 'closed') {
+                store.dispatch(
+                    setShowEditLogDialog({ kind: 'comic', comicId: 666 })
+                )
                 store.dispatch(
                     setSettings({
                         ...Settings.DEFAULTS,
@@ -120,7 +122,7 @@ export const Comic: Story = {
 
 export const Error: Story = {
     args: {
-        showFor: true,
+        showFor: { kind: 'all' },
     },
     parameters: {
         msw: {
@@ -135,8 +137,8 @@ export const Error: Story = {
     loaders: [
         () => {
             const state = store.getState()
-            if (state.dialog.showEditLogDialogFor === false) {
-                store.dispatch(setShowEditLogDialog(true))
+            if (state.dialog.showEditLogDialogFor.kind === 'closed') {
+                store.dispatch(setShowEditLogDialog({ kind: 'all' }))
                 store.dispatch(
                     setSettings({
                         ...Settings.DEFAULTS,

@@ -50,12 +50,12 @@ export const Default: Story = {
         await testMenuItem(
             canvasElement,
             'Show edit log for comic 666...',
-            setShowEditLogDialog(666)
+            setShowEditLogDialog({ kind: 'comic', comicId: 666 })
         )
         await testMenuItem(
             canvasElement,
             'Show edit log...',
-            setShowEditLogDialog(true)
+            setShowEditLogDialog({ kind: 'all' })
         )
     },
 }

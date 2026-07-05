@@ -60,7 +60,12 @@ export default function OperationsMenu({}: Record<string, never>) {
                     <MenuItem
                         onClick={() => {
                             setShowPopup(false)
-                            dispatch(setShowEditLogDialog(currentComic))
+                            dispatch(
+                                setShowEditLogDialog({
+                                    kind: 'comic',
+                                    comicId: currentComic,
+                                })
+                            )
                         }}
                     >
                         Show edit log for comic {currentComic}...
@@ -68,7 +73,7 @@ export default function OperationsMenu({}: Record<string, never>) {
                     <MenuItem
                         onClick={() => {
                             setShowPopup(false)
-                            dispatch(setShowEditLogDialog(true))
+                            dispatch(setShowEditLogDialog({ kind: 'all' }))
                         }}
                     >
                         Show edit log...

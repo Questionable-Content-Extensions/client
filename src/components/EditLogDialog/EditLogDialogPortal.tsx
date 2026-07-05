@@ -12,12 +12,14 @@ export default function EditLogDialogPortal() {
 
     return (
         <DialogPortal
-            show={showEditLogDialogFor !== false}
-            onClose={() => dispatch(setShowEditLogDialog(false))}
+            show={showEditLogDialogFor.kind !== 'closed'}
+            onClose={() => dispatch(setShowEditLogDialog({ kind: 'closed' }))}
         >
             <EditLogDialog
                 showFor={showEditLogDialogFor}
-                onClose={() => dispatch(setShowEditLogDialog(false))}
+                onClose={() =>
+                    dispatch(setShowEditLogDialog({ kind: 'closed' }))
+                }
             />
         </DialogPortal>
     )
