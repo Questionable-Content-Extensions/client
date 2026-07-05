@@ -200,7 +200,7 @@ export default function EditorModePanel() {
         return () => {
             window.removeEventListener('resize', onResize)
         }
-    })
+    }, [])
     const correctionWidth = useMemo(
         () => (clientWidth < 1530 ? (1530 - clientWidth) / 2 : 0),
         [clientWidth]
