@@ -62,15 +62,19 @@ export default function NavElement({
                 : skipToken
         )
 
-    let extraStuff = <></>
-    if (editMode) {
+    // `interactive` is false for the hidden measurement mirror, which must not duplicate `title` text.
+    function renderExtraStuff(interactive: boolean) {
         switch (mode) {
             case NavElementMode.Present:
-                extraStuff = (
-                    <>
+                return (
+                    editMode && (
                         <button
                             className="px-1 text-sm"
-                            title={`Remove ${item.shortName} from comic`}
+                            title={
+                                interactive
+                                    ? `Remove ${item.shortName} from comic`
+                                    : undefined
+                            }
                             onClick={(e) => {
                                 e.preventDefault()
                                 if (onRemoveItem) {
@@ -81,15 +85,18 @@ export default function NavElement({
                             <span className="sr-only">{`Remove ${item.shortName} from comic`}</span>
                             <i className={`fa fa-minus`} aria-hidden></i>
                         </button>
-                    </>
+                    )
                 )
-                break
             case NavElementMode.Missing:
-                extraStuff = (
-                    <>
+                return (
+                    editMode && (
                         <button
                             className="px-1 text-sm"
-                            title={`Add ${item.shortName} to comic`}
+                            title={
+                                interactive
+                                    ? `Add ${item.shortName} to comic`
+                                    : undefined
+                            }
                             onClick={(e) => {
                                 e.preventDefault()
                                 if (onAddItem) {
@@ -100,53 +107,49 @@ export default function NavElement({
                             <span className="sr-only">{`Add ${item.shortName} to comic`}</span>
                             <i className={`fa fa-plus`} aria-hidden></i>
                         </button>
-                    </>
+                    )
                 )
-                break
+            default:
+                return <></>
         }
     }
 
-    const [alternateLayout, selfRef] = useAlternateLayout()
+    const [alternateLayout, selfRef, measureRef] = useAlternateLayout()
 
     const locked = lockedToItem !== null && lockedToItem === item.id
 
-    return (
-        <>
-            <div
-                ref={selfRef}
-                id={`qc-ext-navelement-${item.id}`}
-                className={
-                    `qc-ext-navelement flex items-center rounded` +
-                    (useColors ? ' with-color' : '') +
-                    (alternateLayout ? ' flex-wrap justify-between' : '')
-                }
-                style={
-                    useColors
-                        ? {
-                              '--qc-ext-navelement-bg-color': backgroundColor,
-                              '--qc-ext-navelement-color': foregroundColor,
-                              '--qc-ext-navelement-accent-color':
-                                  hoverFocusColor,
-                          }
-                        : undefined
-                }
-            >
+    // Shared by the visible element and its hidden measurement mirror below.
+    function renderButtons(alternate: boolean, interactive: boolean) {
+        return (
+            <>
                 <NavButton
                     comicNo={item.first !== currentComic ? item.first : null}
-                    title={`First strip with ${item.shortName}`}
+                    title={
+                        interactive
+                            ? `First strip with ${item.shortName}`
+                            : undefined
+                    }
                     faClass="fast-backward"
                     onSetCurrentComic={(c) => onSetCurrentComic(c, locked)}
                 />
                 <NavButton
                     comicNo={item.previous}
-                    title={`Previous strip with ${item.shortName}`}
+                    title={
+                        interactive
+                            ? `Previous strip with ${item.shortName}`
+                            : undefined
+                    }
                     faClass="backward"
                     onSetCurrentComic={(c) => onSetCurrentComic(c, locked)}
                 />
                 {settings?.showItemChainButton &&
                     (locked ? (
                         <button
-                            title={`Unlock page navigation from ${item.shortName}`}
+                            title={
+                                interactive
+                                    ? `Unlock page navigation from ${item.shortName}`
+                                    : undefined
+                            }
                             className={'flex-none px-2 block'}
                             onClick={(e) => {
                                 e.preventDefault()
@@ -158,7 +161,11 @@ export default function NavElement({
                     ) : (
                         mode === NavElementMode.Present && (
                             <button
-                                title={`Lock page navigation to ${item.shortName}`}
+                                title={
+                                    interactive
+                                        ? `Lock page navigation to ${item.shortName}`
+                                        : undefined
+                                }
                                 className={'flex-none px-2 block'}
                                 onClick={(e) => {
                                     e.preventDefault()
@@ -172,7 +179,7 @@ export default function NavElement({
                 <button
                     className={
                         'font-bold flex-auto' +
-                        (alternateLayout ? ' -order-1 basis-full' : '')
+                        (alternate ? ' -order-1 basis-full' : '')
                     }
                     onClick={(e) => {
                         e.preventDefault()
@@ -181,21 +188,29 @@ export default function NavElement({
                 >
                     <span
                         className="inline-block text-center"
-                        title={item.name}
+                        title={interactive ? item.name : undefined}
                     >
                         {item.shortName}
                     </span>
                 </button>
-                {extraStuff}
+                {renderExtraStuff(interactive)}
                 <NavButton
                     comicNo={item.next}
-                    title={`Next strip with ${item.shortName}`}
+                    title={
+                        interactive
+                            ? `Next strip with ${item.shortName}`
+                            : undefined
+                    }
                     faClass="forward"
                     onSetCurrentComic={(c) => onSetCurrentComic(c, locked)}
                 />
                 <NavButton
                     comicNo={item.last !== currentComic ? item.last : null}
-                    title={`Last strip with ${item.shortName}`}
+                    title={
+                        interactive
+                            ? `Last strip with ${item.shortName}`
+                            : undefined
+                    }
                     faClass="fast-forward"
                     onSetCurrentComic={(c) => onSetCurrentComic(c, locked)}
                 />
@@ -203,7 +218,11 @@ export default function NavElement({
                     settings?.showItemRandomButton && (
                         <NavButton
                             comicNo={randomComic ?? 0}
-                            title={`Random strip with ${item.shortName}`}
+                            title={
+                                interactive
+                                    ? `Random strip with ${item.shortName}`
+                                    : undefined
+                            }
                             faClass="question"
                             onSetCurrentComic={(c) => {
                                 onSetCurrentComic(c, locked)
@@ -211,6 +230,52 @@ export default function NavElement({
                             }}
                         />
                     )}
+            </>
+        )
+    }
+
+    const baseClassName =
+        `qc-ext-navelement flex items-center rounded` +
+        (useColors ? ' with-color' : '')
+
+    return (
+        <>
+            <div
+                ref={selfRef}
+                id={`qc-ext-navelement-${item.id}`}
+                className={
+                    baseClassName +
+                    (alternateLayout ? ' flex-wrap justify-between' : '')
+                }
+                style={
+                    useColors
+                        ? {
+                              '--qc-ext-navelement-bg-color': backgroundColor,
+                              '--qc-ext-navelement-color': foregroundColor,
+                              '--qc-ext-navelement-accent-color':
+                                  hoverFocusColor,
+                          }
+                        : undefined
+                }
+            >
+                {renderButtons(alternateLayout, true)}
+            </div>
+            {/* Hidden mirror measuring natural width; see useAlternateLayout.ts */}
+            <div
+                ref={measureRef}
+                aria-hidden="true"
+                className={baseClassName}
+                style={{
+                    position: 'absolute',
+                    visibility: 'hidden',
+                    pointerEvents: 'none',
+                    flexWrap: 'nowrap',
+                    whiteSpace: 'nowrap',
+                    top: 0,
+                    left: 0,
+                }}
+            >
+                {renderButtons(false, false)}
             </div>
         </>
     )

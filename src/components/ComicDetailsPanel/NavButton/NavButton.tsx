@@ -7,7 +7,7 @@ export default function NavButton({
     onSetCurrentComic,
 }: {
     comicNo: number | null
-    title: string
+    title?: string
     faClass: ForkAwesomeIcon
     onSetCurrentComic: (comicNo: number) => void
 }) {
