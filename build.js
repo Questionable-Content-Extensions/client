@@ -85,7 +85,7 @@ s.on('end', () => {
                 s.push('\n')
                 s.push(null)
 
-                s.pipe(w, { end: false })
+                s.pipe(w)
             })
         })
     })
