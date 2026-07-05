@@ -50,4 +50,12 @@ describe('ModalPageOverlay', () => {
         rerender(<OverlayWithProbe show={false} label="probe" />)
         expect(screen.getByTestId('probe')).toHaveTextContent('false')
     })
+
+    it('does not throw when the body container element is absent from the DOM', () => {
+        document.getElementById(BODY_CONTAINER_ID)?.remove()
+
+        expect(() =>
+            render(<OverlayWithProbe show={true} label="probe" />)
+        ).not.toThrow()
+    })
 })

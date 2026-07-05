@@ -27,13 +27,13 @@ export default function ModalPageOverlay({
     }, [show, setActive])
 
     useEffect(() => {
-        const body = document.getElementById(BODY_CONTAINER_ID)!
+        const body = document.getElementById(BODY_CONTAINER_ID)
 
         if (show && document.body.style.overflow !== 'hidden') {
             debug('Hiding body overflow')
             // When a modal is active, remove the scrolling from the main body
             document.body.style.overflow = 'hidden'
-            body.setAttribute('aria-hidden', 'true')
+            body?.setAttribute('aria-hidden', 'true')
         } else if (
             !show &&
             document.body.style.overflow !== originalBodyOverflow
@@ -42,7 +42,7 @@ export default function ModalPageOverlay({
             // Return the scrolling to normal on the main body when the modal
             // is closed once again.
             document.body.style.overflow = originalBodyOverflow
-            body.setAttribute('aria-hidden', '')
+            body?.setAttribute('aria-hidden', '')
         }
     }, [show, originalBodyOverflow])
     return (
