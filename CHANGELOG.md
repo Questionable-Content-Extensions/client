@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.4.0] - 2026-07-05
+
 ### Added ✨
 
 - Added a "Filtered Navigation" section to the comic navigation panel: after filtering in the "Go to comic" dialog, you can now jump between the first/previous/next/last matching comics directly, reopen the dialog to adjust the filter, or clear the filtered navigation entirely.
@@ -417,7 +419,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [0.1.0]: https://github.com/Questionable-Content-Extensions/client/releases/tag/0.1.0
 [issues]: https://github.com/Questionable-Content-Extensions/client/issues
 [1.0.0]: https://github.com/Questionable-Content-Extensions/client/compare/0.6.2...1.0.0
-[Unreleased]: https://github.com/Questionable-Content-Extensions/client/compare/1.3.0...HEAD
+[unreleased]: https://github.com/Questionable-Content-Extensions/client/compare/1.4.0...HEAD
+[1.4.0]: https://github.com/Questionable-Content-Extensions/client/compare/0.6.1...1.4.0
 [1.3.0]: https://github.com/Questionable-Content-Extensions/client/compare/1.2.1...1.3.0
 [1.2.1]: https://github.com/Questionable-Content-Extensions/client/compare/1.2.0...1.2.1
 [1.2.0]: https://github.com/Questionable-Content-Extensions/client/compare/1.1.0...1.2.0
