@@ -9,6 +9,11 @@ vi.mock('~/utils', () => ({
     error: vi.fn(),
 }))
 
+const { toastError } = vi.hoisted(() => ({ toastError: vi.fn() }))
+vi.mock('react-toastify', () => ({
+    toast: { error: toastError },
+}))
+
 class FakeImage {
     onload: ((event: Event) => void) | null = null
     onerror: ((event: Event) => void) | null = null
@@ -23,6 +28,7 @@ let instances: FakeImage[] = []
 
 beforeEach(() => {
     instances = []
+    toastError.mockClear()
     vi.stubGlobal('Image', FakeImage)
 })
 
@@ -94,5 +100,62 @@ describe('ComicImage', () => {
 
         expect(imageReady).toHaveBeenCalledTimes(1)
         expect(screen.getByRole('img')).toHaveAttribute('src', './comics/2.png')
+    })
+
+    it('shows a toast when a hard-coded image type fails to load', () => {
+        render(
+            <ComicImage
+                imageData={{ comicNo: 3, imageType: 'png' }}
+                initialComicSrc="initial.png"
+                initialComic={3}
+                imageReady={vi.fn()}
+                tagline={null}
+            />
+        )
+
+        const image = instances[0]
+
+        act(() => {
+            image.onerror?.({ target: image } as unknown as Event)
+        })
+
+        expect(toastError).toHaveBeenCalledWith(
+            'Failed to load the image for comic #3',
+            expect.objectContaining({ toastId: 'comic-image-error-3' })
+        )
+    })
+
+    it('shows a toast once every fallback extension has failed to load', () => {
+        render(
+            <ComicImage
+                imageData={{ comicNo: 4, imageType: null }}
+                initialComicSrc="initial.png"
+                initialComic={4}
+                imageReady={vi.fn()}
+                tagline={null}
+            />
+        )
+
+        expect(instances).toHaveLength(1)
+        const image = instances[0]
+
+        // Fail through every known extension without the toast firing early.
+        act(() => {
+            image.onerror?.({ target: image } as unknown as Event)
+        })
+        expect(toastError).not.toHaveBeenCalled()
+
+        act(() => {
+            image.onerror?.({ target: image } as unknown as Event)
+        })
+        expect(toastError).not.toHaveBeenCalled()
+
+        act(() => {
+            image.onerror?.({ target: image } as unknown as Event)
+        })
+        expect(toastError).toHaveBeenCalledWith(
+            'Failed to load the image for comic #4',
+            expect.objectContaining({ toastId: 'comic-image-error-4' })
+        )
     })
 })

@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { toast } from 'react-toastify'
 
 import { ImageType } from '@models/ImageType'
 
@@ -56,8 +57,11 @@ export default function ComicImage({
                 if (cancelled) {
                     return
                 }
-                // TODO: Report image error to user
                 error(event)
+                toast.error(`Failed to load the image for comic #${comic}`, {
+                    autoClose: 15000,
+                    toastId: `comic-image-error-${comic}`,
+                })
             }
             const imageExtension = imageTypeToExtension(imageType)
             downloadingImage.src = `./comics/${comic}.${imageExtension}`
@@ -103,8 +107,14 @@ export default function ComicImage({
                         constants.comicExtensions[currentExtension]
                     downloadingImage.src = `./comics/${comicNo}.${imageExtension}`
                 } else {
-                    // TODO: Report image error to user
                     error(event)
+                    toast.error(
+                        `Failed to load the image for comic #${comicNo}`,
+                        {
+                            autoClose: 15000,
+                            toastId: `comic-image-error-${comicNo}`,
+                        }
+                    )
                 }
             }
             debug(
