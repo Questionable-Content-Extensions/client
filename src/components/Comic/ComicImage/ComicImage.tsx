@@ -6,7 +6,7 @@ import constants from '~/constants'
 import { KnownImageType } from '~/models/KnownImageType'
 import { debug, error } from '~/utils'
 
-const comicExtensionCache: { [extension: string]: KnownImageType } = {}
+const comicImageTypeCache: { [comicNo: number]: KnownImageType } = {}
 
 export default function ComicImage({
     imageData,
@@ -45,7 +45,7 @@ export default function ComicImage({
                 if (cancelled) {
                     return
                 }
-                comicExtensionCache[comic] = imageType
+                comicImageTypeCache[comic] = imageType
                 setComicSrc((event.target as HTMLImageElement).src)
                 debug(
                     `setting src to ${(event.target as HTMLImageElement).src}`
@@ -64,11 +64,11 @@ export default function ComicImage({
         }
 
         const { comicNo, imageType } = previousImageData
-        if (comicNo && comicNo in comicExtensionCache) {
+        if (comicNo && comicNo in comicImageTypeCache) {
             debug(
-                `using cached image extension ${comicExtensionCache[comicNo]} for ${comicNo}`
+                `using cached image extension ${comicImageTypeCache[comicNo]} for ${comicNo}`
             )
-            tryImage(comicNo, comicExtensionCache[comicNo])
+            tryImage(comicNo, comicImageTypeCache[comicNo])
         } else if (comicNo && imageType && imageType !== 'unknown') {
             debug(
                 `using hard-coded image extension ${imageType} for ${comicNo}`
