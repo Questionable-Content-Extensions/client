@@ -236,6 +236,16 @@ export function hexColorToRgb(hexColor: string): RGBValue {
     if (hexColor.charAt(0) === '#') {
         hexColor = hexColor.substring(1) // Strip #
     }
+    if (hexColor.length === 3) {
+        // Expand shorthand form (e.g. "03f") to full form (e.g. "0033ff")
+        hexColor = hexColor
+            .split('')
+            .map((c) => c + c)
+            .join('')
+    }
+    if (!/^[0-9a-fA-F]{6}$/.test(hexColor)) {
+        throw new Error(`Invalid hex color: "${hexColor}"`)
+    }
     const rgb = parseInt(hexColor, 16) // Convert rrggbb to decimal
     const r = (rgb >> 16) & 0xff // Extract red
     const g = (rgb >> 8) & 0xff // Extract green
