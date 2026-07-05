@@ -21,7 +21,7 @@ type ImageControlsProps = {
     onSetPrimaryImage: (image: number) => void
     onDeleteImage: (image: number) => void
     setPreviewImage: (image: string | null) => void
-    uploadImage: (args: UploadImageArgs) => Promise<unknown>
+    uploadImage: (args: UploadImageArgs) => Promise<void>
     isUploadingImage: boolean
 }
 
@@ -181,14 +181,21 @@ export default function ImageControls({
                                     ) as HTMLInputElement
                                     const files = imageUpload.files
                                     if (files) {
-                                        await uploadImage({
-                                            image: files[0],
-                                            imageFileName: files[0].name,
-                                            itemId,
-                                        })
-                                        setShowImageUploadPopup(false)
-                                        setPreviewImage(null)
-                                        setHasImage(false)
+                                        try {
+                                            await uploadImage({
+                                                image: files[0],
+                                                imageFileName: files[0].name,
+                                                itemId,
+                                            })
+                                            setShowImageUploadPopup(false)
+                                            setPreviewImage(null)
+                                            setHasImage(false)
+                                        } catch {
+                                            // A rejected upload mutation already surfaces a
+                                            // toast via the global rtkQueryErrorLogger
+                                            // middleware; keep the popup open with the
+                                            // selected file intact so the user can retry.
+                                        }
                                     }
                                 }}
                                 disabled={!hasImage || isUploadingImage}

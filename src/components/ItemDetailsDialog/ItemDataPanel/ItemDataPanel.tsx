@@ -42,7 +42,7 @@ export default function ItemDataPanel({
     onDeleteImage: (imageId: ImageId) => void
     onSetPrimaryImage: (imageId: ImageId) => void
     hasError: boolean
-    onUploadImage: (args: UploadImageArgs) => Promise<unknown>
+    onUploadImage: (args: UploadImageArgs) => Promise<void>
     isUploadingImage: boolean
 }) {
     const shortName = useAppSelector((state) => state.itemEditor.shortName)

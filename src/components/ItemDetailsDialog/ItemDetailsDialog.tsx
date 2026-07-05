@@ -198,7 +198,9 @@ export default function ItemDetailsDialog({
                             })
                         }
                         hasError={hasItemDataError || hasAllItemDataError}
-                        onUploadImage={uploadImage}
+                        onUploadImage={async (args) => {
+                            await uploadImage(args).unwrap()
+                        }}
                         isUploadingImage={isUploadingImage}
                     />
                     <CollapsibleDetails
