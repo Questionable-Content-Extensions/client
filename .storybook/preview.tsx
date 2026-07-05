@@ -7,21 +7,30 @@ import './qc.css'
 import 'react-toastify/dist/ReactToastify.css'
 
 import type { Preview } from '@storybook/react-vite'
+import { cleanup } from '@testing-library/react'
 
 import Settings from '../src/Settings'
+import { apiSlice } from '../src/store/apiSlice'
 import { setSettings } from '../src/store/settingsSlice'
 import store from '../src/store/store'
+import { waitForPendingQueriesToSettle } from '../src/storybook/waitForPendingQueriesToSettle'
 import { setup } from '../src/utils'
 
 setup()
 
+const unhandled: string[] = []
+
 mswInitialize({
-    onUnhandledRequest(req, print) {
-        if (!req.url.startsWith('/api/')) {
+    onUnhandledRequest(req, _print) {
+        const url = new URL(req.url)
+        if (
+            url.hostname !== 'localhost' ||
+            (url.hostname === 'localhost' && url.pathname.startsWith('/src/'))
+        ) {
             return
         }
 
-        print.warning()
+        unhandled.push(`${req.method} ${req.url}`)
     },
 })
 
@@ -46,6 +55,32 @@ const preview: Preview = {
             </Provider>
         ),
     ],
+    beforeEach: async () => {
+        unhandled.length = 0
+
+        // `resetApiState()` makes any still-subscribed component immediately
+        // refetch (that's how RTK Query is documented to behave) - if the
+        // *previous* story's tree were still mounted when this runs, that
+        // refetch would go out through whatever MSW handlers are active at
+        // that instant (the outgoing story's, since this story's `mswLoader`
+        // handler swap hasn't happened yet if this ran in `afterEach`
+        // instead). Doing it here, at the start of the *next* story - after
+        // the test runner's own teardown of the previous one has definitely
+        // happened - avoids that.
+        await waitForPendingQueriesToSettle()
+        cleanup()
+        store.dispatch(apiSlice.util.resetApiState())
+    },
+    afterEach: async () => {
+        if (unhandled.length > 0) {
+            throw new Error(
+                `Unhandled MSW request(s) detected during Storybook test run:\n\n- ${unhandled.join('\n- ')}\n\n` +
+                    `This means one or more stories triggered a fetch to /api that had no matching MSW handler. ` +
+                    `If you wish to mock an error response, please refer to this guide: https://mswjs.io/docs/recipes/mocking-error-responses\n` +
+                    `And this guide: https://storybook.js.org/addons/msw-storybook-addon`
+            )
+        }
+    },
 }
 
 export default preview

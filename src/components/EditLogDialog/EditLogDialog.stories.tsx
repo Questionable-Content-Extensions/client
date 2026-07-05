@@ -1,4 +1,5 @@
 import { HttpResponse, http } from 'msw'
+import { expect, waitFor, within } from 'storybook/test'
 
 import { apiSlice } from '@store/apiSlice'
 import { setShowEditLogDialog } from '@store/dialogSlice'
@@ -9,6 +10,7 @@ import type { Meta, StoryObj } from '@storybook/react-vite'
 import Settings from '~/Settings'
 import { EDIT_LOG_COMIC_4269, LATEST_EDIT_LOG } from '~/mocks'
 import { mockNetworkDelay } from '~/storybook/mockNetworkDelay'
+import { withSuppressedExpectedErrorAsync } from '~/util/testUtils'
 
 import EditLogDialog from './EditLogDialog'
 
@@ -145,4 +147,18 @@ export const Error: Story = {
             }
         },
     ],
+    play: async ({ canvasElement }) => {
+        const canvas = within(canvasElement)
+
+        await withSuppressedExpectedErrorAsync(
+            'Got unexpected response from server',
+            async () => {
+                await waitFor(() =>
+                    expect(
+                        canvas.getByText('Retry loading logs...')
+                    ).toBeInTheDocument()
+                )
+            }
+        )
+    },
 }

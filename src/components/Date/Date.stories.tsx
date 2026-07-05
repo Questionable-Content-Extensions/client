@@ -1,4 +1,5 @@
 import { HttpResponse, http } from 'msw'
+import { expect, waitFor, within } from 'storybook/test'
 
 import { apiSlice } from '@store/apiSlice'
 import { setCurrentComic } from '@store/comicSlice'
@@ -7,6 +8,7 @@ import type { Meta, StoryObj } from '@storybook/react-vite'
 
 import { COMIC_DATA_666 } from '~/mocks'
 import { mockNetworkDelay } from '~/storybook/mockNetworkDelay'
+import { withSuppressedExpectedErrorAsync } from '~/util/testUtils'
 
 import Date from './Date'
 
@@ -64,5 +66,19 @@ export const Error: Story = {
                 ),
             ],
         },
+    },
+    play: async ({ canvasElement }) => {
+        const canvas = within(canvasElement)
+
+        await withSuppressedExpectedErrorAsync(
+            'Got unexpected response from server',
+            async () => {
+                await waitFor(() =>
+                    expect(
+                        canvas.getByText('Error loading comic data')
+                    ).toBeInTheDocument()
+                )
+            }
+        )
     },
 }

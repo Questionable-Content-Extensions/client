@@ -23,6 +23,7 @@ import {
     FAYE_IMAGES,
 } from '~/mocks'
 import { mockNetworkDelay } from '~/storybook/mockNetworkDelay'
+import { waitForPendingQueriesToSettle } from '~/storybook/waitForPendingQueriesToSettle'
 import { withSuppressedExpectedErrorAsync } from '~/util/testUtils'
 
 import fayeImage from './4.png'
@@ -150,21 +151,9 @@ const successHandlers = [
     }),
 ]
 
-// Tracked so the `Error` story's `play` can wait for every in-flight
-// errorHandler-backed request to settle before it hands off to the next
-// story - otherwise a slower request can still be in flight when the next
-// story's test window starts capturing console output, making its expected
-// error log show up as noise there instead.
-let pendingErrorRequests = 0
-
 const SERVER_ERROR = async () => {
-    pendingErrorRequests++
-    try {
-        await mockNetworkDelay()
-        return HttpResponse.text('Server Error', { status: 500 })
-    } finally {
-        pendingErrorRequests--
-    }
+    await mockNetworkDelay()
+    return HttpResponse.text('Server Error', { status: 500 })
 }
 
 const errorHandlers = [
@@ -196,7 +185,7 @@ const errorHandlers = [
         'http://localhost:3000/api/v3/comicdata/removeitem',
         SERVER_ERROR
     ),
-    http.post('http://localhost:3000/api/v3/log/item', SERVER_ERROR),
+    http.get('http://localhost:3000/api/v3/log/item', SERVER_ERROR),
 ]
 
 // Regression coverage for a bug where a background `patchItem` mutation
@@ -366,9 +355,7 @@ export const Error: Story = {
                 // fails, while slower ones are still in flight - keep
                 // suppressing until all of them have settled too, so their
                 // logs can't leak into the next story's captured output.
-                await waitFor(() => expect(pendingErrorRequests).toBe(0), {
-                    timeout: 15000,
-                })
+                await waitForPendingQueriesToSettle(15000)
             }
         )
     },

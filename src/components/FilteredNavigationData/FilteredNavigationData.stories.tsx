@@ -1,15 +1,40 @@
+import { HttpResponse, http } from 'msw'
 import { expect, fn, userEvent, waitFor, within } from 'storybook/test'
 
+import { apiSlice } from '@store/apiSlice'
 import { setCurrentComic } from '@store/comicSlice'
 import store from '@store/store'
 import type { Meta, StoryObj } from '@storybook/react-vite'
 
-import { COMIC_DATA_666_HYDRATED_ITEMS, FAYE } from '~/mocks'
+import {
+    ALL_ITEMS,
+    COMIC_DATA_666,
+    COMIC_DATA_666_HYDRATED_ITEMS,
+    FAYE,
+} from '~/mocks'
 
 import FilteredNavigationData from './FilteredNavigationData'
 
+// Renders `ItemNavigation` internally, which calls `useActiveStorylines`
+// regardless of the props passed in below, firing real `allItems` and
+// `comicData` queries - mock them so every story here is self-contained
+// instead of relying on some other story's cache still being populated.
+const mswHandlers = [
+    http.get('http://localhost:3000/api/v3/itemdata/', () =>
+        HttpResponse.json(ALL_ITEMS)
+    ),
+    http.get('http://localhost:3000/api/v3/comicdata/:comicId', () =>
+        HttpResponse.json(COMIC_DATA_666)
+    ),
+]
+
 const meta: Meta<typeof FilteredNavigationData> = {
     component: FilteredNavigationData,
+    parameters: {
+        msw: {
+            handlers: mswHandlers,
+        },
+    },
     argTypes: {
         onAddItem: { action: 'onAddItem' },
     },
@@ -27,6 +52,8 @@ const meta: Meta<typeof FilteredNavigationData> = {
     },
     loaders: [
         () => {
+            store.dispatch(apiSlice.util.resetApiState())
+
             const state = store.getState()
 
             if (state.comic.current !== 666) {

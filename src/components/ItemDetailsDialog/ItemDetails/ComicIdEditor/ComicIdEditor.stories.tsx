@@ -1,11 +1,29 @@
+import { HttpResponse, http } from 'msw'
 import { useArgs } from 'storybook/preview-api'
 
 import type { Meta, StoryObj } from '@storybook/react-vite'
 
+import { ALL_ITEMS } from '~/mocks'
+
 import ComicIdEditor from './ComicIdEditor'
+
+// Always renders `PickComicDialog` (just visually hidden via `show`), whose
+// `ComicList` -> `ComicFilter` calls `useAllItemsQuery` unconditionally -
+// mock it so every story here is self-contained instead of relying on some
+// other story's cache still being populated.
+const mswHandlers = [
+    http.get('http://localhost:3000/api/v3/itemdata/', () =>
+        HttpResponse.json(ALL_ITEMS)
+    ),
+]
 
 const meta: Meta<typeof ComicIdEditor> = {
     component: ComicIdEditor,
+    parameters: {
+        msw: {
+            handlers: mswHandlers,
+        },
+    },
     args: {
         dirty: false,
         isSaving: false,
