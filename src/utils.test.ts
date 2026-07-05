@@ -1,6 +1,10 @@
 import { describe, expect, it } from 'vitest'
 
-import { buildMultipartFormData, bytesToBinaryString } from './utils'
+import {
+    buildMultipartFormData,
+    bytesToBinaryString,
+    parsePopStateComicData,
+} from './utils'
 
 describe('bytesToBinaryString', () => {
     it('maps each byte to the character with the same code point', () => {
@@ -56,5 +60,40 @@ describe('buildMultipartFormData', () => {
             'Content-Type: application/octet-stream'
         )
         expect(contentType).toMatch(/^multipart\/form-data; boundary=/)
+    })
+})
+
+describe('parsePopStateComicData', () => {
+    it('parses a valid state with a locked item', () => {
+        expect(parsePopStateComicData({ comic: 42, lockedToItem: 7 })).toEqual({
+            comic: 42,
+            lockedToItem: 7,
+        })
+    })
+
+    it('parses a valid state with no locked item', () => {
+        expect(
+            parsePopStateComicData({ comic: 42, lockedToItem: null })
+        ).toEqual({ comic: 42, lockedToItem: null })
+    })
+
+    it.each([undefined, null, 'string', 42, []])(
+        'rejects non-object state %p',
+        (state) => {
+            expect(parsePopStateComicData(state)).toBeNull()
+        }
+    )
+
+    it('rejects state missing a numeric comic field', () => {
+        expect(
+            parsePopStateComicData({ comic: '42', lockedToItem: null })
+        ).toBeNull()
+        expect(parsePopStateComicData({ lockedToItem: null })).toBeNull()
+    })
+
+    it('rejects state with a lockedToItem that is neither null nor a number', () => {
+        expect(
+            parsePopStateComicData({ comic: 42, lockedToItem: '7' })
+        ).toBeNull()
     })
 })

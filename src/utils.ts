@@ -1,3 +1,6 @@
+import { ComicId } from '@models/ComicId'
+import { ItemId } from '@models/ItemId'
+
 import Settings from './Settings'
 import { HAS_GREASEMONKEY } from './constants'
 
@@ -294,6 +297,35 @@ export function range(start: number, end: number) {
 export function dbg<T>(v: T, d?: string) {
     console.log(v, d)
     return v
+}
+
+export interface PopStateComicData {
+    comic: ComicId
+    lockedToItem: ItemId | null
+}
+
+export function parsePopStateComicData(
+    state: unknown
+): PopStateComicData | null {
+    if (typeof state !== 'object' || state === null) {
+        return null
+    }
+
+    const candidate = state as Record<string, unknown>
+    if (typeof candidate.comic !== 'number') {
+        return null
+    }
+    if (
+        candidate.lockedToItem !== null &&
+        typeof candidate.lockedToItem !== 'number'
+    ) {
+        return null
+    }
+
+    return {
+        comic: candidate.comic,
+        lockedToItem: candidate.lockedToItem,
+    }
 }
 
 export function readFileToDataURL(file: File): Promise<string> {

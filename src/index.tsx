@@ -36,7 +36,6 @@ import Portals from '@components/Portals'
 import { hydrateItemData } from '@hooks/useHydratedItemData'
 import { ComicId } from '@models/ComicId'
 import { HydratedItemNavigationData } from '@models/HydratedItemData'
-import { ItemId } from '@models/ItemId'
 import {
     comicApiSlice,
     nextComicSelector,
@@ -49,7 +48,16 @@ import { loadSettings } from '@store/settingsSlice'
 
 import Settings from '~/Settings'
 import store, { AppDispatch, RootState } from '~/store/store'
-import { awaitElement, debug, error, fetch, info, qcBug, setup } from '~/utils'
+import {
+    awaitElement,
+    debug,
+    error,
+    fetch,
+    info,
+    parsePopStateComicData,
+    qcBug,
+    setup,
+} from '~/utils'
 
 import { BODY_CONTAINER_ID, PORTAL_CONTAINER_ID } from './shared'
 
@@ -91,8 +99,7 @@ async function main() {
     // Handle popstate events to go back to previous comics that were
     // added using pushState/replaceState above
     window.addEventListener('popstate', (event) => {
-        const state = event.state as
-            { comic: number; lockedToItem: ItemId | null } | undefined
+        const state = parsePopStateComicData(event.state)
         if (state && state.comic) {
             if (state.lockedToItem) {
                 const storeState = store.getState()
