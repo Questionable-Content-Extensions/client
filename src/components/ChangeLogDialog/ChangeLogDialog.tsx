@@ -22,11 +22,12 @@ function escapeAttribute(value: string): string {
 
 marked.use({
     renderer: {
-        heading({ text, depth: level }) {
+        heading({ tokens, text, depth: level }) {
             if (level === 1 || (level === 2 && text.includes('Unreleased'))) {
                 return ''
             } else {
-                return `<h${level}>${text.replace(
+                const parsedText = this.parser.parseInline(tokens)
+                return `<h${level}>${parsedText.replace(
                     /- (\d{4}-\d{2}-\d{2})/,
                     (_, date) => {
                         let dateTime = formatDate(new Date(date), true)
