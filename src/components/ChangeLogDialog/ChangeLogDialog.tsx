@@ -12,6 +12,14 @@ import { formatDate } from '~/utils'
 
 import CHANGE_LOG from './CHANGELOG.md?raw'
 
+function escapeAttribute(value: string): string {
+    return value
+        .replace(/&/g, '&amp;')
+        .replace(/"/g, '&quot;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+}
+
 marked.use({
     renderer: {
         heading({ text, depth: level }) {
@@ -23,20 +31,20 @@ marked.use({
                     (_, date) => {
                         let dateTime = formatDate(new Date(date), true)
                         dateTime = dateTime.substring(0, dateTime.length - 6)
-                        return `<span class="text-sm" title="${date}">${dateTime}</span>`
+                        return `<span class="text-sm" title="${escapeAttribute(date)}">${dateTime}</span>`
                     }
                 )}</h${level}>`
             }
         },
         link({ href, title, text }) {
-            return `<a href="${href}" target="_blank" rel="noreferrer noopener" ${
-                title ? 'title=' + title : ''
+            return `<a href="${escapeAttribute(href)}" target="_blank" rel="noreferrer noopener" ${
+                title ? `title="${escapeAttribute(title)}"` : ''
             }>${text}</a>`
         },
         image({ href, title, text }) {
-            return `<img src="${href}" ${
-                title ? 'style=' + title : ''
-            } alt="${text}" />`
+            return `<img src="${escapeAttribute(href)}" ${
+                title ? `style="${escapeAttribute(title)}"` : ''
+            } alt="${escapeAttribute(text)}" />`
         },
     },
 })
