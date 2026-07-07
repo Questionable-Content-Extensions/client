@@ -1,3 +1,4 @@
+/// <reference types="greasemonkey" />
 import { SetupWorker, rest } from 'msw'
 
 declare global {

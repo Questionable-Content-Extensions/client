@@ -174,7 +174,7 @@ export async function fetch<TContext = undefined>(
             | 'TRACE'
             | 'OPTIONS'
             | 'CONNECT'
-        data?: string | Uint8Array
+        data?: string | Uint8Array<ArrayBuffer>
         headers?: {
             [header: string]: string
         }
@@ -233,7 +233,7 @@ export async function buildMultipartFormData(
     fieldName: string,
     file: Blob,
     filename: string
-): Promise<{ body: Uint8Array; contentType: string }> {
+): Promise<{ body: Uint8Array<ArrayBuffer>; contentType: string }> {
     const boundary = `----QCExtBoundary${Date.now().toString(36)}${Math.random().toString(36).slice(2)}`
     const encoder = new TextEncoder()
     const header = encoder.encode(
