@@ -11,24 +11,15 @@ jobs:
     release:
         name: Publish new release
         runs-on: ubuntu-latest
-        # only merged pull requests that begin with 'release/' or 'hotfix/' must trigger this job
+        # only merged pull requests that begin with 'release/' must trigger this job
         if: github.event.pull_request.merged == true &&
-            (startsWith(github.event.pull_request.head.ref, 'release/') || startsWith(github.event.pull_request.head.ref, 'hotfix/'))
+            startsWith(github.event.pull_request.head.ref, 'release/')
 
         steps:
-            - name: Extract version from branch name (for release branches)
-              if: startsWith(github.event.pull_request.head.ref, 'release/')
+            - name: Extract version from branch name
               run: |
                   BRANCH_NAME="${{ github.event.pull_request.head.ref }}"
                   VERSION=${BRANCH_NAME#release/}
-
-                  echo "RELEASE_VERSION=$VERSION" >> $GITHUB_ENV
-
-            - name: Extract version from branch name (for hotfix branches)
-              if: startsWith(github.event.pull_request.head.ref, 'hotfix/')
-              run: |
-                  BRANCH_NAME="${{ github.event.pull_request.head.ref }}"
-                  VERSION=${BRANCH_NAME#hotfix/}
 
                   echo "RELEASE_VERSION=$VERSION" >> $GITHUB_ENV
 
