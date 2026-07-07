@@ -30,7 +30,7 @@ export default function FilteredComicsNavElement({
     const title = useMemo(() => {
         const count = filteredComics.length
         return (
-            `${describeFilters(filters)}\n` +
+            `Filter: ${describeFilters(filters)}\n` +
             `${count} ${count === 1 ? 'comic matches' : 'comics match'} the filter`
         )
     }, [filters, filteredComics.length])
