@@ -1,0 +1,1 @@
+import{i as e}from"./preload-helper-B45gAKPr.js";import{n as t,t as n}from"./core-BZngjW6Y.js";function r(e=1e3+Math.random()*1e3){return t(e)}var i=e((()=>{n()}));export{r as n,i as t};

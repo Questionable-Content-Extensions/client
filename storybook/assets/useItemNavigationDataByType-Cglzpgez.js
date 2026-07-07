@@ -1,0 +1,1 @@
+import{c as e,i as t}from"./preload-helper-B45gAKPr.js";import{t as n}from"./react-DoC9vUy4.js";function r(e,t){return(0,i.useMemo)(()=>{let n={cast:[],location:[],storyline:[],locked:[]};if(e)for(let r of e)t&&r.id===t?n.locked.push(r):n[r.type].push(r);return n},[e,t])}var i,a=t((()=>{i=e(n())}));export{r as n,a as t};

@@ -1,0 +1,5 @@
+import{i as e}from"./preload-helper-B45gAKPr.js";import{t}from"./iframe-BUsqzLvk.js";import{n,r,t as i}from"./ToggleButton-1EleoPDt.js";var a,o,s,c,l,u,d;e((()=>{r(),a=t(),{useArgs:o}=__STORYBOOK_MODULE_PREVIEW_API__,{fn:s}=__STORYBOOK_MODULE_TEST__,c={component:n,argTypes:{onChange:{action:`onChange`},kind:{control:`select`,options:[i[i.Skinny],i[i.Thick]]}},args:{label:`Toggle me!`,kind:i[i.Skinny],checked:!1,disabled:!1,onChange:s()},render:e=>{let[,t]=o(),r=typeof e.kind==`string`?i[e.kind]:e.kind;return(0,a.jsx)(n,{...e,kind:r,onChange:n=>{e.onChange?.(n),t({checked:n.target.checked})}})}},l={},u={args:{disabled:!0}},l.parameters={...l.parameters,docs:{...l.parameters?.docs,source:{originalSource:`{}`,...l.parameters?.docs?.source}}},u.parameters={...u.parameters,docs:{...u.parameters?.docs,source:{originalSource:`{
+  args: {
+    disabled: true
+  }
+}`,...u.parameters?.docs?.source}}},d=[`Default`,`Disabled`]}))();export{l as Default,u as Disabled,d as __namedExportsOrder,c as default};
