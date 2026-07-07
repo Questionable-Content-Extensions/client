@@ -7,6 +7,7 @@ import ModalDialog from '@components/Modals/ModalDialog/ModalDialog'
 import { NavElementMode } from '@components/NavElement/NavElement'
 import useHydratedItemData from '@hooks/useHydratedItemData'
 import { ComicId } from '@models/ComicId'
+import { PatchComicBody } from '@models/PatchComicBody'
 import { PresentComic } from '@models/PresentComic'
 import { skipToken } from '@reduxjs/toolkit/dist/query'
 import {
@@ -317,21 +318,42 @@ function EditAdvanceComicFields({
     onBack: () => void
     onClose: () => void
 }) {
-    const [title, setTitle] = useState(initialData.title)
-    const [tagline, setTagline] = useState(initialData.tagline ?? '')
-    const [publishDate, setPublishDate] = useState(
-        initialData.publishDate
-            ? toDatetimeLocalValue(initialData.publishDate)
-            : ''
-    )
+    const originalTitle = initialData.title
+    const originalTagline = initialData.tagline ?? ''
+    const originalPublishDate = initialData.publishDate
+        ? toDatetimeLocalValue(initialData.publishDate)
+        : ''
+    const originalIsAccuratePublishDate = initialData.isAccuratePublishDate
+    const originalIsGuestComic = initialData.isGuestComic
+    const originalIsNonCanon = initialData.isNonCanon
+
+    const [title, setTitle] = useState(originalTitle)
+    const [tagline, setTagline] = useState(originalTagline)
+    const [publishDate, setPublishDate] = useState(originalPublishDate)
     const [isAccuratePublishDate, setIsAccuratePublishDate] = useState(
-        initialData.isAccuratePublishDate
+        originalIsAccuratePublishDate
     )
-    const [isGuestComic, setIsGuestComic] = useState(initialData.isGuestComic)
-    const [isNonCanon, setIsNonCanon] = useState(initialData.isNonCanon)
+    const [isGuestComic, setIsGuestComic] = useState(originalIsGuestComic)
+    const [isNonCanon, setIsNonCanon] = useState(originalIsNonCanon)
 
     const [patchComic, { isLoading: isPatching }] = usePatchComicMutation()
     const [saveFailed, setSaveFailed] = useState(false)
+
+    const isTitleDirty = title !== originalTitle
+    const isTaglineDirty = tagline !== originalTagline
+    const isPublishDateFieldDirty = publishDate !== originalPublishDate
+    const isAccuratePublishDateFieldDirty =
+        isAccuratePublishDate !== originalIsAccuratePublishDate
+    const isPublishDateDataDirty =
+        isPublishDateFieldDirty || isAccuratePublishDateFieldDirty
+    const isGuestComicDirty = isGuestComic !== originalIsGuestComic
+    const isNonCanonDirty = isNonCanon !== originalIsNonCanon
+    const isDirty =
+        isTitleDirty ||
+        isTaglineDirty ||
+        isPublishDateDataDirty ||
+        isGuestComicDirty ||
+        isNonCanonDirty
 
     const {
         comicItems,
@@ -356,20 +378,31 @@ function EditAdvanceComicFields({
             return
         }
 
+        const body: PatchComicBody = {}
+        if (isTitleDirty) {
+            body.title = title
+        }
+        if (isTaglineDirty) {
+            body.tagline = tagline || undefined
+        }
+        if (isPublishDateDataDirty) {
+            body.publishDate = publishDate
+                ? {
+                      publishDate: new Date(publishDate).toISOString(),
+                      isAccuratePublishDate,
+                  }
+                : undefined
+        }
+        if (isGuestComicDirty) {
+            body.isGuestComic = isGuestComic
+        }
+        if (isNonCanonDirty) {
+            body.isNonCanon = isNonCanon
+        }
+
         const result = await patchComic({
             comic: comicId,
-            body: {
-                title,
-                tagline: tagline || undefined,
-                publishDate: publishDate
-                    ? {
-                          publishDate: new Date(publishDate).toISOString(),
-                          isAccuratePublishDate,
-                      }
-                    : undefined,
-                isGuestComic,
-                isNonCanon,
-            },
+            body,
         })
         if ('data' in result) {
             setSaveFailed(false)
@@ -390,7 +423,9 @@ function EditAdvanceComicFields({
             body={
                 <div className="flex flex-col gap-2">
                     <label className="flex flex-col">
-                        Title
+                        <span className={isTitleDirty ? 'italic' : ''}>
+                            Title{isTitleDirty ? '*' : ''}
+                        </span>
                         <input
                             type="text"
                             className="border border-qc-header pl-2"
@@ -399,7 +434,9 @@ function EditAdvanceComicFields({
                         />
                     </label>
                     <label className="flex flex-col">
-                        Tagline
+                        <span className={isTaglineDirty ? 'italic' : ''}>
+                            Tagline{isTaglineDirty ? '*' : ''}
+                        </span>
                         <input
                             type="text"
                             className="border border-qc-header pl-2"
@@ -408,7 +445,11 @@ function EditAdvanceComicFields({
                         />
                     </label>
                     <label className="flex flex-col">
-                        Publish date
+                        <span
+                            className={isPublishDateFieldDirty ? 'italic' : ''}
+                        >
+                            Publish date{isPublishDateFieldDirty ? '*' : ''}
+                        </span>
                         <input
                             type="datetime-local"
                             className="border border-qc-header pl-2"
@@ -424,7 +465,14 @@ function EditAdvanceComicFields({
                                 setIsAccuratePublishDate(e.target.checked)
                             }
                         />
-                        Accurate date
+                        <span
+                            className={
+                                isAccuratePublishDateFieldDirty ? 'italic' : ''
+                            }
+                        >
+                            Accurate date
+                            {isAccuratePublishDateFieldDirty ? '*' : ''}
+                        </span>
                     </label>
                     <label className="flex items-center gap-2">
                         <input
@@ -432,7 +480,9 @@ function EditAdvanceComicFields({
                             checked={isGuestComic}
                             onChange={(e) => setIsGuestComic(e.target.checked)}
                         />
-                        Guest comic
+                        <span className={isGuestComicDirty ? 'italic' : ''}>
+                            Guest comic{isGuestComicDirty ? '*' : ''}
+                        </span>
                     </label>
                     <label className="flex items-center gap-2">
                         <input
@@ -440,7 +490,9 @@ function EditAdvanceComicFields({
                             checked={isNonCanon}
                             onChange={(e) => setIsNonCanon(e.target.checked)}
                         />
-                        Non-canon
+                        <span className={isNonCanonDirty ? 'italic' : ''}>
+                            Non-canon{isNonCanonDirty ? '*' : ''}
+                        </span>
                     </label>
                     {saveFailed && (
                         <p className="text-red-600 m-0">
@@ -491,7 +543,7 @@ function EditAdvanceComicFields({
                 <>
                     <PaddedButton
                         onClick={onSave}
-                        disabled={isPatching || !title}
+                        disabled={isPatching || !title || !isDirty}
                     >
                         Save changes
                     </PaddedButton>
