@@ -62,7 +62,8 @@ export default function ItemDataPanel({
         itemData === null ||
         itemImageData === null ||
         itemFriendData === null ||
-        itemLocationData === null
+        itemLocationData === null ||
+        color === ''
     if (isLoading) {
         return (
             <div className="text-center pt-4">
