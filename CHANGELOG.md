@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed 🔧
+
+- Highlight the current pagination page in the Edit Log dialog with a pill-shaped outline, and only dim it when the whole pagination control is disabled instead of whenever it isn't the active page.
+
 ## [1.4.0] - 2026-07-05
 
 ### Added ✨

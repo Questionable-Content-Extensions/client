@@ -82,6 +82,7 @@ export default function Pagination({
                             count={count}
                             isFetching={isFetching && page === i}
                             disabled={disabled || page === disabledPage}
+                            dimmed={disabled}
                             type={i}
                             onGoToPage={onGoToPage}
                         />
@@ -97,6 +98,7 @@ function GoToPageButton({
     count,
     type,
     disabled,
+    dimmed,
     isFetching,
     onGoToPage,
 }: {
@@ -104,6 +106,7 @@ function GoToPageButton({
     count: number
     type: Exclude<NavigationType, 'start-ellipsis' | 'end-ellipsis'> | number
     disabled: boolean
+    dimmed: boolean
     isFetching: boolean
     onGoToPage: (page: number) => void
 }) {
@@ -118,12 +121,16 @@ function GoToPageButton({
             }
             disabled={disabled}
             className={
-                'w-8 disabled:opacity-50 qc-ext-qc-link hover:underline' +
-                (isFetching ? ' cursor-wait!' : '')
+                'min-w-8 h-8 px-2 inline-flex items-center justify-center leading-none qc-ext-qc-link hover:underline disabled:hover:no-underline' +
+                (isFetching ? ' cursor-wait!' : '') +
+                (type === currentPage
+                    ? ' rounded-full border border-current font-bold' +
+                      (dimmed ? ' opacity-50' : '')
+                    : ' disabled:opacity-50')
             }
         >
             {typeof type === 'number' ? (
-                type
+                <span className="relative top-[2px]">{type}</span>
             ) : (
                 <i className={`fa ${typeToFaClass(type)}`} aria-hidden></i>
             )}
