@@ -38,6 +38,7 @@ export default function AddAdvanceComicDialog({
     onClose: () => void
 }) {
     const settings = useAppSelector((state) => state.settings.values)
+    const latestComic = useAppSelector((state) => state.comic.latest)
 
     // Pending advance comics aren't published yet, so they must never be
     // opened via the normal comic-navigation state: this extension runs on
@@ -65,6 +66,7 @@ export default function AddAdvanceComicDialog({
         <CreateAdvanceComicDialog
             show={show}
             settings={settings}
+            latestComic={latestComic}
             onSelectPending={setEditingComic}
             onClose={handleClose}
         />
@@ -74,11 +76,13 @@ export default function AddAdvanceComicDialog({
 function CreateAdvanceComicDialog({
     show,
     settings,
+    latestComic,
     onSelectPending,
     onClose,
 }: {
     show: boolean
     settings: SettingValues | null
+    latestComic: ComicId
     onSelectPending: (comicId: ComicId) => void
     onClose: () => void
 }) {
@@ -87,7 +91,8 @@ function CreateAdvanceComicDialog({
             !show || !settings?.editModeToken ? skipToken : undefined
         )
 
-    const [comicId, setComicId] = useState('')
+    const defaultComicId = String(latestComic + 1)
+    const [comicId, setComicId] = useState(defaultComicId)
     const [title, setTitle] = useState('')
     const [tagline, setTagline] = useState('')
     const [publishDate, setPublishDate] = useState('')
@@ -118,7 +123,7 @@ function CreateAdvanceComicDialog({
         })
         if ('data' in result) {
             setAddFailed(false)
-            setComicId('')
+            setComicId(defaultComicId)
             setTitle('')
             setTagline('')
             setPublishDate('')

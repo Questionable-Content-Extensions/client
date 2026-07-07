@@ -4,6 +4,7 @@ import { expect, userEvent, waitFor, within } from 'storybook/test'
 
 import { PresentComic } from '@models/PresentComic'
 import { apiSlice } from '@store/apiSlice'
+import { setLatestComic } from '@store/comicSlice'
 import { setSettings } from '@store/settingsSlice'
 import store from '@store/store'
 import type { Meta, StoryObj } from '@storybook/react-vite'
@@ -132,6 +133,21 @@ type Story = StoryObj<typeof AddAdvanceComicDialog>
 
 export const Default: Story = {}
 
+export const ComicIdDefaultsToLatestPlusOne: Story = {
+    loaders: [
+        () => {
+            store.dispatch(setLatestComic(2500))
+        },
+    ],
+    play: async ({ canvasElement }) => {
+        const canvas = within(canvasElement)
+
+        await waitFor(() =>
+            expect(canvas.getByLabelText('Comic ID')).toHaveValue(2501)
+        )
+    },
+}
+
 export const CreateComicEntersEditMode: Story = {
     play: async ({ canvasElement }) => {
         const canvas = within(canvasElement)
@@ -146,10 +162,9 @@ export const CreateComicEntersEditMode: Story = {
         // proving the dialog switches straight into edit mode (with items
         // available to add) right after a successful create — no need for
         // a second click on the newly-listed pending comic.
-        await userEvent.type(
-            canvas.getByLabelText('Comic ID'),
-            String(PENDING_COMIC.comic)
-        )
+        const comicIdInput = canvas.getByLabelText('Comic ID')
+        await userEvent.clear(comicIdInput)
+        await userEvent.type(comicIdInput, String(PENDING_COMIC.comic))
         await userEvent.type(canvas.getByLabelText('Title'), 'A new comic')
         await userEvent.click(canvas.getByLabelText('Accurate date'))
 
@@ -234,7 +249,9 @@ export const AddFails: Story = {
             ).toBeInTheDocument()
         )
 
-        await userEvent.type(canvas.getByLabelText('Comic ID'), '5003')
+        const comicIdInput = canvas.getByLabelText('Comic ID')
+        await userEvent.clear(comicIdInput)
+        await userEvent.type(comicIdInput, '5003')
         await userEvent.type(canvas.getByLabelText('Title'), 'A new comic')
 
         await withSuppressedExpectedErrorAsync(
