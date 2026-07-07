@@ -43,6 +43,7 @@ import {
     toGetDataQueryArgs,
 } from '@store/api/comicApiSlice'
 import { itemApiSlice } from '@store/api/itemApiSlice'
+import { loadComicFilter } from '@store/comicFilterSlice'
 import {
     setCurrentComic,
     setLatestComic,
@@ -80,7 +81,8 @@ const NAVIGATION_CONTAINER_CLASSNAME = 'qc-ext-navigation-container'
 async function main() {
     await Settings.loadSettings()
     setup()
-    store.dispatch(loadSettings())
+    await store.dispatch(loadSettings())
+    store.dispatch(loadComicFilter())
 
     info('Injecting CSS')
     injectCSS()

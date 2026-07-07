@@ -1,15 +1,14 @@
 {
     "compilerOptions": {
-        "baseUrl": ".",
         "paths": {
-            "@models/*": ["src/models/*", "src/bindings/models/*"],
-            "@endpoints/*": ["src/bindings/endpoints/*"],
-            "@store/*": ["src/store/*"],
-            "@hooks/*": ["src/hooks/*"],
-            "@modals/*": ["src/components/Modals/*"],
-            "@services/*": ["src/services/*"],
-            "@components/*": ["src/components/*"],
-            "~/*": ["src/*"]
+            "@models/*": ["./src/models/*", "./src/bindings/models/*"],
+            "@endpoints/*": ["./src/bindings/endpoints/*"],
+            "@store/*": ["./src/store/*"],
+            "@hooks/*": ["./src/hooks/*"],
+            "@modals/*": ["./src/components/Modals/*"],
+            "@services/*": ["./src/services/*"],
+            "@components/*": ["./src/components/*"],
+            "~/*": ["./src/*"]
         },
         "target": "es2016",
         "lib": ["dom", "dom.iterable", "esnext"],

@@ -53,7 +53,7 @@ export interface GreasemonkeyQueryArgs {
             | 'TRACE'
             | 'OPTIONS'
             | 'CONNECT'
-        data?: string | Uint8Array
+        data?: string | Uint8Array<ArrayBuffer>
         headers?: {
             [header: string]: string
         }

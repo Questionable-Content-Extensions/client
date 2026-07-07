@@ -29,6 +29,8 @@ export interface SettingValues {
     skipNonCanon: boolean
     skipGuest: boolean
 
+    rememberComicFilter: boolean
+
     editMode: boolean
     editModeToken: string
 
@@ -76,6 +78,8 @@ export default class Settings {
 
         skipNonCanon: false,
         skipGuest: false,
+
+        rememberComicFilter: true,
 
         editMode: false,
         editModeToken: '',

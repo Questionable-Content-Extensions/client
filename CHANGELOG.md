@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.4.1] - 2026-07-07
+
+### Added ✨
+
+- Added a "Remember comic filter" setting (enabled by default) that restores the "Go to comic" dialog's active filter when the page reloads, and forgets it when disabled.
+
+### Changed 🔧
+
+- Highlight the current pagination page in the Edit Log dialog with a pill-shaped outline, and only dim it when the whole pagination control is disabled instead of whenever it isn't the active page.
+
 ## [1.4.0] - 2026-07-05
 
 ### Added ✨
@@ -400,7 +410,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Attempt to fix Travis build
 
-[unreleased]: https://github.com/Questionable-Content-Extensions/client/compare/v1.4.0...HEAD
+[unreleased]: https://github.com/Questionable-Content-Extensions/client/compare/v1.4.1...HEAD
+[1.4.1]: https://github.com/Questionable-Content-Extensions/client/compare/v1.4.0...v1.4.1
 [1.4.0]: https://github.com/Questionable-Content-Extensions/client/compare/1.3.0...v1.4.0
 [1.3.0]: https://github.com/Questionable-Content-Extensions/client/compare/1.2.1...1.3.0
 [1.2.1]: https://github.com/Questionable-Content-Extensions/client/compare/1.2.0...1.2.1

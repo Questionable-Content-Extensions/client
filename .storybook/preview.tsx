@@ -21,6 +21,12 @@ setup()
 const unhandled: string[] = []
 
 mswInitialize({
+    serviceWorker: {
+        url:
+            process.env.NODE_ENV === 'production'
+                ? '/client/storybook/mockServiceWorker.js'
+                : '/mockServiceWorker.js',
+    },
     onUnhandledRequest(req, _print) {
         const url = new URL(req.url)
         if (

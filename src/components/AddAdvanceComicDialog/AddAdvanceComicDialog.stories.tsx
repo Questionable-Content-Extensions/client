@@ -1,8 +1,10 @@
 import { HttpResponse, http } from 'msw'
+import { getWorker } from 'msw-storybook-addon'
 import { expect, userEvent, waitFor, within } from 'storybook/test'
 
 import { PresentComic } from '@models/PresentComic'
 import { apiSlice } from '@store/apiSlice'
+import { setLatestComic } from '@store/comicSlice'
 import { setSettings } from '@store/settingsSlice'
 import store from '@store/store'
 import type { Meta, StoryObj } from '@storybook/react-vite'
@@ -89,7 +91,7 @@ const meta: Meta<typeof AddAdvanceComicDialog> = {
                     'http://localhost:3000/api/v3/comicdata/:comicId',
                     async () => {
                         await mockNetworkDelay(500)
-                        return HttpResponse.text('Comic updated')
+                        return HttpResponse.text('"Comic updated"')
                     }
                 ),
                 http.get('http://localhost:3000/api/v3/itemdata/', () => {
@@ -131,6 +133,21 @@ type Story = StoryObj<typeof AddAdvanceComicDialog>
 
 export const Default: Story = {}
 
+export const ComicIdDefaultsToLatestPlusOne: Story = {
+    loaders: [
+        () => {
+            store.dispatch(setLatestComic(2500))
+        },
+    ],
+    play: async ({ canvasElement }) => {
+        const canvas = within(canvasElement)
+
+        await waitFor(() =>
+            expect(canvas.getByLabelText('Comic ID')).toHaveValue(2501)
+        )
+    },
+}
+
 export const CreateComicEntersEditMode: Story = {
     play: async ({ canvasElement }) => {
         const canvas = within(canvasElement)
@@ -145,10 +162,9 @@ export const CreateComicEntersEditMode: Story = {
         // proving the dialog switches straight into edit mode (with items
         // available to add) right after a successful create — no need for
         // a second click on the newly-listed pending comic.
-        await userEvent.type(
-            canvas.getByLabelText('Comic ID'),
-            String(PENDING_COMIC.comic)
-        )
+        const comicIdInput = canvas.getByLabelText('Comic ID')
+        await userEvent.clear(comicIdInput)
+        await userEvent.type(comicIdInput, String(PENDING_COMIC.comic))
         await userEvent.type(canvas.getByLabelText('Title'), 'A new comic')
         await userEvent.click(canvas.getByLabelText('Accurate date'))
 
@@ -233,7 +249,9 @@ export const AddFails: Story = {
             ).toBeInTheDocument()
         )
 
-        await userEvent.type(canvas.getByLabelText('Comic ID'), '5003')
+        const comicIdInput = canvas.getByLabelText('Comic ID')
+        await userEvent.clear(comicIdInput)
+        await userEvent.type(comicIdInput, '5003')
         await userEvent.type(canvas.getByLabelText('Title'), 'A new comic')
 
         await withSuppressedExpectedErrorAsync(
@@ -296,6 +314,120 @@ export const EditPendingComicItems: Story = {
         await userEvent.click(addClaireButton)
 
         await expect(store.getState().comic.current).toEqual(0)
+    },
+}
+
+export const SaveDisabledUntilChanged: Story = {
+    play: async ({ canvasElement }) => {
+        const canvas = within(canvasElement)
+
+        await userEvent.click(
+            await canvas.findByText(
+                `#${PENDING_COMIC.comic} — ${PENDING_COMIC.title}`
+            )
+        )
+
+        const saveButton = await waitFor(() =>
+            canvas.getByRole('button', { name: 'Save changes' })
+        )
+
+        // Nothing has been edited yet, so there's nothing to save.
+        await expect(saveButton).toBeDisabled()
+
+        const titleInput = canvas.getByLabelText('Title')
+        await userEvent.type(titleInput, ' (edited)')
+
+        await waitFor(() => expect(saveButton).toBeEnabled())
+
+        // Reverting the edit back to the original value means the form is
+        // clean again, so saving should be disabled once more.
+        await userEvent.clear(titleInput)
+        await userEvent.type(titleInput, PENDING_COMIC.title)
+
+        await waitFor(() => expect(saveButton).toBeDisabled())
+    },
+}
+
+export const DirtyFieldsAreMarked: Story = {
+    play: async ({ canvasElement }) => {
+        const canvas = within(canvasElement)
+
+        await userEvent.click(
+            await canvas.findByText(
+                `#${PENDING_COMIC.comic} — ${PENDING_COMIC.title}`
+            )
+        )
+
+        await waitFor(() =>
+            expect(canvas.getByText('Title')).toBeInTheDocument()
+        )
+
+        // Untouched fields show their plain label, with no trailing marker.
+        await expect(canvas.getByText('Title')).not.toHaveClass('italic')
+        await expect(canvas.queryByText('Title*')).not.toBeInTheDocument()
+
+        const titleInput = canvas.getByLabelText('Title')
+        await userEvent.type(titleInput, ' (edited)')
+
+        // Once edited, the label switches to the dirty presentation: italic
+        // text with a trailing `*`, matching the regular comic editor.
+        await waitFor(() =>
+            expect(canvas.getByText('Title*')).toHaveClass('italic')
+        )
+
+        const guestComicLabel = canvas.getByText('Guest comic')
+        await expect(guestComicLabel).not.toHaveClass('italic')
+
+        await userEvent.click(canvas.getByLabelText('Guest comic'))
+
+        await waitFor(() =>
+            expect(canvas.getByText('Guest comic*')).toHaveClass('italic')
+        )
+    },
+}
+
+export const SaveOnlySendsChangedFields: Story = {
+    play: async ({ canvasElement }) => {
+        const canvas = within(canvasElement)
+
+        await userEvent.click(
+            await canvas.findByText(
+                `#${PENDING_COMIC.comic} — ${PENDING_COMIC.title}`
+            )
+        )
+
+        await waitFor(() =>
+            expect(
+                canvas.getByRole('button', { name: 'Save changes' })
+            ).toBeInTheDocument()
+        )
+
+        let patchedBody: unknown
+        getWorker().use(
+            http.patch(
+                'http://localhost:3000/api/v3/comicdata/:comicId',
+                async ({ request }) => {
+                    patchedBody = await request.json()
+                    return HttpResponse.text('"Comic updated"')
+                }
+            )
+        )
+
+        // Only the title is touched; every other field is left as loaded.
+        // The patch request should therefore only carry `title` — sending
+        // unmodified fields would make the backend log spurious "changed
+        // from X to X" entries for every one of them.
+        const titleInput = canvas.getByLabelText('Title')
+        await userEvent.clear(titleInput)
+        await userEvent.type(titleInput, 'An edited title')
+
+        await userEvent.click(
+            canvas.getByRole('button', { name: 'Save changes' })
+        )
+
+        await waitFor(() =>
+            expect(patchedBody).toEqual({ title: 'An edited title' })
+        )
     },
 }
 
@@ -368,6 +500,9 @@ export const SaveFails: Story = {
                 canvas.getByRole('button', { name: 'Save changes' })
             ).toBeInTheDocument()
         )
+
+        // Save changes is disabled until something is actually edited.
+        await userEvent.type(canvas.getByLabelText('Title'), ' (edited)')
 
         await withSuppressedExpectedErrorAsync(
             'Got unexpected response from server',

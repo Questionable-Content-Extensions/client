@@ -61,6 +61,7 @@ const itemDataEndpoint = `itemdata/` as const
 
 const constants = {
     settingsKey: 'settings' as const,
+    comicFilterKey: 'comicFilter' as const,
 
     scriptVersion,
 
