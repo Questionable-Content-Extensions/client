@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added ✨
+
+- Added a "Remember comic filter" setting (enabled by default) that restores the "Go to comic" dialog's active filter when the page reloads, and forgets it when disabled.
+
 ### Changed 🔧
 
 - Highlight the current pagination page in the Edit Log dialog with a pill-shaped outline, and only dim it when the whole pagination control is disabled instead of whenever it isn't the active page.

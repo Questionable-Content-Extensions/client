@@ -65,6 +65,15 @@ export default function SettingsPanel({
                     'is enabled, as all guest strips are also non-canon.'
                 }
             />
+            <ToggleSetting
+                settings={settings}
+                setting="rememberComicFilter"
+                updateSettings={updateSettings}
+                label="Remember comic filter"
+                description={
+                    'Remembers the filter set in the "Go to comic" dialog between visits.'
+                }
+            />
 
             <h3 className="text-lg mt-6">Display settings</h3>
             <ToggleSetting
